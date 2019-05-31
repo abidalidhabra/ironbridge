@@ -1,4 +1,4 @@
-@section('title','ironbridge1779 | User')
+@section('title','Ironbridge1779 | User')
 @extends('admin.layouts.admin-app')
 @section('styles')
     <!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->

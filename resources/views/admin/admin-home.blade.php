@@ -1,4 +1,4 @@
-@section('title','Dot Dating | Dashboard')
+@section('title','Ironbridge1779 | Dashboard')
 @extends('admin.layouts.admin-app')
     <!-- <link rel="stylesheet" type="text/css" href="{{ asset('admin_assets/css/daterangepicker.css') }}" /> -->
 @section('content')
@@ -18,17 +18,17 @@
             <div class="total_usersdetlis">
                 <ul>
                     <li>
-                        <img src="{{ asset('admin_assets/images/Users.png') }}">
+                        <img src="{{ asset('admin_assets/svg/user.svg') }}">
                         <h3>55,000</h3>
                         <p>Total Users</p>
                     </li>
                     <li>
-                        <img src="{{ asset('admin_assets/images/Users.png') }}">
+                        <img src="{{ asset('admin_assets/svg/male-icon.svg') }}">
                         <h3>55,000</h3>
                         <p>Male</p>
                     </li>
                     <li>
-                        <img src="{{ asset('admin_assets/images/Users.png') }}">
+                        <img src="{{ asset('admin_assets/svg/female-icon.svg') }}">
                         <h3>55,000</h3>
                         <p>Female</p>
                     </li>
@@ -40,10 +40,12 @@
                         <p>Device</p>
                     </div>
                     <div class="iosdeviceuser_text">
+                        <img src="{{ asset('admin_assets/svg/apple-icon.svg') }}">
                         <h3>25,000</h3>
                         <p>ios</p>
                     </div>
                     <div class="iosdeviceuser_text bordersetnone">
+                        <img src="{{ asset('admin_assets/svg/android-icon.svg') }}">
                         <h3>25,000</h3>
                         <p>Android</p>
                     </div>
@@ -103,16 +105,16 @@
         <div class="verified_detlisbox">
             <ul>
                 <li>
-                    <img src="{{ asset('admin_assets/images/email.png') }}">
-                    <h3>30,000</h3>
-                    <p>Email Addresses Verified</p>
+                    <img src="{{ asset('admin_assets/svg/news.svg') }}">
+                    <h3>{{ $data['news'] }}</h3>
+                    <p>Total News</p>
                 </li>
                 <li>
-                    <img src="{{ asset('admin_assets/images/phone.png') }}">
-                    <h3>30,000</h3>
-                    <p>Phone Numbers Verified</p>
+                    <img src="{{ asset('admin_assets/svg/map.svg') }}">
+                    <h3>{{ $data['treasure_locations'] }}</h3>
+                    <p>Total Treasure Locations</p>
                 </li>         
-                <li>
+                <!-- <li>
                     <img src="{{ asset('admin_assets/images/instagram.png') }}">
                     <h3>30,000</h3>
                     <p>Instagram Connections</p>
@@ -121,7 +123,7 @@
                     <img src="{{ asset('admin_assets/images/youtub.png') }}">
                     <h3>30,000</h3>
                     <p>Total Ads Watched</p>
-                </li>         
+                </li>  -->        
             </ul>
         </div>
     </div>

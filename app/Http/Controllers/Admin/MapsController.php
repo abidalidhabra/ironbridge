@@ -22,7 +22,7 @@ class MapsController extends Controller
         ->addIndexColumn()
         ->addColumn('map', function($city){
         	//https://maps.google.com/?q=<lat>,<lng>
-            return '<a href="https://maps.google.com/?q='.$city->latitude.','.$city->longitude.'" target="_blank">MAP</a>';
+            return '<a href="https://maps.google.com/?q='.$city->latitude.','.$city->longitude.'" target="_blank"><img src="'.asset('admin_assets/svg/map-marke-icon.svg').'"</a>';
         })
         ->rawColumns(['map'])
         ->make(true);
