@@ -16,8 +16,9 @@
                     <tr>
                         <th>Sr</th>
                         <th>Place Name</th>
-                        <th>City</th>
+                        <th>Country</th>
                         <th>Province</th>
+                        <th>City</th>
                         <th>Open in Map</th>
                     </tr>
                 </thead>
@@ -38,7 +39,7 @@
                 processing: true,
                 responsive: true,
                 serverSide: true,
-                // order: [[1, 'desc']],
+                order: [[4, 'asc']],
                 lengthMenu: [[10, 50, 100, -1], [10, 50, 100, "All"]],
                 ajax: {
                     type: "get",
@@ -54,8 +55,9 @@
                 columns:[
                     { data:'DT_RowIndex',name:'_id' },
                     { data:'place_name',name:'place_name' },
-                    { data:'city',name:'city' },
+                    { data:'country',name:'country' },
                     { data:'province',name:'province' },
+                    { data:'city',name:'city' },
                     { data:'map',name:'map'},
                 ],
 

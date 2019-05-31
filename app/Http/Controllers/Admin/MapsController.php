@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Yajra\DataTables\EloquentDataTable;
-use App\Models\v1\NewCityInfo;
+use App\Models\v1\TreasureLocation;
 
 class MapsController extends Controller
 {
@@ -16,7 +16,7 @@ class MapsController extends Controller
     }
 
     public function getMaps(){
-    	$city = NewCityInfo::select('latitude','longitude','place_name','city','province')
+    	$city = TreasureLocation::select('latitude','longitude','place_name','city','province','country')
     						->get();
     	return DataTables::of($city)
         ->addIndexColumn()

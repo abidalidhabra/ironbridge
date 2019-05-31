@@ -5,7 +5,7 @@ namespace App\Models\v1;
 // use Illuminate\Database\Eloquent\Model;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
-class Treasurelocation extends Eloquent
+class TreasureLocation extends Eloquent
 {
 
 	protected $table = 'new_city_info';
@@ -15,7 +15,7 @@ class Treasurelocation extends Eloquent
      *
      * @var array
      */
-    protected $fillable = ['latitude','longitude','place_name','place_id','boundary_arr','boundingbox','city','province'];
+    protected $fillable = ['latitude','longitude','place_name','place_id','boundary_arr','boundingbox','city','province','country'];
     
     /**
      * The attributes that should be cast to native types.

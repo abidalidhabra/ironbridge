@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin-app')
-@section('title','ironbridge1779 | Login')
+@section('title','Ironbridge1779 | Login')
 @section('content')
 <div class="signupparent_divbox">
     <div class="signup_innerbox">

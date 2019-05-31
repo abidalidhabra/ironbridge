@@ -19,17 +19,17 @@
                 <ul>
                     <li>
                         <img src="{{ asset('admin_assets/svg/user.svg') }}">
-                        <h3>55,000</h3>
+                        <h3>0</h3>
                         <p>Total Users</p>
                     </li>
                     <li>
                         <img src="{{ asset('admin_assets/svg/male-icon.svg') }}">
-                        <h3>55,000</h3>
+                        <h3>0</h3>
                         <p>Male</p>
                     </li>
                     <li>
                         <img src="{{ asset('admin_assets/svg/female-icon.svg') }}">
-                        <h3>55,000</h3>
+                        <h3>0</h3>
                         <p>Female</p>
                     </li>
                 </ul>
@@ -41,12 +41,12 @@
                     </div>
                     <div class="iosdeviceuser_text">
                         <img src="{{ asset('admin_assets/svg/apple-icon.svg') }}">
-                        <h3>25,000</h3>
+                        <h3>{{ $data['device_ios'] }}</h3>
                         <p>ios</p>
                     </div>
                     <div class="iosdeviceuser_text bordersetnone">
                         <img src="{{ asset('admin_assets/svg/android-icon.svg') }}">
-                        <h3>25,000</h3>
+                        <h3>{{ $data['device_android'] }}</h3>
                         <p>Android</p>
                     </div>
                 </div>
@@ -56,13 +56,10 @@
                     </div>
                     <div class="citycategory_box">
                         <div class="leftcity_textbox">
-                            <p>Abc</p>
-                        </div>
-                        <div class="rightcity_textbox">
-                            <p>92,333(42%)</p>
+                            <p>No records found</p>
                         </div>
                     </div>
-                    <div class="citycategory_box">
+                    <!-- <div class="citycategory_box">
                         <div class="leftcity_textbox">
                             <p>Abc</p>
                         </div>
@@ -93,14 +90,14 @@
                         <div class="rightcity_textbox">
                             <p>92,333(42%)</p>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
     </div>
     <div class="right_paretboxpart">
         <div class="lifetime_titaltext">
-            <p>Lifetime</p>
+            <!-- <p>Lifetime</p> -->
         </div>
         <div class="verified_detlisbox">
             <ul>
@@ -108,6 +105,21 @@
                     <img src="{{ asset('admin_assets/svg/news.svg') }}">
                     <h3>{{ $data['news'] }}</h3>
                     <p>Total News</p>
+                </li>
+                <li>
+                    <img src="{{ asset('admin_assets/svg/earth.svg') }}">
+                    <h3>{{ $data['total_country'] }}</h3>
+                    <p>Total Counties</p>
+                </li>
+                <li>
+                    <img src="{{ asset('admin_assets/svg/city-icon.svg') }}">
+                    <h3>{{ $data['total_province'] }}</h3>
+                    <p>Total Province</p>
+                </li>
+                <li>
+                    <img src="{{ asset('admin_assets/svg/city-icon.svg') }}">
+                    <h3>{{ $data['total_city'] }}</h3>
+                    <p>Total Cities</p>
                 </li>
                 <li>
                     <img src="{{ asset('admin_assets/svg/map.svg') }}">

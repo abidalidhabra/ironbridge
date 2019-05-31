@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\v1\Avatar;
 use App\Models\v1\User;
 use App\Models\v1\UserBalancesheet;
-use App\Models\v1\NewCityInfo;
+use App\Models\v1\TreasureLocation;
 use App\Models\v1\CityInfo;
 use Auth;
 use Illuminate\Http\Request;
@@ -227,7 +227,7 @@ class UserController extends Controller
     }
     public function getParks1(Request $request)
     {
-        return response()->json(NewCityInfo::select('latitude','longitude','place_name','place_id','boundary_arr','boundingbox')->whereIn('city',['Calgary','Edmonton'])->get());
+        return response()->json(TreasureLocation::select('latitude','longitude','place_name','place_id','boundary_arr','boundingbox')->whereIn('city',['Calgary','Edmonton'])->get());
         //return response()->json(CityInfo::all());
     }
 
