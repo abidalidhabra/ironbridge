@@ -1,4 +1,4 @@
-@section('title','ironbridge1779 | Maps')
+@section('title','Ironbridge1779 | Maps')
 @extends('admin.layouts.admin-app')
 @section('styles')
     <!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->
