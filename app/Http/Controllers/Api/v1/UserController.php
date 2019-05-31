@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Models\v1\Avatar;
 use App\Models\v1\User;
 use App\Models\v1\UserBalancesheet;
+use App\Models\v1\NewCityInfo;
+use App\Models\v1\CityInfo;
 use Auth;
 use Illuminate\Http\Request;
 use Route;
@@ -23,7 +25,7 @@ class UserController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('jwt-auth', ['except' => ['register']]);
+        $this->middleware('jwt-auth', ['except' => ['register','getParks','getParks1','watercheck']]);
     }
 
     public function register(Request $request){
@@ -216,5 +218,58 @@ class UserController extends Controller
             'avatars' => $avatars,
             'user_avatar' => $userAvatar
         ]);
+    }
+
+    public function getParks(Request $request)
+    {
+        return response()->json(CityInfo::select('latitude','longitude','place_name','place_id','boundary_arr','boundingbox')->get());
+        //return response()->json(CityInfo::all());
+    }
+    public function getParks1(Request $request)
+    {
+        return response()->json(NewCityInfo::select('latitude','longitude','place_name','place_id','boundary_arr','boundingbox')->whereIn('city',['Calgary','Edmonton'])->get());
+        //return response()->json(CityInfo::all());
+    }
+
+    public function watercheck($lat,$long){
+        
+        $GMAPStaticUrl = "https://maps.googleapis.com/maps/api/staticmap?center=".$lat.",".$long."&size=40x40&maptype=roadmap&sensor=false&zoom=40&key=AIzaSyBW0Gy-NfQI_Z8k9-X3M0MZoDgY-k_EdNg";  
+        //echo $GMAPStaticUrl;
+        $chuid = curl_init();
+        curl_setopt($chuid, CURLOPT_URL, $GMAPStaticUrl);   
+        curl_setopt($chuid, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($chuid, CURLOPT_SSL_VERIFYPEER, FALSE);
+        $data = trim(curl_exec($chuid));
+        curl_close($chuid);
+        $image = imagecreatefromstring($data);
+
+        // this is for debug to print the image
+        ob_start();
+        imagepng($image);
+        $contents =  ob_get_contents();
+        ob_end_clean();
+        //echo "<img src='data:image/png;base64,".base64_encode($contents)."' />";
+
+        // here is the test : I only test 3 pixels ( enough to avoid rivers ... )
+        $hexaColor = imagecolorat($image,0,0);
+        $color_tran = imagecolorsforindex($image, $hexaColor);
+
+        $hexaColor2 = imagecolorat($image,0,1);
+        $color_tran2 = imagecolorsforindex($image, $hexaColor2);
+
+        $hexaColor3 = imagecolorat($image,0,2);
+        $color_tran3 = imagecolorsforindex($image, $hexaColor3);
+
+        $red = $color_tran['red'] + $color_tran2['red'] + $color_tran3['red'];
+        $green = $color_tran['green'] + $color_tran2['green'] + $color_tran3['green'];
+        $blue = $color_tran['blue'] + $color_tran2['blue'] + $color_tran3['blue'];
+
+        imagedestroy($image);
+        //var_dump($red,$green,$blue);
+        
+        if($red == 510 && $green == 654 && $blue == 765)
+            return json_encode(array("status"=>1));
+        else
+            return json_encode(array("status"=>0));
     }
 }

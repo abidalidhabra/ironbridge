@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "62d0b22d75c9e69da0929256230d32ba",
+    "content-hash": "444f937b9bbc92c35e1ac21fc72e1790",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -3888,7 +3888,7 @@
                 },
                 {
                     "name": "Gert de Pagter",
-                    "email": "backendtea@gmail.com"
+                    "email": "BackEndTea@gmail.com"
                 }
             ],
             "description": "Symfony polyfill for ctype functions",

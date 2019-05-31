@@ -16,7 +16,7 @@
         "laravel/tinker": "^1.0",
         "toin0u/geocoder-laravel": "^4.1",
         "tymon/jwt-auth": "dev-develop#34d8e48 as 1.0.0-rc.3.2",
-        "yajra/laravel-datatables": "^1.0"
+        "yajra/laravel-datatables": "^1.2"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",

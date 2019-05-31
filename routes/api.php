@@ -22,6 +22,9 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 	Route::post('login', 'AuthController@login');
 	Route::post('register', 'UserController@register');
 	Route::get('checkMyBalance', 'UserController@checkMyBalance');
+	Route::get('getParks', 'UserController@getParks');
+	Route::get('getParks1', 'UserController@getParks1');
+	Route::get('watercheck/{lat}/{long}', 'UserController@watercheck');
 	
 	Route::group(['middleware' => 'jwt-auth'], function ($router) {
 
