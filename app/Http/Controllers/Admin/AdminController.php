@@ -6,14 +6,14 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\v1\News;
 use App\Models\v1\User;
-use App\Models\v1\Treasurelocation;
+use App\Models\v1\TreasureLocation;
 
 class AdminController extends Controller
 {
     public function index()
     {
     	$data['news'] = News::count();
-    	$treasureLocations = Treasurelocation::select('city','province','country')->get();
+    	$treasureLocations = TreasureLocation::select('city','province','country')->get();
     	$data['treasure_locations'] = $treasureLocations->count();
     	$data['total_city'] = $treasureLocations->groupBy('city')->count();
     	$data['total_province'] = $treasureLocations->groupBy('province')->count();
