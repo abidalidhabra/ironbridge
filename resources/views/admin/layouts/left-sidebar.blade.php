@@ -10,7 +10,7 @@
 			<li  class="@if(Route::currentRouteName() == 'admin.news.index') {{ 'activelist' }} @endif">
 				<a href="{{ route('admin.news.index') }}">News</a>
 			</li>
-			<li  class="@if(Route::currentRouteName() == 'admin.mapsList') {{ 'activelist' }} @endif">
+			<li  class="@if(Route::currentRouteName() == 'admin.mapsList' || Route::currentRouteName() == 'admin.boundary_map') {{ 'activelist' }} @endif">
 				<a href="{{ route('admin.mapsList') }}">Treasure locations</a>
 			</li>
 		</ul>

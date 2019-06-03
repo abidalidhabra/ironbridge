@@ -22,10 +22,20 @@ class MapsController extends Controller
         ->addIndexColumn()
         ->addColumn('map', function($city){
         	//https://maps.google.com/?q=<lat>,<lng>
-            return '<a href="https://maps.google.com/?q='.$city->latitude.','.$city->longitude.'" target="_blank"><img src="'.asset('admin_assets/svg/map-marke-icon.svg').'"</a>';
+            //return '<a href="https://maps.google.com/?q='.$city->latitude.','.$city->longitude.'" target="_blank"><img src="'.asset('admin_assets/svg/map-marke-icon.svg').'"</a>';
+            return '<a href="'.route('admin.boundary_map',$city->id).'" target="_blank"><img src="'.asset('admin_assets/svg/map-marke-icon.svg').'"</a>';
         })
         ->rawColumns(['map'])
         ->make(true);
     	
+    }
+
+
+    //boundary map
+    public function boundaryMap($id){
+        $id = $id;
+        $location = TreasureLocation::where('_id',$id)
+                                ->first();
+        return view('admin.maps.boundary',compact('location'));
     }
 }

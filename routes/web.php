@@ -45,6 +45,7 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	//MAPS
 	Route::get('/mapsList', 'MapsController@index')->name('mapsList');
 	Route::get('/getMaps', 'MapsController@getMaps')->name('getMaps');
+	Route::get('/boundary_map/{id}', 'MapsController@boundaryMap')->name('boundary_map');
 	
 });
 

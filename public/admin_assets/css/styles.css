@@ -302,9 +302,10 @@ header{
     box-shadow: none;
     color: #212121;
     height: 42px;
+    font-size: 14px;
     width: 100%;
     padding: 0px 10px;
-    font-family: 'Montserrat-Light';
+    font-family: 'Montserrat-Medium';
 }
 .logindetail_inputbox .form-control:focus {
     box-shadow: none !important;    
@@ -777,6 +778,29 @@ i.iconsetaddbox{
     font-size: 14px;
     font-family: 'Montserrat-Light';
 }
+
+
+
+.users_datatablebox{
+
+}
+.users_datatablebox h3{
+    /*font-family: 'Montserrat-Regular';*/
+    color: #000;
+    margin-bottom: 8px;
+    font-family: 'Montserrat-Medium';
+}
+.users_datatablebox h3 span{
+    font-family: 'Montserrat-SemiBold';
+    color: #C0B08C;
+
+}
+
+
+
+
+
+
 
 
 
