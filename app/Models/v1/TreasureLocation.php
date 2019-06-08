@@ -23,7 +23,7 @@ class TreasureLocation extends Eloquent
      * @var array
      */
     protected $casts = [
-        'boundary_arr' => 'array',
+        // 'boundary_arr' => 'array',
         'boundingbox' => 'array',
     ];
     
@@ -35,6 +35,10 @@ class TreasureLocation extends Eloquent
         return (float)$value;
     }
 
+    public function getBoundaryArrAttribute($value){
+        return json_decode($value,true);
+    }
+
     public function getBoundingboxAttribute($value){
         $val = trim(html_entity_decode(preg_replace('/\s\s+/', ' ', $value)));
         $val = preg_replace('/\"/', '', $val);
@@ -44,5 +48,10 @@ class TreasureLocation extends Eloquent
         $val = explode(',',$val);
         return array_filter($val);
         //return stripslashes(html_entity_decode($value));
-	}
+    }
+
+    public function complexities()
+    {
+        return $this->hasMany('App\Models\v1\PlaceStar','place_id');
+    }
 }

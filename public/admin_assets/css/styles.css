@@ -201,10 +201,16 @@ header{
 .customdatatable_box tr td a img{
     width: 30px;
 }
-.has-error , .help-block{
+.has-error , .help-block , .error{
     color: #a94442;
 }
 .modalbuttonadd button{
+   background: #C0B08C;
+   border: 0px;
+   font-size: 15px;
+   font-family: 'Montserrat-Regular';
+}
+.modalbuttonadd a{
    background: #C0B08C;
    border: 0px;
    font-size: 15px;
@@ -225,7 +231,7 @@ header{
     color: #333;
     font-family: 'Montserrat-Medium';
 }
-.modalbuttonadd:hover button{
+.modalbuttonadd:hover button ,.modalbuttonadd:hover a{
    background: #C0B08C;
 }
 .modalbuttonadd .btn-info.active, .btn-info:active, .open>.dropdown-toggle.btn-info {
@@ -781,19 +787,49 @@ i.iconsetaddbox{
 
 
 
-.users_datatablebox{
+.locationinfobox{    
+    -webkit-box-shadow: 0px 0px 6px 1px rgba(161,161,161,1);
+    -moz-box-shadow: 0px 0px 6px 1px rgba(161,161,161,1);
+    box-shadow: 0px 0px 6px 1px rgba(161,161,161,1);
+    border-radius: 6px;
+    padding: 18px 18px;
+    padding-top: 20px;
+    padding-left: 18px;
+    margin-bottom: 35px;
+    display: inline-block;
+    width: 100%;
+}
+.locationinfobox h2{
+    font-family: 'Montserrat-Medium';
+    color: #C0B08C;
+    margin: 0;
+    margin-bottom: 18px;
+    font-size: 26px;
 
 }
-.users_datatablebox h3{
+.locationinfobox h3{
     /*font-family: 'Montserrat-Regular';*/
     color: #000;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     font-family: 'Montserrat-Medium';
+    font-size: 18px;
+    display: inline-block;
+    width: 100%;
+    margin-top: 5px;
 }
-.users_datatablebox h3 span{
+.locationinfobox h3 span{
     font-family: 'Montserrat-SemiBold';
-    color: #C0B08C;
-
+    color: #000;
+}
+.inerdeta_locat{
+    display: inline-block;
+    width: 40%;
+    float: left;
+}
+.locationinfobox .customdatatable_box{
+    margin-top: 0;
+    width: 60%;
+    float: left;
 }
 
 

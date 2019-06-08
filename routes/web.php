@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+	return view('welcome');
 });
 
 Route::group(['prefix'=> 'admin', 'namespace'=>'Admin\Auth','as'=>'admin.'],function(){
@@ -46,6 +46,13 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('/mapsList', 'MapsController@index')->name('mapsList');
 	Route::get('/getMaps', 'MapsController@getMaps')->name('getMaps');
 	Route::get('/boundary_map/{id}', 'MapsController@boundaryMap')->name('boundary_map');
+	Route::get('/star_complexity_map/{id}/{complexity}', 'MapsController@starComplexityMap')->name('starComplexityMap');
+	Route::post('/store_star_complexity', 'MapsController@storeStarComplexity')->name('storeStarComplexity');
+	Route::delete('/clearAllClues/{id}', 'MapsController@clearAllClues')->name('clearAllClues');
+
+
+	Route::get('/add_location', 'MapsController@addLocation')->name('add_location');
+	Route::post('/store_location', 'MapsController@storeLocation')->name('store_location');
 	
 });
 

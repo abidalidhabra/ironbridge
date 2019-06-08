@@ -6,7 +6,14 @@
 @section('content')
     <div class="right_paddingboxpart">
         <div class="users_datatablebox">
-            <h3>Treasure hunt locations</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>Treasure hunt locations</h3>
+                </div>
+                <div class="col-md-6 text-right modalbuttonadd">
+                    <a href="{{ route('admin.add_location') }}" class="btn btn-info btn-md">Add Location</a>
+                </div>
+            </div>
         </div>
         <br/>
         <br/>

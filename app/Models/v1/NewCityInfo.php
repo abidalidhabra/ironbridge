@@ -45,4 +45,5 @@ class NewCityInfo extends Eloquent
         return array_filter($val);
         //return stripslashes(html_entity_decode($value));
 	}
+
 }

@@ -227,7 +227,7 @@ class UserController extends Controller
     }
     public function getParks1(Request $request)
     {
-        return response()->json(TreasureLocation::select('latitude','longitude','place_name','place_id','boundary_arr','boundingbox')->whereIn('city',['Calgary','Edmonton'])->get());
+        return response()->json(TreasureLocation::select('latitude','longitude','place_name','place_id','boundary_arr','boundingbox')->whereIn('city',['Calgary','Vancouver'])->get());
         //return response()->json(CityInfo::all());
     }
 
