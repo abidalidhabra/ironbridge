@@ -29,7 +29,8 @@ class MapsController extends Controller
             return '<a href="'.route('admin.boundary_map',$city->id).'" target="_blank"><img src="'.asset('admin_assets/svg/map-marke-icon.svg').'"</a>';
         })
         ->addColumn('action', function($city){
-            return '<a href="javascript:void(0)" class="delete_location" data-action="delete" data-placement="left" data-id="'.$city->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>
+            return '<a href="'.route('admin.edit_location',$city->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>
+                <a href="javascript:void(0)" class="delete_location" data-action="delete" data-placement="left" data-id="'.$city->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>
             </a>';
         })
         ->rawColumns(['map','action'])
@@ -127,10 +128,55 @@ class MapsController extends Controller
         return view('admin.maps.add_location');
     }
 
+    //EDIT LOCATION
+    public function editLocation($id){
+        $id = $id;
+        $location = TreasureLocation::where('_id',$id)
+                                ->with(['complexities'=>function($query){
+                                    $query->whereHas('place_clues');
+                                  }])
+                                ->first();
+
+        $complexityarr = [];
+        foreach ($location->complexities as $key => $complexity) {
+            $complexityarr[] = $complexity['complexity'];
+        }
+
+        return view('admin.maps.edit_location',compact('location','complexityarr'));
+    }
+
+    //UPDATE LOCATION
+    public function updateLocation(Request $request){
+        $id = $request->get('id');
+        $location = TreasureLocation::where('_id',$id)
+                                    ->first();
+
+        $boundaryArr = $request->get('boundary_arr');
+        
+        if($boundaryArr != ""){
+            $boundary = [];
+            foreach (json_decode($request->get('boundary_arr'),true) as $key => $value) {
+                if (isset($value)) {
+                    $boundary[] = '['.$value.']';
+                }
+            }
+            $location->boundary_arr = '['.implode(',', $boundary).']';
+        }
+
+        $location->custom_name = $request->get('custom_name');
+        $location->update();
+
+        return response()->json([
+            'status' => true,
+            'message'=>'Location has been successfully update',
+        ]);
+    }
+
+
     //STORE LOCATION
     public function storeLocation(Request $request){
         $validator = Validator::make($request->all(),[
-                        //'custom_name'  => 'required',
+                        'custom_name'  => 'required',
                         'boundary_arr' => 'required',
                         'place_name'   => 'required',
                         'latitude'     => 'required',

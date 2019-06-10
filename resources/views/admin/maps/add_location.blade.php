@@ -304,7 +304,7 @@
                 focusInvalid: false, 
                 ignore: "",
                 rules: {
-                    //custom_name: { required: true },
+                    custom_name: { required: true },
                     place_name: { required: true },
                     city: { required: true },
                     province: { required: true },

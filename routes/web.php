@@ -52,9 +52,11 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 
 
 	Route::get('/add_location', 'MapsController@addLocation')->name('add_location');
+	Route::get('/edit_location/{id}', 'MapsController@editLocation')->name('edit_location');
 	Route::post('/store_location', 'MapsController@storeLocation')->name('store_location');
 	Route::delete('/locationDelete/{id}', 'MapsController@locationDelete')->name('locationDelete');
 	Route::get('/removeStar', 'MapsController@removeStar')->name('removeStar');
+	Route::post('/update_location', 'MapsController@updateLocation')->name('update_location');
 	
 });
 
