@@ -2,7 +2,7 @@
 @extends('admin.layouts.admin-app')
 @section('styles')
 <style>
-   #map {
+    #map {
         height: 500px;
         width: 100%;
     }
@@ -61,6 +61,10 @@
 @endsection
 @section('content')
     <div class="right_paddingboxpart">
+        <div class="text-right">
+            <a href="{{ route('admin.boundary_map',$id) }}" class="btn btn-color">Back</a>
+        </div>
+        <br/>
         <div class="locationinfobox">
             <div class="inerdeta_locat">
                 <h2>Location Info</h2>

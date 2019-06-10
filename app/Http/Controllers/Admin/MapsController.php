@@ -60,7 +60,7 @@ class MapsController extends Controller
                                 ->first();
         
         $complexitySuf = $this->addOrdinalNumberSuffix($complexity);
-        return view('admin.maps.start_complexity',compact('location','complexity','complexitySuf'));
+        return view('admin.maps.start_complexity',compact('location','complexity','complexitySuf','id'));
     }
 
     //boundary map

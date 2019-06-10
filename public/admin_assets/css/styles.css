@@ -832,7 +832,13 @@ i.iconsetaddbox{
     float: left;
 }
 
-
+.btn-color{
+    background: #C0B08C;
+    border: 0px;
+    font-size: 15px;
+    font-family: 'Montserrat-Regular';
+    color: #ffff;
+}
 
 
 
