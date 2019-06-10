@@ -130,6 +130,7 @@ class MapsController extends Controller
     //STORE LOCATION
     public function storeLocation(Request $request){
         $validator = Validator::make($request->all(),[
+                        //'custom_name'  => 'required',
                         'boundary_arr' => 'required',
                         'place_name'   => 'required',
                         'latitude'     => 'required',
@@ -186,7 +187,14 @@ class MapsController extends Controller
 
     //LOCATION DELETE
     public function locationDelete($id){
-        TreasureLocation::where('_id', $id)->delete();
+        //TreasureLocation::where('_id', $id)->delete();
+        $location = TreasureLocation::where('_id',$id)->first();
+        foreach ($location->complexities as $key => $complexity) {
+            $complexity->place_clues()->delete();
+        }
+        $location->complexities()->delete();
+        $location->delete();
+
         return response()->json([
             'status' => true,
             'message'=>'Location has been successfully deleted',

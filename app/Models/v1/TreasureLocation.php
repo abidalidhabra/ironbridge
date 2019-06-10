@@ -15,7 +15,7 @@ class TreasureLocation extends Eloquent
      *
      * @var array
      */
-    protected $fillable = ['latitude','longitude','place_name','place_id','boundary_arr','boundingbox','city','province','country'];
+    protected $fillable = ['latitude','longitude','place_name','place_id','boundary_arr','boundingbox','city','province','country','custom_name'];
     
     /**
      * The attributes that should be cast to native types.
