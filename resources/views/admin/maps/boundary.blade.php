@@ -10,48 +10,6 @@
       margin:5px;
     }
    
-    .locatininfobtn a{
-      background: #C0B08C;
-      border: 0px;
-      font-size: 15px;
-      font-family: 'Montserrat-Regular';
-      display: inline-block;
-      float: right;
-    }
-    .locatininfobtn{
-      display: inline-block;
-      width: 100%;
-      padding-right: 18px;
-    }
-    .locatininfobtn span{
-      display: inline-block;
-      float: left;
-      padding-top: 3px;
-    }
-
-    .locatininfoinerbtn{
-      margin: 5px;
-      display: inline-block;
-      margin-right: 1px;
-      margin-left: 2px;
-    }
-    .locatininfoinerbtn a{      
-      font-size: 15px;
-      font-family: 'Montserrat-Regular';
-      border: 1px solid #C0B08C;
-      color: #000;
-      background: transparent ;
-      border: 1px solid #C0B08C;
-    }
-    .locatininfoinerbtn a.active_btn{
-
-      border: 1px solid #000 !important;
-    }
-   
-    .locatininfoinerbtn a:hover{
-      background: #C0B08C;
-      border: 1px solid #C0B08C;
-    }
     .activeBorder{
     }
 </style>

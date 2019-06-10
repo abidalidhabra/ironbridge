@@ -12,9 +12,12 @@
 @section('content')
     <div class="right_paddingboxpart">
         <div class="users_datatablebox">
-            <div class="row">
+            <div class="">
                 <div class="col-md-6">
                     <h3>Add location</h3>
+                </div>
+                <div class="col-md-6 text-right">
+                    <a href="{{ route('admin.mapsList') }}" class="btn back-btn">Back</a>
                 </div>
             </div>
         </div>

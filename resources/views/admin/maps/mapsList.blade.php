@@ -27,6 +27,7 @@
                         <th>Province</th>
                         <th>City</th>
                         <th>Open in Map</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -55,6 +56,7 @@
                         d._token = "{{ csrf_token() }}";
                     },
                     complete:function(){
+                        afterfunction();
                         if( $('[data-toggle="tooltip"]').length > 0 )
                             $('[data-toggle="tooltip"]').tooltip();
                     }
@@ -66,10 +68,40 @@
                     { data:'province',name:'province' },
                     { data:'city',name:'city' },
                     { data:'map',name:'map'},
+                    { data:'action',name:'action'},
                 ],
 
             });
             
+
+            function afterfunction(){
+                //DELETE ACCOUNT
+                $("a[data-action='delete']").confirmation({
+                    container:"body",
+                    btnOkClass:"btn btn-sm btn-success",
+                    btnCancelClass:"btn btn-sm btn-danger",
+                    onConfirm:function(event, element) {
+                        var id = element.attr('data-id');
+                        $.ajax({
+                            type: "delete",
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            url: '{{ route("admin.locationDelete","/") }}/'+id,
+                            data: {id : id},
+                            success: function(response)
+                            {
+                                if (response.status == true) {
+                                    toastr.success(response.message);
+                                    table.ajax.reload();
+                                } else {
+                                    toastr.warning(response.message);
+                                }
+                            }
+                        });
+                    }
+                });
+            }
         });
     </script>
 @endsection

@@ -62,12 +62,16 @@
 @section('content')
     <div class="right_paddingboxpart">
         <div class="text-right">
-            <a href="{{ route('admin.boundary_map',$id) }}" class="btn btn-color">Back</a>
+            <a href="{{ route('admin.boundary_map',$id) }}" class="btn back-btn">Back</a>
         </div>
         <br/>
         <div class="locationinfobox">
             <div class="inerdeta_locat">
-                <h2>Location Info</h2>
+                <h2 class="locatininfobtn"><span>Location Info</span>
+                    @if(count($location->complexities) > 0)
+                        <a href="javascript:void(0);" class="btn btn-info btn-md" data-action="remove_stars" data-id='{{ $id }}' data-complexity='{{ $complexity }}'>Clear Stars</a>
+                    @endif
+                </h2>
                 <h3><span>Place Name :</span> {{ $location->place_name }}</h3>
                 <h3><span>City :</span> {{ $location->city }}</h3>
                 <h3><span>Province :</span> {{ $location->province }}</h3>
@@ -374,7 +378,7 @@
             var marker = new google.maps.Marker({position: uluru, map: map});
             var i=0;
             var icon = {
-              url: "{{ asset('admin_assets/images/marker.png') }}",
+              url: "{{ asset('admin_assets/images/blue_marker.png') }}",
               // This marker is 20 pixels wide by 32 pixels high.
               scaledSize: new google.maps.Size(20, 32),
               // The origin for this image is (0, 0).
@@ -453,12 +457,36 @@
                             if (response.status == true) {
                                 toastr.success(response.message);
                                 // location.replace('{{route('admin.boundary_map',$location->_id)}}');
+                                location.reload();
                             } else {
                                 toastr.warning(response.message);
                             }
                         }
                     });
 
+        });
+
+        //CLEAR CLUES
+        $('a[data-action="remove_stars"]').click(function(e){
+            var complexity = $(this).data('complexity');
+            var id = $(this).data('id');
+            $.ajax({
+                type: "get",
+                url: '{{ route("admin.removeStar") }}',
+                data: { 'id':id , 'complexity':complexity},
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response)
+                {
+                    if (response.status == true) {
+                        toastr.success(response.message);
+                        location.reload();
+                    } else {
+                        toastr.warning(response.message);
+                    }
+                }
+            });
         });
     </script>
     <script async defer

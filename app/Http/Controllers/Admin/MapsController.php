@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Yajra\DataTables\EloquentDataTable;
 use App\Models\v1\TreasureLocation;
+use App\Models\v1\PlaceStar;
 use Validator;
 
 
@@ -27,7 +28,11 @@ class MapsController extends Controller
             //return '<a href="https://maps.google.com/?q='.$city->latitude.','.$city->longitude.'" target="_blank"><img src="'.asset('admin_assets/svg/map-marke-icon.svg').'"</a>';
             return '<a href="'.route('admin.boundary_map',$city->id).'" target="_blank"><img src="'.asset('admin_assets/svg/map-marke-icon.svg').'"</a>';
         })
-        ->rawColumns(['map'])
+        ->addColumn('action', function($city){
+            return '<a href="javascript:void(0)" class="delete_location" data-action="delete" data-placement="left" data-id="'.$city->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>
+            </a>';
+        })
+        ->rawColumns(['map','action'])
         ->make(true);
     	
     }
@@ -176,6 +181,32 @@ class MapsController extends Controller
             'status' => true,
             'message'=>'Location has been created successfully',
             'id'     => $location->_id,
+        ]);
+    }
+
+    //LOCATION DELETE
+    public function locationDelete($id){
+        TreasureLocation::where('_id', $id)->delete();
+        return response()->json([
+            'status' => true,
+            'message'=>'Location has been successfully deleted',
+        ]);
+    }
+
+    //REMOVE STAR
+    public function removeStar(Request $request){
+        $id = $request->get('id');
+        $complexity = $request->get('complexity');
+        $placeStar = PlaceStar::where([
+                            'place_id' => $id,
+                            'complexity' => $complexity,
+                        ])
+                        ->first();
+        $placeStar->place_clues()->delete();
+        $placeStar->delete();
+        return response()->json([
+            'status' => true,
+            'message'=>'Star has been successfully clear',
         ]);
     }
 }
