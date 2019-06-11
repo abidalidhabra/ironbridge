@@ -101,9 +101,11 @@
              <div class="customdatatable_box">
                 <div id="map"></div>
             </div>
+            @if(count($location->complexities) == 0)
             <div class="pull-right modal-footer">
                     <button type="button" class="btn btn-success" id="saveCoordinates">Save</button>
             </div>
+            @endif
         </div>
         <br/>
         <br/>
@@ -117,15 +119,7 @@
                             'lng'=>$value[0],
                             ];
         }
-        $coord = [];
-        if(count($location->complexities) > 0){
-            foreach($location->complexities[0]['place_clues']['coordinates'] as $coordinates){
-                $coord [] = [
-                                'lat'=>$coordinates[0],
-                                'lng'=>$coordinates[1],
-                                ];
-            }
-        }
+        
     ?>
 @endsection
 
@@ -145,18 +139,29 @@
                 <?php echo json_encode($boundary) ?>
             ];
 
-            
-            // var marker = new google.maps.Marker({position: coord, map: map});
+            //var marker = new google.maps.Marker({position: uluru, map: map});
             var i=0;
             var icon = {
               url: "{{ asset('admin_assets/images/blue_marker.png') }}",
               // This marker is 20 pixels wide by 32 pixels high.
               scaledSize: new google.maps.Size(20, 32),
               // The origin for this image is (0, 0).
-              //origin: new google.maps.Point(0, 0),
+              origin: new google.maps.Point(0, 0),
               // The anchor for this image is the base of the flagpole at (0, 32).
-              //anchor: new google.maps.Point(10, 20)
+              anchor: new google.maps.Point(0, 32)
             };
+          <?php  if(count($location->complexities) > 0){ 
+            foreach($location->complexities[0]['place_clues']['coordinates'] as $coordinates){
+            ?>
+                  var coord = { lat: {{ $coordinates[0] }} , lng: {{ $coordinates[1] }} };
+                  new google.maps.Marker({
+                      position: coord,
+                      map: map,
+                      size:[10,10],
+                      icon:icon
+                  });
+                  i++;
+          <?php } } ?>
 
             // Construct the polygon.
             var bermudaTriangle = new google.maps.Polygon({
@@ -168,101 +173,52 @@
                 fillOpacity: 0.35
             });
             bermudaTriangle.setMap(map);
+            var goldStar = {
+                              path: 'M 125,5 155,90 245,90 175,145 200,230 125,180 50,230 75,145 5,90 95,90 z',
+                              fillColor: 'yellow',
+                              fillOpacity: 0.8,
+                              scale: 1,
+                              strokeColor: 'gold',
+                              strokeWeight: 14
+                            };
+            var i=0;
             var coordinates = [];
-            <?php
-                if(count($location->complexities) > 0){
-                    $coord = [];
-                        foreach($location->complexities[0]['place_clues']['coordinates'] as $coordinates){
-                        $coord [] = [
-                                    'lat'=>$coordinates[0],
-                                    'lng'=>$coordinates[1],
-                                    ];
-            
-            ?>
-                var coord = { lat: {{ $coordinates[0] }} , lng: {{ $coordinates[1] }} };
-                  new google.maps.Marker({
-                      position: coord,
-                      map: map,
-                      size:[10,10],
-                      icon:icon
-                  });
-                <?php } ?>
-                var coord = [
-                            <?php echo json_encode($coord) ?>
-                        ];
-                // Construct the polygon.
-                var starPolygon = new google.maps.Polygon({
-                    paths: coord,
-                    strokeColor: '#007F7F',
-                    strokeOpacity: 0.8,
-                    strokeWeight: 2,
-                    fillColor: '#007F7F',
-                    fillOpacity: 0.35,
-                    editable: true,
-                    draggable: false
-                });
-                starPolygon.setMap(map);
-                starPolygon.addListener('mouseup', function(event){
-                    var vertices = this.getPath();
-                    // Iterate over the vertices.
-                    var boundary_arr = [];
-                    for (var i =0; i < vertices.getLength(); i++) {
-                        var xy = vertices.getAt(i);
-                        /*boundary_arr[i] = xy.lng() +','+ xy.lat();*/
-                        var arr = [];
-                        arr.push(xy.lat());
-                        arr.push(xy.lng());
-                        coordinates.push(arr);
-                    }
-                    console.log(JSON.stringify(coordinates));
-                    $('#latitude').val(JSON.stringify(coordinates));
-                });
-            <?php 
-                } else {
-            ?>
-                var drawingManager = new google.maps.drawing.DrawingManager({
-                        drawingMode: google.maps.drawing.OverlayType.POLYGON,
-                        drawingControl: false,
-                        drawingControlOptions: {
-                            position: google.maps.ControlPosition.TOP_CENTER,
-                            drawingModes: ['marker'],
-                            icon:icon
-                        },
-                        polygonOptions: {
-                            editable: true,
-                            zIndex: 1,
-                        }
-                    });
-
-                drawingManager.setMap(map);
-                google.maps.event.addListener(drawingManager, "overlaycomplete", function(event) {
-                        var newShape = event.overlay;
-                        newShape.type = event.type;
-                    });
-                google.maps.event.addListener(drawingManager, "overlaycomplete", function(event){
-                    overlayClickListener(event.overlay);
-                    // $('#boundary_arr').val(event.overlay.getPath().getArray());
-                    var boundary_arr = [];
-                    var i=1;
-                    event.overlay.getPath().getArray().forEach((value, key) => {
-                        var arr = [];
-                        arr.push(value.lat());
-                        arr.push(value.lng());
-                        coordinates.push(arr);
-                    });
-                    $('#latitude').val(JSON.stringify(coordinates));
-                });
-            <?php } ?>
-            
-            
-            function overlayClickListener(overlay) {
-                google.maps.event.addListener(overlay, "mouseup", function(event){
-                    $('#boundary_arr').val(overlay.getPath().getArray());
-                    console.log(overlay.getPath().getArray());
-                    console.log(overlay.getPath());
-                });
+            var getMarkerUniqueId= function(lat, lng) {
+                return lat + '_' + lng;
             }
+            var marker = [];
+            var remove_item = [];
+            bermudaTriangle.addListener('click', function (event) {
+                console.log(coordinates.length);
+                if(coordinates.length < 5){
+                    var markerId = getMarkerUniqueId(event.latLng.lat().toFixed(6) , event.latLng.lng().toFixed(6));
+                    
+                    var marker = new google.maps.Marker({position: event.latLng,
+                            map:map,
+                            icon:icon,
+                            id: 'marker_' + markerId
+                        });
+                    google.maps.event.addListener(marker, "click", function (point) {
+                        var markerId = getMarkerUniqueId(point.latLng.lat(), point.latLng.lng());
+                        // remove_item[];
+                        removeMarker(marker, markerId,remove_item); // remove it
+                    });
+                    
+                    $('#coordinates').append(event.latLng.lat().toFixed(6)+" "+", "+event.latLng.lng().toFixed(6)+'<br>');
 
+                        var arr = [];
+                        arr.push(event.latLng.lat());
+                        arr.push(event.latLng.lng());
+                        coordinates[i]= arr;
+                        $('#latitude').val(JSON.stringify(coordinates));
+                    i++;
+                } 
+            });
+
+            var removeMarker = function(marker, markerId) {
+                marker.setMap(null); // set markers setMap to null to remove it from map
+                delete marker[markerId]; // delete marker instance from markers object
+            };
         }
         $('#saveCoordinates').click(function(e){
           e.preventDefault();
@@ -317,6 +273,6 @@
         });
     </script>
     <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0AzhRBk1LARqw9SDz9qwpAkTYDaQNe6o&libraries=drawing&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0AzhRBk1LARqw9SDz9qwpAkTYDaQNe6o&callback=initMap">
     </script>
 @endsection
