@@ -58,10 +58,10 @@ class LocationController extends Controller
     //GET LOCATION
     public function getLocation(Request $request){
         $validator = Validator::make($request->all(),[
-                        'clue' => "required|numeric",
+                        'clue'=> "required",
                     ]);
         if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()->first()], 422);
+            return response()->json(['message'=>$validator->messages()->first()]);
         }
 
         $clue = $request->get('clue');

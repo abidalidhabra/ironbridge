@@ -875,13 +875,15 @@ i.iconsetaddbox{
   border: 1px solid #C0B08C;
 }
 .locatininfoinerbtn a.active_btn{
-
-  border: 1px solid #000 !important;
+    border: 1px solid #000 !important;
 }
 
 .locatininfoinerbtn a:hover{
   background: #C0B08C;
   border: 1px solid #C0B08C;
+}
+.border_black{
+    border: 1px solid #000 !important;
 }
 
 

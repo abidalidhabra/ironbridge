@@ -22,6 +22,7 @@
                 <thead>
                     <tr>
                         <th>Sr</th>
+                        <th>Custom Name</th>
                         <th>Place Name</th>
                         <th>Country</th>
                         <th>Province</th>
@@ -63,6 +64,7 @@
                 },
                 columns:[
                     { data:'DT_RowIndex',name:'_id' },
+                    { data:'custom_name',name:'custom_name' },
                     { data:'place_name',name:'place_name' },
                     { data:'country',name:'country' },
                     { data:'province',name:'province' },

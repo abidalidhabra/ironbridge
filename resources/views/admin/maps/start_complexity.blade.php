@@ -9,50 +9,7 @@
     .modalbuttonadd{
       margin:5px;
     }
-   
-    .locatininfobtn a{
-      background: #C0B08C;
-      border: 0px;
-      font-size: 15px;
-      font-family: 'Montserrat-Regular';
-      display: inline-block;
-      float: right;
-    }
-    .locatininfobtn{
-      display: inline-block;
-      width: 100%;
-      padding-right: 18px;
-    }
-    .locatininfobtn span{
-      display: inline-block;
-      float: left;
-      padding-top: 3px;
-    }
-
-    .locatininfoinerbtn{
-      margin: 5px;
-      display: inline-block;
-      margin-right: 1px;
-      margin-left: 2px;
-    }
-    .locatininfoinerbtn a{      
-      font-size: 15px;
-      font-family: 'Montserrat-Regular';
-      border: 1px solid #C0B08C;
-      color: #000;
-      background: transparent ;
-      border: 1px solid #C0B08C;
-    }
-    .locatininfoinerbtn a.active_btn{
-      background: #C0B08C;
-      border: 0px;
-      color: #fff;
-    }
-   
-    .locatininfoinerbtn a:hover{
-      background: #C0B08C;
-      border: 1px solid #C0B08C;
-    }
+    
     .activeBorder{
       border: 1px solid #000 !important;
     }
@@ -81,20 +38,20 @@
                 <h3><span>Country :</span> {{ $location->country }}</h3>
                 {{--<h2>{{$complexitySuf}} Complexity Coordinates</h2>--}}
                 <div class="locatininfoinerbtn">
-                    <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>1]) }}" class="btn btn-info btn-md @if($complexity == 1) active_btn @endif">
+                    <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>1]) }}" class="btn btn-info btn-md @if($complexity == 1) active_btn @endif @if(in_array(1,$complexityarr)) border_black @endif">
                     1 Star</a>
                 </div>
                 <div class="locatininfoinerbtn">
-                    <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>2]) }}" class="btn btn-info btn-md @if($complexity == 2) active_btn @endif" >2 Stars</a>
+                    <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>2]) }}" class="btn btn-info btn-md @if($complexity == 2) active_btn @endif @if(in_array(2,$complexityarr)) border_black @endif" >2 Stars</a>
                 </div>
                 <div class="locatininfoinerbtn">
-                    <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>3]) }}" class="btn btn-info btn-md @if($complexity == 3) active_btn @endif">3 Stars</a>
+                    <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>3]) }}" class="btn btn-info btn-md @if($complexity == 3) active_btn @endif  @if(in_array(3,$complexityarr)) border_black @endif">3 Stars</a>
                 </div>
                 <div class="locatininfoinerbtn">
-                    <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>4]) }}" class="btn btn-info btn-md @if($complexity == 4) active_btn @endif">4 Stars</a>
+                    <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>4]) }}" class="btn btn-info btn-md @if($complexity == 4) active_btn @endif @if(in_array(4,$complexityarr)) border_black @endif">4 Stars</a>
                 </div>
                 <div class="locatininfoinerbtn">
-                    <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>5]) }}" class="btn btn-info btn-md @if($complexity == 5) active_btn @endif">5 Stars</a>
+                    <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>5]) }}" class="btn btn-info btn-md @if($complexity == 5) active_btn @endif @if(in_array(5,$complexityarr)) border_black @endif">5 Stars</a>
                 </div>
                 <input type="hidden" name="coordinates[]" id="latitude">
             </div>

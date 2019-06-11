@@ -19,10 +19,17 @@ class MapsController extends Controller
     }
 
     public function getMaps(Request $request){
-    	$city = TreasureLocation::select('latitude','longitude','place_name','city','province','country')
+    	$city = TreasureLocation::select('latitude','longitude','place_name','city','province','country','custom_name')
     						->get();
     	return DataTables::of($city)
         ->addIndexColumn()
+        ->editColumn('custom_name', function($city){
+            if ($city->custom_name) {
+                return $city->custom_name;
+            } else {
+                return '-';
+            }
+        })
         ->addColumn('map', function($city){
             return '<a href="'.route('admin.boundary_map',$city->id).'" ><img src="'.asset('admin_assets/svg/map-marke-icon.svg').'"</a>';
         })
@@ -62,8 +69,12 @@ class MapsController extends Controller
                                   }])
                                 ->first();
         $complexitySuf = $this->addOrdinalNumberSuffix($complexity);
-        
-        return view('admin.maps.start_complexity',compact('location','complexity','complexitySuf','id'));
+        $complexityarr = PlaceStar::select('id','place_id','complexity')
+                                ->where('place_id',$id)
+                                ->pluck('complexity')
+                                ->toArray();
+
+        return view('admin.maps.start_complexity',compact('location','complexity','complexitySuf','id','complexityarr'));
     }
 
     //boundary map
