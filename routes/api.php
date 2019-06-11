@@ -23,8 +23,11 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 	Route::post('register', 'UserController@register');
 	Route::get('checkMyBalance', 'UserController@checkMyBalance');
 	Route::get('getParks', 'UserController@getParks');
-	Route::get('getParks1', 'UserController@getParks1');
-	Route::get('watercheck/{lat}/{long}', 'UserController@watercheck');
+
+	//LOCATION
+	Route::get('getParks1', 'LocationController@getParks1');
+	Route::post('updateClues', 'LocationController@updateClues');
+	Route::get('getLocation', 'LocationController@getLocation');
 	
 	Route::group(['middleware' => 'jwt-auth'], function ($router) {
 

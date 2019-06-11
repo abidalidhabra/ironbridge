@@ -117,15 +117,16 @@
                             'lng'=>$value[0],
                             ];
         }
-        $coord = [];
-        if(count($location->complexities) > 0){
-            foreach($location->complexities[0]['place_clues']['coordinates'] as $coordinates){
-                $coord [] = [
-                                'lat'=>$coordinates[0],
-                                'lng'=>$coordinates[1],
-                                ];
-            }
-        }
+        // $coord = [];
+        // if(count($location->complexities) > 0){
+        //     foreach($location->complexities[0]['place_clues']['coordinates'] as $coordinates){
+        //         $coord [] = [
+        //                         'lat'=>$coordinates[1],
+        //                         'lng'=>$coordinates[0],
+        //                         ];
+        //     }
+        // }
+        
     ?>
 @endsection
 
@@ -174,19 +175,20 @@
                     $coord = [];
                         foreach($location->complexities[0]['place_clues']['coordinates'] as $coordinates){
                         $coord [] = [
-                                    'lat'=>$coordinates[0],
-                                    'lng'=>$coordinates[1],
+                                    'lat'=>$coordinates[1],
+                                    'lng'=>$coordinates[0],
                                     ];
             
             ?>
-                var coord = { lat: {{ $coordinates[0] }} , lng: {{ $coordinates[1] }} };
+                // var coord = ;
                   new google.maps.Marker({
-                      position: coord,
+                      position: { lat: {{ $coordinates[1] }} , lng: {{ $coordinates[0] }} },
                       map: map,
                       size:[10,10],
                       icon:icon
                   });
                 <?php } ?>
+
                 var coord = [
                             <?php echo json_encode($coord) ?>
                         ];
@@ -210,8 +212,8 @@
                         var xy = vertices.getAt(i);
                         /*boundary_arr[i] = xy.lng() +','+ xy.lat();*/
                         var arr = [];
-                        arr.push(xy.lat());
                         arr.push(xy.lng());
+                        arr.push(xy.lat());
                         coordinates.push(arr);
                     }
                     console.log(JSON.stringify(coordinates));
@@ -246,8 +248,8 @@
                     var i=1;
                     event.overlay.getPath().getArray().forEach((value, key) => {
                         var arr = [];
-                        arr.push(value.lat());
                         arr.push(value.lng());
+                        arr.push(value.lat());
                         coordinates.push(arr);
                     });
                     $('#latitude').val(JSON.stringify(coordinates));

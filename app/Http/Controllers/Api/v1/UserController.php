@@ -25,7 +25,7 @@ class UserController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('jwt-auth', ['except' => ['register','getParks','getParks1','watercheck']]);
+        $this->middleware('jwt-auth', ['except' => ['register','getParks','watercheck']]);
     }
 
     public function register(Request $request){
@@ -223,11 +223,6 @@ class UserController extends Controller
     public function getParks(Request $request)
     {
         return response()->json(CityInfo::select('latitude','longitude','place_name','place_id','boundary_arr','boundingbox')->get());
-        //return response()->json(CityInfo::all());
-    }
-    public function getParks1(Request $request)
-    {
-        return response()->json(TreasureLocation::select('latitude','longitude','place_name','place_id','boundary_arr','boundingbox')->whereIn('city',['Calgary','Vancouver'])->get());
         //return response()->json(CityInfo::all());
     }
 

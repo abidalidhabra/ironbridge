@@ -58,11 +58,11 @@ class MapsController extends Controller
         $id = $id;
         $location = TreasureLocation::where('_id',$id)
                                 ->with(['complexities'=>function($query) use ($complexity){
-                                    $query->where('complexity',$complexity);
+                                    $query->where('complexity',(int)$complexity);
                                   }])
                                 ->first();
-        
         $complexitySuf = $this->addOrdinalNumberSuffix($complexity);
+        
         return view('admin.maps.start_complexity',compact('location','complexity','complexitySuf','id'));
     }
 
@@ -81,11 +81,11 @@ class MapsController extends Controller
         }
 
         $id = $request->get('place_id');
-        $complexity = $request->get('complexity');
+        $complexity = (int)$request->get('complexity');
         $location = TreasureLocation::where('_id',$id)
                                 ->first();
 
-        $complexity = $location->complexities()->updateOrCreate(['place_id'=>$id,'complexity'=>$complexity],['place_id'=>$id,'complexity'=>$complexity]);
+        $complexity = $location->complexities()->updateOrCreate(['place_id'=>$id,'complexity'=>$complexity],['place_id'=>$id,'complexity'=>(int)$complexity]);
         $complexity->place_clues()->updateOrCreate(['place_star_id'=>$complexity->_id],['place_star_id'=>$complexity->_id,'coordinates'=>json_decode($request->get('coordinates'))]);
 
        return response()->json([
@@ -249,10 +249,11 @@ class MapsController extends Controller
         $id = $request->get('id');
         $complexity = $request->get('complexity');
         $placeStar = PlaceStar::where([
-                            'place_id' => $id,
-                            'complexity' => $complexity,
+                            'place_id'   => $id,
+                            'complexity' => (int)$complexity,
                         ])
                         ->first();
+        
         $placeStar->place_clues()->delete();
         $placeStar->delete();
         return response()->json([
