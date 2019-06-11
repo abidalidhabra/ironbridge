@@ -17,6 +17,10 @@
 @endsection
 @section('content')
     <div class="right_paddingboxpart">
+        <div class="text-right">
+            <a href="{{ route('admin.mapsList') }}" class="btn back-btn">Back</a>
+        </div>
+        <br/>
         <div class="locationinfobox">
             <div class="inerdeta_locat">
                 <h2 class="locatininfobtn"><span>Location Info</span> 

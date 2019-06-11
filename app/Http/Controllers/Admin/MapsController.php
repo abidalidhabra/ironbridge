@@ -24,9 +24,7 @@ class MapsController extends Controller
     	return DataTables::of($city)
         ->addIndexColumn()
         ->addColumn('map', function($city){
-        	//https://maps.google.com/?q=<lat>,<lng>
-            //return '<a href="https://maps.google.com/?q='.$city->latitude.','.$city->longitude.'" target="_blank"><img src="'.asset('admin_assets/svg/map-marke-icon.svg').'"</a>';
-            return '<a href="'.route('admin.boundary_map',$city->id).'" target="_blank"><img src="'.asset('admin_assets/svg/map-marke-icon.svg').'"</a>';
+            return '<a href="'.route('admin.boundary_map',$city->id).'" ><img src="'.asset('admin_assets/svg/map-marke-icon.svg').'"</a>';
         })
         ->addColumn('action', function($city){
             return '<a href="'.route('admin.edit_location',$city->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>
@@ -35,7 +33,6 @@ class MapsController extends Controller
         })
         ->rawColumns(['map','action'])
         ->make(true);
-    	
     }
 
 
@@ -93,7 +90,7 @@ class MapsController extends Controller
 
        return response()->json([
             'status' => true,
-            'message'=>'Complexity clue has been created successfully',
+            'message'=>'Clues has been added successfully',
         ]);
     }
 
@@ -106,7 +103,7 @@ class MapsController extends Controller
         $location->complexities()->delete();
         return response()->json([
             'status' => true,
-            'message'=>'Complexity clue removed successfully',
+            'message'=>'Clues has been removed successfully',
         ]);
     }
 
@@ -168,7 +165,7 @@ class MapsController extends Controller
 
         return response()->json([
             'status' => true,
-            'message'=>'Location has been successfully update',
+            'message'=>'Location has been updated successfully',
         ]);
     }
 
@@ -243,7 +240,7 @@ class MapsController extends Controller
 
         return response()->json([
             'status' => true,
-            'message'=>'Location has been successfully deleted',
+            'message'=>'Location deleted successfully',
         ]);
     }
 
@@ -260,7 +257,7 @@ class MapsController extends Controller
         $placeStar->delete();
         return response()->json([
             'status' => true,
-            'message'=>'Star has been successfully clear',
+            'message'=>'Clue deleted successfully',
         ]);
     }
 }

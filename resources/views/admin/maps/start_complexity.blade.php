@@ -69,7 +69,7 @@
             <div class="inerdeta_locat">
                 <h2 class="locatininfobtn"><span>Location Info</span>
                     @if(count($location->complexities) > 0)
-                        <a href="javascript:void(0);" class="btn btn-info btn-md" data-action="remove_stars" data-id='{{ $id }}' data-complexity='{{ $complexity }}'>Clear Stars</a>
+                        <a href="javascript:void(0);" class="btn btn-info btn-md" data-action="remove_stars" data-id='{{ $id }}' data-complexity='{{ $complexity }}'>Clear Clues</a>
                     @endif
                 </h2>
                 @if($location->custom_name)
