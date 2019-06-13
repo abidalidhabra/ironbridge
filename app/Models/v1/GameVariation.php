@@ -14,7 +14,17 @@ class GameVariation extends Eloquent
      * @var array
      */
     protected $fillable = [
-        'event_id', 'user_id', 'completed_levels'
+        "variation_name", 
+        "variation_size", 
+        "variation_complexity",
+        "variation_image", 
+        "updated_at", 
+        "sudoku_id", 
+        "row", 
+        "column", 
+        "number_generate", 
+        "reveal_number", 
+        "game_id"
     ];
     
     public function game()

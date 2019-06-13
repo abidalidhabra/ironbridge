@@ -52,7 +52,7 @@ class LocationController extends Controller
 	        $complexity->place_clues()->updateOrCreate(['place_star_id'=>$complexity->_id],['place_star_id'=>$complexity->_id,'coordinates'=>$value]);
     	}
     	
-        return response()->json(['status'=>true,'message' => 'Location has been updated successfully']); 
+        return response()->json(['message' => 'Location has been updated successfully']); 
     }
 
     //GET LOCATION

@@ -9,6 +9,8 @@ use Yajra\DataTables\EloquentDataTable;
 use App\Models\v1\TreasureLocation;
 use App\Models\v1\PlaceStar;
 use Validator;
+use App\Models\v1\Game;
+use App\Models\v1\GameVariation;
 
 
 class MapsController extends Controller
@@ -73,15 +75,33 @@ class MapsController extends Controller
                                 ->where('place_id',$id)
                                 ->pluck('complexity')
                                 ->toArray();
+        $games = Game::with('game_variation:_id,variation_name,game_id')->get();
+        
+        // echo "<pre>";
+        // print_r();
+        // exit();
+        return view('admin.maps.start_complexity',compact('location','complexity','complexitySuf','id','complexityarr','games'));
+    }
 
-        return view('admin.maps.start_complexity',compact('location','complexity','complexitySuf','id','complexityarr'));
+    //GET VARIATION
+    public function getGameVariations(Request $request){
+        $gameId = $request->get('game_id');
+        $gameVariation = GameVariation::select('variation_name','game_id')
+                                        ->where('game_id',$gameId)
+                                        ->get();
+        return response()->json([
+            'status' => true,
+            'message'=> 'data found',
+            'data'=> $gameVariation,
+        ]);
     }
 
     //boundary map
     public function storeStarComplexity(Request $request){
         $validator = Validator::make($request->all(),[
                         'place_id'   => 'required',
-                        'complexity' => 'required',
+                        'game'   => 'required',
+                        'game_variation' => 'required',
                         'coordinates'=> 'required|json',
                     ]);
         
@@ -97,7 +117,14 @@ class MapsController extends Controller
                                 ->first();
 
         $complexity = $location->complexities()->updateOrCreate(['place_id'=>$id,'complexity'=>$complexity],['place_id'=>$id,'complexity'=>(int)$complexity]);
-        $complexity->place_clues()->updateOrCreate(['place_star_id'=>$complexity->_id],['place_star_id'=>$complexity->_id,'coordinates'=>json_decode($request->get('coordinates'))]);
+        $complexity->place_clues()->updateOrCreate([
+                            'place_star_id'=>$complexity->_id
+                        ],[
+                            'place_star_id'=>$complexity->_id,
+                            'coordinates'=>json_decode($request->get('coordinates')),
+                            'game_id'=>$request->get('game'),
+                            'game_variation_id'=>$request->get('game_variation')]
+                        );
 
        return response()->json([
             'status' => true,
@@ -271,5 +298,10 @@ class MapsController extends Controller
             'status' => true,
             'message'=>'Clue deleted successfully',
         ]);
+    }
+
+    //TEST 
+    public function testLocation(Request $request){
+        return view('admin.maps.test_location');        
     }
 }

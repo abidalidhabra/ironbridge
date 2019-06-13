@@ -53,13 +53,42 @@
                 <div class="locatininfoinerbtn">
                     <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>5]) }}" class="btn btn-info btn-md @if($complexity == 5) active_btn @endif @if(in_array(5,$complexityarr)) border_black @endif">5 Stars</a>
                 </div>
-                <input type="hidden" name="coordinates[]" id="latitude">
+                <div class="row">
+                    <div class="form-group col-md-8">
+                        <label>Game:</label>
+                        <select name="game_id" class="form-control">
+                            <option value="">Select game</option>
+                            @forelse($games as $game)
+                                <option value="{{ $game->_id }}" {{ (isset($location->complexities[0]['place_clues']['game_id']) && $location->complexities[0]['place_clues']['game_id']==$game->_id)?'selected':'' }}>{{ $game->name }}</option>
+                            @empty
+                                <option>No game found</option>
+                            @endforelse
+                        </select>
+                    </div>
+                    <div class="form-group col-md-8">
+                        <label>Game Variations:</label>
+                        <select name="game_variation_id" class="form-control">
+                            @if(isset($location->complexities[0]['place_clues']['game_variation_id']))
+                                <?php
+                                    $game_variations = $games->where('_id',$location->complexities[0]['place_clues']['game_id'])->first();
+                                ?>
+                                @forelse($game_variations->game_variation as $game_variation)
+                                    <option value="{{ $game_variation['_id'] }}">{{ $game_variation['variation_name'] }}</option>
+                                @empty
+                                @endforelse
+                            @else
+                                <option value="">Select game variation</option>
+                            @endif
+                        </select>
+                    </div>
+                </div>
+                <input type="hidden" name="coordinates[]" id="latitude" value="{{ (isset($location->complexities[0]['place_clues']['coordinates']))? json_encode($location->complexities[0]['place_clues']['coordinates']):'' }}">
             </div>
              <div class="customdatatable_box">
                 <div id="map"></div>
             </div>
             <div class="pull-right modal-footer">
-                    <button type="button" class="btn btn-success" id="saveCoordinates">Save</button>
+                <button type="button" class="btn btn-success" id="saveCoordinates">Save</button>
             </div>
         </div>
         <br/>
@@ -223,32 +252,67 @@
             }
 
         }
+
+        //GAME 
+        $(document).on("change","[name='game_id']",function() {
+            var game_id = $(this).val();
+            console.log(game_id);
+             $.ajax({
+                type: "get",
+                url: '{{ route("admin.getGameVariations") }}',
+                data: { 'game_id':game_id },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response)
+                {
+                    if (response.status == true) {
+                        //toastr.success(response.message);
+                        $('[name="game_variation_id"]').html('');
+                        if (response.data.length > 0) {
+                            $.each(response.data, function( index, value ) {
+                                var html = "<option value='"+value._id+"'>"+value.variation_name+"</option>"
+                                $('[name="game_variation_id"]').append(html);
+                            });
+                        } else {
+                            $('[name="game_variation_id"]').append('<option value="">No data found</option>');
+                        }
+                    } else {
+                        toastr.warning(response.message);
+                    }
+                }
+            });
+        });
+
         $('#saveCoordinates').click(function(e){
           e.preventDefault();
           var formData = new FormData();
+          formData.append("coordinates",$('#latitude').val());
+          formData.append("game",$('[name="game_id"]').val());
+          formData.append("game_variation",$('[name="game_variation_id"]').val());
           formData.append("coordinates",$('#latitude').val());
           formData.append("place_id","{{$location->_id}}");
           formData.append("complexity",{{$complexity}});
 
           formData.append( "_token", $('meta[name="csrf-token"]').attr('content') );
           $.ajax({
-                        type: "POST",
-                        url: '{{ route("admin.storeStarComplexity") }}',
-                        data: formData,
-                        processData:false,
-                        cache:false,
-                        contentType: false,
-                        success: function(response)
-                        {
-                            if (response.status == true) {
-                                toastr.success(response.message);
-                                // location.replace('{{route('admin.boundary_map',$location->_id)}}');
-                                location.reload();
-                            } else {
-                                toastr.warning(response.message);
-                            }
-                        }
-                    });
+                type: "POST",
+                url: '{{ route("admin.storeStarComplexity") }}',
+                data: formData,
+                processData:false,
+                cache:false,
+                contentType: false,
+                success: function(response)
+                {
+                    if (response.status == true) {
+                        toastr.success(response.message);
+                        // location.replace('{{route('admin.boundary_map',$location->_id)}}');
+                        location.reload();
+                    } else {
+                        toastr.warning(response.message);
+                    }
+                }
+            });
 
         });
 

@@ -14,23 +14,14 @@ class Game extends Eloquent
      * @var array
      */
     protected $fillable = [
-        'variation_name', 
-        'variation_complexity', 
-        'row', 
-        'column', 
-        'bubble_level_id', 		/* This field must have value from 1 to 5 */
-        'sudoku_id', 			/* This field must have value from 1 to 15 */
-        'word_search',			/* This Field must have array of words */
-        'target', 
-        'game_id', 
-        'no_of_balls', 
-        'variation_image', 
-        'variation_size', 
-        'number_generate', 
-        'reveal_number', 
+        'identifier', 
+        'name',
     ];
 
-
+    public function game_variation()
+    {
+        return $this->hasMany('App\Models\v1\GameVariation','game_id');
+    }
     /**
     
     	Block Puzzle:

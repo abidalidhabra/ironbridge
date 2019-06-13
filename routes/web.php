@@ -57,6 +57,8 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::delete('/locationDelete/{id}', 'MapsController@locationDelete')->name('locationDelete');
 	Route::get('/removeStar', 'MapsController@removeStar')->name('removeStar');
 	Route::post('/update_location', 'MapsController@updateLocation')->name('update_location');
+	Route::get('/test_location', 'MapsController@testLocation')->name('test_location');
+	Route::get('/getGameVariations', 'MapsController@getGameVariations')->name('getGameVariations');
 	
 });
 

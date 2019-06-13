@@ -27,13 +27,13 @@ class ProfileController extends Controller
 		]);
 
 		if ($validator->fails()) {
-			return response()->json(['status'=>false,'message' => $validator->messages()->first()]);
+			return response()->json(['message' => $validator->messages()],422);
 		}
 
 		$data = $request->all();
 		$user->update($data);
 
-		return response()->json(['status'=>true,'message' => 'Profile updated successfully.','data'=>$data]); 
+		return response()->json(['message' => 'Profile updated successfully.','data'=>$data]); 
 	}
 
 
@@ -47,44 +47,35 @@ class ProfileController extends Controller
                     ]);
 
         if ($validator->fails()) {
-            return response()->json(['status'=> false, 'message' => $validator->messages()->first()]);
+            return response()->json(['message' => $validator->messages()],422);
         }
 
         $user_id  = Auth::user()->_id;
         $password = $request->get('password');
 
         User::where('_id',$user_id)->update(['password' => bcrypt($password)]);
-    	return response()->json(['status'=>true,'message'=>'Your password has been updated successfully.']);
+    	return response()->json(['message'=>'Your password has been updated successfully.']);
 	}
 
 	//UODATE SETTING
 	public function updateSetting(Request $request){
 
 		$validator = Validator::make($request->all(),[
-						'setting'=>'required|in:music,sound',
+						'music'=>'required|in:true,false',
+						'sound'=>'required|in:true,false',
 					]);
 
 		if ($validator->fails()) {
-			return response()->json(['status'=>false,'message' => $validator->messages()->first()]);
+			return response()->json(['message' => $validator->messages()],422);
 		}
 
 		$user    = Auth::user();
-		$setting = $request->get('setting');
-		if ($setting == 'music') {
-			$user->settings = [
-								'sound_fx' => false,
-								'music_fx' => true
+		$user->settings = [
+								'sound_fx' => ($request->get('sound') == "true")?true:false,
+								'music_fx' => ($request->get('music') == "true")?true:false
 							];
-
-		} else {
-			$user->settings = [
-								'sound_fx' => true,
-								'music_fx' => false
-							];
-		}
-		
 		$user->save();
 
-		return response()->json(['status'=>true,'message' => 'Profile setting successfully updated.']);
+		return response()->json(['message' => 'Profile setting successfully updated.']);
 	}
 }

@@ -9,6 +9,8 @@ class PlaceClue extends Eloquent
     protected $fillable = [
         'place_star_id',
 		'coordinates',
+        'game_id',
+        'game_variation_id'
     ];
 
     protected $casts = [
