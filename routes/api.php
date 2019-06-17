@@ -20,6 +20,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 
 	Route::post('login', 'AuthController@login');
+	Route::post('checkUsernameEmail', 'AuthController@checkUsernameEmail');
 	Route::post('register', 'UserController@register');
 	Route::get('checkMyBalance', 'UserController@checkMyBalance');
 	Route::get('getParks', 'UserController@getParks');
@@ -29,6 +30,7 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 	Route::get('getParks1', 'LocationController@getParks1');
 	Route::post('updateClues', 'LocationController@updateClues');
 	Route::get('getLocation', 'LocationController@getLocation');
+	Route::get('getClue', 'LocationController@getClue');
 	
 	Route::group(['middleware' => 'jwt-auth'], function ($router) {
 

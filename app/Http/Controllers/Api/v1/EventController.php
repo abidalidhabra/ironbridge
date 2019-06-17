@@ -76,7 +76,7 @@ class EventController extends Controller
     	]);
 
     	if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()->first()], 422);
+            return response()->json(['message'=>$validator->messages()], 422);
         }
 
     	/* Get the required variables */
@@ -160,7 +160,7 @@ class EventController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['status'=> false, 'message' => array_values(current($validator->messages()))[0][0]]);
+            return response()->json(['message'=>$validator->messages()], 422);
         }
 
         $eventParticipationId = $request->get('event_participation_id');

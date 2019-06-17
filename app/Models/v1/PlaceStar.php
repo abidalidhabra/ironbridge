@@ -18,7 +18,7 @@ class PlaceStar extends Eloquent
 
     public function place_clues()
     {
-        return $this->hasOne('App\Models\v1\PlaceClue','place_id');
+        return $this->hasOne('App\Models\v1\PlaceClue','place_star_id');
     }
 
 }

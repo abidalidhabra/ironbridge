@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use stdClass;
+use Validator;
+use App\Rules\CheckThePassword;
 
 class AuthController extends Controller
 {
@@ -17,7 +19,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('jwt-auth', ['except' => ['login']]);
+        $this->middleware('jwt-auth', ['except' => ['login','checkUsernameEmail']]);
     }
 
     /**
@@ -29,6 +31,16 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
+        $validator = Validator::make($request->all(),[
+                        'username' => "required|exists:users,username",
+                        //'password' => ['required', new IsPasswordValid],
+                        'password' => ['required', new CheckThePassword($request->username)],
+                    ]);
+        
+        if ($validator->fails()) {
+            return response()->json(['message'=>$validator->messages()], 422);
+        }
+
         $credentials = $request->only('username', 'password');
 
         if ($token = $this->guard()->attempt($credentials)) {
@@ -45,6 +57,21 @@ class AuthController extends Controller
             'token' => "", 
             'data' => new stdClass()
         ],500);
+    }
+
+
+    public function checkUsernameEmail(Request $request)
+    {
+        $validator = Validator::make($request->all(),[
+                        'email'      => "required|string|email|unique:users,email",
+                        'username'   => "required|string|max:10||unique:users,username",
+                    ]);
+        
+        if ($validator->fails()) {
+            return response()->json(['status'=>false,'message'=>$validator->messages()]);
+        }
+
+        return response()->json(['status'=>true,'data'=>[]]);
     }
 
     /**

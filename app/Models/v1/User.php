@@ -40,6 +40,10 @@ class User extends Authenticatable implements JWTSubject
         'gold_balance'   => 0,
     ];
 
+    protected $dates = [
+        'dob',
+    ];
+    
     /**
      * The model's default values for attributes.
      *
