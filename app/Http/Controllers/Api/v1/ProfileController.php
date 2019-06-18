@@ -67,8 +67,10 @@ class ProfileController extends Controller
 	public function updateSetting(Request $request){
 
 		$validator = Validator::make($request->all(),[
-						'music'=>'required|in:true,false',
-						'sound'=>'required|in:true,false',
+						//'music'=>'required|in:true,false',
+						//'sound'=>'required|in:true,false',
+						'music'=>'required|boolean',
+						'sound'=>'required|boolean',
 					]);
 
 		if ($validator->fails()) {
@@ -77,11 +79,11 @@ class ProfileController extends Controller
 
 		$user    = Auth::user();
 		$user->settings = [
-								'sound_fx' => ($request->get('sound') == "true")?true:false,
-								'music_fx' => ($request->get('music') == "true")?true:false
+								'sound_fx' => ($request->get('sound') == "1")?true:false,
+								'music_fx' => ($request->get('music') == "1")?true:false
 							];
 		$user->save();
 
-		return response()->json(['message' => 'Profile setting successfully updated.']);
+		return response()->json(['message' => 'Profile setting successfully updated.','data'=>$user->settings]);
 	}
 }
