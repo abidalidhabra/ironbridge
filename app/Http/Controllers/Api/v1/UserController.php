@@ -33,6 +33,8 @@ class UserController extends Controller
     public function register(Request $request){
     	
     	/* Validate the incoming request */
+        $request['email'] = strtolower($request['email']);
+        $request['username'] = strtolower($request['username']);
         $validator = Validator::make($request->all(),[
                         'first_name' => "required|string|max:20",
                         'last_name'  => "required|string|max:20",

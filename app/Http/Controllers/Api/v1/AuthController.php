@@ -31,6 +31,7 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
+        $request['username'] = strtolower($request->get('username'));
         $validator = Validator::make($request->all(),[
                         'username' => "required|exists:users,username",
                         //'password' => ['required', new IsPasswordValid],
@@ -64,7 +65,7 @@ class AuthController extends Controller
     {
         $validator = Validator::make($request->all(),[
                         'email'      => "required|string|email|unique:users,email",
-                        'username'   => "required|string|max:10||unique:users,username",
+                        'username'   => "required|string|unique:users,username",
                     ]);
         
         if ($validator->fails()) {
