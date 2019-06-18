@@ -20,12 +20,20 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 
 	Route::post('login', 'AuthController@login');
+	Route::post('checkUsernameEmail', 'AuthController@checkUsernameEmail');
 	Route::post('register', 'UserController@register');
 	Route::get('checkMyBalance', 'UserController@checkMyBalance');
 	Route::get('getParks', 'UserController@getParks');
 	Route::get('watercheck/{lat}/{long}', 'UserController@watercheck');
 	
 	//LOCATION
+
+
+	// Route::get('getParks1', 'LocationController@getParks1');
+	// Route::post('updateClues', 'LocationController@updateClues');
+	// Route::get('getLocation', 'LocationController@getLocation');
+	// Route::get('getClue', 'LocationController@getClue');
+	
 	Route::get('getParks1', 'HuntController@getParks1');
 	Route::post('updateClues', 'HuntController@updateClues');
 	Route::get('getLocation', 'HuntController@getLocation');
@@ -33,6 +41,7 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 	
 	Route::group(['middleware' => 'jwt-auth'], function ($router) {
 
+		
 		Route::post('changePassword', 'ProfileController@changePassword');
 		Route::post('updateProfile', 'ProfileController@updateProfile');
 		Route::post('updateSetting', 'ProfileController@updateSetting');

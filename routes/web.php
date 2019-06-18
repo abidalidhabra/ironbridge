@@ -60,6 +60,9 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('/test_location', 'MapsController@testLocation')->name('test_location');
 	Route::get('/getGameVariations', 'MapsController@getGameVariations')->name('getGameVariations');
 	
+
+	Route::get('/customRecordStore', 'MapsController@customRecordStore')->name('customRecordStore');
+	
 });
 
 Auth::routes();

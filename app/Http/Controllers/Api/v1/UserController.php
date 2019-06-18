@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 use Route;
 use UserHelper;
 use Validator;
+use MongoDB\BSON\UTCDateTime as MongoDBDate;
+use Carbon\Carbon;
 
 class UserController extends Controller
 {
@@ -36,8 +38,8 @@ class UserController extends Controller
                         'last_name'  => "required|string|max:20",
                         'email'      => "required|string|email|unique:users,email",
                         'password' 	 => "required|string|min:6",
-                        'username'   => "required|string|max:10||unique:users,username",
-                        'dob'  		 => "required|date_format:Y-m-d H:i:s",
+                        'username'   => "required|string|unique:users,username",
+                        'dob'  		 => "required|date_format:d-m-Y",
                         'longitude' => ['required','regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'], 
                         'latitude'  => ['required','regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
                         'device_type'  => "nullable|string",
@@ -46,16 +48,19 @@ class UserController extends Controller
                     ]);
         
         if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()->first()], 422);
+            return response()->json(['message'=>$validator->messages()], 422);
         }
 
+        
+        // $data['dob'] = new MongoDBDate(Carbon::parse($dob));
         /* Get the parameters */
 		$firsNname  = $request->first_name;
 		$lastName 	= $request->last_name;
 		$email 		= $request->email;
 		$password 	= bcrypt($request->password);
 		$username 	= $request->username;
-		$dob 		= $request->dob;
+		// $dob 		= $request->dob;
+        $dob        = new MongoDBDate(Carbon::parse($request->get('dob')));
 		$longitude 	= $request->longitude;
 		$latitude 	= $request->latitude;
 		$deviceType = $request->device_type;
@@ -65,7 +70,8 @@ class UserController extends Controller
 
         /** Get the lcoation from coordinates **/
         $address = UserHelper::getUserLocation($latitude, $longitude);
-        
+        // print_r($request->all());
+        // exit();
 		/* Insert the data into the database */
 		$user = User::create([
 			'first_name' 	=> $firsNname,
@@ -153,7 +159,7 @@ class UserController extends Controller
     	]);
 
     	if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()->first()], 422);
+            return response()->json(['message'=>$validator->messages()], 422);
         }
 
     	$user = Auth::user();

@@ -13,7 +13,7 @@ use App\Models\v1\HuntComplexitie;
 use Validator;
 use App\Models\v1\Game;
 use App\Models\v1\GameVariation;
-
+use MongoDB\BSON\ObjectID;
 
 class MapsController extends Controller
 {
@@ -339,5 +339,64 @@ class MapsController extends Controller
     //TEST 
     public function testLocation(Request $request){
         return view('admin.maps.test_location');        
+    }
+
+    //CUSTOM STORE
+    public function customRecordStore(){
+        
+        /* HUNT RECORD STORE */
+        // $cityInfo = TreasureLocation::get();
+        // foreach ($cityInfo as $key => $value) {
+        //     $location['Type'] = 'Point';
+        //     $location['coordinates'] = [
+        //                                     'lng' => (float)$value->longitude,
+        //                                     'lat' => (float)$value->latitude
+        //                                 ];
+        //     $objectID = new ObjectID($value->_id);
+        //     $hunt['_id'] = $objectID;
+        //     $hunt['name'] = $value->custom_name;
+        //     $hunt['location'] = $location;
+        //     $hunt['city'] = $value->city;
+        //     $hunt['place_name'] = $value->place_name;
+        //     $hunt['province'] = $value->province;
+        //     $hunt['country'] = $value->country;
+        //     $hunt['boundaries_arr'] = $value->boundary_arr;
+        //     $hunt['boundingbox'] = $value->boundingbox;
+            
+        //     Hunt::create($hunt);
+        // }
+
+
+        //HuntComplexitie STORE
+        // $huntComplexities = PlaceStar::whereHas('place')
+        //                             ->with('place_clues')
+        //                             ->get();
+       
+
+        // foreach ($huntComplexities as $key => $value) {
+        //     $huntComplexitie = HuntComplexitie::updateOrCreate(['hunt_id'=>$value->place_id,'complexity'=>$value->complexity],['hunt_id'=>$value->place_id,'complexity'=>$value->complexity]);
+
+        //     foreach ($value->place_clues['coordinates'] as $key1 => $clues) {
+        //         $location['Type'] = 'Point';
+        //         $location['coordinates'] = [
+        //                                         'lng' => $clues[0],
+        //                                         'lat' => $clues[1]
+        //                                     ];
+        //         $huntComplexitie->hunt_clues()->updateOrCreate([
+        //                             'hunt_complexity_id' =>  $huntComplexitie->_id,
+        //                             'location.coordinates.lng' =>  $clues[0],
+        //                             'location.coordinates.lat' =>  $clues[1],
+        //                         ],[
+        //                             'hunt_complexity_id' => $huntComplexitie->_id,
+        //                             'location'           => $location,
+        //                             'game_id'            => null,
+        //                             'game_variation_id'  => null
+        //                         ]);
+        //     }
+        // }
+         return response()->json([
+            'status' => true,
+            'message'=>'successfully',
+        ]);
     }
 }

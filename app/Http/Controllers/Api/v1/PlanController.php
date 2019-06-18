@@ -30,7 +30,7 @@ class PlanController extends Controller
     	]);
         
         if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()->first(),'amount'=>0], 422);
+            return response()->json(['message'=>$validator->messages(),'amount'=>0], 422);
         }
 
         /** Get the parameters **/

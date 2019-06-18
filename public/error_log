@@ -1,0 +1,4 @@
+[14-Jun-2019 05:03:35 UTC] PHP Fatal error:  Cannot use Carbon\Carbon as Carbon because the name is already in use in /home/fddev/public_html/ironbridge1779/app/Http/Controllers/Api/v1/ProfileController.php on line 13
+[17-Jun-2019 08:36:49 UTC] PHP Fatal error:  Can't use method return value in write context in /home/fddev/public_html/ironbridge1779/app/Http/Controllers/Api/v1/ProfileController.php on line 69
+[17-Jun-2019 08:38:09 UTC] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 18878464 bytes) in /home/fddev/public_html/ironbridge1779/app/Http/Controllers/Api/v1/ProfileController.php on line 68
+[17-Jun-2019 08:38:09 UTC] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 81920 bytes) in /home/fddev/public_html/ironbridge1779/vendor/filp/whoops/src/Whoops/Resources/views/layout.html.php on line 28

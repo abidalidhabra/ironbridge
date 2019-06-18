@@ -23,7 +23,7 @@ class NewsController extends Controller
                     ]);
         
         if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()->first()], 422);
+            return response()->json(['message'=>$validator->messages()], 422);
         }
 
         /* Get the parameters */
@@ -33,7 +33,7 @@ class NewsController extends Controller
 
         $news = News::where('valid_till','>',now())->paginate();
         
-        return response()->json(['news' => $news->all()]);
+        return response()->json(["message"=> "News has been retrieved successfully.", 'news' => $news->all(), 'last_page' => $news->lastPage()]);
     }
 
     /**
@@ -53,7 +53,7 @@ class NewsController extends Controller
                     ]);
         
         if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()->first()], 422);
+            return response()->json(['message'=>$validator->messages()], 422);
         }
 
         return response()->json(News::create([

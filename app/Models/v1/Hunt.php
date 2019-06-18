@@ -8,6 +8,7 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 class Hunt extends Eloquent
 {
     protected $fillable = [
+        '_id',
         'location',
         'name',
         'place_name',

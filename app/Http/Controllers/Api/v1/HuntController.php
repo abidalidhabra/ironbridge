@@ -137,7 +137,7 @@ class HuntController extends Controller
         
         $huntClues = [];
         foreach ($clue->hunt_clues as $key => $value) {
-            $huntClues[] = [$value->location['coordinates']['lat'],$value->location['coordinates']['lng']];
+            $huntClues[] = [$value->location['coordinates']['lng'],$value->location['coordinates']['lat']];
         }
         if ($clue) {
             $data = [

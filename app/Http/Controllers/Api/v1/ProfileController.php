@@ -9,6 +9,8 @@ use Carbon\Carbon;
 use Validator;
 use Auth;
 use App\Rules\IsPasswordValid;
+use MongoDB\BSON\UTCDateTime as MongoDBDate;
+
 
 
 class ProfileController extends Controller
@@ -23,7 +25,7 @@ class ProfileController extends Controller
 			'last_name' => "required|string|max:50",
 			'email' => "required|string|email|max:255|unique:users,email,".$user->_id.',_id',
 			// 'email'                => "required|email|unique:users,email,{$user->id}",
-			'dob' => "required|date_format:Y-m-d H:i:s",
+			'dob' => "required|date_format:d-m-Y",
 		]);
 
 		if ($validator->fails()) {
@@ -31,9 +33,13 @@ class ProfileController extends Controller
 		}
 
 		$data = $request->all();
-		$user->update($data);
+		$user->dob = new MongoDBDate(Carbon::parse($request->get('dob')));
+		$user->first_name = $request->get('first_name');
+		$user->last_name = $request->get('last_name');
+		$user->email = $request->get('email');
+		$user->save();
 
-		return response()->json(['message' => 'Profile updated successfully.','data'=>$data]); 
+		return response()->json(['message' => 'Profile updated successfully.','data'=>$user]); 
 	}
 
 
@@ -61,8 +67,10 @@ class ProfileController extends Controller
 	public function updateSetting(Request $request){
 
 		$validator = Validator::make($request->all(),[
-						'music'=>'required|in:true,false',
-						'sound'=>'required|in:true,false',
+						//'music'=>'required|in:true,false',
+						//'sound'=>'required|in:true,false',
+						'music'=>'required|boolean',
+						'sound'=>'required|boolean',
 					]);
 
 		if ($validator->fails()) {
@@ -71,11 +79,11 @@ class ProfileController extends Controller
 
 		$user    = Auth::user();
 		$user->settings = [
-								'sound_fx' => ($request->get('sound') == "true")?true:false,
-								'music_fx' => ($request->get('music') == "true")?true:false
+								'sound_fx' => ($request->get('sound') == "1")?true:false,
+								'music_fx' => ($request->get('music') == "1")?true:false
 							];
 		$user->save();
 
-		return response()->json(['message' => 'Profile setting successfully updated.']);
+		return response()->json(['message' => 'Profile setting successfully updated.','data'=>$user->settings]);
 	}
 }
