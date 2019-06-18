@@ -29,8 +29,8 @@
                 <div class="modal-body">
                     <div class="modalbodysetbox">
                         <div class="form-group">
-                            <label class="control-label">Custom Name:</label>
-                            <input type="text" class="form-control" placeholder="Enter custom name" name="custom_name" id="custom_name">
+                            <label class="control-label">Name:</label>
+                            <input type="text" class="form-control" placeholder="Enter custom name" name="name" id="name">
                         </div>
                         <div class="form-group">
                             <label class="control-label">Place Name:</label>
@@ -49,6 +49,10 @@
                         <div class="form-group">
                             <label class="control-label">Country:</label>
                             <input type="text" class="form-control" id="country" placeholder="Enter country name" name="country">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Fees:</label>
+                            <input type="number" class="form-control" id="fees" placeholder="Enter fees name" name="fees">
                         </div>
                         <input type="hidden" name="boundary_arr" value="" id="boundary_arr"  />
                         <input type="hidden" name="boundary_box" value="" id="boundary_box"  />
@@ -201,17 +205,22 @@
                     var newShape = event.overlay;
                     newShape.type = event.type;
                 });
-
+                var coordinates = [];
                 google.maps.event.addListener(drawingManager, "overlaycomplete", function(event){
                     overlayClickListener(event.overlay);
                     // $('#boundary_arr').val(event.overlay.getPath().getArray());
                     var boundary_arr = [];
                     var i=1;
                     event.overlay.getPath().getArray().forEach((value, key) => {
-                        boundary_arr[i] = value.lng() +','+ value.lat();
-                        i++;
+                        // boundary_arr[i] = value.lng() +','+ value.lat();
+                        // i++;
+                        var arr = [];
+                        arr.push(value.lng());
+                        arr.push(value.lat());
+                        coordinates.push(arr);
                     });
-                    $('#boundary_arr').val(JSON.stringify(boundary_arr));
+                    console.log(coordinates);
+                    $('#boundary_arr').val(JSON.stringify(coordinates));
 
                     // console.log(jQuery.parseJSON(boundary_arr));
 
@@ -255,7 +264,8 @@
                     });
                     var boundary_box = [];
                     var j=1;
-                    $('#boundary_box').val(polygon.getBounds());
+                    // $('#boundary_box').val(polygon.getBounds());
+                    $('#boundary_box').val(JSON.stringify(polygon.getBounds()));
                 });
             }    
             function getPlaceInformation(place){
@@ -304,11 +314,12 @@
                 focusInvalid: false, 
                 ignore: "",
                 rules: {
-                    custom_name: { required: true },
+                    name: { required: true },
                     place_name: { required: true },
                     city: { required: true },
                     province: { required: true },
                     country: { required: true },
+                    fees: { required: true },
                 },
                 submitHandler: function (form) {
                     var formData = new FormData(form);

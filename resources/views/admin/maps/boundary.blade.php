@@ -60,7 +60,10 @@
     </div>
     <?php
         $boundary = [];
-        foreach ($location->boundary_arr as $key => $value) {
+        // echo "<pre>";
+        // print_r($location->location['coordinates']['lng']);
+        // exit();
+        foreach ($location->boundaries_arr as $key => $value) {
             $boundary [] = [
                             'lat'=>$value[1],
                             'lng'=>$value[0],
@@ -73,40 +76,40 @@
 @section('scripts')
     <!-- <script type="text/javascript" src="{{ asset('js/toastr.min.js') }}"></script> -->
     <script type="text/javascript">
-$(document).on('click','#clearAllClues',function(e){
-  e.preventDefault();
-  // alert();
-  //DELETE ACCOUNT
-                $(this).confirmation({
-                    container:"body",
-                    btnOkClass:"btn btn-sm btn-success",
-                    btnCancelClass:"btn btn-sm btn-danger",
-                    onConfirm:function(event, element) {
-                        var id = element.attr('data-id');
-                        $.ajax({
-                            type: "delete",
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            url: '{{ route("admin.clearAllClues",$location->_id) }}',
-                            data: {id : id},
-                            success: function(response)
-                            {
-                                if (response.status == true) {
-                                    toastr.success(response.message);
-                                    location.reload();
-                                } else {
-                                    toastr.warning(response.message);
-                                }
+        $(document).on('click','#clearAllClues',function(e){
+          e.preventDefault();
+          // alert();
+          //DELETE ACCOUNT
+            $(this).confirmation({
+                container:"body",
+                btnOkClass:"btn btn-sm btn-success",
+                btnCancelClass:"btn btn-sm btn-danger",
+                onConfirm:function(event, element) {
+                    var id = element.attr('data-id');
+                    $.ajax({
+                        type: "delete",
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url: '{{ route("admin.clearAllClues",$location->_id) }}',
+                        data: {id : id},
+                        success: function(response)
+                        {
+                            if (response.status == true) {
+                                toastr.success(response.message);
+                                location.reload();
+                            } else {
+                                toastr.warning(response.message);
                             }
-                        });
-                    }
-                });  
-});
+                        }
+                    });
+                }
+            });  
+        });
 
 
         function initMap() {
-            var uluru = { lat: {{ $location->latitude }} , lng: {{ $location->longitude }} };
+            var uluru = { lat: {{ $location->location['coordinates']['lat'] }} , lng: {{ $location->location['coordinates']['lng'] }} };
             var map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 16,
                 center: uluru,

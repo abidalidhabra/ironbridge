@@ -23,73 +23,88 @@
         </div>
         <br/>
         <div class="locationinfobox">
-            <div class="inerdeta_locat">
-                <h2 class="locatininfobtn"><span>Location Info</span>
-                    @if(count($location->complexities) > 0)
-                        <a href="javascript:void(0);" class="btn btn-info btn-md" data-action="remove_stars" data-id='{{ $id }}' data-complexity='{{ $complexity }}'>Clear Clues</a>
+            <form method="POST" id="startComplexity">
+                <div class="inerdeta_locat">
+                    <h2 class="locatininfobtn"><span>Location Info</span>
+                        @if(count($location->hunt_complexities) > 0)
+                            <a href="javascript:void(0);" class="btn btn-info btn-md" data-action="remove_stars" data-id='{{ $id }}' data-complexity='{{ $complexity }}'>Clear Clues</a>
+                        @endif
+                    </h2>
+                    @if($location->custom_name)
+                        <h3><span>Custom Name :</span> {{ $location->custom_name }}</h3>
                     @endif
-                </h2>
-                @if($location->custom_name)
-                    <h3><span>Custom Name :</span> {{ $location->custom_name }}</h3>
-                @endif
-                <h3><span>Place Name :</span> {{ $location->place_name }}</h3>
-                <h3><span>City :</span> {{ $location->city }}</h3>
-                <h3><span>Province :</span> {{ $location->province }}</h3>
-                <h3><span>Country :</span> {{ $location->country }}</h3>
-                {{--<h2>{{$complexitySuf}} Complexity Coordinates</h2>--}}
-                <div class="locatininfoinerbtn">
-                    <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>1]) }}" class="btn btn-info btn-md @if($complexity == 1) active_btn @endif @if(in_array(1,$complexityarr)) border_black @endif">
-                    1 Star</a>
-                </div>
-                <div class="locatininfoinerbtn">
-                    <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>2]) }}" class="btn btn-info btn-md @if($complexity == 2) active_btn @endif @if(in_array(2,$complexityarr)) border_black @endif" >2 Stars</a>
-                </div>
-                <div class="locatininfoinerbtn">
-                    <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>3]) }}" class="btn btn-info btn-md @if($complexity == 3) active_btn @endif  @if(in_array(3,$complexityarr)) border_black @endif">3 Stars</a>
-                </div>
-                <div class="locatininfoinerbtn">
-                    <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>4]) }}" class="btn btn-info btn-md @if($complexity == 4) active_btn @endif @if(in_array(4,$complexityarr)) border_black @endif">4 Stars</a>
-                </div>
-                <div class="locatininfoinerbtn">
-                    <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>5]) }}" class="btn btn-info btn-md @if($complexity == 5) active_btn @endif @if(in_array(5,$complexityarr)) border_black @endif">5 Stars</a>
-                </div>
-                <div class="row">
-                    <div class="form-group col-md-8">
-                        <label>Game:</label>
-                        <select name="game_id" class="form-control">
-                            <option value="">Select game</option>
-                            @forelse($games as $game)
-                                <option value="{{ $game->_id }}" {{ (isset($location->complexities[0]['place_clues']['game_id']) && $location->complexities[0]['place_clues']['game_id']==$game->_id)?'selected':'' }}>{{ $game->name }}</option>
+                    <h3><span>Place Name :</span> {{ $location->place_name }}</h3>
+                    <h3><span>City :</span> {{ $location->city }}</h3>
+                    <h3><span>Province :</span> {{ $location->province }}</h3>
+                    <h3><span>Country :</span> {{ $location->country }}</h3>
+                    {{--<h2>{{$complexitySuf}} Complexity Coordinates</h2>--}}
+                    <div class="locatininfoinerbtn">
+                        <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>1]) }}" class="btn btn-info btn-md @if($complexity == 1) active_btn @endif @if(in_array(1,$complexityarr)) border_black @endif">
+                        1 Star</a>
+                    </div>
+                    <div class="locatininfoinerbtn">
+                        <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>2]) }}" class="btn btn-info btn-md @if($complexity == 2) active_btn @endif @if(in_array(2,$complexityarr)) border_black @endif" >2 Stars</a>
+                    </div>
+                    <div class="locatininfoinerbtn">
+                        <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>3]) }}" class="btn btn-info btn-md @if($complexity == 3) active_btn @endif  @if(in_array(3,$complexityarr)) border_black @endif">3 Stars</a>
+                    </div>
+                    <div class="locatininfoinerbtn">
+                        <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>4]) }}" class="btn btn-info btn-md @if($complexity == 4) active_btn @endif @if(in_array(4,$complexityarr)) border_black @endif">4 Stars</a>
+                    </div>
+                    <div class="locatininfoinerbtn">
+                        <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>5]) }}" class="btn btn-info btn-md @if($complexity == 5) active_btn @endif @if(in_array(5,$complexityarr)) border_black @endif">5 Stars</a>
+                    </div>
+                    <div class="row" id="game_box">
+                        @if(isset($location->hunt_complexities[0]))
+                            @forelse ($location->hunt_complexities[0]->hunt_clues as $key => $gamedetails)
+                                <div class="game_section{{ $key }} selected_game" id="game_{{ str_replace('.','_',substr($gamedetails->location['coordinates']['lng'], 0, 12).substr($gamedetails->location['coordinates']['lat'],0,12)) }}">
+                                    <div class="form-group col-md-8">
+                                        <label>Game:</label>
+                                        <select name="game_id[]" class="form-control" data-id="{{ $key }}">
+                                            <option value="">Select game</option>
+                                            @forelse($games as $game)
+                                                <option value="{{ $game->_id }}" {{ (isset($gamedetails->game_id) && $gamedetails->game_id == $game->_id)?'selected':'' }}>{{ $game->name }}</option>
+                                            @empty
+                                                <option>No game found</option>
+                                            @endforelse
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-8">
+                                        <label>Game Variations:</label>
+                                        <select name="game_variation_id[]" class="form-control">
+                                            <?php
+                                                $game_variations = $games->where('_id',$gamedetails->game_id)->first();
+                                            ?>
+                                            @if($game_variations)
+                                                @forelse($game_variations->game_variation as $game_variation)
+                                                    <option value="{{ $game_variation['_id'] }}" {{ (isset($gamedetails->game_variation_id) && $gamedetails->game_variation_id == $game_variation['_id'])?'selected':'' }}>{{ $game_variation['variation_name'] }}</option>
+                                                @empty
+                                                @endforelse
+                                            @else
+                                                <option>No game variation found</option>
+                                            @endif
+                                        </select>
+                                    </div>
+                                </div>
                             @empty
-                                <option>No game found</option>
                             @endforelse
-                        </select>
+                        @else
+                        @endif
                     </div>
-                    <div class="form-group col-md-8">
-                        <label>Game Variations:</label>
-                        <select name="game_variation_id" class="form-control">
-                            @if(isset($location->complexities[0]['place_clues']['game_variation_id']))
-                                <?php
-                                    $game_variations = $games->where('_id',$location->complexities[0]['place_clues']['game_id'])->first();
-                                ?>
-                                @forelse($game_variations->game_variation as $game_variation)
-                                    <option value="{{ $game_variation['_id'] }}">{{ $game_variation['variation_name'] }}</option>
-                                @empty
-                                @endforelse
-                            @else
-                                <option value="">Select game variation</option>
-                            @endif
-                        </select>
-                    </div>
+                    <input type="hidden" name="coordinates" id="latitude" value="{{ (!empty($location->hunt_complexities[0]->hunt_clues))? json_encode($cluesCoordinates,true):'' }}">
+                    <?php
+                        // exit();
+                    ?>
+                    <input type="hidden" name="hunt_id" value="{{ $location->_id }}">
+                    <input type="hidden" name="complexity" value="{{ $complexity }}">
                 </div>
-                <input type="hidden" name="coordinates[]" id="latitude" value="{{ (isset($location->complexities[0]['place_clues']['coordinates']))? json_encode($location->complexities[0]['place_clues']['coordinates']):'' }}">
-            </div>
-             <div class="customdatatable_box">
-                <div id="map"></div>
-            </div>
-            <div class="pull-right modal-footer">
-                <button type="button" class="btn btn-success" id="saveCoordinates">Save</button>
-            </div>
+                 <div class="customdatatable_box">
+                    <div id="map"></div>
+                </div>
+                <div class="pull-right modal-footer">
+                    <button type="submit" class="btn btn-success" id="saveCoordinates">Save</button>
+                </div>
+            </form>
         </div>
         <br/>
         <br/>
@@ -97,30 +112,20 @@
     </div>
     <?php
         $boundary = [];
-        foreach ($location->boundary_arr as $key => $value) {
+        foreach ($location->boundaries_arr as $key => $value) {
             $boundary [] = [
                             'lat'=>$value[1],
                             'lng'=>$value[0],
                             ];
         }
-        // $coord = [];
-        // if(count($location->complexities) > 0){
-        //     foreach($location->complexities[0]['place_clues']['coordinates'] as $coordinates){
-        //         $coord [] = [
-        //                         'lat'=>$coordinates[1],
-        //                         'lng'=>$coordinates[0],
-        //                         ];
-        //     }
-        // }
-        
     ?>
 @endsection
 
 @section('scripts')
-    <!-- <script type="text/javascript" src="{{ asset('js/toastr.min.js') }}"></script> -->
+    
     <script type="text/javascript">
         function initMap() {
-            var uluru = { lat: {{ $location->latitude }} , lng: {{ $location->longitude }} };
+            var uluru = { lat: {{ $location->location['coordinates']['lat'] }} , lng: {{ $location->location['coordinates']['lng'] }} };
             var map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 18,
                 center: uluru,
@@ -136,13 +141,8 @@
             // var marker = new google.maps.Marker({position: coord, map: map});
             var i=0;
             var icon = {
-              url: "{{ asset('admin_assets/images/blue_marker.png') }}",
-              // This marker is 20 pixels wide by 32 pixels high.
-              scaledSize: new google.maps.Size(20, 32),
-              // The origin for this image is (0, 0).
-              //origin: new google.maps.Point(0, 0),
-              // The anchor for this image is the base of the flagpole at (0, 32).
-              //anchor: new google.maps.Point(10, 20)
+                url: "{{ asset('admin_assets/images/blue_marker.png') }}",
+                scaledSize: new google.maps.Size(20, 32),
             };
 
             // Construct the polygon.
@@ -157,18 +157,19 @@
             bermudaTriangle.setMap(map);
             var coordinates = [];
             <?php
-                if(count($location->complexities) > 0){
+                if(count($location->hunt_complexities) > 0){
                     $coord = [];
-                        foreach($location->complexities[0]['place_clues']['coordinates'] as $coordinates){
+               
+                        foreach($location->hunt_complexities[0]->hunt_clues->pluck('location.coordinates') as $coordinates){
                         $coord [] = [
-                                    'lat'=>$coordinates[1],
-                                    'lng'=>$coordinates[0],
+                                    'lat'=>$coordinates['lat'],
+                                    'lng'=>$coordinates['lng'],
                                     ];
             
             ?>
                 // var coord = ;
                   new google.maps.Marker({
-                      position: { lat: {{ $coordinates[1] }} , lng: {{ $coordinates[0] }} },
+                      position: { lat: {{ $coordinates['lat'] }} , lng: {{ $coordinates['lng'] }} },
                       map: map,
                       size:[10,10],
                       icon:icon
@@ -194,6 +195,12 @@
                     var vertices = this.getPath();
                     // Iterate over the vertices.
                     var boundary_arr = [];
+                    var games = <?php echo json_encode($games) ?>;
+                    var option_game = "'<option value=''>Select game</option>";
+                    $.each(games, function(i, k) {
+                        option_game += '<option value="'+k._id+'">'+k.name+'</option>';
+                    });
+                    var coordinates = [];
                     for (var i =0; i < vertices.getLength(); i++) {
                         var xy = vertices.getAt(i);
                         /*boundary_arr[i] = xy.lng() +','+ xy.lat();*/
@@ -201,8 +208,25 @@
                         arr.push(xy.lng());
                         arr.push(xy.lat());
                         coordinates.push(arr);
+                        var gameId = xy.lng().toString().slice(0,12)+xy.lat().toString().slice(0,12);
+                        if($('#game_'+gameId.replace(/\./g,'_')).length == 0){
+                            $('.selected_game:nth-child('+i+')').after('<div class="game_section'+i+' selected_game" id="game_'+gameId.replace(/\./g,'_')+'">\
+                                                    <div class="form-group col-md-8">\
+                                                        <label>Game:</label>\
+                                                        <select name="game_id[]" data-action="game_id'+i+'" data-id="'+i+'" class="form-control">\
+                                                        '+option_game+'</select>\
+                                                    </div>\
+                                                    <div class="form-group col-md-8">\
+                                                        <label>Game Variations:</label>\
+                                                        <select name="game_variation_id[]" id="game_variation_id'+i+'" class="form-control">\
+                                                            <option value="">Select game variation</option>\
+                                                        </select>\
+                                                    <div>\
+                                                <div>');
+                        } else {
+                            // alert('fail');
+                        }
                     }
-                    console.log(JSON.stringify(coordinates));
                     $('#latitude').val(JSON.stringify(coordinates));
                 });
             <?php 
@@ -238,6 +262,28 @@
                         arr.push(value.lat());
                         coordinates.push(arr);
                     });
+                    var i;
+                    var games = <?php echo json_encode($games) ?>;
+                    var option_game = "'<option value=''>Select game</option>";
+                    $.each(games, function(i, k) {
+                        option_game += '<option value="'+k._id+'">'+k.name+'</option>';
+                    });
+                    for (i = 0; i < JSON.stringify(coordinates.length); i++) {
+                        var html = '<div class="game_section'+i+'">\
+                                        <div class="form-group col-md-8">\
+                                            <label>Game:</label>\
+                                            <select name="game_id[]" data-action="game_id'+i+'" data-id="'+i+'" class="form-control">\
+                                            '+option_game+'</select>\
+                                        </div>\
+                                        <div class="form-group col-md-8">\
+                                            <label>Game Variations:</label>\
+                                            <select name="game_variation_id[]" id="game_variation_id'+i+'" class="form-control">\
+                                                <option value="">Select game variation</option>\
+                                            </select>\
+                                        <div>\
+                                    <div>';
+                        $('#game_box').append(html);
+                    }
                     $('#latitude').val(JSON.stringify(coordinates));
                 });
             <?php } ?>
@@ -254,13 +300,13 @@
         }
 
         //GAME 
-        $(document).on("change","[name='game_id']",function() {
+        $(document).on("change","[name='game_id[]']",function() {
             var game_id = $(this).val();
-            console.log(game_id);
-             $.ajax({
+            var id = $(this).data('id');
+            $.ajax({
                 type: "get",
                 url: '{{ route("admin.getGameVariations") }}',
-                data: { 'game_id':game_id },
+                data: { 'game_id':game_id,'array_id':id },
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
@@ -268,11 +314,14 @@
                 {
                     if (response.status == true) {
                         //toastr.success(response.message);
-                        $('[name="game_variation_id"]').html('');
+                        // $('[name="game_variation_id"]').html('');
+                        $('.game_section'+response.array_id).find('[name="game_variation_id[]"]').html('');
                         if (response.data.length > 0) {
                             $.each(response.data, function( index, value ) {
                                 var html = "<option value='"+value._id+"'>"+value.variation_name+"</option>"
-                                $('[name="game_variation_id"]').append(html);
+                                // $('[name="game_variation_id"]').append(html);
+                                $('.game_section'+response.array_id).find('[name="game_variation_id[]"]').append(html);
+                                console.log($('.game_section'+response.array_id).length)
                             });
                         } else {
                             $('[name="game_variation_id"]').append('<option value="">No data found</option>');
@@ -284,29 +333,27 @@
             });
         });
 
-        $('#saveCoordinates').click(function(e){
+        $('#startComplexity').submit(function(e){
           e.preventDefault();
-          var formData = new FormData();
-          formData.append("coordinates",$('#latitude').val());
-          formData.append("game",$('[name="game_id"]').val());
-          formData.append("game_variation",$('[name="game_variation_id"]').val());
-          formData.append("coordinates",$('#latitude').val());
-          formData.append("place_id","{{$location->_id}}");
-          formData.append("complexity",{{$complexity}});
+          // formData.append("coordinates",$('#latitude').val());
+          // formData.append("game",$('[name="game_id"]').val());
+          // formData.append("game_variation",$('[name="game_variation_id"]').val());
+          // formData.append("coordinates",$('#latitude').val());
+          // formData.append("hunt_id","{{$location->_id}}");
+          //formData.append("complexity",{{$complexity}});
 
-          formData.append( "_token", $('meta[name="csrf-token"]').attr('content') );
-          $.ajax({
+          //formData.append( "_token", $('meta[name="csrf-token"]').attr('content') );
+            $.ajax({
                 type: "POST",
                 url: '{{ route("admin.storeStarComplexity") }}',
-                data: formData,
-                processData:false,
-                cache:false,
-                contentType: false,
+                data: $('#startComplexity').serialize(),
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
                 success: function(response)
                 {
                     if (response.status == true) {
                         toastr.success(response.message);
-                        // location.replace('{{route('admin.boundary_map',$location->_id)}}');
                         location.reload();
                     } else {
                         toastr.warning(response.message);

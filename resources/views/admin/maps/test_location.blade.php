@@ -176,7 +176,7 @@
                     }
                 });
 
-                polyLine = new google.maps.Polygon({
+                polyLine = new google.maps.Polyline({
                     map: map,
                     path: [],
                     strokeColor: "#222",
@@ -187,6 +187,7 @@
                     zIndex: 0
                 });
 
+                
                 var outlineMarkers = new Array();
                 google.maps.event.addListener(map, "click", function (event) {
                     
@@ -194,20 +195,24 @@
                     var markerIndex = polyLine.getPath().length;
                     polyLine.setMap(map);
                     var isFirstMarker = markerIndex === 0;
+                    var icon = {
+                        url: "{{ asset('admin_assets/images/blue_marker.png') }}",
+                        scaledSize: new google.maps.Size(20, 32),
+                    };
                     var marker = new google.maps.Marker({
                         map: map,
                         position: event.latLng,
-                        draggable: true
+                        draggable: true,
+                        icon:icon
                     });
                     
                     if (isFirstMarker) {
                         google.maps.event.addListener(marker, 'click', function () {
+                        console.log(isFirstMarker);
                             var path = polyLine.getPath();
                             polyGon.setPath(path);
                             polyGon.setMap(Map);
                         });
-                            // we were setting different colored icons so you could tell which was the last point set
-                            //    marker.setIcon(blueIcon);
                     } else {
                         //    marker.setIcon(yellowIcon);
                     }
@@ -301,6 +306,7 @@
             function updateDistance(outlineMarkers){
                 var totalDistance = 0.0;
                     var last = undefined;
+                    var sumDistance = sumDistance;
                     $.each(outlineMarkers, function(index, val){
                         if(last){
                             //console.log(google.maps.geometry.spherical.computeDistanceBetween(last.position, val.position));
@@ -308,7 +314,10 @@
                         }
                         last = val;
                     });
-                    console.log(totalDistance);
+                        console.log(totalDistance);
+                    // sumDistance += totalDistance;
+                    // console.log(sumDistance);
+                    // console.log(totalDistance);
                     // $("#txtDistance").val(totalDistance);
             }
             function getPlaceInformation(place){

@@ -9,7 +9,6 @@ use Yajra\DataTables\EloquentDataTable;
 use App\Models\v1\TreasureLocation;
 use App\Models\v1\Hunt;
 use App\Models\v1\PlaceStar;
-use App\Models\v1\HuntComplexitie;
 use Validator;
 use App\Models\v1\Game;
 use App\Models\v1\GameVariation;
@@ -23,13 +22,13 @@ class MapsController extends Controller
     }
 
     public function getMaps(Request $request){
-    	$city = Hunt::select('latitude','longitude','place_name','city','province','country','custom_name')
+    	$city = TreasureLocation::select('latitude','longitude','place_name','city','province','country','custom_name')
     						->get();
     	return DataTables::of($city)
         ->addIndexColumn()
-        ->editColumn('name', function($city){
-            if ($city->name) {
-                return $city->name;
+        ->editColumn('custom_name', function($city){
+            if ($city->custom_name) {
+                return $city->custom_name;
             } else {
                 return '-';
             }
@@ -50,14 +49,14 @@ class MapsController extends Controller
     //boundary map
     public function boundaryMap($id){
         $id = $id;
-        $location = Hunt::where('_id',$id)
-                                ->with(['hunt_complexities'=>function($query){
-                                    $query->whereHas('hunt_clues');
-                                }])
+        $location = TreasureLocation::where('_id',$id)
+                                ->with(['complexities'=>function($query){
+                                    $query->whereHas('place_clues');
+                                  }])
                                 ->first();
 
         $complexityarr = [];
-        foreach ($location->hunt_complexities as $key => $complexity) {
+        foreach ($location->complexities as $key => $complexity) {
             $complexityarr[] = $complexity['complexity'];
         }
 
@@ -67,51 +66,43 @@ class MapsController extends Controller
      //boundary map
     public function starComplexityMap($id,$complexity){
         $id = $id;
-        $location = Hunt::where('_id',$id)
-                        ->with(['hunt_complexities'=>function($query) use ($complexity){
-                            $query->where('complexity',(int)$complexity);
-                        }])
-                        ->first();
+        $location = TreasureLocation::where('_id',$id)
+                                ->with(['complexities'=>function($query) use ($complexity){
+                                    $query->where('complexity',(int)$complexity);
+                                  }])
+                                ->first();
         $complexitySuf = $this->addOrdinalNumberSuffix($complexity);
-        $complexityarr = HuntComplexitie::select('id','hunt_id','complexity')
-                                ->where('hunt_id',$id)
+        $complexityarr = PlaceStar::select('id','place_id','complexity')
+                                ->where('place_id',$id)
                                 ->pluck('complexity')
                                 ->toArray();
         $games = Game::with('game_variation:_id,variation_name,game_id')->get();
-        $cluesCoordinates = [];
-        if (!empty($location->hunt_complexities[0]->hunt_clues)) {
-            foreach($location->hunt_complexities[0]->hunt_clues as $clues){
-                $cluesCoordinates[] = [$clues->location['coordinates']['lng'],$clues->location['coordinates']['lat']];
-            }
-        }
+        
         // echo "<pre>";
-        // print_r($cluesCoordinates);
+        // print_r();
         // exit();
-        // $clueLocation = 
-        return view('admin.maps.start_complexity',compact('location','complexity','complexitySuf','id','complexityarr','games','cluesCoordinates'));
+        return view('admin.maps.start_complexity',compact('location','complexity','complexitySuf','id','complexityarr','games'));
     }
 
     //GET VARIATION
     public function getGameVariations(Request $request){
         $gameId = $request->get('game_id');
-        $arrayId = $request->get('array_id');
         $gameVariation = GameVariation::select('variation_name','game_id')
                                         ->where('game_id',$gameId)
                                         ->get();
         return response()->json([
-            'status'   => true,
-            'message'  => 'data found',
-            'data'     => $gameVariation,
-            'array_id' => $arrayId,
+            'status' => true,
+            'message'=> 'data found',
+            'data'=> $gameVariation,
         ]);
     }
 
     //boundary map
     public function storeStarComplexity(Request $request){
         $validator = Validator::make($request->all(),[
-                        'hunt_id'   => 'required',
-                        'game_id'   => 'required|array',
-                        'game_variation_id' => 'required|array',
+                        'place_id'   => 'required',
+                        'game'   => 'required',
+                        'game_variation' => 'required',
                         'coordinates'=> 'required|json',
                     ]);
         
@@ -120,48 +111,35 @@ class MapsController extends Controller
             $message = $validator->messages()->first();
             return response()->json(['status' => false,'message' => $message]);
         }
-        
-        $id = $request->get('hunt_id');
+
+        $id = $request->get('place_id');
         $complexity = (int)$request->get('complexity');
-        $gameId = $request->get('game_id');
-        $gameVariationId = $request->get('game_variation_id');
-        $hunt = Hunt::where('_id',$id)->first();
-       
-        $locationdata = [];
-        foreach (json_decode($request->get('coordinates')) as $key => $value) {
-            $location['Type'] = 'Point';
-            $location['coordinates'] = [
-                                            'lng' => $value[0],
-                                            'lat' => $value[1]
-                                        ];
-            // $locationdata[] = $location;
-            $huntComplexities = $hunt->hunt_complexities()->updateOrCreate(['hunt_id'=>$id,'complexity'=>$complexity],['hunt_id'=>$id,'complexity'=>$complexity]);
+        $location = TreasureLocation::where('_id',$id)
+                                ->first();
 
-            $huntComplexities->hunt_clues()->updateOrCreate([
-                                'hunt_complexity_id' =>  $huntComplexities->_id,
-                                'location.coordinates.lng' =>  $value[0],
-                                'location.coordinates.lat' =>  $value[1],
-                            ],[
-                                'hunt_complexity_id' => $huntComplexities->_id,
-                                'location'           => $location,
-                                'game_id'            => $gameId[$key],
-                                'game_variation_id'  => $gameVariationId[$key]
-                            ]);
-        }
+        $complexity = $location->complexities()->updateOrCreate(['place_id'=>$id,'complexity'=>$complexity],['place_id'=>$id,'complexity'=>(int)$complexity]);
+        $complexity->place_clues()->updateOrCreate([
+                            'place_star_id'=>$complexity->_id
+                        ],[
+                            'place_star_id'=>$complexity->_id,
+                            'coordinates'=>json_decode($request->get('coordinates')),
+                            'game_id'=>$request->get('game'),
+                            'game_variation_id'=>$request->get('game_variation')]
+                        );
 
-        return response()->json([
+       return response()->json([
             'status' => true,
             'message'=>'Clues has been added successfully',
         ]);
     }
 
     public function clearAllClues($id){
-        $location = Hunt::where('_id',$id)
+        $location = TreasureLocation::where('_id',$id)
                                 ->first();
-        foreach ($location->hunt_complexities() as $key => $complexity) {
-            $complexity->hunt_clues()->delete();
+        foreach ($location->complexities() as $key => $complexity) {
+            $complexity->place_clues()->delete();
         }
-        $location->hunt_complexities()->delete();
+        $location->complexities()->delete();
         return response()->json([
             'status' => true,
             'message'=>'Clues has been removed successfully',
@@ -189,14 +167,14 @@ class MapsController extends Controller
     //EDIT LOCATION
     public function editLocation($id){
         $id = $id;
-        $location = Hunt::where('_id',$id)
-                                ->with(['hunt_complexities'=>function($query){
-                                    $query->whereHas('hunt_clues');
+        $location = TreasureLocation::where('_id',$id)
+                                ->with(['complexities'=>function($query){
+                                    $query->whereHas('place_clues');
                                   }])
                                 ->first();
 
         $complexityarr = [];
-        foreach ($location->hunt_complexities as $key => $complexity) {
+        foreach ($location->complexities as $key => $complexity) {
             $complexityarr[] = $complexity['complexity'];
         }
 
@@ -206,24 +184,22 @@ class MapsController extends Controller
     //UPDATE LOCATION
     public function updateLocation(Request $request){
         $id = $request->get('id');
-        $location = Hunt::where('_id',$id)
+        $location = TreasureLocation::where('_id',$id)
                                     ->first();
 
-        $boundaries = $request->get('boundaries_arr');
-        if(isset($boundaries) && $boundaries!=""){
-            $boundaries = str_replace('[[','' , $request->get('boundaries_arr'));
-            $boundaries = str_replace(']]','' , $boundaries);
-            $boundaries = explode('],[', $boundaries);
-            $boundaries_arr = [];
-            foreach ($boundaries as $key => $value) {
-                $boundaries_arr[] = array_map('floatval', explode(',',$value));
-            }
-            $location['boundaries_arr'] = $boundaries_arr;
-        }
+        $boundaryArr = $request->get('boundary_arr');
         
+        if($boundaryArr != ""){
+            $boundary = [];
+            foreach (json_decode($request->get('boundary_arr'),true) as $key => $value) {
+                if (isset($value)) {
+                    $boundary[] = '['.$value.']';
+                }
+            }
+            $location->boundary_arr = '['.implode(',', $boundary).']';
+        }
 
-        $location->name = $request->get('name');
-        $location->fees = $request->get('fees');
+        $location->custom_name = $request->get('custom_name');
         $location->update();
 
         return response()->json([
@@ -256,24 +232,14 @@ class MapsController extends Controller
 
         $data = $request->all();
         
-        // $cityInfo = TreasureLocation::get();
-        // foreach ($cityInfo as $key => $value) {
-        //     $hunt['custom_name'] = $value->custom_name;
-        //     $location['Type'] = 'Point';
-        //     $location['coordinates'] = [
-        //                                     'lng' => (float)$value->longitude,
-        //                                     'lat' => (float)$value->latitude
-        //                                 ];
-        //     $hunt['location'] = $location;
-        //     $hunt['city'] = $value->city;
-        //     $hunt['place_name'] = $value->place_name;
-        //     $hunt['province'] = $value->province;
-        //     $hunt['country'] = $value->country;
-        //     $hunt['boundaries_arr'] = $value->boundary_arr;
-        //     $hunt['boundingbox'] = $value->boundingbox;
-        //     Hunt::create($hunt);
-        // }
-
+        $cityInfo = TreasureLocation::get();
+        foreach ($cityInfo as $key => $value) {
+            $hunt['']
+            echo "<pre>";
+            print_r($value->toArray());
+            exit();
+        }
+            exit();
         $location['Type'] = 'Point';
         $location['coordinates'] = [
                                         'lng' => (float)$request->get('longitude'),
@@ -292,9 +258,26 @@ class MapsController extends Controller
         $data['boundaries_arr'] = $boundaries_arr;
         $data['fees'] = (float)$request->get('fees');
 
-        $boundingbox = $request->get('boundary_box');
-        $data['boundingbox'] = array_map('strval', array_values(json_decode($request->get('boundary_box'),true)));
-        $location = Hunt::create($data);
+        $boundingbox = $request->get('boundary_box');         
+        $boundingbox = str_replace("((","",$boundingbox);
+        $boundingbox = str_replace("))","",$boundingbox);
+        $boundingbox = str_replace("(","",$boundingbox);
+        $boundingbox = str_replace(")","",$boundingbox);
+        $boundingbox = str_replace(")","",$boundingbox);
+        $boundingbox = explode(',',$boundingbox);
+        $new_arr = array();
+        if(count($boundingbox)>0) {
+            foreach($boundingbox as $key=>$val) {
+                $new_arr[] = '"'.trim($val).'"';
+            }
+        }
+        $boundingbox = "[".implode(',',$new_arr)."]";
+        $boundingbox = htmlentities($boundingbox);
+        
+        $data['boundingbox'] = $boundingbox;
+        $location = Hunt::create($data);        
+        print_r($data);
+        exit();
         return response()->json([
             'status' => true,
             'message'=>'Location has been created successfully',
@@ -304,12 +287,12 @@ class MapsController extends Controller
 
     //LOCATION DELETE
     public function locationDelete($id){
-        //Hunt::where('_id', $id)->delete();
-        $location = Hunt::where('_id',$id)->first();
-        foreach ($location->hunt_complexities as $key => $complexity) {
-            $complexity->hunt_clues()->delete();
+        //TreasureLocation::where('_id', $id)->delete();
+        $location = TreasureLocation::where('_id',$id)->first();
+        foreach ($location->complexities as $key => $complexity) {
+            $complexity->place_clues()->delete();
         }
-        $location->hunt_complexities()->delete();
+        $location->complexities()->delete();
         $location->delete();
 
         return response()->json([
@@ -322,13 +305,13 @@ class MapsController extends Controller
     public function removeStar(Request $request){
         $id = $request->get('id');
         $complexity = $request->get('complexity');
-        $placeStar = HuntComplexitie::where([
-                            'hunt_id'   => $id,
+        $placeStar = PlaceStar::where([
+                            'place_id'   => $id,
                             'complexity' => (int)$complexity,
                         ])
                         ->first();
         
-        $placeStar->hunt_clues()->delete();
+        $placeStar->place_clues()->delete();
         $placeStar->delete();
         return response()->json([
             'status' => true,

@@ -30,14 +30,14 @@
                     <div class="modalbodysetbox">
                         <div class="form-group">
                             <label class="control-label">Custom Name:</label>
-                            <input type="text" class="form-control" placeholder="Enter custom name" name="custom_name" value="{{ $location->custom_name }}" id="custom_name">
+                            <input type="text" class="form-control" placeholder="Enter custom name" name="name" value="{{ $location->name }}" id="custom_name">
                         </div>
                         <div class="form-group">
                             <label class="control-label">Place Name:</label>
                             <input type="text" class="form-control" placeholder="Enter place name" name="place_name" id="place_name" autocomplete="off" value="{{ $location->place_name }}" readonly="">
                             <input type="hidden" name="id" value="{{ $location->_id }}" />
-                            <input type="hidden" name="latitude" id="latitude" value="{{ $location->latitude }}" />
-                            <input type="hidden" name="longitude" id="longitude" value="{{ $location->longitude }}" />
+                            <input type="hidden" name="latitude" id="latitude" value="{{ $location->location['coordinates']['lat'] }}" />
+                            <input type="hidden" name="longitude" id="longitude" value="{{ $location->location['coordinates']['lng'] }}" />
                         </div>
                         <div class="form-group">
                             <label class="control-label">City:</label>
@@ -51,8 +51,12 @@
                             <label class="control-label">Country:</label>
                             <input type="text" class="form-control" id="country" placeholder="Enter country name" name="country" value="{{ $location->country }}" readonly="">
                         </div>
-                        <input type="hidden" name="boundary_arr" value="" id="boundary_arr"  />
-                        <input type="hidden" name="boundary_box" value="" id="boundary_box"  />
+                        <div class="form-group">
+                            <label class="control-label">Fees:</label>
+                            <input type="number" class="form-control" id="fees" placeholder="Enter fees name" name="fees" value="{{ $location->fees }}" >
+                        </div>
+                        <input type="hidden" name="boundaries_arr" value="" id="boundary_arr"  />
+                        <!-- <input type="hidden" name="boundary_box" value="" id="boundary_box"  /> -->
                         <div id="map"></div>
                     </div>
                 </div>
@@ -65,10 +69,10 @@
     </div>
     <?php
         $boundary = [];
-        foreach ($location->boundary_arr as $key => $value) {
+        foreach ($location->boundaries_arr as $key => $value) {
             $boundary [] = [
-                            'lat'=>$value[1],
-                            'lng'=>$value[0],
+                                'lat'=>$value[1],
+                                'lng'=>$value[0],
                             ];
         }
 
@@ -102,7 +106,7 @@
             })
 
             function initMap() {
-                var uluru = { lat: {{ $location->latitude }} , lng: {{ $location->longitude }} };
+                var uluru = { lat: {{ $location->location['coordinates']['lat'] }} , lng: {{ $location->location['coordinates']['lng'] }} };
                 var map = new google.maps.Map(document.getElementById('map'), {
                     zoom: 16,
                     center: uluru,
@@ -163,7 +167,11 @@
                 var boundary_arr = [];
                 for (var i =0; i < vertices.getLength(); i++) {
                     var xy = vertices.getAt(i);
-                    boundary_arr[i] = xy.lng() +','+ xy.lat();
+                    //boundary_arr[i] = xy.lng() +','+ xy.lat();
+                    var arr = [];
+                    arr.push(xy.lng());
+                    arr.push(xy.lat());
+                    boundary_arr.push(arr);
                 }
                 console.log(JSON.stringify(boundary_arr));
                 $('#boundary_arr').val(JSON.stringify(boundary_arr));
@@ -179,11 +187,11 @@
             focusInvalid: false, 
             ignore: "",
             rules: {
-                custom_name: { required: true },
+                name: { required: true },
                 place_name: { required: true },
                 city: { required: true },
                 province: { required: true },
-                country: { required: true },
+                fees: { required: true },
             },
             submitHandler: function (form) {
                 var formData = new FormData(form);

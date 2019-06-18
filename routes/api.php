@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 */
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+	return $request->user();
 });
 
 Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
@@ -26,9 +26,10 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 	Route::get('watercheck/{lat}/{long}', 'UserController@watercheck');
 	
 	//LOCATION
-	Route::get('getParks1', 'LocationController@getParks1');
-	Route::post('updateClues', 'LocationController@updateClues');
-	Route::get('getLocation', 'LocationController@getLocation');
+	Route::get('getParks1', 'HuntController@getParks1');
+	Route::post('updateClues', 'HuntController@updateClues');
+	Route::get('getLocation', 'HuntController@getLocation');
+	Route::get('getClue', 'HuntController@getClue');
 	
 	Route::group(['middleware' => 'jwt-auth'], function ($router) {
 
