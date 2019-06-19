@@ -76,13 +76,13 @@ class HuntController extends Controller
             }
         }
 
-        // $subject ="updated clues";
-        // $email = 'arshikweb@gmail.com';
-        // //$email = 'abidalidhabra@gmail.com';
-        // $from="support@ironbridge1779.com";
-        // $message = $request->get('data');
-        // $headers = "From:".$from;
-        // mail($email,$subject,$message,$headers);
+        $subject ="updated clues";
+        $email = 'arshikweb@gmail.com';
+        //$email = 'abidalidhabra@gmail.com';
+        $from="support@ironbridge1779.com";
+        $message = $request->get('data');
+        $headers = "From:".$from;
+        mail($email,$subject,$message,$headers);
         
         return response()->json(['message' => 'Location has been updated successfully']); 
     }
@@ -128,32 +128,31 @@ class HuntController extends Controller
         $huntId  = $request->get('hunt_id');
         $clueId  = (int)$request->get('star');
 
-        $clue = HuntComplexitie::select('hunt_id','complexity')
-                        ->where([
-                                    'hunt_id'   => $huntId,
-                                    'complexity' => $clueId
-                                ])
-                        ->with('hunt:_id,name,location,place_name')
-                        ->with('hunt_clues:_id,hunt_complexity_id,location.coordinates')
-                        ->first();
-        
-        $location = $clue->hunt->location['coordinates'];
+        $hunt = Hunt::select('_id','name','location','place_name')
+                    ->with(['hunt_complexities'=>function($query) use ($clueId){
+                        $query->where('complexity',$clueId)
+                            ->select('hunt_id','complexity')
+                            ->with('hunt_clues:_id,hunt_complexity_id,location,game_id,game_variation_id');
+                    }])
+                    ->where('_id',$huntId)
+                    ->first();
+        $location = $hunt->location['coordinates'];
         
         $huntClues = [];
-        foreach ($clue->hunt_clues as $key => $value) {
-            $huntClues[] = [$value->location['coordinates']['lng'],$value->location['coordinates']['lat']];
+        if (count($hunt->hunt_complexities) > 0) {
+            foreach ($hunt->hunt_complexities[0]->hunt_clues as $key => $value) {
+                $huntClues[] = [$value->location['coordinates']['lng'],$value->location['coordinates']['lat']];
+            }
         }
-        if ($clue) {
-            $data = [
-                        'custom_name' => $clue->hunt->name,
-                        'place_name' => $clue->hunt->place_name,
-                        'latitude' => $location['lat'],
-                        'longitude' => $location['lng'],
-                        'clue' => $huntClues,
-                    ];
-        } else {
-            $data = [];
-        }
+        
+        $data = [
+                    'custom_name' => $hunt->name,
+                    'place_name' => $hunt->place_name,
+                    'latitude' => $location['lat'],
+                    'longitude' => $location['lng'],
+                    'clue' => $huntClues,
+                ];
+
         return response()->json($data);
     }
 

@@ -51,7 +51,7 @@
                             <input type="text" class="form-control" id="country" placeholder="Enter country name" name="country">
                         </div>
                         <div class="form-group">
-                            <label class="control-label">Fees:</label>
+                            <label class="control-label">Challenge Entry Fee:</label>
                             <input type="number" class="form-control" id="fees" placeholder="Enter fees name" name="fees">
                         </div>
                         <input type="hidden" name="boundary_arr" value="" id="boundary_arr"  />
