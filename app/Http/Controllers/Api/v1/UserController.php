@@ -46,7 +46,8 @@ class UserController extends Controller
                         'latitude'  => ['required','regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
                         'device_type'  => "nullable|string",
                         'firebase_id'  => "nullable|string",
-                        'reffered_by'  => "nullable|string|exists:users,reffered_id",
+                        //'reffered_by'  => "nullable|string|exists:users,reffered_id",
+                        'reffered_by'  => "nullable|string",
                     ]);
         
         if ($validator->fails()) {
