@@ -6,7 +6,12 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\v1\Hunt;
 use App\Models\v1\HuntComplexitie;
+use App\Models\v1\HuntUser;
+use App\Models\v1\HuntUserDetail;
 use Validator;
+use Auth;
+use MongoDB\BSON\UTCDateTime as MongoDBDate;
+use Carbon\Carbon;
 
 class HuntController extends Controller
 {
@@ -30,7 +35,6 @@ class HuntController extends Controller
     									return $query;
     								});
         return response()->json($location);
-        //return response()->json(CityInfo::all());
     }
 
     //UPDATE LOCATION
@@ -152,4 +156,85 @@ class HuntController extends Controller
         }
         return response()->json($data);
     }
+
+
+    //JOIS HUNT
+    public function joinHunt(Request $request)
+    {
+        $validator = Validator::make($request->all(),[
+                        'hunt_id'=> "required|exists:hunts,_id",
+                        'star'=> "required",
+                    ]);
+        if ($validator->fails()) {
+            return response()->json(['message'=>$validator->messages()],422);
+        }
+
+        $user = Auth::user();
+        
+        $data = $request->all();
+        $star = (int)$request->get('star');
+        $huntId = $request->get('hunt_id');
+
+        $huntComplexitie = HuntComplexitie::with('hunt_clues')
+                                            ->where([
+                                                        'complexity' => $star,
+                                                        'hunt_id'    => $huntId,
+                                                    ])
+                                            ->first();
+
+        $huntUser = HuntUser::create([
+                                        'user_id'            => $user->_id,
+                                        'hunt_id'            => $huntId,
+                                        'hunt_complexity_id' => $huntComplexitie->id,
+                                        'valid'              => false,
+                                    ]);
+
+        foreach ($huntComplexitie->hunt_clues as $key => $value) {
+            $huntUserDetail = HuntUserDetail::create([
+                                                        'hunt_user_id'      => $huntUser->id,
+                                                        'location'          => $value->location,
+                                                        'game_id'           => $value->game_id,
+                                                        'game_variation_id' => $value->game_variation_id,
+                                                        'est_completion'    => $value->est_completion,
+                                                        'revealed_at'       => null,
+                                                        'started_at'        => null,
+                                                        'finished_at'       => null
+                                                    ]);
+        }
+
+        return response()->json([
+                                'status'=>true,
+                                'message'=>'user has been successfully participants'
+                            ]);
+    }
+
+
+    //GET HUNT USER
+    public function getHuntUser(Request $request){
+        $user = Auth::User();
+        $userId = $user->id;
+
+        $huntUser = HuntUser::select('user_id','hunt_id','status')
+                            ->where('user_id',$userId)
+                            ->with('hunt:_id,name,place_name')
+                            ->with('hunt_user_details:_id,hunt_user_id,location,est_completion,revealed_at,started_at,finished_at')
+                            ->first();
+
+        $est_completion = $huntUser->hunt_user_details->pluck('est_completion')->toArray();
+
+        $data = [
+                    'hunt_name'    => ($huntUser->hunt->name != "")?$huntUser->hunt->name:$huntUser->hunt->place_name,
+                    'clue'         => $huntUser->hunt_user_details->count(),
+                    'est_complete' => gmdate("H:i:s", array_sum($est_completion)*60),
+                    'distance'     => ""
+                ];
+
+        return response()->json([
+                                'status'  => true,
+                                'message' => 'user has been retrieved successfully',
+                                'data'    => $data
+                            ]);
+    }
+
+    
 }

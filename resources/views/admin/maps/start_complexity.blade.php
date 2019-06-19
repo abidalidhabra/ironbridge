@@ -65,7 +65,7 @@
                                             @forelse($games as $game)
                                                 <option value="{{ $game->_id }}" {{ (isset($gamedetails->game_id) && $gamedetails->game_id == $game->_id)?'selected':'' }}>{{ $game->name }}</option>
                                             @empty
-                                                <option>No game found</option>
+                                                <option value="">No game found</option>
                                             @endforelse
                                         </select>
                                     </div>
@@ -81,7 +81,7 @@
                                                 @empty
                                                 @endforelse
                                             @else
-                                                <option>No game variation found</option>
+                                                <option value="">Select game variation</option>
                                             @endif
                                         </select>
                                     </div>
@@ -334,15 +334,7 @@
         });
 
         $('#startComplexity').submit(function(e){
-          e.preventDefault();
-          // formData.append("coordinates",$('#latitude').val());
-          // formData.append("game",$('[name="game_id"]').val());
-          // formData.append("game_variation",$('[name="game_variation_id"]').val());
-          // formData.append("coordinates",$('#latitude').val());
-          // formData.append("hunt_id","{{$location->_id}}");
-          //formData.append("complexity",{{$complexity}});
-
-          //formData.append( "_token", $('meta[name="csrf-token"]').attr('content') );
+            e.preventDefault();
             $.ajax({
                 type: "POST",
                 url: '{{ route("admin.storeStarComplexity") }}',

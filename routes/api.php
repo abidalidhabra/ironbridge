@@ -41,7 +41,7 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 	
 	Route::group(['middleware' => 'jwt-auth'], function ($router) {
 
-		
+
 		Route::post('changePassword', 'ProfileController@changePassword');
 		Route::post('updateProfile', 'ProfileController@updateProfile');
 		Route::post('updateSetting', 'ProfileController@updateSetting');
@@ -67,6 +67,10 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 		Route::post('logout', 'AuthController@logout');
 		Route::post('refresh', 'AuthController@refresh');
 		Route::post('me', 'AuthController@me');
+
+		/** Hunt related requests **/
+		Route::post('joinHunt', 'HuntController@joinHunt');
+		Route::get('getHuntUser', 'HuntController@getHuntUser');
 
 	});
 

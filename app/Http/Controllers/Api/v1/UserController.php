@@ -46,14 +46,19 @@ class UserController extends Controller
                         'latitude'  => ['required','regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
                         'device_type'  => "nullable|string",
                         'firebase_id'  => "nullable|string",
-                        'reffered_by'  => "nullable|string|exists:users,reffered_id",
+                        'reffered_by'  => "nullable|exists:users,reffered_id",
                     ]);
         
         if ($validator->fails()) {
             return response()->json(['message'=>$validator->messages()], 422);
         }
+        $referralCode = $request->reffered_by;
+        if (!empty($referralCode)) {
+            $referralUser = User::where('reffered_id',$referralCode)->first();
+        }
 
-        
+        $reffered_id = substr(str_shuffle(str_repeat("0123456789abcdefghijklmnopqrstuvwxyz", 8)), 0, 8);
+
         // $data['dob'] = new MongoDBDate(Carbon::parse($dob));
         /* Get the parameters */
 		$firsNname  = $request->first_name;
@@ -97,6 +102,7 @@ class UserController extends Controller
 				'ios_id'	 => ($deviceType == 'ios')?$firebaseId:null,
 			],
 			'reffered_by' 	=> ($request->filled('reffered_by'))?$refferedBy:null,
+            'reffered_id'   => $reffered_id,
             // 'settings'   => [
             //     'sound_fx' => true,
             //     'music_fx' => true,

@@ -110,8 +110,8 @@ class MapsController extends Controller
     public function storeStarComplexity(Request $request){
         $validator = Validator::make($request->all(),[
                         'hunt_id'   => 'required',
-                        'game_id'   => 'required|array',
-                        'game_variation_id' => 'required|array',
+                        'game_id.*'   => 'required',
+                        'game_variation_id.*' => 'required',
                         'coordinates'=> 'required|json',
                     ]);
         

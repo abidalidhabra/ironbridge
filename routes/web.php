@@ -63,6 +63,16 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 
 	Route::get('/customRecordStore', 'MapsController@customRecordStore')->name('customRecordStore');
 	
+	//GAME
+	Route::get('game', 'GameController@index')->name('game.index');
+	Route::post('addgame', 'GameController@addgame')->name('addgame');
+	Route::get('getGameList', 'GameController@getGameList')->name('getGameList');
+	Route::put('editGame', 'GameController@editGame')->name('editGame');
+
+
+	//GameVariationController
+	Route::resource('gameVariation', 'GameVariationController');
+
 });
 
 Auth::routes();
