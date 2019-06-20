@@ -35,9 +35,7 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 	// Route::get('getClue', 'LocationController@getClue');
 	
 	Route::get('getParks1', 'HuntController@getParks1');
-	Route::post('updateClues', 'HuntController@updateClues');
-	Route::get('getLocation', 'HuntController@getLocation');
-	Route::get('getClue', 'HuntController@getClue');
+	
 	
 	Route::group(['middleware' => 'jwt-auth'], function ($router) {
 
@@ -69,8 +67,14 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 		Route::post('me', 'AuthController@me');
 
 		/** Hunt related requests **/
+		Route::post('updateClues', 'HuntController@updateClues');
+		Route::get('getLocation', 'HuntController@getLocation');
+		Route::get('getClue', 'HuntController@getClue');
 		Route::post('joinHunt', 'HuntController@joinHunt');
-		Route::get('getHuntUser', 'HuntController@getHuntUser');
+		Route::post('getHuntUser', 'HuntController@getHuntUser');
+		Route::post('clueRevealed', 'HuntController@clueRevealed');
+		Route::get('clueInfo', 'HuntController@clueInfo');
+		Route::post('clueGame', 'HuntController@clueGame');
 
 	});
 

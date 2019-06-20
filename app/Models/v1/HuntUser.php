@@ -22,4 +22,9 @@ class HuntUser extends Eloquent
     public function hunt_user_details(){
         return $this->hasMany('App\Models\v1\HuntUserDetail','hunt_user_id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo('App\Models\v1\User','user_id');
+    }    
 }

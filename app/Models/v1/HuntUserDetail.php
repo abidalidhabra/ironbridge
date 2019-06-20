@@ -14,13 +14,19 @@ class HuntUserDetail extends Eloquent
 		'game_variation_id',
 		'est_completion',
 		'revealed_at',
-		'started_at',
-		'finished_at'
+		'finished_in'
 	];
 
 	protected $dates = [
         'revealed_at',
-		'started_at',
-		'finished_at',
     ];
+
+    public function game()
+    {
+    	return $this->belongsTo('App\Models\v1\Game','game_id');
+    }
+
+    public function game_variation(){
+    	return $this->belongsTo('App\Models\v1\GameVariation','game_variation_id');    	
+    }
 }

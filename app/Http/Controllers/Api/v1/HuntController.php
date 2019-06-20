@@ -115,7 +115,7 @@ class HuntController extends Controller
 
 
     //Get Clue
-    public function getClue(Request $request){
+    public function getClue_old(Request $request){
         $validator = Validator::make($request->all(),[
                         'hunt_id'=> "required|exists:hunts,_id",
                         'star'   => "required|integer|between:1,5",
@@ -156,6 +156,64 @@ class HuntController extends Controller
         return response()->json($data);
     }
 
+    public function getClue(Request $request){
+        $validator = Validator::make($request->all(),[
+                        'hunt_id'=> "required|exists:hunts,_id",
+                        'star'   => "required|integer|between:1,5",
+                    ]);
+        
+        if ($validator->fails()) {
+            return response()->json(['message'=>$validator->messages()],422);
+        }
+
+        $huntId  = $request->get('hunt_id');
+        $clueId  = (int)$request->get('star');
+
+        $bestTime = HuntUser::select('hunt_id')
+                            ->with('hunt_user_details:_id,finished_in,hunt_user_id')
+                            ->where('hunt_id',$huntId)
+                            ->get()
+                            ->map(function($query){
+                                $finishedIn = $query->hunt_user_details->pluck('finished_in')->toArray();
+                                $query->finished_in = min(array_diff($finishedIn,array(0)));
+                                unset($query->hunt_user_details);
+                                return $query;
+                            });
+
+        
+        $hunt = Hunt::select('_id','name','location','place_name')
+                    ->with(['hunt_complexities'=>function($query) use ($clueId){
+                        $query->where('complexity',$clueId)
+                            ->select('hunt_id','complexity')
+                            ->with('hunt_clues:_id,hunt_complexity_id,location,game_id,game_variation_id,est_completion');
+                    }])
+                    ->where('_id',$huntId)
+                    ->first();
+        $location = $hunt->location['coordinates'];
+        
+        $huntClues = [];
+        $est_completion = "00:00:00";
+        if (count($hunt->hunt_complexities) > 0) {
+            foreach ($hunt->hunt_complexities[0]->hunt_clues as $key => $value) {
+                $huntClues[] = [$value->location['coordinates']['lng'],$value->location['coordinates']['lat']];
+            }
+
+            $est_completion = $hunt->hunt_complexities[0]->hunt_clues->pluck('est_completion')->toArray();
+        }
+        
+        $data = [
+                    'hunt_name' => ($hunt->name != "")?$hunt->name:$hunt->place_name,
+                    'latitude' => $location['lat'],
+                    'longitude' => $location['lng'],
+                    'clue' => $huntClues,
+                    'est_complete' => gmdate("H:i:s", array_sum($est_completion)),
+                    'best_time' => gmdate("H:i:s", min($bestTime->pluck('finished_in')->toArray())),
+                    'distance' => 0,
+                ];
+
+        return response()->json($data);
+    }
+
 
     //JOIS HUNT
     public function joinHunt(Request $request)
@@ -181,57 +239,159 @@ class HuntController extends Controller
                                                     ])
                                             ->first();
 
-        $huntUser = HuntUser::create([
+        $huntUserDetail = HuntUser::where([
                                         'user_id'            => $user->_id,
                                         'hunt_id'            => $huntId,
                                         'hunt_complexity_id' => $huntComplexitie->id,
-                                        'valid'              => false,
-                                    ]);
-
-        foreach ($huntComplexitie->hunt_clues as $key => $value) {
-            $huntUserDetail = HuntUserDetail::create([
-                                                        'hunt_user_id'      => $huntUser->id,
-                                                        'location'          => $value->location,
-                                                        'game_id'           => $value->game_id,
-                                                        'game_variation_id' => $value->game_variation_id,
-                                                        'est_completion'    => $value->est_completion,
-                                                        'revealed_at'       => null,
-                                                        'started_at'        => null,
-                                                        'finished_at'       => null
-                                                    ]);
-        }
-
-        return response()->json([
+                                    ])
+                            ->first();
+        if($huntUserDetail){
+            return response()->json([
                                 'status'=>true,
                                 'message'=>'user has been successfully participants'
                             ]);
+        } else {
+            $huntUser = HuntUser::create([
+                                            'user_id'            => $user->_id,
+                                            'hunt_id'            => $huntId,
+                                            'hunt_complexity_id' => $huntComplexitie->id,
+                                            'valid'              => false,
+                                        ]);
+
+            foreach ($huntComplexitie->hunt_clues as $key => $value) {
+                $huntUserDetail = HuntUserDetail::create([
+                                                            'hunt_user_id'      => $huntUser->id,
+                                                            'location'          => $value->location,
+                                                            'game_id'           => $value->game_id,
+                                                            'game_variation_id' => $value->game_variation_id,
+                                                            'est_completion'    => $value->est_completion,
+                                                            'revealed_at'       => null,
+                                                            'finished_in'       => 0
+                                                        ]);
+            }
+            return response()->json([
+                                'status'=>true,
+                                'message'=>'user has been successfully participants'
+                            ]);
+        }
     }
 
+    //CLUE complete
+    public function clueRevealed(Request $request){
+        $validator = Validator::make($request->all(),[
+                        'hunt_user_details_id' => "required|exists:hunt_user_details,_id",
+                        'time'=> "required|integer",
+                    ]);
+        if ($validator->fails()) {
+            return response()->json(['message'=>$validator->messages()],422);
+        }
 
-    //GET HUNT USER
-    public function getHuntUser(Request $request){
         $user = Auth::User();
-        $userId = $user->id;
+        $id = $request->get('hunt_user_details_id');
+        $data = [
+                    'revealed_at' => new MongoDBDate(),
+                    'finished_in' => (int)$request->get('time'),
+                ];
+        HuntUserDetail::where('_id',$id)->update($data);
+        return response()->json([
+                                'status'=>true,
+                                'message'=>'Revealed updated successfully '
+                            ]);   
+    }
 
-        $huntUser = HuntUser::select('user_id','hunt_id','status')
-                            ->where('user_id',$userId)
-                            ->with('hunt:_id,name,place_name')
-                            ->with('hunt_user_details:_id,hunt_user_id,location,est_completion,revealed_at,started_at,finished_at')
+    //CLUE INFO
+    public function clueInfo(Request $request){
+        $user = Auth::User();        
+        $huntUser = HuntUser::with([
+                                    'hunt_user_details:_id,hunt_user_id,revealed_at,finished_in',
+                                    'hunt:_id,name,place_name'
+                                ])
+                            ->where('user_id',$user->id)
                             ->first();
 
-        $est_completion = $huntUser->hunt_user_details->pluck('est_completion')->toArray();
-
+        $clue_complete = $huntUser->hunt_user_details->pluck('revealed_at')->filter()->count();
         $data = [
-                    'hunt_name'    => ($huntUser->hunt->name != "")?$huntUser->hunt->name:$huntUser->hunt->place_name,
-                    'clue'         => $huntUser->hunt_user_details->count(),
-                    'est_complete' => gmdate("H:i:s", array_sum($est_completion)*60),
-                    'distance'     => ""
+                    'hunt_name' => ($huntUser->hunt->name != "")?$huntUser->hunt->name:$huntUser->hunt->place_name,
+                    'clues' => $clue_complete.' Of '.$huntUser->hunt_user_details->count(),
+                    'distance' => 0,
+                    'current_time' => '00:00:00',
                 ];
-
         return response()->json([
                                 'status'  => true,
                                 'message' => 'user has been retrieved successfully',
                                 'data'    => $data
+                            ]);
+    }
+
+
+    //CLUE BASED GAME DETAILS
+    public function clueGame(Request $request){
+        $validator = Validator::make($request->all(),[
+                        'hunt_user_details_id' => "required|exists:hunt_user_details,_id",
+                    ]);
+        if ($validator->fails()) {
+            return response()->json(['message'=>$validator->messages()],422);
+        }
+
+        $user = Auth::User();
+        $huntUserDetailId = $request->get('hunt_user_details_id');
+        
+        $huntUser = HuntUser::with(['hunt_user_details'=>function($query) use ($huntUserDetailId){
+                                $query->where('_id',$huntUserDetailId)
+                                    ->with('game:_id,name,identifier','game_variation:_id,variation_name');
+                            }])
+                            ->where('user_id',$user->id)
+                            ->first();
+
+
+        $data = [
+                    'game' => $huntUser->hunt_user_details[0]->game,
+                    'game_variation' => $huntUser->hunt_user_details[0]->game_variation,
+                ];
+
+        return response()->json([
+                                'status'  => true,
+                                'message' => 'Clue game has been retrieved successfully',
+                                'data'    => $data
+                            ]);
+    }
+
+    //GET HUNT USER
+    public function getHuntUser(Request $request){
+        $validator = Validator::make($request->all(),[
+                        'hunt_id'=> "required|exists:hunts,_id",
+                        'star'=> "required",
+                    ]);
+        if ($validator->fails()) {
+            return response()->json(['message'=>$validator->messages()],422);
+        }
+
+        $user = Auth::user();
+        
+        $data = $request->all();
+        $star = (int)$request->get('star');
+        $huntId = $request->get('hunt_id');
+
+        $huntComplexitie = HuntComplexitie::with('hunt_clues')
+                                            ->where([
+                                                        'complexity' => $star,
+                                                        'hunt_id'    => $huntId,
+                                                    ])
+                                            ->first();
+
+        $huntUser = HuntUser::select('_id','user_id','hunt_id','hunt_complexity_id',)
+                            ->where([
+                                        'user_id'            => $user->_id,
+                                        'hunt_id'            => $huntId,
+                                        'hunt_complexity_id' => $huntComplexitie->id,
+                                    ])
+                            ->with('hunt_user_details:_id,hunt_user_id,location,est_completion')
+                            ->first();
+
+        return response()->json([
+                                'status'  => true,
+                                'message' => 'hunt user has been retrieved successfully',
+                                'data'    => $huntUser
                             ]);
     }
 
