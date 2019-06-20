@@ -42,8 +42,8 @@ class UserController extends Controller
                         'password' 	 => "required|string|min:6",
                         'username'   => "required|string|unique:users,username",
                         'dob'  		 => "required|date_format:d-m-Y",
-                        'longitude' => ['required','regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'], 
-                        'latitude'  => ['required','regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
+                        'longitude' => 'required', 
+                        'latitude'  => 'required',
                         'device_type'  => "nullable|string",
                         'firebase_id'  => "nullable|string",
                         //'reffered_by'  => "nullable|string|exists:users,reffered_id",
@@ -53,6 +53,8 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json(['message'=>$validator->messages()], 422);
         }
+
+        \Log::info($request->all());
         $referralCode = $request->reffered_by;
         if (!empty($referralCode)) {
             $referralUser = User::where('reffered_id',$referralCode)->first();
