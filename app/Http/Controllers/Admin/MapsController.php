@@ -81,7 +81,7 @@ class MapsController extends Controller
         $cluesCoordinates = [];
         if (!empty($location->hunt_complexities[0]->hunt_clues)) {
             foreach($location->hunt_complexities[0]->hunt_clues as $clues){
-                $cluesCoordinates[] = [$clues->location['coordinates']['lng'],$clues->location['coordinates']['lat']];
+                $cluesCoordinates[] = [$clues->location['coordinates'][0],$clues->location['coordinates'][1]];
             }
         }
         // echo "<pre>";
@@ -131,16 +131,16 @@ class MapsController extends Controller
         foreach (json_decode($request->get('coordinates')) as $key => $value) {
             $location['Type'] = 'Point';
             $location['coordinates'] = [
-                                            'lng' => $value[0],
-                                            'lat' => $value[1]
+                                            $value[0],
+                                            $value[1]
                                         ];
             // $locationdata[] = $location;
             $huntComplexities = $hunt->hunt_complexities()->updateOrCreate(['hunt_id'=>$id,'complexity'=>$complexity],['hunt_id'=>$id,'complexity'=>$complexity]);
 
             $huntComplexities->hunt_clues()->updateOrCreate([
                                 'hunt_complexity_id' =>  $huntComplexities->_id,
-                                'location.coordinates.lng' =>  $value[0],
-                                'location.coordinates.lat' =>  $value[1],
+                                'location.coordinates.0' =>  $value[0],
+                                'location.coordinates.1' =>  $value[1],
                             ],[
                                 'hunt_complexity_id' => $huntComplexities->_id,
                                 'location'           => $location,
@@ -276,8 +276,8 @@ class MapsController extends Controller
 
         $location['Type'] = 'Point';
         $location['coordinates'] = [
-                                        'lng' => (float)$request->get('longitude'),
-                                        'lat' => (float)$request->get('latitude')
+                                        (float)$request->get('longitude'),
+                                        (float)$request->get('latitude')
                                     ];
 
         $data['location'] = $location;
@@ -349,8 +349,8 @@ class MapsController extends Controller
         // foreach ($cityInfo as $key => $value) {
         //     $location['Type'] = 'Point';
         //     $location['coordinates'] = [
-        //                                     'lng' => (float)$value->longitude,
-        //                                     'lat' => (float)$value->latitude
+        //                                     (float)$value->longitude,
+        //                                     (float)$value->latitude
         //                                 ];
         //     $objectID = new ObjectID($value->_id);
         //     $hunt['_id'] = $objectID;
@@ -379,13 +379,13 @@ class MapsController extends Controller
         //     foreach ($value->place_clues['coordinates'] as $key1 => $clues) {
         //         $location['Type'] = 'Point';
         //         $location['coordinates'] = [
-        //                                         'lng' => $clues[0],
-        //                                         'lat' => $clues[1]
+        //                                         $clues[0],
+        //                                         $clues[1]
         //                                     ];
         //         $huntComplexitie->hunt_clues()->updateOrCreate([
         //                             'hunt_complexity_id' =>  $huntComplexitie->_id,
-        //                             'location.coordinates.lng' =>  $clues[0],
-        //                             'location.coordinates.lat' =>  $clues[1],
+        //                             'location.coordinates' =>  $clues[0],
+        //                             'location.coordinates' =>  $clues[1],
         //                         ],[
         //                             'hunt_complexity_id' => $huntComplexitie->_id,
         //                             'location'           => $location,

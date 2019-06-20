@@ -26,4 +26,10 @@ class HuntComplexitie extends Eloquent
     {
         return $this->hasMany('App\Models\v1\HuntClue','hunt_complexity_id');
     }
+
+    public function hunt_users()
+    {
+        return $this->hasMany('App\Models\v1\HuntUser','hunt_complexity_id');
+    }
+       
 }

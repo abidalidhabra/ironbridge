@@ -36,8 +36,8 @@
                             <label class="control-label">Place Name:</label>
                             <input type="text" class="form-control" placeholder="Enter place name" name="place_name" id="place_name" autocomplete="off" value="{{ $location->place_name }}" readonly="">
                             <input type="hidden" name="id" value="{{ $location->_id }}" />
-                            <input type="hidden" name="latitude" id="latitude" value="{{ $location->location['coordinates']['lat'] }}" />
-                            <input type="hidden" name="longitude" id="longitude" value="{{ $location->location['coordinates']['lng'] }}" />
+                            <input type="hidden" name="latitude" id="latitude" value="{{ $location->location['coordinates'][1] }}" />
+                            <input type="hidden" name="longitude" id="longitude" value="{{ $location->location['coordinates'][0] }}" />
                         </div>
                         <div class="form-group">
                             <label class="control-label">City:</label>
@@ -106,7 +106,7 @@
             })
 
             function initMap() {
-                var uluru = { lat: {{ $location->location['coordinates']['lat'] }} , lng: {{ $location->location['coordinates']['lng'] }} };
+                var uluru = { lat: {{ $location->location['coordinates'][1] }} , lng: {{ $location->location['coordinates'][0] }} };
                 var map = new google.maps.Map(document.getElementById('map'), {
                     zoom: 16,
                     center: uluru,

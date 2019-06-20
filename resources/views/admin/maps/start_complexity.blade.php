@@ -57,7 +57,7 @@
                     <div class="row" id="game_box">
                         @if(isset($location->hunt_complexities[0]))
                             @forelse ($location->hunt_complexities[0]->hunt_clues as $key => $gamedetails)
-                                <div class="game_section{{ $key }} selected_game" id="game_{{ str_replace('.','_',substr($gamedetails->location['coordinates']['lng'], 0, 12).substr($gamedetails->location['coordinates']['lat'],0,12)) }}">
+                                <div class="game_section{{ $key }} selected_game" id="game_{{ str_replace('.','_',substr($gamedetails->location['coordinates'][0], 0, 12).substr($gamedetails->location['coordinates'][1],0,12)) }}">
                                     <div class="form-group col-md-8">
                                         <label>Game:</label>
                                         <select name="game_id[]" class="form-control" data-id="{{ $key }}">
@@ -125,7 +125,7 @@
     
     <script type="text/javascript">
         function initMap() {
-            var uluru = { lat: {{ $location->location['coordinates']['lat'] }} , lng: {{ $location->location['coordinates']['lng'] }} };
+            var uluru = { lat: {{ $location->location['coordinates'][1] }} , lng: {{ $location->location['coordinates'][0] }} };
             var map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 18,
                 center: uluru,
@@ -162,14 +162,14 @@
                
                         foreach($location->hunt_complexities[0]->hunt_clues->pluck('location.coordinates') as $coordinates){
                         $coord [] = [
-                                    'lat'=>$coordinates['lat'],
-                                    'lng'=>$coordinates['lng'],
+                                    'lat'=>$coordinates[1],
+                                    'lng'=>$coordinates[0],
                                     ];
             
             ?>
                 // var coord = ;
                   new google.maps.Marker({
-                      position: { lat: {{ $coordinates['lat'] }} , lng: {{ $coordinates['lng'] }} },
+                      position: { lat: {{ $coordinates[1] }} , lng: {{ $coordinates[0] }} },
                       map: map,
                       size:[10,10],
                       icon:icon

@@ -76,9 +76,11 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 
 
 		/** Clues related requests  **/
-		Route::post('clueRevealed', 'HuntController@clueRevealed');
-		Route::get('clueInfo', 'HuntController@clueInfo');
-		Route::post('clueGame', 'HuntController@clueGame');
+		Route::post('clueRevealed', 'ClueController@clueRevealed');
+		Route::post('userHuntInfo', 'ClueController@userHuntInfo');
+		Route::post('clueGame', 'ClueController@clueGame');
+		Route::get('quitClue', 'ClueController@quitClue');
+		Route::get('cluePause', 'ClueController@cluePause');
 	});
 
 });

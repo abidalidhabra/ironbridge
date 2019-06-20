@@ -56,7 +56,7 @@ class ClueController extends Controller
     }
 
     //CLUE INFO
-    public function clueInfo(Request $request){
+    public function userHuntInfo(Request $request){
         $user = Auth::User();        
         $huntUser = HuntUser::with([
                                     'hunt_user_details:_id,hunt_user_id,revealed_at,finished_in,status',
@@ -109,6 +109,70 @@ class ClueController extends Controller
                                 'status'  => true,
                                 'message' => 'Clue game has been retrieved successfully',
                                 'data'    => $data
+                            ]);
+    }
+
+    //REMOVE PARTICIPET
+    public function quitClue(Request $request){
+        $validator = Validator::make($request->all(),[
+                        'hunt_id'=> "required|exists:hunts,_id",
+                        'star'=> "required",
+                    ]);
+        if ($validator->fails()) {
+            return response()->json(['message'=>$validator->messages()],422);
+        }
+        $data = $request->all();
+        $star = (int)$request->get('star');
+        $huntId = $request->get('hunt_id');
+        $user = Auth::User();
+        $huntComplexitie = HuntComplexitie::with('hunt_users')
+                                            ->where([
+                                                        'complexity' => $star,
+                                                        'hunt_id'    => $huntId,
+                                                    ])
+                                            ->first();
+        $huntUser = HuntUser::where('hunt_complexity_id',$huntComplexitie->id)
+                            ->where('user_id',$user->id)
+                            ->first();
+        if ($huntUser) {
+            $huntUser->hunt_user_details()->delete();
+            $huntUser->delete();
+        }
+        return response()->json([
+                                'status'  => true,
+                                'message' => 'Clue has been successfully delete'
+                            ]);
+    }
+
+    //CLUE PAUSE
+    public function cluePause(Request $request){
+        $validator = Validator::make($request->all(),[
+                        'hunt_user_details_id' => "required|exists:hunt_user_details,_id"
+                    ]);
+        if ($validator->fails()) {
+            return response()->json(['message'=>$validator->messages()],422);
+        }
+
+        $huntUserDetail = HuntUserDetail::where('_id',$request->get('hunt_user_details_id'))
+                                        ->first();
+        $huntUserDetail->update(['status'=>'pause']);
+
+        if ($huntUserDetail) {
+            $clueDetail = HuntUserDetail::where('hunt_user_id',$huntUserDetail->hunt_user_id)
+                            ->where('status','pause')
+                            ->count();
+
+            if ($clueDetail == 1) {
+                $data = [
+                    'started_at' => new MongoDBDate(),
+                ];                
+                $huntUserDetail->update($data);
+            }
+
+        }
+        return response()->json([
+                                'status'  => true,
+                                'message' => 'Clue pause has been updated successfully',
                             ]);
     }
 }
