@@ -69,8 +69,8 @@ class UserController extends Controller
 		$username 	= $request->username;
 		// $dob 		= $request->dob;
         $dob        = new MongoDBDate(Carbon::parse($request->get('dob')));
-		$longitude 	= $request->longitude;
-		$latitude 	= $request->latitude;
+		$longitude 	= (float)$request->longitude;
+		$latitude 	= (float)$request->latitude;
 		$deviceType = $request->device_type;
 		$firebaseId = $request->firebase_id;
 		$refferedBy = $request->reffered_by;

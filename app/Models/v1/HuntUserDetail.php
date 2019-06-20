@@ -14,7 +14,8 @@ class HuntUserDetail extends Eloquent
 		'game_variation_id',
 		'est_completion',
 		'revealed_at',
-		'finished_in'
+		'finished_in',
+        'status'
 	];
 
 	protected $dates = [

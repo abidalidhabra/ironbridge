@@ -12,6 +12,8 @@ class HuntUser extends Eloquent
 		'hunt_id',
 		'hunt_complexity_id',
 		'valid',
+        'status',
+        'hunt_mode'
     ];
 
     public function hunt()
