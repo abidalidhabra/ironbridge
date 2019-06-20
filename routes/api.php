@@ -33,7 +33,9 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 	// Route::post('updateClues', 'LocationController@updateClues');
 	// Route::get('getLocation', 'LocationController@getLocation');
 	// Route::get('getClue', 'LocationController@getClue');
-	
+	Route::post('updateClues', 'HuntController@updateClues');
+	Route::get('getLocation', 'HuntController@getLocation');
+	Route::get('getClue', 'HuntController@getClue');
 	Route::get('getParks1', 'HuntController@getParks1');
 	
 	
@@ -67,9 +69,9 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 		Route::post('me', 'AuthController@me');
 
 		/** Hunt related requests **/
-		Route::post('updateClues', 'HuntController@updateClues');
-		Route::get('getLocation', 'HuntController@getLocation');
-		Route::get('getClue', 'HuntController@getClue');
+		// Route::post('updateClues', 'HuntController@updateClues');
+		// Route::get('getLocation', 'HuntController@getLocation');
+		// Route::get('getClue', 'HuntController@getClue');
 		Route::post('joinHunt', 'HuntController@joinHunt');
 		Route::post('getHuntUser', 'HuntController@getHuntUser');
 		Route::post('clueRevealed', 'HuntController@clueRevealed');

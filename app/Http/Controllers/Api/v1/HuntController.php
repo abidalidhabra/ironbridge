@@ -115,7 +115,7 @@ class HuntController extends Controller
 
 
     //Get Clue
-    public function getClue_old(Request $request){
+    public function getClue(Request $request){
         $validator = Validator::make($request->all(),[
                         'hunt_id'=> "required|exists:hunts,_id",
                         'star'   => "required|integer|between:1,5",
@@ -156,7 +156,7 @@ class HuntController extends Controller
         return response()->json($data);
     }
 
-    public function getClue(Request $request){
+    public function getClue1(Request $request){
         $validator = Validator::make($request->all(),[
                         'hunt_id'=> "required|exists:hunts,_id",
                         'star'   => "required|integer|between:1,5",
@@ -169,7 +169,7 @@ class HuntController extends Controller
         $huntId  = $request->get('hunt_id');
         $clueId  = (int)$request->get('star');
 
-        $bestTime = HuntUser::select('hunt_id')
+        $huntUser = HuntUser::select('hunt_id')
                             ->with('hunt_user_details:_id,finished_in,hunt_user_id')
                             ->where('hunt_id',$huntId)
                             ->get()
@@ -198,7 +198,13 @@ class HuntController extends Controller
                 $huntClues[] = [$value->location['coordinates']['lng'],$value->location['coordinates']['lat']];
             }
 
-            $est_completion = $hunt->hunt_complexities[0]->hunt_clues->pluck('est_completion')->toArray();
+            $est_sec = $hunt->hunt_complexities[0]->hunt_clues->pluck('est_completion')->toArray();
+            $est_completion = gmdate("H:i:s", array_sum($est_sec));
+        }
+
+        $bestTime = "00:00:00";
+        if (count($huntUser->pluck('finished_in')) > 0) {
+            $bestTime = gmdate("H:i:s", min($huntUser->pluck('finished_in')->toArray()));
         }
         
         $data = [
@@ -206,8 +212,8 @@ class HuntController extends Controller
                     'latitude' => $location['lat'],
                     'longitude' => $location['lng'],
                     'clue' => $huntClues,
-                    'est_complete' => gmdate("H:i:s", array_sum($est_completion)),
-                    'best_time' => gmdate("H:i:s", min($bestTime->pluck('finished_in')->toArray())),
+                    'est_complete' => $est_completion,
+                    'best_time' => $bestTime,
                     'distance' => 0,
                 ];
 
@@ -379,7 +385,7 @@ class HuntController extends Controller
                                                     ])
                                             ->first();
 
-        $huntUser = HuntUser::select('_id','user_id','hunt_id','hunt_complexity_id',)
+        $huntUser = HuntUser::select('_id','user_id','hunt_id','hunt_complexity_id')
                             ->where([
                                         'user_id'            => $user->_id,
                                         'hunt_id'            => $huntId,
