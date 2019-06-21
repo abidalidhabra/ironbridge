@@ -175,4 +175,57 @@ class ClueController extends Controller
                                 'message' => 'Clue pause has been updated successfully',
                             ]);
     }
+
+
+    //SKELETON
+    public function skeleton(Request $request){
+        $validator = Validator::make($request->all(),[
+                        'hunt_id'=> "required|exists:hunts,_id",
+                        'star'=> "required",
+                    ]);
+        if ($validator->fails()) {
+            return response()->json(['message'=>$validator->messages()],422);
+        }
+        $user = Auth::User();
+        $star = (int)$request->get('star');
+        $huntId = $request->get('hunt_id');
+        $huntComplexitie = HuntComplexitie::with('hunt_users')
+                                            ->where([
+                                                        'complexity' => $star,
+                                                        'hunt_id'    => $huntId,
+                                                    ])
+                                            ->first();
+        $huntUser = HuntUser::where('hunt_complexity_id',$huntComplexitie->id)
+                            ->where('user_id',$user->id)
+                            ->where('skeleton.used',false)
+                            // ->project([
+                            //     'skeleton' => [
+                            //         '$elemMatch' => [
+                            //             'used' => false
+                            //         ]
+                            //     ]
+                            //     // 'skeleton' => [
+                            //     //     '$slice' => 1
+                            //     // ]
+                            // ])
+                            ->first();
+
+        $skeletonKey = "";
+        foreach ($huntUser->skeleton as $key => $value) {
+            if ($value['used'] == false) {
+                $skeletonKey = $value['key'];
+                break;
+            }
+        }
+
+        HuntUser::where('hunt_complexity_id',$huntComplexitie->id)
+                            ->where('user_id',$user->id)
+                            ->where('skeleton.key',$skeletonKey)
+                            ->update(['skeleton.$.used'=>true]);
+
+        return response()->json([
+                                'status'  => true,
+                                'message' => 'Skeleton used has been successfully'
+                            ]);
+    }
 }

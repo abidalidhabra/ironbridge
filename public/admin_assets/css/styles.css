@@ -106,6 +106,7 @@ header{
     float: left;
     background: #FDFDFD;
     border-right: 1px solid #F7F7F7;
+    position: absolute !important;
 }
 .innercategories {
     display: inline-block;
@@ -131,7 +132,7 @@ header{
     margin-top: 13px;
 }
 .activelist {
-    width: 85% !important;
+    width: 95% !important;
     border-radius: 0px 26px 26px 0px;
     background: #000;
     /*background: url(../images/bgimg2.png);
@@ -147,6 +148,7 @@ header{
     padding-left: 30px;
     padding-top: 20px;
     padding-right: 30px;
+    float: right;
 }
 .users_datatablebox{
     display: inline-block;
@@ -893,11 +895,131 @@ i.iconsetaddbox{
 
 
 
+.left_paretboxpart{
+    position: relative;
+}
+
+.content-wrapper {
+  /*height: 100vh;*/
+  /*display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;*/
+  /*background: linear-gradient(135deg, #ff5f6d 0%, #ffc371 100%);*/
+}
 
 
 
+.nav-offcanvas {
+  width: 100%;
+  /*background: linear-gradient(135deg, #fbda61 0%, #f76b1c 100%);*/
+  /*height: 100vh;*/
+  position: relative;
+  /*overflow-x: auto;*/
+  /*z-index: 2000;*/
+  /*padding: 50px 0;*/
+  /*top: 0;*/
+  /*left: -300px;*/
+  transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.nav-offcanvas-menu ul {
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style: none;
+}
+.nav-offcanvas-menu ul li.activelist{
+    border-radius: 0px 26px 26px 0px;
+    background: #000;
+}
+.nav-offcanvas-menu ul li a {
+    
+    width: 100%;
+    display: inline-block;
+    font-family: 'Montserrat-Bold';
+    font-size: 18px;
+    color: #000;
+    padding-left: 18px;
+    margin-bottom: 13px;
+    margin-top: 13px;
+}
+/*.nav-offcanvas-menu ul li a:hover {
+  -webkit-transform: translateX(10px);
+          transform: translateX(10px);
+}*/
+.nav-offcanvas.open {
+  left: 0;
+}
+
+.offcanvas-overlay {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 1999;
+  transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  visibility: hidden;
+  opacity: 0;
+}
+.offcanvas-overlay.on {
+  opacity: 1;
+  visibility: visible;
+}
 
 
+
+.hamburgerboxdis{
+    display: inline-block;
+    float: left;
+    margin-right: 18px;
+}
+
+.hamburger {
+    position: relative;
+    left: 0;
+    top: 5px;
+    cursor: pointer;
+    display: none;
+}
+.hamburger span {
+    color: #C0B08C;
+    font-size: 30px;
+    cursor: pointer;
+}
+.topmenuopenbtn {
+    display: inline-block !important;
+    float: left;
+    margin-top: 0px;
+    margin-left: 0px;
+}
+
+
+.closebtnboxiner{
+    display: none;
+}
+.nav-offcanvas .close {
+    position: absolute;
+    left: 17px;
+    top: 7px;
+    outline: 0;
+    opacity: 1;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    cursor: pointer;
+    /* transition: .3s ease; */
+}
+.nav-offcanvas .close span {
+    font-size: 48px;
+    color: #C0B08C;
+    text-shadow: none;
+}
+/*.nav-offcanvas .close:hover {
+  -webkit-transform: rotate(90deg);
+          transform: rotate(90deg);
+}*/
 
 
 
@@ -913,14 +1035,105 @@ i.iconsetaddbox{
 @media (max-width: 1199px){	
 	
 }
+@media (max-width: 1042px){
+    .iosdeviceuser_text img{
+        width: 40px;
+    }
+    .iosdeviceuser_text h3{
+        font-size: 20px;
+    }
+    .iosdeviceuser_text p{
+        font-size: 14px;
+    }
+    .total_usersdetlis ul li img{
+        width: 40px;
+    }
+    .total_usersdetlis ul li h3{
+        font-size: 20px;
+    }
+    .total_usersdetlis ul li p{
+        font-size: 14px;
+    }
+    .verified_detlisbox ul li img{
+        width: 40px;
+    }
+    .verified_detlisbox ul li h3{
+        font-size: 20px;
+    }
+    .verified_detlisbox ul li p{
+        font-size: 14px;
+    }
+}
 @media (max-width: 991px){
-	
+    .closebtnboxiner{
+        display: inline-block;
+    }
+    header{
+        padding-left: 20px;
+        padding-right: 25px;
+    }
+    .logout_rightbox{
+        float: right;
+        width: 150px;
+        text-align: right;
+    }
+    .logo_leftbox{
+        width: 150px;
+    }
+    .right_paddingboxpart{
+        display: inline-block;
+        width: 100%;
+    }
+    .hamburger{
+        display: inline-block;
+    }
+	.nav-offcanvas {
+        width: 249px;
+        background: #fff;
+        height: 100vh;
+        position: fixed;
+        overflow-x: auto;
+        z-index: 2000;
+        padding: 50px 0;
+        padding-top: 85px;
+        top: 0;
+        left: -300px;
+        transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        /*border-right: 1px solid #C0B08C;*/
+        border-right: 1px solid #F7F7F7;
+    }
 }
 @media (max-width: 767px){
-
+    .right_paddingboxpart{
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    .signeup_innerborderbox{
+        margin-bottom: 18px;
+    }
+    .centr_paretboxpart{
+        width: 100%;
+    }
+    .right_paretboxpart{
+        width: 100%;
+        margin-left: 0px;
+    }
+    .verified_detlisbox{
+        padding-top: 0;
+    }
 }
 @media (max-width: 479px){
-	
+    .total_usersdetlis ul li{
+        margin-bottom: 10px;
+        margin-top: 10px;width: 100%;
+    }
+    .device_childbox{
+        width: 100%;
+        padding-bottom: 0;
+    }
+    .city_childbox{
+        width: 100%;
+    }
 }
 @media (max-width: 360px){
 	

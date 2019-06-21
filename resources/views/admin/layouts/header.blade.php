@@ -1,4 +1,7 @@
 <header>
+    <div class="hamburgerboxdis">
+        <a id="offCanvas" class="hamburger"><span> ☰ </span></a>
+    </div>    
     <div class="logo_leftbox">
         <img src="{{ asset('admin_assets/svg/ib-logo.svg') }}">
     </div>
