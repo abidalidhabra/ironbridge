@@ -11,6 +11,7 @@ use App\Models\v1\Hunt;
 use App\Models\v1\PlaceStar;
 use App\Models\v1\HuntComplexitie;
 use Validator;
+use Carbon\Carbon;
 use App\Models\v1\Game;
 use App\Models\v1\GameVariation;
 use MongoDB\BSON\ObjectID;
@@ -23,7 +24,7 @@ class MapsController extends Controller
     }
 
     public function getMaps(Request $request){
-    	$city = Hunt::select('latitude','longitude','place_name','city','province','country','custom_name')
+    	$city = Hunt::select('latitude','longitude','place_name','city','province','country','custom_name','updated_at')
     						->get();
     	return DataTables::of($city)
         ->addIndexColumn()
@@ -34,6 +35,9 @@ class MapsController extends Controller
                 return '-';
             }
         })
+        ->editColumn('updated_at', function($city){
+            return Carbon::parse($city->updated_at)->format('d-M-Y @ h:i A');
+        })
         ->addColumn('map', function($city){
             return '<a href="'.route('admin.boundary_map',$city->id).'" ><img src="'.asset('admin_assets/svg/map-marke-icon.svg').'"</a>';
         })
@@ -42,6 +46,12 @@ class MapsController extends Controller
                 <a href="javascript:void(0)" class="delete_location" data-action="delete" data-placement="left" data-id="'.$city->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>
             </a>';
         })
+        // ->order(function ($city) {
+        //             if (request()->has('updated_at')) {
+        //                 $city->orderBy('updated_at', 'DESC');
+        //             }
+                    
+        //         })
         ->rawColumns(['map','action'])
         ->make(true);
     }

@@ -22,6 +22,7 @@
                 <thead>
                     <tr>
                         <th>Sr</th>
+                        <th>Update Date</th>
                         <th>Name</th>
                         <th>Place Name</th>
                         <th>Country</th>
@@ -48,7 +49,7 @@
                 processing: true,
                 responsive: true,
                 serverSide: true,
-                order: [[5, 'asc']],
+                order: [[6, 'asc']],
                 lengthMenu: [[10, 50, 100, -1], [10, 50, 100, "All"]],
                 ajax: {
                     type: "get",
@@ -64,6 +65,7 @@
                 },
                 columns:[
                     { data:'DT_RowIndex',name:'_id' },
+                    { data:'updated_at',name:'updated_at' },
                     { data:'name',name:'name' },
                     { data:'place_name',name:'place_name' },
                     { data:'country',name:'country' },
