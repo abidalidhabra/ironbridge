@@ -98,7 +98,7 @@ class HuntController extends Controller
         }
 
         $clue = $request->get('star');
-        $location = Hunt::select('location','name')
+        $location = Hunt::select('location','name','place_name')
                                     ->whereHas('hunt_complexities', function ($query) use ($clue) {
                                         $query->where('complexity',(int)$clue);
                                     })
@@ -107,11 +107,12 @@ class HuntController extends Controller
                                     	$location = $query->location['coordinates'];
                                     	$query->latitude = $location[1];
                                     	$query->longitude = $location[0];
+                                        $query->name = ($query->name != "")?$query->name:$query->place_name;
                                     	unset($query->location);
                                     	return $query;
                                     });
 
-        return response()->json($location);
+        return response()->json(['message'=>'Hunt has been retrieved successfully','data'=>$location]);
     }
 
 
@@ -226,9 +227,10 @@ class HuntController extends Controller
                     'best_time'     => $bestTime,
                     'distance'      => 0,
                     'cost'          => $hunt->fees,
+                    'complexity'    => $clueId,
                 ];
 
-        return response()->json($data);
+        return response()->json(['message'=>'Hunt clues has been retrieved successfully','data'=>$data]);
     }
 
     //JOIS HUNT
@@ -269,10 +271,8 @@ class HuntController extends Controller
 
         if($huntUserDetail){
             return response()->json([
-                                'status'=>true,
-                                'message'=>'user has been successfully participants',
-                                //'data' => $huntUserDetail
-                            ]);
+                                'message'=>'User already exists',
+                            ],422);
         } else {
             $skeleton = [];
             $huntUser = HuntUser::create([
@@ -308,7 +308,6 @@ class HuntController extends Controller
                 $user->save();            
             }
             return response()->json([
-                                'status'=>true,
                                 'message'=>'user has been successfully participants'
                             ]);
         }   
@@ -353,7 +352,6 @@ class HuntController extends Controller
         }
         unset($huntUser->skeleton);
         return response()->json([
-                                'status'  => true,
                                 'message' => 'hunt user has been retrieved successfully',
                                 'data'    => $huntUser
                             ]);
@@ -386,7 +384,6 @@ class HuntController extends Controller
         
         
         return response()->json([
-                                'status'  => true,
                                 'message' => 'hunt has been retrieved successfully',
                                 'data'    => $hunt
                             ]);
@@ -414,7 +411,6 @@ class HuntController extends Controller
                                 return $query;
                             });
         return response()->json([
-                                'status'  => true,
                                 'message' => 'hunt has been retrieved successfully',
                                 'data'    => $huntUser
                             ]);

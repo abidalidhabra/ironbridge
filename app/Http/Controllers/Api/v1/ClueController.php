@@ -50,7 +50,6 @@ class ClueController extends Controller
 
         }
         return response()->json([
-                                'status'=>true,
                                 'message'=>'Revealed updated successfully '
                             ]);
     }
@@ -73,7 +72,6 @@ class ClueController extends Controller
                     'current_time' => '00:00:00',
                 ];
         return response()->json([
-                                'status'  => true,
                                 'message' => 'user has been retrieved successfully',
                                 'data'    => $data
                             ]);
@@ -106,7 +104,6 @@ class ClueController extends Controller
                 ];
 
         return response()->json([
-                                'status'  => true,
                                 'message' => 'Clue game has been retrieved successfully',
                                 'data'    => $data
                             ]);
@@ -139,7 +136,6 @@ class ClueController extends Controller
             $huntUser->delete();
         }
         return response()->json([
-                                'status'  => true,
                                 'message' => 'Clue has been successfully delete'
                             ]);
     }
@@ -171,7 +167,6 @@ class ClueController extends Controller
 
         }
         return response()->json([
-                                'status'  => true,
                                 'message' => 'Clue pause has been updated successfully',
                             ]);
     }
@@ -211,20 +206,21 @@ class ClueController extends Controller
                             ->first();
 
         $skeletonKey = "";
-        foreach ($huntUser->skeleton as $key => $value) {
-            if ($value['used'] == false) {
-                $skeletonKey = $value['key'];
-                break;
+        if ($huntUser) {
+            foreach ($huntUser->skeleton as $key => $value) {
+                if ($value['used'] == false) {
+                    $skeletonKey = $value['key'];
+                    break;
+                }
             }
+            HuntUser::where('hunt_complexity_id',$huntComplexitie->id)
+                                ->where('user_id',$user->id)
+                                ->where('skeleton.key',$skeletonKey)
+                                ->update(['skeleton.$.used'=>true]);
         }
 
-        HuntUser::where('hunt_complexity_id',$huntComplexitie->id)
-                            ->where('user_id',$user->id)
-                            ->where('skeleton.key',$skeletonKey)
-                            ->update(['skeleton.$.used'=>true]);
 
         return response()->json([
-                                'status'  => true,
                                 'message' => 'Skeleton used has been successfully'
                             ]);
     }
