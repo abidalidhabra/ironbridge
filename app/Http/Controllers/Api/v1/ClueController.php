@@ -19,7 +19,7 @@ class ClueController extends Controller
     public function clueRevealed(Request $request){
         $validator = Validator::make($request->all(),[
                         'hunt_user_details_id' => "required|exists:hunt_user_details,_id",
-                        'time'=> "required|integer",
+                        // 'time'=> "required|integer",
                     ]);
         if ($validator->fails()) {
             return response()->json(['message'=>$validator->messages()],422);
@@ -29,9 +29,11 @@ class ClueController extends Controller
         $id = $request->get('hunt_user_details_id');
         $data = [
                     'revealed_at' => new MongoDBDate(),
-                    'finished_in' => (int)$request->get('time'),
-                    'status'      => 'completed'
+                    // 'finished_in' => (int)$request->get('time'),
+                    'status'      => 'completed',
+                    'started_at'  => new MongoDBDate(),
                 ];
+
         $huntUserDetail = HuntUserDetail::where('_id',$id)->first();
         $huntUserDetail->update($data);
 
@@ -39,13 +41,31 @@ class ClueController extends Controller
             $clueDetail = HuntUserDetail::where('hunt_user_id',$huntUserDetail->hunt_user_id)
                             ->whereIn('status',['progress','pause'])
                             ->count();
-
+            
             if ($clueDetail == 0) {
                 HuntUser::where([
                                     '_id'=>$huntUserDetail->hunt_user_id,
                                     'user_id'=>$user->id,
                                 ])
-                        ->update(['status'=>'completed']);
+                        ->update([
+                                    'status'=>'completed',
+                                    'end_at'=> new MongoDBDate()
+                                ]);
+            }
+
+            $huntUserDetail_complate = HuntUserDetail::where('hunt_user_id',$huntUserDetail->hunt_user_id)
+                                                        ->where('status','completed')
+                                                        ->count();
+            
+            if($huntUserDetail_complate  == 1){
+                HuntUser::where([
+                                '_id'=>$huntUserDetail->hunt_user_id,
+                                'user_id'=>$user->id,
+                            ])
+                    ->update([
+                                'status'=>'completed',
+                                'started_at'=> new MongoDBDate()
+                            ]);       
             }
 
         }
@@ -216,7 +236,8 @@ class ClueController extends Controller
             HuntUser::where('hunt_complexity_id',$huntComplexitie->id)
                                 ->where('user_id',$user->id)
                                 ->where('skeleton.key',$skeletonKey)
-                                ->update(['skeleton.$.used'=>true]);
+                                ->update(['skeleton.$.used'=>true , 'skeleton.$.used_date'=>new MongoDBDate()]);
+
         }
 
 

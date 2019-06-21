@@ -14,7 +14,15 @@ class HuntUser extends Eloquent
 		'valid',
         'status',
         'hunt_mode',
-        'skeleton'
+        'skeleton',
+        'started_at',
+        'end_at',
+    ];
+
+    protected $dates = [
+        'revealed_at',
+        'started_at',
+        'end_at',
     ];
 
     public function hunt()

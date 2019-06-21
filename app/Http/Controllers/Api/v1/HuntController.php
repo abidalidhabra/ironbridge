@@ -8,6 +8,7 @@ use App\Models\v1\Hunt;
 use App\Models\v1\HuntComplexitie;
 use App\Models\v1\HuntUser;
 use App\Models\v1\HuntUserDetail;
+use App\Models\v1\Game;
 use Validator;
 use Auth;
 use MongoDB\BSON\UTCDateTime as MongoDBDate;
@@ -48,7 +49,6 @@ class HuntController extends Controller
             return response()->json(['message'=>$validator->messages()]);
         }
 
-
         $data  = json_decode($request->get('data'),true);
         $id = $data[0]['_id'];
         $hunt = Hunt::where('_id',$id)->first();
@@ -57,11 +57,20 @@ class HuntController extends Controller
             if (isset($value) && !empty($value)) {
                 $huntComplexities = $hunt->hunt_complexities()->updateOrCreate(['hunt_id'=>$id,'complexity'=>$key],['hunt_id'=>$id,'complexity'=>$key]);
                 foreach ($value as $latlng) {
+                    $game = Game::whereHas('game_variation')
+                                ->with('game_variation')
+                                ->get()
+                                ->random(1);
+                    
+                    $rand_variation = rand(0,$game[0]['game_variation']->count()-1);
+                    $gameVariationId = $game[0]['game_variation'][$rand_variation]->id;
+
                     $location['Type'] = 'Point';
                     $location['coordinates'] = [
                                                 $latlng[0],
                                                 $latlng[1]
                                             ];
+                    
                     $huntComplexities->hunt_clues()->updateOrCreate([
                                         'hunt_complexity_id' =>  $huntComplexities->_id,
                                         'location.coordinates.0' =>  $latlng[0],
@@ -69,21 +78,21 @@ class HuntController extends Controller
                                     ],[
                                         'hunt_complexity_id' => $huntComplexities->_id,
                                         'location'           => $location,
-                                        'game_id'            => null,
-                                        'game_variation_id'  => null
+                                        'game_id'            => $game[0]->id,
+                                        'game_variation_id'  => $gameVariationId
                                     ]);
                 }
 
             }
         }
 
-        $subject ="updated clues";
-        $email = 'arshikweb@gmail.com';
-        //$email = 'abidalidhabra@gmail.com';
-        $from="support@ironbridge1779.com";
-        $message = $request->get('data');
-        $headers = "From:".$from;
-        mail($email,$subject,$message,$headers);
+        // $subject ="updated clues";
+        // $email = 'arshikweb@gmail.com';
+        // //$email = 'abidalidhabra@gmail.com';
+        // $from="support@ironbridge1779.com";
+        // $message = $request->get('data');
+        // $headers = "From:".$from;
+        // mail($email,$subject,$message,$headers);
         
         return response()->json(['message' => 'Location has been updated successfully']); 
     }
@@ -282,6 +291,8 @@ class HuntController extends Controller
                                             'valid'              => false,
                                             'status'             => 'progress',
                                             'hunt_mode'          => $request->get('hunt_mode'),
+                                            'started_at'         => null,
+                                            'end_at'             => null,
                                         ]);
 
             foreach ($huntComplexitie->hunt_clues as $key => $value) {
@@ -293,11 +304,14 @@ class HuntController extends Controller
                                                             'est_completion'    => $value->est_completion,
                                                             'revealed_at'       => null,
                                                             'finished_in'       => 0,
-                                                            'status'            => 'progress'
+                                                            'status'            => 'progress',
+                                                            'started_at'        => null,
+                                                            'end_at'            => null,
                                                         ]);
                 $skeleton[] = [
                                 'key'   => substr(str_shuffle(str_repeat("0123456789abcdefghijklmnopqrstuvwxyz", 10)), 0, 10),
-                                'used' => false
+                                'used'  => false ,
+                                'used_date'=>null
                             ];
             }
             $huntUser->skeleton = $skeleton;
@@ -371,6 +385,23 @@ class HuntController extends Controller
         $huntId  = $request->get('hunt_id');
         $starId  = (int)$request->get('star');
 
+        /*$hunt = Hunt::where('_id',$huntId)->first();
+        $from_location_latitude = $hunt->location['coordinates'][0];
+        $from_location_longitude = $hunt->location['coordinates'][1];
+        $radius = 100;*/
+         /*$driver = Driver::
+                whereHas('user',function($query) use ($from_location_latitude,$from_location_longitude){
+                    $query->select(DB::raw('( 6367 * acos( cos( radians('.$from_location_latitude.') ) * cos( radians( current_latitude ) ) * cos( radians( current_longitude ) - radians('.$from_location_longitude.') ) + sin( radians('.$from_location_latitude.') ) * sin( radians( current_latitude ) ) ) ) AS distance'))
+                    ->whereRaw(DB::raw('( 6367 * acos( cos( radians('.$from_location_latitude.') ) * cos( radians( current_latitude ) ) * cos( radians( current_longitude ) - radians('.$from_location_longitude.') ) + sin( radians('.$from_location_latitude.') ) * sin( radians( current_latitude ) ) ) )').' < ?',[3])
+                    ->orderBy('distance');
+                })*/
+        /*$driver = Hunt::select(\DB::raw('( 6367 * acos( cos( radians('.$from_location_latitude.') ) * cos( radians( location.coordinates.0 ) ) * cos( radians( location.coordinates.0 ) - radians('.$from_location_longitude.') ) + sin( radians('.$from_location_latitude.') ) * sin( radians( latitude ) ) ) ) AS distance'))
+                    ->whereRaw(\DB::raw('( 6367 * acos( cos( radians('.$from_location_latitude.') ) * cos( radians( location.coordinates.0 ) ) * cos( radians( location.coordinates.1 ) - radians('.$from_location_longitude.') ) + sin( radians('.$from_location_latitude.') ) * sin( radians( longitude ) ) ) )').' < ?',[3])
+                    ->orderBy('distance')
+                ->get();
+        print_r($products->toArray());
+        exit();*/
+                
         $hunt = HuntComplexitie::select('hunt_id','complexity')
                                 ->where('complexity',$starId)
                                 ->where('hunt_id','!=',$huntId)

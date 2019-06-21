@@ -17,11 +17,13 @@ class HuntUserDetail extends Eloquent
 		'finished_in',
         'status',
         'started_at',
+        'end_at',
 	];
 
 	protected $dates = [
         'revealed_at',
-        'started_at'
+        'started_at',
+        'end_at',
     ];
 
     public function game()
