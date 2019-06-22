@@ -67,12 +67,12 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 		Route::post('me', 'AuthController@me');
 
 		/** Hunt related requests **/
+		Route::get('getHuntsByDifficulty', 'HuntController@getHuntsByDifficulty');
 		Route::post('updateClues', 'HuntController@updateClues');
-		Route::get('getLocation', 'HuntController@getLocation');
-		Route::get('getHuntClue', 'HuntController@getHuntClue');
-		Route::post('userParticipate', 'HuntController@joinHunt');
+		Route::get('getHuntDetails', 'HuntController@getHuntDetails');
+		Route::post('participateInHunt', 'HuntController@participateInHunt');
 		Route::post('getHuntUser', 'HuntController@getHuntUser');
-		Route::get('huntList', 'HuntController@huntList');
+		Route::get('getNearByHunts', 'HuntController@getNearByHunts');
 		Route::get('huntPauseList', 'HuntController@huntPauseList');
 
 
@@ -80,7 +80,7 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 		Route::post('clueRevealed', 'ClueController@clueRevealed');
 		Route::get('userHuntInfo', 'ClueController@userHuntInfo');
 		Route::post('clueGame', 'ClueController@clueGame');
-		Route::get('userParticipateDelete', 'ClueController@quitClue');
+		Route::get('quitTheHunt', 'ClueController@quitTheHunt');
 		Route::get('cluePause', 'ClueController@cluePause');
 		Route::post('skeleton', 'ClueController@skeleton');
 	});

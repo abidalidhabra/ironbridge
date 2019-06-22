@@ -98,7 +98,7 @@ class HuntController extends Controller
     }
 
     //GET LOCATION
-    public function getLocation(Request $request){
+    public function getHuntsByDifficulty(Request $request){
         $validator = Validator::make($request->all(),[
                         'star'=> "required",
                     ]);
@@ -167,7 +167,7 @@ class HuntController extends Controller
         return response()->json($data);
     }
 
-    public function getHuntClue(Request $request){
+    public function getHuntDetails(Request $request){
         $validator = Validator::make($request->all(),[
                         'hunt_id'  => "required|exists:hunts,_id",
                         'star'     => "required|integer|between:1,5",
@@ -211,7 +211,7 @@ class HuntController extends Controller
         $location = $hunt->location['coordinates'];
         
         $huntClues = [];
-        $est_completion = "00:00:00";
+        
         if (count($hunt->hunt_complexities) > 0) {
             foreach ($hunt->hunt_complexities[0]->hunt_clues as $key => $value) {
                 $huntClues[] = [$value->location['coordinates'][0],$value->location['coordinates'][1]];
@@ -232,9 +232,9 @@ class HuntController extends Controller
                     'latitude'      => $location[0],
                     'longitude'     => $location[1],
                     'clue'          => $huntClues,
+                    'total_clue'    => count($huntClues),
                     'est_complete'  => $est_completion,
                     'best_time'     => $bestTime,
-                    'distance'      => 0,
                     'cost'          => $hunt->fees,
                     'complexity'    => $clueId,
                 ];
@@ -243,7 +243,7 @@ class HuntController extends Controller
     }
 
     //JOIS HUNT
-    public function joinHunt(Request $request)
+    public function participateInHunt(Request $request)
     {
         $validator = Validator::make($request->all(),[
                         'hunt_id'=> "required|exists:hunts,_id",
@@ -269,12 +269,12 @@ class HuntController extends Controller
                                                     ])
                                             ->first();
 
-        $huntUserDetail = HuntUser::select('user_id','hunt_id','hunt_complexity_id','status','hunt_mode','skeleton')
-                                    //->with('hunt_user_details') 
+        $huntUserDetail = HuntUser::select('user_id','hunt_id','hunt_complexity_id','status','hunt_mode','skeleton') 
                                     ->where([
                                         'user_id'            => $user->_id,
                                         'hunt_id'            => $huntId,
                                         'hunt_complexity_id' => $huntComplexitie->id,
+                                        'hunt_mode'          => $huntMode,
                                     ])
                             ->first();
 
@@ -290,7 +290,7 @@ class HuntController extends Controller
                                             'hunt_complexity_id' => $huntComplexitie->id,
                                             'valid'              => false,
                                             'status'             => 'progress',
-                                            'hunt_mode'          => $request->get('hunt_mode'),
+                                            'hunt_mode'          => $huntMode,
                                             'started_at'         => null,
                                             'end_at'             => null,
                                         ]);
@@ -372,7 +372,7 @@ class HuntController extends Controller
     }
 
     //HUT LIST
-    public function huntList(Request $request){
+    public function getNearByHunts(Request $request){
         $validator = Validator::make($request->all(),[
                         'hunt_id'=> "required|exists:hunts,_id",
                         'star'   => "required|integer|between:1,5",

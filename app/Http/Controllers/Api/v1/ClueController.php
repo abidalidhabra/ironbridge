@@ -130,7 +130,7 @@ class ClueController extends Controller
     }
 
     //REMOVE PARTICIPET
-    public function quitClue(Request $request){
+    public function quitTheHunt(Request $request){
         $validator = Validator::make($request->all(),[
                         'hunt_id'=> "required|exists:hunts,_id",
                         'star'=> "required",
