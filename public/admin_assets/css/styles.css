@@ -168,6 +168,7 @@ header{
 .customdatatable_box{
     display: inline-block;
     width: 100%;
+    overflow: auto;
 }
 .customdatatable_box table.dataTable.no-footer {
     border-bottom: 1px solid #f1f1f1;
@@ -260,6 +261,7 @@ header{
     width: 100%;
     text-align: center;
     margin-top: 90px;
+    margin-bottom: 50px;
 }
 .signup_innerbox{
     display: inline-block;
@@ -1022,8 +1024,13 @@ i.iconsetaddbox{
 }*/
 
 
+.modal-body.padboxset{
+    padding: 0;
+}
 
-
+.signup_innerbox{
+    width: 35%;
+}
 
 
 
@@ -1035,7 +1042,15 @@ i.iconsetaddbox{
 @media (max-width: 1199px){	
 	
 }
+@media (max-width: 1068px){
+    .locationinfobox h2{
+        font-size: 22px;
+    }
+}
 @media (max-width: 1042px){
+    .locationinfobox h2{
+        font-size: 22px;
+    }
     .iosdeviceuser_text img{
         width: 40px;
     }
@@ -1065,6 +1080,9 @@ i.iconsetaddbox{
     }
 }
 @media (max-width: 991px){
+    .signup_innerbox {
+        width: 64%;
+    }
     .closebtnboxiner{
         display: inline-block;
     }
@@ -1103,7 +1121,27 @@ i.iconsetaddbox{
         border-right: 1px solid #F7F7F7;
     }
 }
+@media (max-width: 850px){
+    .inerdeta_locat{
+        width: 100%;
+        margin-bottom: 18px;
+    }
+    .locationinfobox .customdatatable_box{
+        width: 100%;
+    }
+    .locationinfobox h2{
+        margin-bottom: 10px;
+    }
+    .locationinfobox h3{
+        font-size: 15px;
+        margin-top: 4px;
+    }
+    .locatininfobtn span{
+        padding-top: 6px;
+    }
+}
 @media (max-width: 767px){
+    
     .right_paddingboxpart{
         padding-left: 20px;
         padding-right: 20px;
@@ -1120,6 +1158,47 @@ i.iconsetaddbox{
     }
     .verified_detlisbox{
         padding-top: 0;
+    }
+}
+@media (max-width: 414px){
+    .login_toplogobox{
+        padding-bottom: 22px;
+    }
+    .login_toplogobox p{
+        font-size: 13px;
+    }
+    .login_toplogobox h3{
+        font-size: 20px;
+    }
+    .login_toplogobox img {
+        width: 95px;
+    }
+    .signupparent_divbox{
+        margin-top: 40px;
+    }
+    .signup_innerbox{
+        width: 88%;
+    }
+    .locatininfoinerbtn a{
+        font-size: 13px;
+        padding: 6px 10px 5px;
+    }
+    .back-btn{
+        font-size: 12px;
+    }
+    .locationinfobox h3{
+        font-size: 14px;
+    }
+    .locationinfobox h2 {
+        font-size: 20px;
+        padding-right: 0;
+    }
+    .locatininfobtn a{
+        font-size: 13px;
+        padding-left: 6px;
+        padding-right: 6px;
+        padding-top: 5px;
+        padding-bottom: 4px;
     }
 }
 @media (max-width: 479px){

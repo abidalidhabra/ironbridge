@@ -13,12 +13,14 @@
     <div class="right_paddingboxpart">
         <div class="users_datatablebox">
             <div class="">
-                <div class="col-md-6">
-                    <h3>Edit location</h3>
+                <div class="col-md-12 text-right">                    
+                    <a href="{{ route('admin.mapsList') }}" class="btn back-btn">Back</a>                    
                 </div>
-                <div class="col-md-6 text-right">
-                    <a href="{{ route('admin.mapsList') }}" class="btn back-btn">Back</a>
-                </div>
+                <div class="col-md-12">
+                    <div class="row">
+                        <h3>Edit location</h3>
+                    </div>
+                </div>                
             </div>
         </div>
         <br/>
@@ -26,7 +28,7 @@
         <div class="customdatatable_box">
             <form method="post" id="editLocationForm">
                 @csrf
-                <div class="modal-body">
+                <div class="modal-body padboxset">
                     <div class="modalbodysetbox">
                         <div class="form-group">
                             <label class="control-label">Custom Name:</label>

@@ -384,39 +384,70 @@ class HuntController extends Controller
 
         $huntId  = $request->get('hunt_id');
         $starId  = (int)$request->get('star');
+        $hunt = Hunt::where('_id',$huntId)->first();
+        $latitude = $hunt->location['coordinates'][0];
+        $longitude = $hunt->location['coordinates'][1];
 
-        /*$hunt = Hunt::where('_id',$huntId)->first();
-        $from_location_latitude = $hunt->location['coordinates'][0];
-        $from_location_longitude = $hunt->location['coordinates'][1];
-        $radius = 100;*/
-         /*$driver = Driver::
-                whereHas('user',function($query) use ($from_location_latitude,$from_location_longitude){
-                    $query->select(DB::raw('( 6367 * acos( cos( radians('.$from_location_latitude.') ) * cos( radians( current_latitude ) ) * cos( radians( current_longitude ) - radians('.$from_location_longitude.') ) + sin( radians('.$from_location_latitude.') ) * sin( radians( current_latitude ) ) ) ) AS distance'))
-                    ->whereRaw(DB::raw('( 6367 * acos( cos( radians('.$from_location_latitude.') ) * cos( radians( current_latitude ) ) * cos( radians( current_longitude ) - radians('.$from_location_longitude.') ) + sin( radians('.$from_location_latitude.') ) * sin( radians( current_latitude ) ) ) )').' < ?',[3])
-                    ->orderBy('distance');
-                })*/
-        /*$driver = Hunt::select(\DB::raw('( 6367 * acos( cos( radians('.$from_location_latitude.') ) * cos( radians( location.coordinates.0 ) ) * cos( radians( location.coordinates.0 ) - radians('.$from_location_longitude.') ) + sin( radians('.$from_location_latitude.') ) * sin( radians( latitude ) ) ) ) AS distance'))
-                    ->whereRaw(\DB::raw('( 6367 * acos( cos( radians('.$from_location_latitude.') ) * cos( radians( location.coordinates.0 ) ) * cos( radians( location.coordinates.1 ) - radians('.$from_location_longitude.') ) + sin( radians('.$from_location_latitude.') ) * sin( radians( longitude ) ) ) )').' < ?',[3])
-                    ->orderBy('distance')
-                ->get();
-        print_r($products->toArray());
-        exit();*/
+        // $hunt1 = Hunt::
+        //         where(function($query) use ($latitude,$longitude,$huntId){
+        //             $query->where('_id',$huntId)
+        //             ->orWhereRaw(\DB::raw('( 6367 * acos( cos( radians('.$latitude.') ) * cos( radians( location.coordinates.0 ) ) * cos( radians( location.coordinates.1 ) - radians('.$longitude.') ) + sin( radians('.$latitude.') ) * sin( radians( location.coordinates.0 ) ) ) )').' < ?',[100]);
+        //         })
+        //         ->whereHas('hunt_complexities',function($query) use ($starId){
+        //             $query->where('complexity',$starId);
+        //         })
+        //         ->get();
+        //         print_r($hunt1);die();
+        $distance = 100;
+        $proximosArr = Hunt::raw(function($collection) use ($latitude,$longitude,$distance,$starId)
+                            {
+                                return $collection
+                                ->aggregate([ 
+                                    [ '$geoNear' => 
+                                        [ 'near' => 
+                                            [
+                                                'coordinates' => [$latitude,$longitude],
+                                                'type' => 'Point'
+                                            ],
+                                            'distanceField' => 'distancia.calculada',
+                                            "includeLocs" => "dist.location",
+                                            "maxDistance"=> 100*1000,
+                                            'spherical' => true,
+                                        ]
+                                    ]]);
+                            })->pluck('_id');
+
+        $hunt_data = Hunt::select('_id','name','place_name')
+                    ->whereHas('hunt_complexities',function($query) use ($starId){
+                        $query->where('complexity',$starId);
+                    })
+                    ->whereIn('_id',$proximosArr)
+                    ->get()
+                    ->map(function($query) use ($starId){
+                        $query->hunt_name = ($query->name != "")?$query->name:$query->place_name;
+                        $query->hunt_id = $query->_id;
+                        $query->complexity = $starId;
+                        unset($query->place_name,$query->name);
+                        return $query;
+                    });
+
+        
                 
-        $hunt = HuntComplexitie::select('hunt_id','complexity')
-                                ->where('complexity',$starId)
-                                ->where('hunt_id','!=',$huntId)
-                                ->with('hunt:_id,name,place_name')
-                                ->get()
-                                ->map(function($query){
-                                    $query->hunt_name = ($query->hunt->name != "")?$query->hunt->name:$query->hunt->place_name;
-                                    unset($query->hunt);
-                                    return $query;
-                                });
+        // $hunt = HuntComplexitie::select('hunt_id','complexity')
+        //                         ->where('complexity',$starId)
+        //                         ->where('hunt_id','!=',$huntId)
+        //                         ->with('hunt:_id,name,place_name')
+        //                         ->get()
+        //                         ->map(function($query){
+        //                             $query->hunt_name = ($query->hunt->name != "")?$query->hunt->name:$query->hunt->place_name;
+        //                             unset($query->hunt);
+        //                             return $query;
+        //                         });
         
         
         return response()->json([
                                 'message' => 'hunt has been retrieved successfully',
-                                'data'    => $hunt
+                                'data'    => $hunt_data
                             ]);
     }
 

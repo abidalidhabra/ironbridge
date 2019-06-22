@@ -70,7 +70,7 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 		Route::post('updateClues', 'HuntController@updateClues');
 		Route::get('getLocation', 'HuntController@getLocation');
 		Route::get('getHuntClue', 'HuntController@getHuntClue');
-		Route::post('joinHunt', 'HuntController@joinHunt');
+		Route::post('userParticipate', 'HuntController@joinHunt');
 		Route::post('getHuntUser', 'HuntController@getHuntUser');
 		Route::get('huntList', 'HuntController@huntList');
 		Route::get('huntPauseList', 'HuntController@huntPauseList');
@@ -80,7 +80,7 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 		Route::post('clueRevealed', 'ClueController@clueRevealed');
 		Route::get('userHuntInfo', 'ClueController@userHuntInfo');
 		Route::post('clueGame', 'ClueController@clueGame');
-		Route::get('quitClue', 'ClueController@quitClue');
+		Route::get('userParticipateDelete', 'ClueController@quitClue');
 		Route::get('cluePause', 'ClueController@cluePause');
 		Route::post('skeleton', 'ClueController@skeleton');
 	});
