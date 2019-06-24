@@ -228,7 +228,7 @@ class HuntController extends Controller
         
         $data = [
                     'hunt_id'       => $hunt->id,
-                    'hunt_name'     => ($hunt->name != "")?$hunt->name:$hunt->place_name,
+                    'name'          => ($hunt->name != "")?$hunt->name:$hunt->place_name,
                     'latitude'      => $location[0],
                     'longitude'     => $location[1],
                     'clue'          => $huntClues,
@@ -292,7 +292,7 @@ class HuntController extends Controller
                                             'status'             => 'progress',
                                             'hunt_mode'          => $huntMode,
                                             'started_at'         => null,
-                                            'end_at'             => null,
+                                            'ended_at'           => null,
                                         ]);
 
             foreach ($huntComplexitie->hunt_clues as $key => $value) {
@@ -306,7 +306,7 @@ class HuntController extends Controller
                                                             'finished_in'       => 0,
                                                             'status'            => 'progress',
                                                             'started_at'        => null,
-                                                            'end_at'            => null,
+                                                            'ended_at'          => null,
                                                         ]);
                 $skeleton[] = [
                                 'key'   => substr(str_shuffle(str_repeat("0123456789abcdefghijklmnopqrstuvwxyz", 10)), 0, 10),
@@ -392,7 +392,12 @@ class HuntController extends Controller
 
         $huntUser = HuntUser::select('_id','user_id','hunt_id','hunt_complexity_id','status','skeleton')
                             ->where('_id',$huntUserId)
-                            ->with('hunt_user_details:_id,hunt_user_id,location,est_completion,status')
+                            //->with('hunt_user_details:_id,hunt_user_id,location,est_completion,status')
+                            ->with(['hunt_user_details'=>function($query) use ($huntUserId){
+                                $query->where('hunt_user_id',$huntUserId)
+                                    ->select('_id','hunt_user_id','location','est_completion','status','game_id','game_variation_id')
+                                    ->with('game:_id,name,identifier','game_variation');
+                            }])
                             ->first();
         
         $huntUser->skeleton_key_available = false;
@@ -482,26 +487,28 @@ class HuntController extends Controller
     }
 
     //HUNT PAUSE LIST
-    public function huntPauseList(Request $request){
-        $star = (int)$request->get('star');
-        $huntId = $request->get('hunt_id');
-        
+    public function getHuntsInProgress(Request $request){
+
         $user = Auth::User();
-        $huntUser = HuntUser::select('_id','user_id','hunt_id','hunt_complexity_id','status')
-                            ->with(['hunt:_id,name,place_name,location','hunt_complexities:_id,complexity'])
+        
+        $huntUser = HuntUser::whereHas('hunt_user_details',function($query){
+                                $query->where('status','pause');
+                            })
+                            ->select('_id','user_id','hunt_id')
+                            ->with(['hunt:_id,name,place_name,location'])
                             ->where([
                                         'user_id' => $user->_id,
-                                        'status'  => 'pause',
                                     ])
                             ->get()
                             ->map(function($query){
-                                $query->hunt_name = ($query->hunt->name != "")?$query->hunt->name:$query->hunt->place_name;
+                                $query->name = ($query->hunt->name != "")?$query->hunt->name:$query->hunt->place_name;
                                 $query->location = $query->hunt->location;
-                                $query->star = $query->hunt_complexities->complexity;
+                                //$query->star = $query->hunt_complexities->complexity;
                                 
-                                unset($query->hunt,$query->hunt_complexities);
+                                unset($query->hunt , $query->user_id);
                                 return $query;
                             });
+
         return response()->json([
                                 'message' => 'hunt has been retrieved successfully',
                                 'data'    => $huntUser
