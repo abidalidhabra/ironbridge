@@ -416,40 +416,135 @@ class HuntController extends Controller
     //HUT LIST
     public function getNearByHunts(Request $request){
         $validator = Validator::make($request->all(),[
-                        //'hunt_id'=> "required|exists:hunts,_id",
                         'star'   => "required|integer|between:1,5",
+                        'page' => 'required|numeric|min:1',
+                        'longitude' => 'required|numeric',
+                        'latitude' => 'required|numeric'
                     ]);
         
         if ($validator->fails()) {
             return response()->json(['message'=>$validator->messages()],422);
         }
 
-        // $huntId  = $request->get('hunt_id');
-        $starId  = (int)$request->get('star');
-        //$hunt = Hunt::where('_id',$huntId)->first();
-        $user = Auth::User();
-        $latitude = (float)$user->location['coordinates'][0];
-        $longitude = (float)$user->location['coordinates'][1];
+        $star       = (int)$request->star;
+        $page       = (int)$request->page;
+        $user       = Auth::User();
+        $longitude  = (float)$request->longitude;
+        $latitude   = (float)$request->latitude;
+        $page       = $page -1;
+        $take       = 10;
+        $skip       = ($page * $take);
+        $distance   = 100;
+        // $latitude   = (float)$user->location['coordinates'][0];
+        // $longitude  = (float)$user->location['coordinates'][1];
 
-        
-        $distance = 100;
-        $hunt = Hunt::raw(function($collection) use ($latitude,$longitude,$distance,$starId)
+        $huntIds = HuntUser::where('user_id',$user->id)->pluck('hunt_id')->toArray();
+        $hunts = Hunt::raw(function($collection) use ($latitude,$longitude,$distance,$star,$skip,$take,$huntIds)
                             {
-                                return $collection
-                                ->aggregate([ 
-                                    [ '$geoNear' => 
-                                        [ 'near' => 
-                                            [
-                                                'coordinates' => [$latitude,$longitude],
-                                                'type' => 'Point'
+                                return $collection->aggregate([
+                                    [ 
+                                        '$geoNear' => [ 
+                                            'near' => [
+                                                'type' => 'Point',
+                                                'coordinates' => [$longitude,$latitude]
                                             ],
-                                            'distanceField' => 'distance',
-                                            "includeLocs" => "dist.location",
-                                            "maxDistance"=> 100*1000,
                                             'spherical' => true,
+                                            'distanceField' => 'distance',
+                                            'distanceMultiplier'=> 0.001,
+                                            "includeLocs" => "location.coordinates",
+                                            "maxDistance"=> $distance * 1000,
                                         ]
-                                    ]]);
+                                    ],
+                                    [
+                                        '$match' => [
+                                            '_id' => ['$nin' => $huntIds]
+                                        ]
+                                    ],
+                                    [
+                                        '$addFields' => [
+                                            'hunt_string_id' => [
+                                                '$toString' => '$_id'
+                                            ]
+                                        ]
+                                    ],
+                                    [
+                                        '$lookup' => [
+                                            'from' => 'hunt_complexities',
+                                            'let'=> [ 'hunt_string_id'=> '$hunt_string_id'],
+                                            'pipeline'=> [
+                                                [
+                                                    '$match'=> [ 
+                                                        '$expr'=> [ 
+                                                            '$and'=> [
+                                                               [ '$eq'=> [ '$hunt_id',  '$$hunt_string_id' ] ],
+                                                               [ '$eq'=> [ '$complexity', $star ] ]
+                                                            ]
+                                                        ]
+                                                    ]
+                                                ],
+                                                [
+                                                    '$project' => [
+                                                        '_id' => [ '$toString' => '$_id' ],
+                                                        'hunt_id' => true,
+                                                        'complexity' => true,
+                                                    ]
+                                                ]
+                                            ],
+                                            'as' => 'hunt_complexities'
+                                        ]
+                                    ],
+                                    [
+                                        '$lookup' => [
+                                            'from' => 'hunt_users',
+                                            'let'=> [ 'hunt_string_id'=> '$hunt_string_id'],
+                                            'pipeline'=> [
+                                                [
+                                                    '$match'=> [ 
+                                                        '$expr'=> [ 
+                                                            '$and'=> [
+                                                               [ '$eq'=> [ '$hunt_id',  '$$hunt_string_id' ] ],
+                                                               [ '$eq'=> [ '$complexity', $star ] ]
+                                                            ]
+                                                        ]
+                                                    ]
+                                                ],
+                                                [
+                                                    '$project' => [
+                                                        '_id' => [ '$toString' => '$_id' ],
+                                                        'hunt_id' => true,
+                                                        'complexity' => true,
+                                                    ]
+                                                ]
+                                            ],
+                                            'as' => 'hunt_complexities'
+                                        ]
+                                    ],
+                                    [
+                                        '$sort' => [
+                                            'distance' => 1
+                                        ]
+                                    ],
+                                    ['$skip' => $skip],
+                                    ['$limit' => $take+1],
+                                    [
+                                        '$project' => [
+                                            '_id' => true,
+                                            'name' => true,
+                                            'location' => true,
+                                            'distance' => true,
+                                        ]
+                                    ]
+                                ]);
                             });
+
+        $hasNextPage = ($hunts->count() > 20)?true:false;
+        return response()->json([
+                                'message' => 'Near by hunts has been retrieved successfully.',
+                                'data'    => $hunts,
+                                'has_next_page' => $hasNextPage
+                            ]);
+        print_r($hunt->toArray());
+        exit;
         $huntId = $hunt->pluck('id'); 
         
         $hunt_data = Hunt::select('_id','name','place_name')
@@ -465,25 +560,7 @@ class HuntController extends Controller
                         unset($query->place_name,$query->name);
                         return $query;
                     });
-
         
-                
-        // $hunt = HuntComplexitie::select('hunt_id','complexity')
-        //                         ->where('complexity',$starId)
-        //                         ->where('hunt_id','!=',$huntId)
-        //                         ->with('hunt:_id,name,place_name')
-        //                         ->get()
-        //                         ->map(function($query){
-        //                             $query->hunt_name = ($query->hunt->name != "")?$query->hunt->name:$query->hunt->place_name;
-        //                             unset($query->hunt);
-        //                             return $query;
-        //                         });
-        
-        
-        return response()->json([
-                                'message' => 'hunt has been retrieved successfully',
-                                'data'    => $hunt_data
-                            ]);
     }
 
     //HUNT PAUSE LIST
