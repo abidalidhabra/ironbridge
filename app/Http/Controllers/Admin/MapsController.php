@@ -122,6 +122,7 @@ class MapsController extends Controller
                         'hunt_id'   => 'required',
                         'game_id.*'   => 'required',
                         'game_variation_id.*' => 'required',
+                        'est_completion.*' => 'required|integer',
                         'coordinates'=> 'required|json',
                     ]);
         
@@ -135,6 +136,7 @@ class MapsController extends Controller
         $complexity = (int)$request->get('complexity');
         $gameId = $request->get('game_id');
         $gameVariationId = $request->get('game_variation_id');
+        $estCompletion = $request->get('est_completion');
         $hunt = Hunt::where('_id',$id)->first();
        
         $locationdata = [];
@@ -155,7 +157,8 @@ class MapsController extends Controller
                                 'hunt_complexity_id' => $huntComplexities->_id,
                                 'location'           => $location,
                                 'game_id'            => $gameId[$key],
-                                'game_variation_id'  => $gameVariationId[$key]
+                                'game_variation_id'  => $gameVariationId[$key],
+                                'est_completion'     => (int)$estCompletion[$key]
                             ]);
         }
 

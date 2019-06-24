@@ -20,6 +20,10 @@ class HuntUserDetail extends Eloquent
         'ended_at',
 	];
 
+    protected $attributes = [
+        'est_completion' => 0
+    ];
+
 	protected $dates = [
         'revealed_at',
         'started_at',
