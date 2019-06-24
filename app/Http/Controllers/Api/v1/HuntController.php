@@ -280,7 +280,7 @@ class HuntController extends Controller
 
         if($huntUserDetail){
             return response()->json([
-                                'message'=>'User already exists',
+                                'message'=>'You already participated in this hunt.',
                             ],422);
         } else {
             $skeleton = [];
@@ -321,8 +321,13 @@ class HuntController extends Controller
                 $user->gold_balance = $coin;
                 $user->save();            
             }
+
+            $request->request->add(['hunt_user_id'=>$huntUser->id]);
+            $data1 = (new HuntController)->getHuntParticipationDetails($request);
+            
             return response()->json([
-                                'message'=>'user has been successfully participants'
+                                'message'=>'user has been successfully participants',
+                                'data'  => $data1->original['data']
                             ]);
         }   
     }
@@ -362,6 +367,38 @@ class HuntController extends Controller
         foreach ($huntUser->skeleton as $key => $value) {
             if ($value['used'] == false) {
                 $huntUser->skeleton_used = true;
+            }    
+        }
+        unset($huntUser->skeleton);
+        return response()->json([
+                                'message' => 'hunt user has been retrieved successfully',
+                                'data'    => $huntUser
+                            ]);
+    }
+
+
+    public function getHuntParticipationDetails(Request $request){
+        $validator = Validator::make($request->all(),[
+                        'hunt_user_id'=> "required|exists:hunt_users,_id",
+                    ]);
+        if ($validator->fails()) {
+            return response()->json(['message'=>$validator->messages()],422);
+        }
+
+        $user = Auth::user();
+        
+        $data = $request->all();
+        $huntUserId = $request->get('hunt_user_id');
+
+        $huntUser = HuntUser::select('_id','user_id','hunt_id','hunt_complexity_id','status','skeleton')
+                            ->where('_id',$huntUserId)
+                            ->with('hunt_user_details:_id,hunt_user_id,location,est_completion,status')
+                            ->first();
+        
+        $huntUser->skeleton_key_available = false;
+        foreach ($huntUser->skeleton as $key => $value) {
+            if ($value['used'] == false) {
+                $huntUser->skeleton_key_available = true;
             }    
         }
         unset($huntUser->skeleton);

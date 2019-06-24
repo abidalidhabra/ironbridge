@@ -72,6 +72,7 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 		Route::get('getHuntDetails', 'HuntController@getHuntDetails');
 		Route::post('participateInHunt', 'HuntController@participateInHunt');
 		Route::post('getHuntUser', 'HuntController@getHuntUser');
+		Route::post('getHuntParticipationDetails', 'HuntController@getHuntParticipationDetails');
 		Route::get('getNearByHunts', 'HuntController@getNearByHunts');
 		Route::get('huntPauseList', 'HuntController@huntPauseList');
 
