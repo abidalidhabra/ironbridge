@@ -13,7 +13,7 @@ class CreateHuntsTable extends Migration
      */
     public function up()
     {
-        Schema::create('hunts', function ($collection) {
+        Schema::table('hunts', function ($collection) {
             $collection->geospatial('location.coordinates', '2dsphere');
         });
     }
