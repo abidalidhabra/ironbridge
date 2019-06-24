@@ -411,7 +411,7 @@ class HuntController extends Controller
     //HUT LIST
     public function getNearByHunts(Request $request){
         $validator = Validator::make($request->all(),[
-                        'hunt_id'=> "required|exists:hunts,_id",
+                        //'hunt_id'=> "required|exists:hunts,_id",
                         'star'   => "required|integer|between:1,5",
                     ]);
         
@@ -419,24 +419,16 @@ class HuntController extends Controller
             return response()->json(['message'=>$validator->messages()],422);
         }
 
-        $huntId  = $request->get('hunt_id');
+        // $huntId  = $request->get('hunt_id');
         $starId  = (int)$request->get('star');
-        $hunt = Hunt::where('_id',$huntId)->first();
-        $latitude = $hunt->location['coordinates'][0];
-        $longitude = $hunt->location['coordinates'][1];
+        //$hunt = Hunt::where('_id',$huntId)->first();
+        $user = Auth::User();
+        $latitude = (float)$user->location['coordinates'][0];
+        $longitude = (float)$user->location['coordinates'][1];
 
-        // $hunt1 = Hunt::
-        //         where(function($query) use ($latitude,$longitude,$huntId){
-        //             $query->where('_id',$huntId)
-        //             ->orWhereRaw(\DB::raw('( 6367 * acos( cos( radians('.$latitude.') ) * cos( radians( location.coordinates.0 ) ) * cos( radians( location.coordinates.1 ) - radians('.$longitude.') ) + sin( radians('.$latitude.') ) * sin( radians( location.coordinates.0 ) ) ) )').' < ?',[100]);
-        //         })
-        //         ->whereHas('hunt_complexities',function($query) use ($starId){
-        //             $query->where('complexity',$starId);
-        //         })
-        //         ->get();
-        //         print_r($hunt1);die();
+        
         $distance = 100;
-        $proximosArr = Hunt::raw(function($collection) use ($latitude,$longitude,$distance,$starId)
+        $hunt = Hunt::raw(function($collection) use ($latitude,$longitude,$distance,$starId)
                             {
                                 return $collection
                                 ->aggregate([ 
@@ -446,21 +438,22 @@ class HuntController extends Controller
                                                 'coordinates' => [$latitude,$longitude],
                                                 'type' => 'Point'
                                             ],
-                                            'distanceField' => 'distancia.calculada',
+                                            'distanceField' => 'distance',
                                             "includeLocs" => "dist.location",
                                             "maxDistance"=> 100*1000,
                                             'spherical' => true,
                                         ]
                                     ]]);
-                            })->pluck('_id');
-
+                            });
+        $huntId = $hunt->pluck('id'); 
+        
         $hunt_data = Hunt::select('_id','name','place_name')
                     ->whereHas('hunt_complexities',function($query) use ($starId){
                         $query->where('complexity',$starId);
                     })
-                    ->whereIn('_id',$proximosArr)
+                    ->whereIn('_id',$huntId)
                     ->get()
-                    ->map(function($query) use ($starId){
+                    ->map(function($query) use ($starId , $hunt){
                         $query->hunt_name = ($query->name != "")?$query->name:$query->place_name;
                         $query->hunt_id = $query->_id;
                         $query->complexity = $starId;

@@ -28,24 +28,21 @@ class JWTAuthentication
 
         } catch (TokenExpiredException $e) {
              return response()->json( [
-                'status' => false,
                 'code'  => 11,
                 'message' => 'Token Expired'
-            ]);
+            ],500);
 
         } catch (TokenInvalidException $e) {
              return response()->json( [
-                'status' => false,
                 'code'  => 12,
                 'message' => 'Invalid Token'
-            ]);
+            ],500);
 
         } catch (JWTException $e) {
              return response()->json( [
-                'status' => false,
                 'code'  => 13,
                 'message' => 'Token absent'
-            ]);
+            ],500);
 
         }
         return $next($request);

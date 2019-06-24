@@ -84,6 +84,8 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 		Route::get('quitTheHunt', 'ClueController@quitTheHunt');
 		Route::get('cluePause', 'ClueController@cluePause');
 		Route::post('skeleton', 'ClueController@skeleton');
+		Route::post('gameFinish', 'ClueController@gameFinish');
+
 	});
 
 });

@@ -245,4 +245,19 @@ class ClueController extends Controller
                                 'message' => 'Skeleton used has been successfully'
                             ]);
     }
+
+    //GAME FINISH
+    public function gameFinish(Request $request){
+        $validator = Validator::make($request->all(),[
+                        'hunt_user_details_id' => "required|exists:hunt_user_details,_id"
+                    ]);
+        if ($validator->fails()) {
+            return response()->json(['message'=>$validator->messages()],422);
+        }
+
+        $huntUserDetailsId = $request->get('hunt_user_details_id');
+        $huntUserDetail = HuntUserDetail::where('_id',$huntUserDetailsId)->first();
+        print_r($huntUserDetail->toArray());
+        exit();
+    }
 }
