@@ -534,7 +534,7 @@ class HuntController extends Controller
 
         $hasNextPage = ($hunts->count() > 20)?true:false;
         return response()->json([
-                                'message' => 'hunt has been retrieved successfully',
+                                'message' => 'Near by hunts has been retrieved successfully.',
                                 'data'    => $hunts,
                                 'has_next_page' => $hasNextPage
                             ]);
