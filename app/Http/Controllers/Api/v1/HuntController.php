@@ -583,7 +583,7 @@ class HuntController extends Controller
         $user = Auth::User();
         
         $huntUser = HuntUser::whereHas('hunt_user_details',function($query){
-                                $query->where('status','pause');
+                                $query->whereIn('status',['pause','progress']);
                             })
                             ->select('_id','user_id','hunt_id')
                             ->with(['hunt:_id,name,place_name,location'])
