@@ -10,6 +10,13 @@ class HuntComplexitie extends Eloquent
     protected $fillable = [
         'hunt_id', 
         'complexity',
+        'est_completion',
+        'distance'
+    ];
+
+    protected $attributes = [
+        'est_completion' => 0,
+        'distance' => 0
     ];
 
     public function hunt()

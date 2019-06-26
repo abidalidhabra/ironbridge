@@ -49,6 +49,7 @@ class HuntController extends Controller
     //UPDATE LOCATION
     public function updateClues(Request $request){
         \Log::info($request->data);
+
         $validator = Validator::make($request->all(),[
                         'data'       => "required",
                     ]);
@@ -57,13 +58,20 @@ class HuntController extends Controller
         }
 
         $data  = json_decode($request->get('data'),true);
-        $id = $data[0]['_id'];
+        $id = $data['_id'];
         $hunt = Hunt::where('_id',$id)->first();
         
-        foreach ($data[0]['clues'] as $key => $value) {
+        foreach ($data['clue_data'] as $key => $value) {
             if (isset($value) && !empty($value)) {
-                $huntComplexities = $hunt->hunt_complexities()->updateOrCreate(['hunt_id'=>$id,'complexity'=>$key],['hunt_id'=>$id,'complexity'=>$key]);
-                foreach ($value as $latlng) {
+                $distance = (int)round($value['distance']);
+                $km = $distance/1000;
+                //4.5 km = 6o min
+                // $avg_km = $km/4.5;   
+                $mins = 60/4.5 * $km;
+                $fixClueMins = count($value['total_clues'])*5;
+                $estTime =  $mins + $fixClueMins;
+                $huntComplexities = $hunt->hunt_complexities()->updateOrCreate(['hunt_id'=>$id,'complexity'=>$key],['hunt_id'=>$id,'complexity'=>$key,'distance'=>$distance,'est_completion'=>(int)round($estTime)]);
+                foreach ($value['total_clues'] as $latlng) {
                     $game = Game::whereHas('game_variation')
                                 ->with('game_variation')
                                 ->get()

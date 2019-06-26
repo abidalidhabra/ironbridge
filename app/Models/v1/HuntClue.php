@@ -12,10 +12,10 @@ class HuntClue extends Eloquent
         'location',
         'game_id',
         'game_variation_id',
-        'est_completion',
+        //'est_completion',
     ];
 
-    protected $attributes = [
+    /*protected $attributes = [
         'est_completion' => 0
-    ];
+    ];*/
 }
