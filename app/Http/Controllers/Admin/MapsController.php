@@ -357,6 +357,11 @@ class MapsController extends Controller
     //CUSTOM STORE
     public function customRecordStore(){
         
+        /*$hunts = Hunt::get();
+        foreach ($hunts as $key => $hunt) {
+            $hunt->name = ($hunt->name!="")?$hunt->name:$hunt->place_name;
+            $hunt->save();
+        }*/
         /* HUNT RECORD STORE */
         // $cityInfo = TreasureLocation::get();
         // foreach ($cityInfo as $key => $value) {
