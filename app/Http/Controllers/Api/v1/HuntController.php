@@ -29,7 +29,7 @@ class HuntController extends Controller
     	
     	$location = Hunt::select('location','place_name','place_id','boundaries_arr','boundingbox')
                                     ->with('hunt_complexities:_id,hunt_id')
-    								->whereIn('city',['Calgary','Vancouver'])
+    								->whereIn('city',['Red Deer','Vancouver'])
     								->get()
     								->map(function($query){
     									if (count($query->hunt_complexities) > 0) {
@@ -122,17 +122,30 @@ class HuntController extends Controller
         }
 
         $clue = $request->get('star');
+        $user = Auth::User();
+        $userId = $user->id;
         $location = Hunt::select('location','name','place_name')
-                                    ->whereHas('hunt_complexities', function ($query) use ($clue) {
+                                    ->whereHas('hunt_complexities', function ($query) use ($clue,$userId) {
                                         $query->where('complexity',(int)$clue);
                                     })
+                                    ->with(['hunt_complexities'=>function($query) use ($clue,$userId){
+                                        $query->where('complexity',(int)$clue)
+                                        ->with(['hunt_users'=>function($hunt) use ($userId){
+                                            $hunt->where('user_id',$userId);
+                                        }]);
+                                    }])
                                     ->get()
                                     ->map(function($query){
                                     	$location = $query->location['coordinates'];
                                     	$query->latitude = $location[1];
                                     	$query->longitude = $location[0];
                                         $query->name = ($query->name != "")?$query->name:$query->place_name;
-                                    	unset($query->location);
+                                    	if (count($query->hunt_complexities[0]->hunt_users)>0 && $query->hunt_complexities[0]->hunt_users[0]->status == 'participate') {
+                                            $query->status = true;
+                                        } else {
+                                            $query->status = false;
+                                        }
+                                        unset($query->location,$query->hunt_complexities);
                                     	return $query;
                                     });
 
@@ -221,7 +234,7 @@ class HuntController extends Controller
                     })
                     ->with(['hunt_complexities'=>function($query) use ($clueId){
                         $query->where('complexity',$clueId)
-                            ->select('hunt_id','complexity')
+                            ->select('hunt_id','complexity','est_completion')
                             ->with('hunt_clues:_id,hunt_complexity_id,location,game_id,game_variation_id,est_completion');
                     }])
                     ->where('_id',$huntId)
@@ -233,7 +246,8 @@ class HuntController extends Controller
         }
         $huntClues = [];
         $location = $hunt->location['coordinates'];
-
+        /*print_r($hunt->hunt_complexities->toArray());
+        exit();*/
         if (count($hunt->hunt_complexities) > 0) {
             foreach ($hunt->hunt_complexities[0]->hunt_clues as $key => $value) {
                 $huntClues[] = [$value->location['coordinates'][0],$value->location['coordinates'][1]];
@@ -290,13 +304,18 @@ class HuntController extends Controller
                                                         'hunt_id'    => $huntId,
                                                     ])
                                             ->first();
+        if(!$huntComplexitie){
+            return response()->json([
+                                'message'=>'Hunt details not found',
+                            ],422);
+        }
 
         $huntUserDetail = HuntUser::select('user_id','hunt_id','hunt_complexity_id','status','hunt_mode','skeleton') 
                                     ->where([
                                         'user_id'            => $user->_id,
                                         'hunt_id'            => $huntId,
                                         'hunt_complexity_id' => $huntComplexitie->id,
-                                        'hunt_mode'          => $huntMode,
+                                        //'hunt_mode'          => $huntMode,
                                     ])
                             ->first();
 
@@ -311,10 +330,11 @@ class HuntController extends Controller
                                             'hunt_id'            => $huntId,
                                             'hunt_complexity_id' => $huntComplexitie->id,
                                             'valid'              => false,
-                                            'status'             => 'progress',
+                                            'status'             => 'participate',
                                             'hunt_mode'          => $huntMode,
                                             'started_at'         => null,
                                             'ended_at'           => null,
+                                            'est_completion'     => $huntComplexitie->est_completion,
                                         ]);
 
             foreach ($huntComplexitie->hunt_clues as $key => $value) {
@@ -323,10 +343,9 @@ class HuntController extends Controller
                                                             'location'          => $value->location,
                                                             'game_id'           => $value->game_id,
                                                             'game_variation_id' => $value->game_variation_id,
-                                                            'est_completion'    => $value->est_completion,
                                                             'revealed_at'       => null,
                                                             'finished_in'       => 0,
-                                                            'status'            => 'progress',
+                                                            'status'            => 'participate',
                                                             'started_at'        => null,
                                                             'ended_at'          => null,
                                                         ]);

@@ -37,7 +37,7 @@ class ClueController extends Controller
         $data = [
                     'revealed_at' => new MongoDBDate(),
                     // 'finished_in' => (int)$request->get('time'),
-                    'status'      => 'completed',
+                    'status'      => 'progress',
                     'started_at'  => new MongoDBDate(),
                 ];
 
@@ -45,35 +45,34 @@ class ClueController extends Controller
         $huntUserDetail->update($data);
 
         if ($huntUserDetail) {
-            $clueDetail = HuntUserDetail::where('hunt_user_id',$huntUserDetail->hunt_user_id)
-                            ->whereIn('status',['progress','pause'])
-                            ->count();
+            // $clueDetail = HuntUserDetail::where('hunt_user_id',$huntUserDetail->hunt_user_id)
+            //                 ->whereIn('status',['progress','pause'])
+            //                 ->count();
             
-            if ($clueDetail == 0) {
-                HuntUser::where([
-                                    '_id'=>$huntUserDetail->hunt_user_id,
-                                    'user_id'=>$user->id,
-                                ])
-                        ->update([
-                                    'status'=>'completed',
-                                    'ended_at'=> new MongoDBDate()
-                                ]);
-            }
+            // if ($clueDetail == 0) {
+            //     HuntUser::where([
+            //                         '_id'=>$huntUserDetail->hunt_user_id,
+            //                         'user_id'=>$user->id,
+            //                     ])
+            //             ->update([
+            //                         'status'=>'completed',
+            //                         'ended_at'=> new MongoDBDate()
+            //                     ]);
+            // }
 
-            $huntUserDetail_complate = HuntUserDetail::where('hunt_user_id',$huntUserDetail->hunt_user_id)
-                                                        ->where('status','completed')
-                                                        ->count();
+            // $huntUserDetail_complate = HuntUserDetail::where('hunt_user_id',$huntUserDetail->hunt_user_id)
+            //                                             ->where('status','completed')
+            //                                             ->count();
             
-            if($huntUserDetail_complate  == 1){
                 HuntUser::where([
                                 '_id'=>$huntUserDetail->hunt_user_id,
                                 'user_id'=>$user->id,
                             ])
-                    ->update([
-                                'status'=>'completed',
-                                'started_at'=> new MongoDBDate()
-                            ]);       
-            }
+                        ->update([
+                            'status'=>'progress',
+                            'started_at'=> new MongoDBDate()
+                        ]);       
+            
 
         }
         return response()->json([
@@ -320,6 +319,7 @@ class ClueController extends Controller
         $huntUserDetail = HuntUserDetail::where('_id',$request->get('hunt_user_details_id'))->first();
         $startdate = $huntUserDetail->started_at;
         $huntUserDetail->ended_at = new MongoDBDate();
+        $huntUserDetail->status = 'complete';
         $huntUserDetail->huntUserDetail = Carbon::now()->diffInSeconds($startdate);
         $huntUserDetail->save();
         
