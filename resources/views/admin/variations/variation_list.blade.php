@@ -8,10 +8,11 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Game</h3>
+                <h3>Game Variations</h3>
             </div>
             <div class="col-md-6 text-right modalbuttonadd">
-                <button type="button" class="btn btn-info btn-md" data-toggle="modal" data-target="#addNews">Add Game</button>
+                <!-- <button type="button" class="btn btn-info btn-md" data-toggle="modal" data-target="#addNews">Add Variation</button> -->
+                <a href="{{ route('admin.gameVariation.create') }}" class="btn btn-info btn-md">Add Variation</a>
             </div>
         </div>
     </div>
@@ -21,8 +22,11 @@
             <thead>
                 <tr>
                     <th width="7%">Sr</th>
-                    <th>Identifier</th>
-                    <th>Name</th>
+                    <th>Game Name</th>
+                    <th>Variation Name</th>
+                    <th>Variation Image</th>
+                    <th>Variation Size</th>
+                    <th>Complexity</th>
                     <th width="5%">Action</th>
                 </tr>
             </thead>
@@ -114,8 +118,8 @@
                 order: [[1, 'desc']],
                 lengthMenu: [[10, 50, 100, -1], [10, 50, 100, "All"]],
                 ajax: {
-                    type: "get",
-                    url: "{{ route('admin.getGameList') }}",
+                    type: "GET",
+                    url: "{{ route('admin.getGameVariationList') }}",
                     data: function ( d ) {
                         d._token = "{{ csrf_token() }}";
                     },
@@ -127,8 +131,11 @@
                 },
                 columns:[
                     { data:'DT_RowIndex',name:'_id' },
-                    { data:'identifier',name:'identifier'},
-                    { data:'name',name:'name' },
+                    { data:'game_name',name:'game_name' },
+                    { data:'variation_name',name:'variation_name' },
+                    { data:'variation_image',name:'variation_image' },
+                    { data:'variation_size',name:'variation_size' },
+                    { data:'variation_complexity',name:'variation_complexity' },
                     { data:'action',name:'action' },
                 ],
 
@@ -184,7 +191,7 @@
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             },
-                            url: '{{ route("admin.news.destroy","/") }}/'+id,
+                            url: '{{ route("admin.gameVariation.destroy","/") }}/'+id,
                             data: {id : id},
                             success: function(response)
                             {
@@ -201,52 +208,6 @@
                 
             }
 
-            /*EDIT MODEL*/
-            $(document).on('click', '.edit_game', function(){
-                $("#editGame input[name='identifier']").val($(this).data('identifier'));
-                $("#editGame input[name='name']").val($(this).data('name'));
-                $("#editGame input[name='game_id']").val($(this).data('id'));
-                $('#editGame').modal('show');
-            });
-
-
-            //EDIT NEWS
-            $('#editGameForm').submit(function(e) {
-                    e.preventDefault();
-                })
-            .validate({
-                focusInvalid: false, 
-                ignore: "",
-                rules: {
-                    identifier: { required: true },
-                    name: { required: true },
-                },
-                submitHandler: function (form) {
-                    var formData = new FormData(form);
-                    $.ajax({
-                        type: "POST",
-                        url: '{{ route("admin.editGame") }}',
-                        data: formData,
-                        processData:false,
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        cache:false,
-                        contentType: false,
-                        success: function(response)
-                        {
-                            if (response.status == true) {
-                                toastr.success(response.message);
-                                $('input[name="subject"] , textarea[name="description"] , input[name="valid_till"]').val('');
-                                $('#editGame').modal('hide');
-                                table.ajax.reload();
-                            } else {
-                                toastr.warning(response.message);
-                            }
-                        }
-                    });
-                }
-            });
         });
     </script>
 @endsection

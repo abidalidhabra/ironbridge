@@ -27,16 +27,17 @@
     <link rel="stylesheet" href="{{ asset('admin_assets/css/styles.css') }}">
     <link rel="stylesheet" href="{{ asset('admin_assets/css/datepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('admin_assets/css/toastr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin_assets/css/jquery.fancybox.min.css') }}" />
 
 
-
-    <script type="text/javascript" src="{{ asset('admin_assets/js/jquery.js') }}"></script>
+    <script src="{{ asset('admin_assets/js/jquery.js') }}"></script>
     <script src="{{ asset('admin_assets/js/bootstrap.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('admin_assets/js/datatables.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('admin_assets/js/bootstrap-datepicker.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('admin_assets/js/toastr.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('admin_assets/js/jquery.validate.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('admin_assets/js/bootstrap-confirmation.min.js') }}"></script>
+    <script src="{{ asset('admin_assets/js/datatables.min.js') }}"></script>
+    <script src="{{ asset('admin_assets/js/bootstrap-datepicker.js') }}"></script>
+    <script src="{{ asset('admin_assets/js/toastr.min.js') }}"></script>
+    <script src="{{ asset('admin_assets/js/jquery.validate.min.js') }}"></script>
+    <script src="{{ asset('admin_assets/js/bootstrap-confirmation.min.js') }}"></script>
+    <script src="{{ asset('admin_assets/js/jquery.fancybox.min.js') }}"></script>
     @yield('styles')
 </head>
 
