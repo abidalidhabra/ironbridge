@@ -15,6 +15,13 @@ use Carbon\Carbon;
 
 class ClueController extends Controller
 {
+    public function __construct()
+    {
+        if (version_compare(phpversion(), '7.1', '>=')) {
+            ini_set( 'serialize_precision', -1 );
+        }
+    }
+
     //CLUE complete
     public function revealTheClue(Request $request){
         $validator = Validator::make($request->all(),[
@@ -132,25 +139,27 @@ class ClueController extends Controller
     //REMOVE PARTICIPET
     public function quitTheHunt(Request $request){
         $validator = Validator::make($request->all(),[
-                        'hunt_id'=> "required|exists:hunts,_id",
-                        'star'=> "required",
+                        'hunt_user_id'=> "required|exists:hunt_users,_id",
+                        //'star'=> "required",
                     ]);
         if ($validator->fails()) {
             return response()->json(['message'=>$validator->messages()],422);
         }
         $data = $request->all();
-        $star = (int)$request->get('star');
-        $huntId = $request->get('hunt_id');
+        /*$star = (int)$request->get('star');
+        $huntId = $request->get('hunt_id');*/
         $user = Auth::User();
-        $huntComplexitie = HuntComplexitie::with('hunt_users')
+        /*$huntComplexitie = HuntComplexitie::with('hunt_users')
                                             ->where([
                                                         'complexity' => $star,
                                                         'hunt_id'    => $huntId,
                                                     ])
-                                            ->first();
-        $huntUser = HuntUser::where('hunt_complexity_id',$huntComplexitie->id)
+                                            ->first();*/
+        $id = $request->get('hunt_user_id');
+        $huntUser = HuntUser::where('_id',$id)
                             ->where('user_id',$user->id)
                             ->first();
+        
         if ($huntUser) {
             $huntUser->hunt_user_details()->delete();
             $huntUser->delete();

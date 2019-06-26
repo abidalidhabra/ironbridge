@@ -16,6 +16,13 @@ use Carbon\Carbon;
 
 class HuntController extends Controller
 {
+    public function __construct()
+    {
+        if (version_compare(phpversion(), '7.1', '>=')) {
+            ini_set( 'serialize_precision', -1 );
+        }
+    }
+    
     //GET HUNT
     public function getParks1(Request $request)
     {
@@ -176,7 +183,7 @@ class HuntController extends Controller
         if ($validator->fails()) {
             return response()->json(['message'=>$validator->messages()],422);
         }
-
+        /**/
         $huntId  = $request->get('hunt_id');
         $clueId  = (int)$request->get('star');
 
@@ -201,6 +208,9 @@ class HuntController extends Controller
 
         
         $hunt = Hunt::select('_id','name','location','place_name','fees')
+                    ->whereHas('hunt_complexities',function($query) use ($clueId){
+                        $query->where('complexity',$clueId);
+                    })
                     ->with(['hunt_complexities'=>function($query) use ($clueId){
                         $query->where('complexity',$clueId)
                             ->select('hunt_id','complexity')
@@ -208,10 +218,14 @@ class HuntController extends Controller
                     }])
                     ->where('_id',$huntId)
                     ->first();
-        $location = $hunt->location['coordinates'];
         
+        
+        if (!$hunt) {
+           return response()->json(['message'=>'Hunt details not found'],422);
+        }
         $huntClues = [];
-        
+        $location = $hunt->location['coordinates'];
+
         if (count($hunt->hunt_complexities) > 0) {
             foreach ($hunt->hunt_complexities[0]->hunt_clues as $key => $value) {
                 $huntClues[] = [$value->location['coordinates'][0],$value->location['coordinates'][1]];
@@ -229,8 +243,8 @@ class HuntController extends Controller
         $data = [
                     'hunt_id'       => $hunt->id,
                     'name'          => ($hunt->name != "")?$hunt->name:$hunt->place_name,
-                    'latitude'      => $location[0],
-                    'longitude'     => $location[1],
+                    'latitude'      => $location[1],
+                    'longitude'     => $location[0],
                     'clue'          => $huntClues,
                     'total_clue'    => count($huntClues),
                     'est_complete'  => $est_completion,
@@ -569,7 +583,7 @@ class HuntController extends Controller
         $user = Auth::User();
         
         $huntUser = HuntUser::whereHas('hunt_user_details',function($query){
-                                $query->where('status','pause');
+                                $query->whereIn('status',['pause','progress']);
                             })
                             ->select('_id','user_id','hunt_id')
                             ->with(['hunt:_id,name,place_name,location'])
