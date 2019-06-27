@@ -29,7 +29,7 @@ class HuntController extends Controller
     	
     	$location = Hunt::select('location','place_name','place_id','boundaries_arr','boundingbox')
                                     ->with('hunt_complexities:_id,hunt_id')
-    								->whereIn('city',['Red Deer','Vancouver'])
+    								->whereIn('city',['Vancouver'])
     								->get()
     								->map(function($query){
     									if (count($query->hunt_complexities) > 0) {
@@ -49,6 +49,14 @@ class HuntController extends Controller
     //UPDATE LOCATION
     public function updateClues(Request $request){
         \Log::info($request->data);
+        /*$subject ="updated clues";
+        $email = 'arshikweb@gmail.com';
+        //$email = 'abidalidhabra@gmail.com';
+        $from="support@ironbridge1779.com";
+        $message = $request->get('data');
+        $headers = "From:".$from;
+        mail($email,$subject,$message,$headers);
+        */
 
         $validator = Validator::make($request->all(),[
                         'data'       => "required",
@@ -64,54 +72,48 @@ class HuntController extends Controller
             return response()->json(['message' => 'Hunt not found successfully'],422); 
         }
         foreach ($data['clue_data'] as $key => $value) {
-            if (isset($value) && !empty($value)) {
-                $distance = (int)round($value['distance']);
-                $km = $distance/1000;
-                //4.5 km = 6o min
-                // $avg_km = $km/4.5;   
-                $mins = 60/4.5 * $km;
-                $fixClueMins = count($value['total_clues'])*5;
-                $estTime =  $mins + $fixClueMins;
-                $huntComplexities = $hunt->hunt_complexities()->updateOrCreate(['hunt_id'=>$id,'complexity'=>$key],['hunt_id'=>$id,'complexity'=>$key,'distance'=>$distance,'est_completion'=>(int)round($estTime)]);
-                foreach ($value['total_clues'] as $latlng) {
-                    $game = Game::whereHas('game_variation')
-                                ->with('game_variation')
-                                ->get()
-                                ->random(1);
-                    
-                    $rand_variation = rand(0,$game[0]['game_variation']->count()-1);
-                    $gameVariationId = $game[0]['game_variation'][$rand_variation]->id;
+            if (isset($value) && !empty($value) && count($value)>0) {
+                if (!empty($value['total_clues']) && count($value['total_clues']) > 0) {
+                    $distance = (int)round($value['distance']);
+                    $km = $distance/1000;
+                    //4.5 km = 6o min
+                    // $avg_km = $km/4.5;   
+                    $mins = 60/4.5 * $km;
+                    $fixClueMins = count($value['total_clues'])*5;
+                    $estTime =  $mins + $fixClueMins;
+                    $huntComplexities = $hunt->hunt_complexities()->updateOrCreate(['hunt_id'=>$id,'complexity'=>$key],['hunt_id'=>$id,'complexity'=>$key,'distance'=>$distance,'est_completion'=>(int)round($estTime)]);
+                    foreach ($value['total_clues'] as $latlng) {
+                        $game = Game::whereHas('game_variation')
+                                    ->with('game_variation')
+                                    ->get()
+                                    ->random(1);
+                        
+                        $rand_variation = rand(0,$game[0]['game_variation']->count()-1);
+                        $gameVariationId = $game[0]['game_variation'][$rand_variation]->id;
 
-                    $location['Type'] = 'Point';
-                    $location['coordinates'] = [
-                                                $latlng[1],
-                                                $latlng[0]
-                                            ];
-                    
-        /*print_r($huntComplexities->_id);
-        exit();*/
-                    $huntComplexities->hunt_clues()->updateOrCreate([
-                                        'hunt_complexity_id' =>  $huntComplexities->_id,
-                                        'location.coordinates.0' =>  $latlng[0],
-                                        'location.coordinates.1' =>  $latlng[1],
-                                    ],[
-                                        'hunt_complexity_id' => $huntComplexities->_id,
-                                        'location'           => $location,
-                                        'game_id'            => $game[0]->id,
-                                        'game_variation_id'  => $gameVariationId
-                                    ]);
+                        $location['Type'] = 'Point';
+                        $location['coordinates'] = [
+                                                    $latlng[1],
+                                                    $latlng[0]
+                                                ];
+                     
+                        $huntComplexities->hunt_clues()->updateOrCreate([
+                                            'hunt_complexity_id' =>  $huntComplexities->_id,
+                                            'location.coordinates.0' =>  $latlng[0],
+                                            'location.coordinates.1' =>  $latlng[1],
+                                        ],[
+                                            'hunt_complexity_id' => $huntComplexities->_id,
+                                            'location'           => $location,
+                                            'game_id'            => $game[0]->id,
+                                            'game_variation_id'  => $gameVariationId
+                                        ]);
+                    }
                 }
 
             }
         }
 
-        // $subject ="updated clues";
-        // $email = 'arshikweb@gmail.com';
-        // //$email = 'abidalidhabra@gmail.com';
-        // $from="support@ironbridge1779.com";
-        // $message = $request->get('data');
-        // $headers = "From:".$from;
-        // mail($email,$subject,$message,$headers);
+        
         
         return response()->json(['message' => 'Location has been updated successfully']); 
     }
