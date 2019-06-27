@@ -29,7 +29,7 @@ class HuntController extends Controller
     	
     	$location = Hunt::select('location','place_name','place_id','boundaries_arr','boundingbox')
                                     ->with('hunt_complexities:_id,hunt_id')
-    								->whereIn('city',['Vancouver'])
+    								->whereIn('city',['Calgary'])
     								->get()
     								->map(function($query){
     									if (count($query->hunt_complexities) > 0) {
