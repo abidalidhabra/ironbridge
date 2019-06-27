@@ -35,6 +35,7 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 	// Route::get('getClue', 'LocationController@getClue');
 	Route::get('getParks1', 'HuntController@getParks1');
 	Route::get('getClue', 'HuntController@getClue');
+	Route::post('updateClues', 'HuntController@updateClues');
 	
 	
 	Route::group(['middleware' => 'jwt-auth'], function ($router) {
@@ -72,7 +73,6 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 		Route::post('participateInHunt', 'HuntController@participateInHunt');
 		Route::post('getHuntParticipationDetails', 'HuntController@getHuntParticipationDetails');
 		Route::get('getNearByHunts', 'HuntController@getNearByHunts');
-		Route::post('updateClues', 'HuntController@updateClues');
 		Route::post('getHuntUser', 'HuntController@getHuntUser');
 		Route::get('getHuntsInProgress', 'HuntController@getHuntsInProgress');
 
