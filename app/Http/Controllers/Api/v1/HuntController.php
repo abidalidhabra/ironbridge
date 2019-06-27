@@ -330,6 +330,16 @@ class HuntController extends Controller
                                 'message'=>'You already participated in this hunt.',
                             ],422);
         } else {
+            if ($huntMode == 'challenge') {
+                if ($user->gold_balance < $huntComplexitie->hunt->fees) {
+                    return response()->json([
+                                'message'=>"you don't have enough balance",
+                            ],422);
+                }
+                $coin = $user->gold_balance - $huntComplexitie->hunt->fees;
+                $user->gold_balance = (int)$coin;
+                $user->save();            
+            }
             $skeleton = [];
             $huntUser = HuntUser::create([
                                             'user_id'            => $user->_id,
@@ -363,16 +373,7 @@ class HuntController extends Controller
             }
             $huntUser->skeleton = $skeleton;
             $huntUser->save();
-            if ($huntMode == 'challenge') {
-                if ($user->gold_balance < $huntComplexitie->hunt->fees) {
-                    return response()->json([
-                                'message'=>"you don't have enough balance",
-                            ],422);
-                }
-                $coin = $user->gold_balance - $huntComplexitie->hunt->fees;
-                $user->gold_balance = $coin;
-                $user->save();            
-            }
+            
 
             $request->request->add(['hunt_user_id'=>$huntUser->id]);
             $data1 = (new HuntController)->getHuntParticipationDetails($request);
