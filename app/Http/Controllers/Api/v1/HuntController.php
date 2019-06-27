@@ -423,9 +423,11 @@ class HuntController extends Controller
 
 
     public function getHuntParticipationDetails(Request $request){
+        
         $validator = Validator::make($request->all(),[
                         'hunt_user_id'=> "required|exists:hunt_users,_id",
                     ]);
+        
         if ($validator->fails()) {
             return response()->json(['message'=>$validator->messages()],422);
         }
@@ -435,16 +437,31 @@ class HuntController extends Controller
         $data = $request->all();
         $huntUserId = $request->get('hunt_user_id');
 
+        /** Pause the clue if running **/
+        $runningClues = HuntUserDetail::where(['hunt_user_id' => $huntUserId, 'status' => 'running'])->get();
+
+        foreach ($runningClues as $index => $clue) {
+            $startdate = $clue->started_at;
+            $clue->ended_at = new MongoDBDate();
+            $finishedIn = Carbon::now()->diffInMinutes($startdate);
+            if ($clue->finished_in > 0) {
+                $finishedIn += $clue->finished_in;
+            }
+            $clue->finished_in = (int)$finishedIn;
+            $clue->status = 'pause';
+            $clue->save();
+        }
+
         $huntUser = HuntUser::select('_id','user_id','hunt_id','hunt_complexity_id','status','skeleton')
                             ->where('_id',$huntUserId)
                             //->with('hunt_user_details:_id,hunt_user_id,location,est_completion,status')
                             ->with(['hunt_user_details'=>function($query) use ($huntUserId){
                                 $query->where('hunt_user_id',$huntUserId)
-                                    ->select('_id','hunt_user_id','location','est_completion','status','game_id','game_variation_id','finished_in')
+                                    ->select('_id','hunt_user_id','location','est_completion','status','game_id','game_variation_id','finished_in','started_at','ended_at')
                                     ->with('game:_id,name,identifier','game_variation');
                             }])
                             ->first();
-        
+       
         $skeleton_key_available = 0;
         $i = 1;
         foreach ($huntUser->skeleton as $key => $value) {
@@ -483,7 +500,7 @@ class HuntController extends Controller
         $longitude  = (float)$request->longitude;
         $latitude   = (float)$request->latitude;
         $page       = $page -1;
-        $take       = 10;
+        $take       = 50;
         $skip       = ($page * $take);
         $distance   = 100;
         // $latitude   = (float)$user->location['coordinates'][0];
@@ -618,7 +635,7 @@ class HuntController extends Controller
     public function getHuntsInProgress(Request $request){
 
         $user = Auth::User();
-        
+
         $huntUser = HuntUser::whereHas('hunt_user_details',function($query){
                                 $query->whereIn('status',['pause','progress']);
                             })
@@ -629,16 +646,17 @@ class HuntController extends Controller
                                     ])
                             ->get()
                             ->map(function($query){
-                                $query->name = ($query->hunt->name != "")?$query->hunt->name:$query->hunt->place_name;
-                                $query->location = $query->hunt->location;
-                                //$query->star = $query->hunt_complexities->complexity;
-                                
-                                unset($query->hunt , $query->user_id);
+                                $query->name = $query->hunt->name;
+                                $query->place_name = $query->hunt->place_name;
+                                $query->latitude = $query->hunt->location['coordinates'][1];
+                                $query->longitude = $query->hunt->location['coordinates'][0];
+                                $query->hunt_user_id = $query->_id;
+                                unset($query->_id, $query->hunt , $query->user_id , $query->location);
                                 return $query;
                             });
 
         return response()->json([
-                                'message' => 'hunt has been retrieved successfully',
+                                'message' => 'In progress hunt has been retrieved successfully',
                                 'data'    => $huntUser
                             ]);
     }
