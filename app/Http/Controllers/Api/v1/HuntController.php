@@ -144,10 +144,12 @@ class HuntController extends Controller
                                     	$query->latitude = $location[1];
                                     	$query->longitude = $location[0];
                                         $query->name = ($query->name != "")?$query->name:$query->place_name;
-                                    	if (count($query->hunt_complexities[0]->hunt_users)>0 && $query->hunt_complexities[0]->hunt_users[0]->status == 'participate') {
-                                            $query->status = true;
+                                    	if (count($query->hunt_complexities[0]->hunt_users)>0 && $query->hunt_complexities[0]->hunt_users[0]->status == 'participated') {
+                                            $query->already_participated = 1;
+                                            $query->hunt_user_id = $query->hunt_complexities[0]->hunt_users[0]->id;
                                         } else {
-                                            $query->status = false;
+                                            $query->already_participated = 0;
+                                            $query->hunt_user_id = "";
                                         }
                                         unset($query->location,$query->hunt_complexities);
                                     	return $query;
@@ -230,16 +232,14 @@ class HuntController extends Controller
                                 unset($query->hunt_user_details);
                                 return $query;
                             });
-
-        
         $hunt = Hunt::select('_id','name','location','place_name','fees')
                     ->whereHas('hunt_complexities',function($query) use ($clueId){
                         $query->where('complexity',$clueId);
                     })
                     ->with(['hunt_complexities'=>function($query) use ($clueId){
                         $query->where('complexity',$clueId)
-                            ->select('hunt_id','complexity','est_completion')
-                            ->with('hunt_clues:_id,hunt_complexity_id,location,game_id,game_variation_id,est_completion');
+                            ->select('hunt_id','complexity','est_completion','distance')
+                            ->with('hunt_clues:_id,hunt_complexity_id,location,game_id,game_variation_id');
                     }])
                     ->where('_id',$huntId)
                     ->first();
@@ -250,21 +250,21 @@ class HuntController extends Controller
         }
         $huntClues = [];
         $location = $hunt->location['coordinates'];
-        /*print_r($hunt->hunt_complexities->toArray());
-        exit();*/
         $est_completion = '00:00:00';
         if (count($hunt->hunt_complexities) > 0) {
             foreach ($hunt->hunt_complexities[0]->hunt_clues as $key => $value) {
                 $huntClues[] = [$value->location['coordinates'][0],$value->location['coordinates'][1]];
             }
-
-            $est_sec = $hunt->hunt_complexities[0]->hunt_clues->pluck('est_completion')->toArray();
-            $est_completion = gmdate("H:i:s", array_sum($est_sec));
+            $est_sec = $hunt->hunt_complexities[0]->est_completion;
+            $est_completion = gmdate("H:i:s", $est_sec*60);
         }
+        
 
         $bestTime = "00:00:00";
         if (count($huntUser->pluck('finished_in')) > 0) {
-            $bestTime = gmdate("H:i:s", min($huntUser->pluck('finished_in')->toArray()));
+            $minutesTime = min(array_diff($huntUser->pluck('finished_in')->toArray(), array(0)));
+            // $bestTime = gmdate("H:i:s", min($huntUser->pluck('finished_in')->toArray()));
+            $bestTime = gmdate("H:i:s", $minutesTime*60);
         }
         
         $data = [
@@ -278,6 +278,7 @@ class HuntController extends Controller
                     'best_time'     => $bestTime,
                     'cost'          => $hunt->fees,
                     'complexity'    => $clueId,
+                    'distance'      => $hunt->hunt_complexities[0]->distance/1000,
                 ];
 
         return response()->json(['message'=>'Hunt clues has been retrieved successfully','data'=>$data]);
@@ -335,7 +336,7 @@ class HuntController extends Controller
                                             'hunt_id'            => $huntId,
                                             'hunt_complexity_id' => $huntComplexitie->id,
                                             'valid'              => false,
-                                            'status'             => 'participate',
+                                            'status'             => 'participated',
                                             'hunt_mode'          => $huntMode,
                                             'started_at'         => null,
                                             'ended_at'           => null,
@@ -350,7 +351,7 @@ class HuntController extends Controller
                                                             'game_variation_id' => $value->game_variation_id,
                                                             'revealed_at'       => null,
                                                             'finished_in'       => 0,
-                                                            'status'            => 'participate',
+                                                            'status'            => 'tobestart',
                                                             'started_at'        => null,
                                                             'ended_at'          => null,
                                                         ]);
@@ -446,12 +447,17 @@ class HuntController extends Controller
                             }])
                             ->first();
         
-        $huntUser->skeleton_key_available = false;
+        $skeleton_key_available = 0;
+        $i = 1;
         foreach ($huntUser->skeleton as $key => $value) {
             if ($value['used'] == false) {
-                $huntUser->skeleton_key_available = true;
+                $skeleton_key_available = $i;
+                $i++;
             }    
         }
+
+        $huntUser->skeleton_key_available = $skeleton_key_available;
+
         unset($huntUser->skeleton);
         return response()->json([
                                 'message' => 'hunt user has been retrieved successfully',
@@ -659,6 +665,52 @@ class HuntController extends Controller
         return response()->json([
                                 'message' => 'In progress hunt has been retrieved successfully',
                                 'data'    => $huntUser
+                            ]);
+    }
+
+
+    //previous Hunt Details
+    public function getPreviousHuntDetails(Request $request){
+        $validator = Validator::make($request->all(),[
+                        'hunt_user_id'=> "required|exists:hunt_users,_id",
+                    ]);
+        if ($validator->fails()) {
+            return response()->json(['message'=>$validator->messages()],422);
+        }
+
+        $user = Auth::User();
+        $id = $request->get('hunt_user_id');
+        $huntUsers = HuntUser::with([
+                                        'hunt:_id,name,place_name',
+                                        'hunt_complexities:_id,complexity,distance',
+                                        'hunt_user_details'
+                                    ])
+                               ->where([
+                                        '_id'     => $id,
+                                        'user_id' => $user->id,
+                                    ])
+                               ->first();
+        $totalCompletedClues = $huntUsers->hunt_user_details->where('status','completed')->count();
+        $time = $huntUsers->hunt_user_details->pluck('finished_in')->toArray();
+        $totalClue = $huntUsers->hunt_user_details->count();
+        $totalKm = $huntUsers->hunt_complexities->distance/1000;
+        $completedKm = ($totalKm/$totalClue)*$totalCompletedClues;
+        $data = [   
+                    '_id'                   => $huntUsers->id,
+                    'name'                  => $huntUsers->hunt->name,
+                    'status'                => $huntUsers->status,
+                    'complexity'            => $huntUsers->hunt_complexities->complexity,
+                    'total_clues'           => $totalClue,
+                    'total_completed_clues' => $totalCompletedClues,
+                    'time'                  => array_sum($time),
+                    'total_km'              => $totalKm,
+                    'completed_km'          => $completedKm,
+                ];
+
+        
+        return response()->json([
+                                'message' => 'Previous hunt has been retrieved successfully',
+                                'data'    => $data
                             ]);
     }
 }
