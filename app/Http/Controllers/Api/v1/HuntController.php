@@ -479,7 +479,7 @@ class HuntController extends Controller
         $longitude  = (float)$request->longitude;
         $latitude   = (float)$request->latitude;
         $page       = $page -1;
-        $take       = 10;
+        $take       = 50;
         $skip       = ($page * $take);
         $distance   = 500;
         // $latitude   = (float)$user->location['coordinates'][0];
@@ -636,7 +636,7 @@ class HuntController extends Controller
     public function getHuntsInProgress(Request $request){
 
         $user = Auth::User();
-        
+
         $huntUser = HuntUser::whereHas('hunt_user_details',function($query){
                                 $query->whereIn('status',['pause','progress']);
                             })
@@ -647,16 +647,17 @@ class HuntController extends Controller
                                     ])
                             ->get()
                             ->map(function($query){
-                                $query->name = ($query->hunt->name != "")?$query->hunt->name:$query->hunt->place_name;
-                                $query->location = $query->hunt->location;
-                                //$query->star = $query->hunt_complexities->complexity;
-                                
-                                unset($query->hunt , $query->user_id);
+                                $query->name = $query->hunt->name;
+                                $query->place_name = $query->hunt->place_name;
+                                $query->latitude = $query->hunt->location['coordinates'][1];
+                                $query->longitude = $query->hunt->location['coordinates'][0];
+                                $query->hunt_user_id = $query->_id;
+                                unset($query->_id, $query->hunt , $query->user_id , $query->location);
                                 return $query;
                             });
 
         return response()->json([
-                                'message' => 'hunt has been retrieved successfully',
+                                'message' => 'In progress hunt has been retrieved successfully',
                                 'data'    => $huntUser
                             ]);
     }
