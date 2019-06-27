@@ -278,12 +278,12 @@ class ClueController extends Controller
 
             $startdate = $huntUserDetail->started_at;
             $huntUserDetail->ended_at = new MongoDBDate();
-            $huntUserDetail->huntUserDetail = Carbon::now()->diffInSeconds($startdate);
+            $huntUserDetail->finished_in = Carbon::now()->diffInMinutes($startdate);
             $huntUserDetail->save();
 
             if ($huntUserDetail) {
                 $clueDetail = HuntUserDetail::where('hunt_user_id',$huntUserDetail->hunt_user_id)
-                                ->whereIn('status',['progress','pause'])
+                                ->whereIn('status',['tobestart','pause'])
                                 ->count();
                 if ($clueDetail == 0) {
                     HuntUser::where([
