@@ -509,7 +509,7 @@ class HuntController extends Controller
         $page       = $page -1;
         $take       = 50;
         $skip       = ($page * $take);
-        $distance   = 100;
+        $distance   = 2000;
         // $latitude   = (float)$user->location['coordinates'][0];
         // $longitude  = (float)$user->location['coordinates'][1];
 
