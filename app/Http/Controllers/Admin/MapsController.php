@@ -24,7 +24,7 @@ class MapsController extends Controller
     }
 
     public function getMaps(Request $request){
-    	$city = Hunt::select('latitude','longitude','place_name','city','province','country','custom_name','updated_at')
+    	$city = Hunt::select('latitude','longitude','place_name','city','province','country','name','updated_at')
     						->get();
     	return DataTables::of($city)
         ->addIndexColumn()
@@ -122,6 +122,7 @@ class MapsController extends Controller
                         'hunt_id'   => 'required',
                         'game_id.*'   => 'required',
                         'game_variation_id.*' => 'required',
+                        'est_completion.*' => 'required|integer',
                         'coordinates'=> 'required|json',
                     ]);
         
@@ -135,6 +136,7 @@ class MapsController extends Controller
         $complexity = (int)$request->get('complexity');
         $gameId = $request->get('game_id');
         $gameVariationId = $request->get('game_variation_id');
+        $estCompletion = $request->get('est_completion');
         $hunt = Hunt::where('_id',$id)->first();
        
         $locationdata = [];
@@ -155,7 +157,8 @@ class MapsController extends Controller
                                 'hunt_complexity_id' => $huntComplexities->_id,
                                 'location'           => $location,
                                 'game_id'            => $gameId[$key],
-                                'game_variation_id'  => $gameVariationId[$key]
+                                'game_variation_id'  => $gameVariationId[$key],
+                                'est_completion'     => (int)$estCompletion[$key]
                             ]);
         }
 
@@ -354,6 +357,12 @@ class MapsController extends Controller
     //CUSTOM STORE
     public function customRecordStore(){
         
+        /*$hunts = Hunt::get();
+        foreach ($hunts as $key => $hunt) {
+            $hunt->name = ($hunt->name!="")?$hunt->name:$hunt->place_name;
+            $hunt->save();
+        }*/
+
         /* HUNT RECORD STORE */
         // $cityInfo = TreasureLocation::get();
         // foreach ($cityInfo as $key => $value) {

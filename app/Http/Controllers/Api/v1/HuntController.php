@@ -16,13 +16,20 @@ use Carbon\Carbon;
 
 class HuntController extends Controller
 {
+    public function __construct()
+    {
+        if (version_compare(phpversion(), '7.1', '>=')) {
+            ini_set( 'serialize_precision', -1 );
+        }
+    }
+    
     //GET HUNT
     public function getParks1(Request $request)
     {
     	
     	$location = Hunt::select('location','place_name','place_id','boundaries_arr','boundingbox')
                                     ->with('hunt_complexities:_id,hunt_id')
-    								->whereIn('city',['Calgary','Vancouver'])
+    								->whereIn('city',['Red Deer','Vancouver'])
     								->get()
     								->map(function($query){
     									if (count($query->hunt_complexities) > 0) {
@@ -42,6 +49,7 @@ class HuntController extends Controller
     //UPDATE LOCATION
     public function updateClues(Request $request){
         \Log::info($request->data);
+
         $validator = Validator::make($request->all(),[
                         'data'       => "required",
                     ]);
@@ -50,13 +58,22 @@ class HuntController extends Controller
         }
 
         $data  = json_decode($request->get('data'),true);
-        $id = $data[0]['_id'];
+        $id = $data['_id'];
         $hunt = Hunt::where('_id',$id)->first();
-        
-        foreach ($data[0]['clues'] as $key => $value) {
+        if (!$hunt) {
+            return response()->json(['message' => 'Hunt not found successfully'],422); 
+        }
+        foreach ($data['clue_data'] as $key => $value) {
             if (isset($value) && !empty($value)) {
-                $huntComplexities = $hunt->hunt_complexities()->updateOrCreate(['hunt_id'=>$id,'complexity'=>$key],['hunt_id'=>$id,'complexity'=>$key]);
-                foreach ($value as $latlng) {
+                $distance = (int)round($value['distance']);
+                $km = $distance/1000;
+                //4.5 km = 6o min
+                // $avg_km = $km/4.5;   
+                $mins = 60/4.5 * $km;
+                $fixClueMins = count($value['total_clues'])*5;
+                $estTime =  $mins + $fixClueMins;
+                $huntComplexities = $hunt->hunt_complexities()->updateOrCreate(['hunt_id'=>$id,'complexity'=>$key],['hunt_id'=>$id,'complexity'=>$key,'distance'=>$distance,'est_completion'=>(int)round($estTime)]);
+                foreach ($value['total_clues'] as $latlng) {
                     $game = Game::whereHas('game_variation')
                                 ->with('game_variation')
                                 ->get()
@@ -67,10 +84,12 @@ class HuntController extends Controller
 
                     $location['Type'] = 'Point';
                     $location['coordinates'] = [
-                                                $latlng[0],
-                                                $latlng[1]
+                                                $latlng[1],
+                                                $latlng[0]
                                             ];
                     
+        /*print_r($huntComplexities->_id);
+        exit();*/
                     $huntComplexities->hunt_clues()->updateOrCreate([
                                         'hunt_complexity_id' =>  $huntComplexities->_id,
                                         'location.coordinates.0' =>  $latlng[0],
@@ -107,17 +126,30 @@ class HuntController extends Controller
         }
 
         $clue = $request->get('star');
+        $user = Auth::User();
+        $userId = $user->id;
         $location = Hunt::select('location','name','place_name')
-                                    ->whereHas('hunt_complexities', function ($query) use ($clue) {
+                                    ->whereHas('hunt_complexities', function ($query) use ($clue,$userId) {
                                         $query->where('complexity',(int)$clue);
                                     })
+                                    ->with(['hunt_complexities'=>function($query) use ($clue,$userId){
+                                        $query->where('complexity',(int)$clue)
+                                        ->with(['hunt_users'=>function($hunt) use ($userId){
+                                            $hunt->where('user_id',$userId);
+                                        }]);
+                                    }])
                                     ->get()
                                     ->map(function($query){
                                     	$location = $query->location['coordinates'];
                                     	$query->latitude = $location[1];
                                     	$query->longitude = $location[0];
                                         $query->name = ($query->name != "")?$query->name:$query->place_name;
-                                    	unset($query->location);
+                                    	if (count($query->hunt_complexities[0]->hunt_users)>0 && $query->hunt_complexities[0]->hunt_users[0]->status == 'participate') {
+                                            $query->status = true;
+                                        } else {
+                                            $query->status = false;
+                                        }
+                                        unset($query->location,$query->hunt_complexities);
                                     	return $query;
                                     });
 
@@ -176,7 +208,7 @@ class HuntController extends Controller
         if ($validator->fails()) {
             return response()->json(['message'=>$validator->messages()],422);
         }
-
+        /**/
         $huntId  = $request->get('hunt_id');
         $clueId  = (int)$request->get('star');
 
@@ -201,17 +233,26 @@ class HuntController extends Controller
 
         
         $hunt = Hunt::select('_id','name','location','place_name','fees')
+                    ->whereHas('hunt_complexities',function($query) use ($clueId){
+                        $query->where('complexity',$clueId);
+                    })
                     ->with(['hunt_complexities'=>function($query) use ($clueId){
                         $query->where('complexity',$clueId)
-                            ->select('hunt_id','complexity')
+                            ->select('hunt_id','complexity','est_completion')
                             ->with('hunt_clues:_id,hunt_complexity_id,location,game_id,game_variation_id,est_completion');
                     }])
                     ->where('_id',$huntId)
                     ->first();
-        $location = $hunt->location['coordinates'];
         
+        
+        if (!$hunt) {
+           return response()->json(['message'=>'Hunt details not found'],422);
+        }
         $huntClues = [];
-        
+        $location = $hunt->location['coordinates'];
+        /*print_r($hunt->hunt_complexities->toArray());
+        exit();*/
+        $est_completion = '00:00:00';
         if (count($hunt->hunt_complexities) > 0) {
             foreach ($hunt->hunt_complexities[0]->hunt_clues as $key => $value) {
                 $huntClues[] = [$value->location['coordinates'][0],$value->location['coordinates'][1]];
@@ -228,9 +269,9 @@ class HuntController extends Controller
         
         $data = [
                     'hunt_id'       => $hunt->id,
-                    'hunt_name'     => ($hunt->name != "")?$hunt->name:$hunt->place_name,
-                    'latitude'      => $location[0],
-                    'longitude'     => $location[1],
+                    'name'          => ($hunt->name != "")?$hunt->name:$hunt->place_name,
+                    'latitude'      => $location[1],
+                    'longitude'     => $location[0],
                     'clue'          => $huntClues,
                     'total_clue'    => count($huntClues),
                     'est_complete'  => $est_completion,
@@ -268,13 +309,18 @@ class HuntController extends Controller
                                                         'hunt_id'    => $huntId,
                                                     ])
                                             ->first();
+        if(!$huntComplexitie){
+            return response()->json([
+                                'message'=>'Hunt details not found',
+                            ],422);
+        }
 
         $huntUserDetail = HuntUser::select('user_id','hunt_id','hunt_complexity_id','status','hunt_mode','skeleton') 
                                     ->where([
                                         'user_id'            => $user->_id,
                                         'hunt_id'            => $huntId,
                                         'hunt_complexity_id' => $huntComplexitie->id,
-                                        'hunt_mode'          => $huntMode,
+                                        //'hunt_mode'          => $huntMode,
                                     ])
                             ->first();
 
@@ -289,10 +335,11 @@ class HuntController extends Controller
                                             'hunt_id'            => $huntId,
                                             'hunt_complexity_id' => $huntComplexitie->id,
                                             'valid'              => false,
-                                            'status'             => 'progress',
+                                            'status'             => 'participate',
                                             'hunt_mode'          => $huntMode,
                                             'started_at'         => null,
-                                            'end_at'             => null,
+                                            'ended_at'           => null,
+                                            'est_completion'     => $huntComplexitie->est_completion,
                                         ]);
 
             foreach ($huntComplexitie->hunt_clues as $key => $value) {
@@ -301,12 +348,11 @@ class HuntController extends Controller
                                                             'location'          => $value->location,
                                                             'game_id'           => $value->game_id,
                                                             'game_variation_id' => $value->game_variation_id,
-                                                            'est_completion'    => $value->est_completion,
                                                             'revealed_at'       => null,
                                                             'finished_in'       => 0,
-                                                            'status'            => 'progress',
+                                                            'status'            => 'participate',
                                                             'started_at'        => null,
-                                                            'end_at'            => null,
+                                                            'ended_at'          => null,
                                                         ]);
                 $skeleton[] = [
                                 'key'   => substr(str_shuffle(str_repeat("0123456789abcdefghijklmnopqrstuvwxyz", 10)), 0, 10),
@@ -392,7 +438,12 @@ class HuntController extends Controller
 
         $huntUser = HuntUser::select('_id','user_id','hunt_id','hunt_complexity_id','status','skeleton')
                             ->where('_id',$huntUserId)
-                            ->with('hunt_user_details:_id,hunt_user_id,location,est_completion,status')
+                            //->with('hunt_user_details:_id,hunt_user_id,location,est_completion,status')
+                            ->with(['hunt_user_details'=>function($query) use ($huntUserId){
+                                $query->where('hunt_user_id',$huntUserId)
+                                    ->select('_id','hunt_user_id','location','est_completion','status','game_id','game_variation_id')
+                                    ->with('game:_id,name,identifier','game_variation');
+                            }])
                             ->first();
         
         $huntUser->skeleton_key_available = false;
@@ -582,26 +633,28 @@ class HuntController extends Controller
     }
 
     //HUNT PAUSE LIST
-    public function huntPauseList(Request $request){
-        $star = (int)$request->get('star');
-        $huntId = $request->get('hunt_id');
-        
+    public function getHuntsInProgress(Request $request){
+
         $user = Auth::User();
-        $huntUser = HuntUser::select('_id','user_id','hunt_id','hunt_complexity_id','status')
-                            ->with(['hunt:_id,name,place_name,location','hunt_complexities:_id,complexity'])
+        
+        $huntUser = HuntUser::whereHas('hunt_user_details',function($query){
+                                $query->whereIn('status',['pause','progress']);
+                            })
+                            ->select('_id','user_id','hunt_id')
+                            ->with(['hunt:_id,name,place_name,location'])
                             ->where([
                                         'user_id' => $user->_id,
-                                        'status'  => 'pause',
                                     ])
                             ->get()
                             ->map(function($query){
-                                $query->hunt_name = ($query->hunt->name != "")?$query->hunt->name:$query->hunt->place_name;
+                                $query->name = ($query->hunt->name != "")?$query->hunt->name:$query->hunt->place_name;
                                 $query->location = $query->hunt->location;
-                                $query->star = $query->hunt_complexities->complexity;
+                                //$query->star = $query->hunt_complexities->complexity;
                                 
-                                unset($query->hunt,$query->hunt_complexities);
+                                unset($query->hunt , $query->user_id);
                                 return $query;
                             });
+
         return response()->json([
                                 'message' => 'hunt has been retrieved successfully',
                                 'data'    => $huntUser

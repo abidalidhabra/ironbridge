@@ -8,7 +8,7 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Game</h3>
+                <h3>Games</h3>
             </div>
             <div class="col-md-6 text-right modalbuttonadd">
                 <button type="button" class="btn btn-info btn-md" data-toggle="modal" data-target="#addNews">Add Game</button>
@@ -70,7 +70,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Edit News</h4>       
+                        <h4 class="modal-title">Edit Game</h4>       
                     </div>
                     <form method="post" id="editGameForm">
                         @method('PUT')
@@ -184,7 +184,7 @@
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             },
-                            url: '{{ route("admin.news.destroy","/") }}/'+id,
+                            url: '{{ route("admin.deleteGame","/") }}/'+id,
                             data: {id : id},
                             success: function(response)
                             {

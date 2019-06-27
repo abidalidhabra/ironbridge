@@ -68,23 +68,23 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 
 		/** Hunt related requests **/
 		Route::get('getHuntsByDifficulty', 'HuntController@getHuntsByDifficulty');
-		Route::post('updateClues', 'HuntController@updateClues');
 		Route::get('getHuntDetails', 'HuntController@getHuntDetails');
 		Route::post('participateInHunt', 'HuntController@participateInHunt');
-		Route::post('getHuntUser', 'HuntController@getHuntUser');
 		Route::post('getHuntParticipationDetails', 'HuntController@getHuntParticipationDetails');
 		Route::get('getNearByHunts', 'HuntController@getNearByHunts');
-		Route::get('huntPauseList', 'HuntController@huntPauseList');
+		Route::post('updateClues', 'HuntController@updateClues');
+		Route::post('getHuntUser', 'HuntController@getHuntUser');
+		Route::get('getHuntsInProgress', 'HuntController@getHuntsInProgress');
 
 
 		/** Clues related requests  **/
-		Route::post('clueRevealed', 'ClueController@clueRevealed');
-		Route::get('userHuntInfo', 'ClueController@userHuntInfo');
-		Route::post('clueGame', 'ClueController@clueGame');
+		Route::post('revealTheClue', 'ClueController@revealTheClue');
 		Route::get('quitTheHunt', 'ClueController@quitTheHunt');
 		Route::get('cluePause', 'ClueController@cluePause');
 		Route::post('skeleton', 'ClueController@skeleton');
-		Route::post('gameFinish', 'ClueController@gameFinish');
+		Route::post('endTheClue', 'ClueController@endTheClue');
+		Route::post('clueGame', 'ClueController@clueGame');
+		Route::get('userHuntInfo', 'ClueController@userHuntInfo');
 
 	});
 

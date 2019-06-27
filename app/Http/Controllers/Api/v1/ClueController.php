@@ -15,8 +15,15 @@ use Carbon\Carbon;
 
 class ClueController extends Controller
 {
+    public function __construct()
+    {
+        if (version_compare(phpversion(), '7.1', '>=')) {
+            ini_set( 'serialize_precision', -1 );
+        }
+    }
+
     //CLUE complete
-    public function clueRevealed(Request $request){
+    public function revealTheClue(Request $request){
         $validator = Validator::make($request->all(),[
                         'hunt_user_details_id' => "required|exists:hunt_user_details,_id",
                         // 'time'=> "required|integer",
@@ -30,7 +37,7 @@ class ClueController extends Controller
         $data = [
                     'revealed_at' => new MongoDBDate(),
                     // 'finished_in' => (int)$request->get('time'),
-                    'status'      => 'completed',
+                    'status'      => 'progress',
                     'started_at'  => new MongoDBDate(),
                 ];
 
@@ -38,35 +45,34 @@ class ClueController extends Controller
         $huntUserDetail->update($data);
 
         if ($huntUserDetail) {
-            $clueDetail = HuntUserDetail::where('hunt_user_id',$huntUserDetail->hunt_user_id)
-                            ->whereIn('status',['progress','pause'])
-                            ->count();
+            // $clueDetail = HuntUserDetail::where('hunt_user_id',$huntUserDetail->hunt_user_id)
+            //                 ->whereIn('status',['progress','pause'])
+            //                 ->count();
             
-            if ($clueDetail == 0) {
-                HuntUser::where([
-                                    '_id'=>$huntUserDetail->hunt_user_id,
-                                    'user_id'=>$user->id,
-                                ])
-                        ->update([
-                                    'status'=>'completed',
-                                    'end_at'=> new MongoDBDate()
-                                ]);
-            }
+            // if ($clueDetail == 0) {
+            //     HuntUser::where([
+            //                         '_id'=>$huntUserDetail->hunt_user_id,
+            //                         'user_id'=>$user->id,
+            //                     ])
+            //             ->update([
+            //                         'status'=>'completed',
+            //                         'ended_at'=> new MongoDBDate()
+            //                     ]);
+            // }
 
-            $huntUserDetail_complate = HuntUserDetail::where('hunt_user_id',$huntUserDetail->hunt_user_id)
-                                                        ->where('status','completed')
-                                                        ->count();
+            // $huntUserDetail_complate = HuntUserDetail::where('hunt_user_id',$huntUserDetail->hunt_user_id)
+            //                                             ->where('status','completed')
+            //                                             ->count();
             
-            if($huntUserDetail_complate  == 1){
                 HuntUser::where([
                                 '_id'=>$huntUserDetail->hunt_user_id,
                                 'user_id'=>$user->id,
                             ])
-                    ->update([
-                                'status'=>'completed',
-                                'started_at'=> new MongoDBDate()
-                            ]);       
-            }
+                        ->update([
+                            'status'=>'progress',
+                            'started_at'=> new MongoDBDate()
+                        ]);       
+            
 
         }
         return response()->json([
@@ -132,25 +138,27 @@ class ClueController extends Controller
     //REMOVE PARTICIPET
     public function quitTheHunt(Request $request){
         $validator = Validator::make($request->all(),[
-                        'hunt_id'=> "required|exists:hunts,_id",
-                        'star'=> "required",
+                        'hunt_user_id'=> "required|exists:hunt_users,_id",
+                        //'star'=> "required",
                     ]);
         if ($validator->fails()) {
             return response()->json(['message'=>$validator->messages()],422);
         }
         $data = $request->all();
-        $star = (int)$request->get('star');
-        $huntId = $request->get('hunt_id');
+        /*$star = (int)$request->get('star');
+        $huntId = $request->get('hunt_id');*/
         $user = Auth::User();
-        $huntComplexitie = HuntComplexitie::with('hunt_users')
+        /*$huntComplexitie = HuntComplexitie::with('hunt_users')
                                             ->where([
                                                         'complexity' => $star,
                                                         'hunt_id'    => $huntId,
                                                     ])
-                                            ->first();
-        $huntUser = HuntUser::where('hunt_complexity_id',$huntComplexitie->id)
+                                            ->first();*/
+        $id = $request->get('hunt_user_id');
+        $huntUser = HuntUser::where('_id',$id)
                             ->where('user_id',$user->id)
                             ->first();
+        
         if ($huntUser) {
             $huntUser->hunt_user_details()->delete();
             $huntUser->delete();
@@ -193,7 +201,7 @@ class ClueController extends Controller
 
 
     //SKELETON
-    public function skeleton(Request $request){
+    public function skeleton_old(Request $request){
         $validator = Validator::make($request->all(),[
                         'hunt_id'=> "required|exists:hunts,_id",
                         'star'=> "required",
@@ -213,16 +221,6 @@ class ClueController extends Controller
         $huntUser = HuntUser::where('hunt_complexity_id',$huntComplexitie->id)
                             ->where('user_id',$user->id)
                             ->where('skeleton.used',false)
-                            // ->project([
-                            //     'skeleton' => [
-                            //         '$elemMatch' => [
-                            //             'used' => false
-                            //         ]
-                            //     ]
-                            //     // 'skeleton' => [
-                            //     //     '$slice' => 1
-                            //     // ]
-                            // ])
                             ->first();
 
         $skeletonKey = "";
@@ -246,8 +244,7 @@ class ClueController extends Controller
                             ]);
     }
 
-    //GAME FINISH
-    public function gameFinish(Request $request){
+    public function skeleton(Request $request){
         $validator = Validator::make($request->all(),[
                         'hunt_user_details_id' => "required|exists:hunt_user_details,_id"
                     ]);
@@ -255,9 +252,94 @@ class ClueController extends Controller
             return response()->json(['message'=>$validator->messages()],422);
         }
 
-        $huntUserDetailsId = $request->get('hunt_user_details_id');
-        $huntUserDetail = HuntUserDetail::where('_id',$huntUserDetailsId)->first();
-        print_r($huntUserDetail->toArray());
-        exit();
+
+        $user = Auth::User();
+        $huntUserDetail = HuntUserDetail::where('_id',$request->get('hunt_user_details_id'))->first();
+
+
+        $huntUser = HuntUser::where('_id',$huntUserDetail->hunt_user_id)
+                            ->where('user_id',$user->id)
+                            ->where('skeleton.used',false)
+                            ->first();
+
+
+        $skeletonKey = "";
+        if ($huntUser) {
+            foreach ($huntUser->skeleton as $key => $value) {
+                if ($value['used'] == false) {
+                    $skeletonKey = $value['key'];
+                    break;
+                }
+            }
+            HuntUser::where('user_id',$user->id)
+                    ->where('_id',$huntUserDetail->hunt_user_id)
+                    ->where('skeleton.key',$skeletonKey)
+                    ->update(['skeleton.$.used'=>true , 'skeleton.$.used_date'=>new MongoDBDate()]);
+
+            $startdate = $huntUserDetail->started_at;
+            $huntUserDetail->ended_at = new MongoDBDate();
+            $huntUserDetail->huntUserDetail = Carbon::now()->diffInSeconds($startdate);
+            $huntUserDetail->save();
+
+            if ($huntUserDetail) {
+                $clueDetail = HuntUserDetail::where('hunt_user_id',$huntUserDetail->hunt_user_id)
+                                ->whereIn('status',['progress','pause'])
+                                ->count();
+                if ($clueDetail == 0) {
+                    HuntUser::where([
+                                        '_id'=>$huntUserDetail->hunt_user_id,
+                                        'user_id'=>$user->id,
+                                    ])
+                            ->update([
+                                        'status'=>'completed',
+                                        'ended_at'=> new MongoDBDate()
+                                    ]);
+                }
+            }
+
+        }
+
+
+        return response()->json([
+                                'message' => 'Skeleton used has been successfully'
+                            ]);
+
+    }
+
+    //GAME FINISH
+    public function endTheClue(Request $request){
+        $validator = Validator::make($request->all(),[
+                        'hunt_user_details_id' => "required|exists:hunt_user_details,_id"
+                    ]);
+        if ($validator->fails()) {
+            return response()->json(['message'=>$validator->messages()],422);
+        }
+
+        $user = Auth::User();
+        $huntUserDetail = HuntUserDetail::where('_id',$request->get('hunt_user_details_id'))->first();
+        $startdate = $huntUserDetail->started_at;
+        $huntUserDetail->ended_at = new MongoDBDate();
+        $huntUserDetail->status = 'complete';
+        $huntUserDetail->huntUserDetail = Carbon::now()->diffInSeconds($startdate);
+        $huntUserDetail->save();
+        
+        if ($huntUserDetail) {
+            $clueDetail = HuntUserDetail::where('hunt_user_id',$huntUserDetail->hunt_user_id)
+                            ->whereIn('status',['progress','pause'])
+                            ->count();
+            if ($clueDetail == 0) {
+                HuntUser::where([
+                                    '_id'=>$huntUserDetail->hunt_user_id,
+                                    'user_id'=>$user->id,
+                                ])
+                        ->update([
+                                    'status'=>'completed',
+                                    'ended_at'=> new MongoDBDate()
+                                ]);
+            }
+        }
+        return response()->json([
+                                'message'=>'Game is completed'
+                            ]);        
     }
 }

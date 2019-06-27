@@ -12,18 +12,22 @@ class HuntUserDetail extends Eloquent
 		'location',
 		'game_id',
 		'game_variation_id',
-		'est_completion',
+		//'est_completion',
 		'revealed_at',
 		'finished_in',
         'status',
         'started_at',
-        'end_at',
+        'ended_at',
 	];
+
+    /*protected $attributes = [
+        'est_completion' => 0
+    ];*/
 
 	protected $dates = [
         'revealed_at',
         'started_at',
-        'end_at',
+        'ended_at',
     ];
 
     public function game()

@@ -68,10 +68,12 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::post('addgame', 'GameController@addgame')->name('addgame');
 	Route::get('getGameList', 'GameController@getGameList')->name('getGameList');
 	Route::put('editGame', 'GameController@editGame')->name('editGame');
+	Route::delete('deleteGame', 'GameController@deleteGame')->name('deleteGame');
 
 
 	//GameVariationController
 	Route::resource('gameVariation', 'GameVariationController');
+	Route::get('getGameVariationList', 'GameVariationController@getGameVariationList')->name('getGameVariationList');
 
 });
 

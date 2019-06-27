@@ -49,7 +49,8 @@ class GameController extends Controller
             // return '<a href="javascript:void(0)" class="edit_game" data-action="edit" data-id="'.$game->id.'" data-identifier="'.$game->identifier.'" data-name="'.$game->name.'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>
             // <a href="javascript:void(0)" class="delete_company" data-action="delete" data-placement="left" data-id="'.$game->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>
             // </a>';
-            return '<a href="javascript:void(0)" class="edit_game" data-action="edit" data-id="'.$game->id.'" data-identifier="'.$game->identifier.'" data-name="'.$game->name.'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+            return '<a href="javascript:void(0)" class="edit_game" data-action="edit" data-id="'.$game->id.'" data-identifier="'.$game->identifier.'" data-name="'.$game->name.'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>
+                <a href="javascript:void(0)" class="delete_game" data-action="delete" data-placement="left" data-id="'.$game->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>';
         })
         ->rawColumns(['action'])
         ->order(function ($query) {
@@ -85,6 +86,18 @@ class GameController extends Controller
 		return response()->json([
             'status' => true,
             'message'=>'Updated game has been created successfully',
+        ]);
+    }
+
+    //DELETE GAME
+    public function deleteGame(Request $request){
+        $id = $request->get('id');
+        $game = Game::where('_id', $id)->first();
+        $game->game_variation()->delete();
+        $game->delete();
+        return response()->json([
+            'status' => true,
+            'message'=>'Game has been successfully deleted',
         ]);
     }
 }

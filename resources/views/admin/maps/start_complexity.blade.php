@@ -59,6 +59,10 @@
                             @forelse ($location->hunt_complexities[0]->hunt_clues as $key => $gamedetails)
                                 <div class="game_section{{ $key }} selected_game" id="game_{{ str_replace('.','_',substr($gamedetails->location['coordinates'][0], 0, 12).substr($gamedetails->location['coordinates'][1],0,12)) }}">
                                     <div class="form-group col-md-8">
+                                        <label>EST Completion(Second):</label>
+                                        <input type="number" name="est_completion[]" class="form-control" placeholder="EST completion(second)" value="{{ $gamedetails->est_completion }}">
+                                    </div>
+                                    <div class="form-group col-md-8">
                                         <label>Game:</label>
                                         <select name="game_id[]" class="form-control" data-id="{{ $key }}">
                                             <option value="">Select game</option>
@@ -212,6 +216,10 @@
                         if($('#game_'+gameId.replace(/\./g,'_')).length == 0){
                             $('.selected_game:nth-child('+i+')').after('<div class="game_section'+i+' selected_game" id="game_'+gameId.replace(/\./g,'_')+'">\
                                                     <div class="form-group col-md-8">\
+                                                        <label>EST Completion(Second):</label>\
+                                                        <input type="number" name="est_completion[]" class="form-control" placeholder="EST completion(second)" value="">\
+                                                    </div>\
+                                                    <div class="form-group col-md-8">\
                                                         <label>Game:</label>\
                                                         <select name="game_id[]" data-action="game_id'+i+'" data-id="'+i+'" class="form-control">\
                                                         '+option_game+'</select>\
@@ -270,6 +278,10 @@
                     });
                     for (i = 0; i < JSON.stringify(coordinates.length); i++) {
                         var html = '<div class="game_section'+i+'">\
+                                        <div class="form-group col-md-8">\
+                                            <label>EST Completion(Second):</label>\
+                                            <input type="number" name="est_completion[]" class="form-control" placeholder="EST completion(second)" value="">\
+                                        </div>\
                                         <div class="form-group col-md-8">\
                                             <label>Game:</label>\
                                             <select name="game_id[]" data-action="game_id'+i+'" data-id="'+i+'" class="form-control">\
