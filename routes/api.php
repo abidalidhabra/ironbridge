@@ -83,6 +83,7 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 		Route::get('quitTheHunt', 'ClueController@quitTheHunt');
 		Route::get('cluePause', 'ClueController@cluePause');
 		Route::post('skeleton', 'ClueController@skeleton');
+		Route::post('startTheClue', 'ClueController@startTheClue');
 		Route::post('endTheClue', 'ClueController@endTheClue');
 		Route::post('clueGame', 'ClueController@clueGame');
 		Route::get('userHuntInfo', 'ClueController@userHuntInfo');

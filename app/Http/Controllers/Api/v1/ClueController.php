@@ -171,33 +171,51 @@ class ClueController extends Controller
     //CLUE PAUSE
     public function cluePause(Request $request){
         $validator = Validator::make($request->all(),[
-                        'hunt_user_details_id' => "required|exists:hunt_user_details,_id"
-                    ]);
+            'hunt_user_details_id' => "required|exists:hunt_user_details,_id"
+        ]);
         if ($validator->fails()) {
             return response()->json(['message'=>$validator->messages()],422);
         }
 
         $huntUserDetail = HuntUserDetail::where('_id',$request->get('hunt_user_details_id'))
-                                        ->first();
-        $huntUserDetail->update(['status'=>'pause']);
+        ->first();
+        $startdate = $huntUserDetail->started_at;
+        $huntUserDetail->ended_at = new MongoDBDate();
 
-        if ($huntUserDetail) {
-            $clueDetail = HuntUserDetail::where('hunt_user_id',$huntUserDetail->hunt_user_id)
-                            ->where('status','pause')
-                            ->count();
-
-            if ($clueDetail == 1) {
-                $data = [
-                    'started_at' => new MongoDBDate(),
-                ];                
-                $huntUserDetail->update($data);
-            }
-
+        $finishedIn = Carbon::now()->diffInMinutes($startdate);
+        if ($huntUserDetail->finished_in > 0) {
+            $finishedIn += $clue->finished_in;
         }
+        $huntUserDetail->finished_in = (int)$finishedIn;
+        $huntUserDetail->status = 'pause';
+        $huntUserDetail->save();
+
         return response()->json([
-                                'message' => 'Clue pause has been updated successfully',
-                            ]);
+            'message' => 'Clue pause has been updated successfully',
+        ]);
     }
+
+    public function startTheClue(Request $request){
+      
+        $validator = Validator::make($request->all(),[
+            'hunt_user_details_id' => "required|exists:hunt_user_details,_id"
+        ]);
+       
+        if ($validator->fails()) {
+            return response()->json(['message'=>$validator->messages()],422);
+        }
+
+        $huntUserDetail = HuntUserDetail::where('_id',$request->get('hunt_user_details_id'))->first();
+        $huntUserDetail->started_at = new MongoDBDate();
+        $huntUserDetail->ended_at = null;
+        $huntUserDetail->status = 'progress';
+        $huntUserDetail->save();
+        
+        return response()->json([
+            'message' => 'Clue started successfully',
+        ]);
+    }
+
 
 
     //SKELETON
@@ -325,7 +343,7 @@ class ClueController extends Controller
         
         if ($huntUserDetail) {
             $clueDetail = HuntUserDetail::where('hunt_user_id',$huntUserDetail->hunt_user_id)
-                            ->whereIn('status',['participate','progress','pause'])
+                            ->whereIn('status',['tobestart','progress','pause'])
                             ->count();
             if ($clueDetail == 0) {
                 HuntUser::where([
