@@ -60,7 +60,9 @@ class HuntController extends Controller
         $data  = json_decode($request->get('data'),true);
         $id = $data['_id'];
         $hunt = Hunt::where('_id',$id)->first();
-        
+        if (!$hunt) {
+            return response()->json(['message' => 'Hunt not found successfully'],422); 
+        }
         foreach ($data['clue_data'] as $key => $value) {
             if (isset($value) && !empty($value)) {
                 $distance = (int)round($value['distance']);
@@ -82,10 +84,12 @@ class HuntController extends Controller
 
                     $location['Type'] = 'Point';
                     $location['coordinates'] = [
-                                                $latlng[0],
-                                                $latlng[1]
+                                                $latlng[1],
+                                                $latlng[0]
                                             ];
                     
+        /*print_r($huntComplexities->_id);
+        exit();*/
                     $huntComplexities->hunt_clues()->updateOrCreate([
                                         'hunt_complexity_id' =>  $huntComplexities->_id,
                                         'location.coordinates.0' =>  $latlng[0],
@@ -248,6 +252,7 @@ class HuntController extends Controller
         $location = $hunt->location['coordinates'];
         /*print_r($hunt->hunt_complexities->toArray());
         exit();*/
+        $est_completion = '00:00:00';
         if (count($hunt->hunt_complexities) > 0) {
             foreach ($hunt->hunt_complexities[0]->hunt_clues as $key => $value) {
                 $huntClues[] = [$value->location['coordinates'][0],$value->location['coordinates'][1]];
