@@ -362,6 +362,11 @@ class HuntController extends Controller
             $huntUser->skeleton = $skeleton;
             $huntUser->save();
             if ($huntMode == 'challenge') {
+                if ($user->gold_balance < $huntComplexitie->hunt->fees) {
+                    return response()->json([
+                                'message'=>"you don't have enough balance",
+                            ],422);
+                }
                 $coin = $user->gold_balance - $huntComplexitie->hunt->fees;
                 $user->gold_balance = $coin;
                 $user->save();            
@@ -452,7 +457,7 @@ class HuntController extends Controller
             $clue->save();
         }
 
-        $huntUser = HuntUser::select('_id','user_id','hunt_id','hunt_complexity_id','status','skeleton')
+        $huntUser = HuntUser::select('_id','user_id','hunt_id','hunt_complexity_id','status','skeleton','hunt_mode')
                             ->where('_id',$huntUserId)
                             //->with('hunt_user_details:_id,hunt_user_id,location,est_completion,status')
                             ->with(['hunt_user_details'=>function($query) use ($huntUserId){
