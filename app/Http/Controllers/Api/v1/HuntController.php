@@ -481,17 +481,18 @@ class HuntController extends Controller
         $star       = (int)$request->star;
         $page       = (int)$request->page;
         $user       = Auth::User();
+        $userId     = $user->id;
         $longitude  = (float)$request->longitude;
         $latitude   = (float)$request->latitude;
         $page       = $page -1;
         $take       = 10;
         $skip       = ($page * $take);
-        $distance   = 100;
+        $distance   = 500;
         // $latitude   = (float)$user->location['coordinates'][0];
         // $longitude  = (float)$user->location['coordinates'][1];
 
         $huntIds = HuntUser::where('user_id',$user->id)->pluck('hunt_id')->toArray();
-        $hunts = Hunt::raw(function($collection) use ($latitude,$longitude,$distance,$star,$skip,$take,$huntIds)
+        $hunts = Hunt::raw(function($collection) use ($latitude,$longitude,$distance,$star,$skip,$take,$huntIds,$userId)
                             {
                                 return $collection->aggregate([
                                     [ 
@@ -509,7 +510,9 @@ class HuntController extends Controller
                                     ],
                                     [
                                         '$match' => [
-                                            '_id' => ['$nin' => $huntIds]
+                                            '$and' => [
+                                                [ '_id' => ['$nin' => $huntIds] ]
+                                            ]
                                         ]
                                     ],
                                     [
@@ -545,6 +548,7 @@ class HuntController extends Controller
                                             'as' => 'hunt_complexities'
                                         ]
                                     ],
+                                    ['$unwind' => '$hunt_complexities'],
                                     [
                                         '$lookup' => [
                                             'from' => 'hunt_users',
@@ -555,6 +559,7 @@ class HuntController extends Controller
                                                         '$expr'=> [ 
                                                             '$and'=> [
                                                                [ '$eq'=> [ '$hunt_id',  '$$hunt_string_id' ] ],
+                                                               [ '$eq'=> [ '$user_id', $userId ] ],
                                                                [ '$eq'=> [ '$complexity', $star ] ]
                                                             ]
                                                         ]
@@ -564,11 +569,14 @@ class HuntController extends Controller
                                                     '$project' => [
                                                         '_id' => [ '$toString' => '$_id' ],
                                                         'hunt_id' => true,
+                                                        'user_id' => true,
                                                         'complexity' => true,
+                                                        'status' => true,
+
                                                     ]
                                                 ]
                                             ],
-                                            'as' => 'hunt_complexities'
+                                            'as' => 'hunt_participated_data'
                                         ]
                                     ],
                                     [
@@ -582,13 +590,28 @@ class HuntController extends Controller
                                         '$project' => [
                                             '_id' => true,
                                             'name' => true,
+                                            'place_name' => true,
                                             'location' => true,
-                                            'distance' => true,
+                                            // 'distance' => true,
+                                            'hunt_complexities' => true,
+                                            'hunt_participated_data' => true,
+                                            'already_participated' => [
+                                                '$size' => '$hunt_participated_data'
+                                            ],
                                         ]
                                     ]
                                 ]);
                             });
-
+    
+        $hunts = $hunts->map(function($hunt, $key){
+            $hunt->latitude = $hunt->location->coordinates[1];
+            $hunt->longitude = $hunt->location->coordinates[0];
+            $hunt->hunt_user_id = $hunt->hunt_participated_data[0]->_id;
+            unset($hunt->location);
+            unset($hunt->hunt_complexities);
+            unset($hunt->hunt_participated_data);
+            return $hunt;
+        });
         $hasNextPage = ($hunts->count() > 20)?true:false;
         return response()->json([
                                 'message' => 'Near by hunts has been retrieved successfully.',
