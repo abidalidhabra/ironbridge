@@ -280,40 +280,48 @@ class ClueController extends Controller
                             ->where('skeleton.used',false)
                             ->first();
 
-
+        if (!$huntUser) {
+            return response()->json([
+                                'message' => 'Skeleton key not available'
+                            ],422);
+        }
         $skeletonKey = "";
         if ($huntUser) {
             foreach ($huntUser->skeleton as $key => $value) {
                 if ($value['used'] == false) {
                     $skeletonKey = $value['key'];
+                    
+                    HuntUser::where('user_id',$user->id)
+                            ->where('_id',$huntUserDetail->hunt_user_id)
+                            ->where('skeleton.key',$skeletonKey)
+                            ->update(['skeleton.$.used'=>true , 'skeleton.$.used_date'=>new MongoDBDate()]);
+                    
+                    $startdate = $huntUserDetail->started_at;
+                    // $huntUserDetail->started_at = new MongoDBDate();
+                    $huntUserDetail->ended_at = new MongoDBDate();
+                    $huntUserDetail->finished_in = Carbon::now()->diffInMinutes($startdate);
+                    // $huntUserDetail->finished_in = 0;
+                    $huntUserDetail->save();
+
+                    if ($huntUserDetail) {
+                        $clueDetail = HuntUserDetail::where('hunt_user_id',$huntUserDetail->hunt_user_id)
+                                        ->whereIn('status',['tobestart','pause'])
+                                        ->count();
+                        if ($clueDetail == 0) {
+                            HuntUser::where([
+                                                '_id'=>$huntUserDetail->hunt_user_id,
+                                                'user_id'=>$user->id,
+                                            ])
+                                    ->update([
+                                                'status'=>'completed',
+                                                'ended_at'=> new MongoDBDate()
+                                            ]);
+                        }
+                    }
                     break;
                 }
             }
-            HuntUser::where('user_id',$user->id)
-                    ->where('_id',$huntUserDetail->hunt_user_id)
-                    ->where('skeleton.key',$skeletonKey)
-                    ->update(['skeleton.$.used'=>true , 'skeleton.$.used_date'=>new MongoDBDate()]);
 
-            $startdate = $huntUserDetail->started_at;
-            $huntUserDetail->ended_at = new MongoDBDate();
-            $huntUserDetail->finished_in = Carbon::now()->diffInMinutes($startdate);
-            $huntUserDetail->save();
-
-            if ($huntUserDetail) {
-                $clueDetail = HuntUserDetail::where('hunt_user_id',$huntUserDetail->hunt_user_id)
-                                ->whereIn('status',['tobestart','pause'])
-                                ->count();
-                if ($clueDetail == 0) {
-                    HuntUser::where([
-                                        '_id'=>$huntUserDetail->hunt_user_id,
-                                        'user_id'=>$user->id,
-                                    ])
-                            ->update([
-                                        'status'=>'completed',
-                                        'ended_at'=> new MongoDBDate()
-                                    ]);
-                }
-            }
 
         }
 

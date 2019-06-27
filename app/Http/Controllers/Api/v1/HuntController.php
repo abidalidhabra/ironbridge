@@ -450,12 +450,14 @@ class HuntController extends Controller
 
         foreach ($runningClues as $index => $clue) {
             $startdate = $clue->started_at;
-            $clue->ended_at = new MongoDBDate();
+            $endedDate = new MongoDBDate();
             $finishedIn = Carbon::now()->diffInMinutes($startdate);
             if ($clue->finished_in > 0) {
                 $finishedIn += $clue->finished_in;
             }
             $clue->finished_in = (int)$finishedIn;
+            $clue->started_at = new MongoDBDate();
+            $clue->ended_at = null;
             $clue->status = 'pause';
             $clue->save();
         }
