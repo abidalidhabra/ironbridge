@@ -75,6 +75,7 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 		Route::post('updateClues', 'HuntController@updateClues');
 		Route::post('getHuntUser', 'HuntController@getHuntUser');
 		Route::get('getHuntsInProgress', 'HuntController@getHuntsInProgress');
+		Route::get('getPreviousHuntDetails', 'HuntController@getPreviousHuntDetails');
 
 
 		/** Clues related requests  **/
