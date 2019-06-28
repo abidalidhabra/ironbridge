@@ -294,10 +294,10 @@
                     var i;
                     var games = <?php echo json_encode($games) ?>;
 
-                    var option_game = "'<option value=''>Select game</option>";
-                    var option_game_variation = "'<option value=''>Select game variation</option>";
 
                     for (i = 0; i < JSON.stringify(coordinates.length); i++) {
+                        var option_game = "'<option value=''>Select game</option>";
+                        var option_game_variation = "'<option value=''>Select game variation</option>";
                         var random_game = games[Math.floor(Math.random()*games.length)];
                         $.each(games, function(i, k) {
                             var selected = '';
