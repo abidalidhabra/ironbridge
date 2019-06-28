@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | NEWS')
+@section('title','Ironbridge1779 | GAME VARIATION')
 @extends('admin.layouts.admin-app')
 @section('styles')
     <!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->
@@ -55,6 +55,7 @@
 @endsection
 
 @section('scripts')
+<!-- <script src="http://jqueryvalidation.org/files/dist/additional-methods.min.js"></script> -->
     <script type="text/javascript">
         $(document).ready(function() {
             $(document).on('change','select[name="game_id"]',function(){
@@ -176,17 +177,17 @@
                             }
                         }
                     },
-                    /*"variation_image[]":{
-                        extension:"jpg|png|jpeg|gif",
-                        required:function(){
-                            let gameIdfentifier = $('#game_id').find(':selected').attr('data-identifier');
-                            if(gameIdfentifier == 'slidingphoto' || gameIdfentifier == 'jigsaw'){
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        }
-                    },*/
+                    // "variation_image[]":{
+                    //     extension:"jpg|png|jpeg|gif",
+                    //     required:function(){
+                    //         let gameIdfentifier = $('#game_id').find(':selected').attr('data-identifier');
+                    //         if(gameIdfentifier == 'slidingphoto' || gameIdfentifier == 'jigsaw'){
+                    //             return true;
+                    //         } else {
+                    //             return false;
+                    //         }
+                    //     }
+                    // },
                     no_of_balls:{
                         digits:true,
                         required:function(){

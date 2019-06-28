@@ -47,6 +47,16 @@ class GameVariationController extends Controller
      */
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(),[
+                        'identifier' => "required",
+                        'variationSize' => 'required_if:list_type,jigsaw|in:12,35,70,140',
+                        // 'variation_image' => 'required_if:list_type,jigsaw|mimes:jpeg,bmp,png',
+                    ]);
+        if ($validator->fails()) {
+            $message = $validator->messages()->first();
+            return response()->json(['status' => false,'message' => $message]);
+        }
+
         try {
 
             // $variationID        = $this->getNextID('games_variations');
