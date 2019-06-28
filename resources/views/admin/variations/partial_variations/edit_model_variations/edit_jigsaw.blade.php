@@ -1,5 +1,5 @@
 <div class="form-group col-md-6">
-    <label class="form-label">Variation size</label>
+    <label class="form-label">Variation size <small class="form-text text-muted">Valid size 12,35,70,140</small></label>
     <input type="text"  name="variationSize" value="{{ $variations->variation_size }}" id="variationSize" class="form-control">
 </div>
 <div class="form-group col-md-6">

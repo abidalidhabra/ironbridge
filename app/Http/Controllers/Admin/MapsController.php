@@ -140,15 +140,15 @@ class MapsController extends Controller
         $locationdata = [];
         
         if($complexity == 1){
-            $distance = 50;
+            $distance = 50*count($coordinates);
         } elseif($complexity == 2){
-            $distance = 100;
+            $distance = 100*count($coordinates);
         } elseif($complexity == 3){
-            $distance = 250;
+            $distance = 250*count($coordinates);
         } elseif($complexity == 4){
-            $distance = 500;
+            $distance = 500*count($coordinates);
         } elseif($complexity == 5){
-            $distance = 1000;
+            $distance = 1000*count($coordinates);
         }
 
         foreach ($coordinates as $key => $value) {
