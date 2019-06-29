@@ -29,7 +29,7 @@ class ClueController extends Controller
                         // 'time'=> "required|integer",
                     ]);
         if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()],422);
+            return response()->json(['message'=>$validator->messages()->first()],422);
         }
 
         $user = Auth::User();
@@ -110,7 +110,7 @@ class ClueController extends Controller
                         'hunt_user_details_id' => "required|exists:hunt_user_details,_id",
                     ]);
         if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()],422);
+            return response()->json(['message'=>$validator->messages()->first()],422);
         }
 
         $user = Auth::User();
@@ -142,7 +142,7 @@ class ClueController extends Controller
                         //'star'=> "required",
                     ]);
         if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()],422);
+            return response()->json(['message'=>$validator->messages()->first()],422);
         }
         $data = $request->all();
         /*$star = (int)$request->get('star');
@@ -174,7 +174,7 @@ class ClueController extends Controller
             'hunt_user_details_id' => "required|exists:hunt_user_details,_id"
         ]);
         if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()],422);
+            return response()->json(['message'=>$validator->messages()->first()],422);
         }
 
         $huntUserDetail = HuntUserDetail::where('_id',$request->get('hunt_user_details_id'))
@@ -202,7 +202,7 @@ class ClueController extends Controller
         ]);
        
         if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()],422);
+            return response()->json(['message'=>$validator->messages()->first()],422);
         }
 
         $huntUserDetail = HuntUserDetail::where('_id',$request->get('hunt_user_details_id'))->first();
@@ -267,7 +267,7 @@ class ClueController extends Controller
                         'hunt_user_details_id' => "required|exists:hunt_user_details,_id"
                     ]);
         if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()],422);
+            return response()->json(['message'=>$validator->messages()->first()],422);
         }
 
 
@@ -338,7 +338,7 @@ class ClueController extends Controller
                         'hunt_user_details_id' => "required|exists:hunt_user_details,_id"
                     ]);
         if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()],422);
+            return response()->json(['message'=>$validator->messages()->first()],422);
         }
 
         $user = Auth::User();

@@ -124,7 +124,7 @@ class HuntController extends Controller
                         'star'=> "required",
                     ]);
         if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()],422);
+            return response()->json(['message'=>$validator->messages()->first()],422);
         }
 
         $clue = $request->get('star');
@@ -169,7 +169,7 @@ class HuntController extends Controller
                     ]);
         
         if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()],422);
+            return response()->json(['message'=>$validator->messages()->first()],422);
         }
 
         $huntId  = $request->get('hunt_id');
@@ -210,7 +210,7 @@ class HuntController extends Controller
                     ]);
         
         if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()],422);
+            return response()->json(['message'=>$validator->messages()->first()],422);
         }
         /**/
         $huntId  = $request->get('hunt_id');
@@ -293,7 +293,7 @@ class HuntController extends Controller
                         'hunt_mode'=>'required|in:challenge,normal'
                     ]);
         if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()],422);
+            return response()->json(['message'=>$validator->messages()->first()],422);
         }
 
         $user = Auth::User();
@@ -351,6 +351,7 @@ class HuntController extends Controller
                                             'started_at'         => null,
                                             'ended_at'           => null,
                                             'est_completion'     => $huntComplexitie->est_completion,
+                                            'complexity'         => $star
                                         ]);
 
             foreach ($huntComplexitie->hunt_clues as $key => $value) {
@@ -392,7 +393,7 @@ class HuntController extends Controller
                         'star'=> "required",
                     ]);
         if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()],422);
+            return response()->json(['message'=>$validator->messages()->first()],422);
         }
 
         $user = Auth::user();
@@ -437,7 +438,7 @@ class HuntController extends Controller
                     ]);
         
         if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()],422);
+            return response()->json(['message'=>$validator->messages()->first()],422);
         }
 
         $user = Auth::user();
@@ -462,7 +463,7 @@ class HuntController extends Controller
             $clue->save();
         }
 
-        $huntUser = HuntUser::select('_id','user_id','hunt_id','hunt_complexity_id','status','skeleton','hunt_mode')
+        $huntUser = HuntUser::select('_id','user_id','hunt_id','hunt_complexity_id','status','skeleton','hunt_mode','complexity')
                             ->where('_id',$huntUserId)
                             //->with('hunt_user_details:_id,hunt_user_id,location,est_completion,status')
                             ->with(['hunt_user_details'=>function($query) use ($huntUserId){
@@ -501,7 +502,7 @@ class HuntController extends Controller
                     ]);
         
         if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()],422);
+            return response()->json(['message'=>$validator->messages()->first()],422);
         }
         $star       = (int)$request->star;
         $page       = (int)$request->page;
@@ -626,10 +627,11 @@ class HuntController extends Controller
                                 ]);
                             });
     
-        $hunts = $hunts->map(function($hunt, $key){
+        $hunts = $hunts->map(function($hunt, $key) use ($star){
             $hunt->latitude = $hunt->location->coordinates[1];
             $hunt->longitude = $hunt->location->coordinates[0];
             $hunt->hunt_user_id = (isset($hunt->hunt_participated_data[0]->_id))?$hunt->hunt_participated_data[0]->_id:"";
+            $hunt->complexity = $star;
             unset($hunt->location);
             unset($hunt->hunt_complexities);
             unset($hunt->hunt_participated_data);
@@ -667,7 +669,7 @@ class HuntController extends Controller
         $user = Auth::User();
 
         $huntUser = HuntUser::whereHas('hunt_user_details',function($query){
-                                $query->whereIn('status',['pause','progress']);
+                                $query->whereIn('status',['tobestart','pause','progress']);
                             })
                             ->select('_id','user_id','hunt_id')
                             ->with(['hunt:_id,name,place_name,location'])
@@ -698,7 +700,7 @@ class HuntController extends Controller
                         'hunt_user_id'=> "required|exists:hunt_users,_id",
                     ]);
         if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()],422);
+            return response()->json(['message'=>$validator->messages()->first()],422);
         }
 
         $user = Auth::User();
