@@ -96,7 +96,13 @@ class HuntController extends Controller
                                                     $latlng[1],
                                                     $latlng[0]
                                                 ];
-                     
+                        
+                        $target = ComplexityTarget::where([
+                                    'game_id' => $game[0]->id, 
+                                    'complexity'=> $key
+                                ])
+                                ->pluck('target')
+                                ->first();
                         $huntComplexities->hunt_clues()->updateOrCreate([
                                             'hunt_complexity_id' =>  $huntComplexities->_id,
                                             'location.coordinates.0' =>  $latlng[0],
@@ -105,7 +111,8 @@ class HuntController extends Controller
                                             'hunt_complexity_id' => $huntComplexities->_id,
                                             'location'           => $location,
                                             'game_id'            => $game[0]->id,
-                                            'game_variation_id'  => $gameVariationId
+                                            'game_variation_id'  => $gameVariationId,
+                                            'target'  => $target
                                         ]);
                     }
                 }

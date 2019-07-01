@@ -125,7 +125,9 @@ class UserController extends Controller
         $credentials = $request->only('email', 'password');
 		if ($token = Auth::guard('api')->attempt($credentials)) {
             
-            
+            $request->request->add(['user_id'=>$user->id]);
+            $apiResponse = (new UserController)->getPayloadData($request);
+
             // $response = UserHelper::playPractiveEvent($user,$token);
             // if ($response->status() != 200) {
             //     return response()->json([ 'message' => $response->getData()->message],500);
@@ -135,6 +137,7 @@ class UserController extends Controller
             return response()->json([
             	'token' => $token,
             	'data'	=> $user,
+                'default_data'  => $apiResponse->original['data'],
             	'message' => 'Your registration has been completed successfully.',
             ],200);
         }else{
@@ -150,7 +153,14 @@ class UserController extends Controller
     public function getPayloadData(Request $request)
     {
 
-    	$user = Auth::user();
+        if (!$request->has('user_id')) {
+            echo "without id";
+            exit;
+            $user = Auth::user();
+        }else{
+            $user = User::find($request->user_id);
+        }
+
     	$payloadData = UserHelper::getPerfixDetails($user);
     	return response()->json([
     		'data'	  => $payloadData,
@@ -167,33 +177,54 @@ class UserController extends Controller
 			'eyes_color'  => "required|string",
 			'hairs_color' => "required|string",
 			'skin_color'  => "required|string",
+            'widgets'     => "required|array",
+            'widgets.*' => "required|string|exists:widget_items,_id",
     	]);
 
     	if ($validator->fails()) {
             return response()->json(['message'=>$validator->messages()], 422);
         }
 
-    	$user = Auth::user();
+    	$user       = Auth::user();
     	$avatarId 	= $request->avatar_id;
 		$eyeColor 	= $request->eyes_color;
 		$hairColor  = $request->hairs_color;
 		$skinColors = $request->skin_color;
-        
+        $widgets    = collect($request->widgets);
+       
         $primaryAvatar = Avatar::where('_id',$avatarId)->select('_id','gender')->first();
-		
         $user->gender = $primaryAvatar->gender;
+        $user->avatar = [
+            'avatar_id' => $avatarId,
+            'eyes_color' => $eyeColor,
+            'hairs_color' => $hairColor,
+            'skin_color' => $skinColors,
+        ];
         $user->save();
 
-        $user->avatar()
-			->updateOrCreate(['user_id' => $user->id],[
-				'avatar_id'  => $avatarId,
-				'eyes_color'  => $eyeColor,
-				'hairs_color' => $hairColor,
-				'skin_color'=> $skinColors,
-			]);
-
+        User::where('_id',$user->id)->where('widgets.selected', true)->update(['widgets.$.selected'=> false]);
+        User::where('_id',$user->id)->whereIn('widgets.id', $widgets)->update(['widgets.$.selected'=> true]);
 		return response()->json(['message' => 'Your avatar has been updated successfully.']);
     }
+
+    public function unlockWidgetItem(Request $request)
+    {
+
+        /* Validate the parameters */
+        $validator = Validator::make($request->all(),[
+            'widget_item_id'   => "required|string|exists:widget_items,_id",
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message'=>$validator->messages()], 422);
+        }
+
+        $user = Auth::user();
+        $user->push('widgets',$request->widget_item_id, true);
+
+        return response()->json(['message' => 'Your Widget has been added successfully.']);
+    }
+
 
     public function checkMyBalance(Request $request)
     {

@@ -1,12 +1,13 @@
 <?php
 
 namespace App\Helpers;
-use Auth;
 use App\Models\v1\Avatar;
-use MongoDB\BSON\ObjectId as MongoID;
-use Route;
-use Request;
 use App\Models\v1\City;
+use App\Models\v1\WidgetItem;
+use Auth;
+use MongoDB\BSON\ObjectId as MongoID;
+use Request;
+use Route;
 
 class UserHelper {
 	
@@ -17,85 +18,43 @@ class UserHelper {
 			$user = Auth::user();
 		}
 
-		$userAvatartInfo = self::getUserAvatarInfo($user);
+		$avatars = self::getAvatars($user);
+		$widgets = self::getWidgets($user);
 		
-		$request 	= Request::create('/api/v1/getThePlans', 'GET');
-		$response 	= Route::dispatch($request);
-		$plans 		= $response->getData()->data;
+		// $request 	= Request::create('/api/v1/getThePlans', 'GET');
+		// $response 	= Route::dispatch($request);
+		// $plans 		= $response->getData()->data;
 
-		$request = new Request();
+		// $request = new Request();
+		// $request = Request::create('/api/v1/getTheEvents', 'GET', ['page' => 1]);
+		// Request::replace($request->input());
+		// $response 	= Route::dispatch($request);
+		// $events 	= $response->getData()->data;
 
-
-		$request = Request::create('/api/v1/getTheEvents', 'GET', ['page' => 1]);
-		Request::replace($request->input());
-		$response 	= Route::dispatch($request);
-		$events 	= $response->getData()->data;
-
-        $cities = City::select('_id','name')->get();
+        // $cities = City::select('_id','name')->get();
 
 		return [
-			'avatars' => $userAvatartInfo,
-			'plans' => $plans,
-			'events_data' => $events,
-			'cities' => $cities,
+			'avatars' => $avatars,
+			'widgets' => $widgets,
+			'user_avatar' => $user->avatar,
+			'user_widgets' => $user->widgets,
+			// 'used_widgets' => $user->used_widgets,
+			// 'plans' => $plans,
+			// 'events_data' => $events,
+			// 'cities' => $cities,
 		];
 	}
 
-	public static function getUserAvatarInfo($user)
+	public static function getWidgets($user)
 	{
+		$widgets = WidgetItem::select('_id','widget_name','item_name','gold_price', 'avatar_id')->get();
+		$widgets = $widgets->groupBy('widget_name');
+		return $widgets;
+	}
 
-		$userAvatar = $user->avatar;
-
-		$response = [];
-		$avatars = Avatar::select('_id','name','eyes_colors','hairs_colors','skin_colors')->get()
-					->map(function($avatar) use ($userAvatar,$response){
-						
-						if ($userAvatar && $avatar->id == $userAvatar->avatar_id) {
-							$avatar->selected = true;
-						}else{
-							$avatar->selected = false;
-						}
-						
-						/**  Get the Skin colors selected by the user. **/
-						$response['skin_colors'] = [];
-						foreach ($avatar->skin_colors as $key => $eyeColor) {
-							$response['skin_colors'][$key]['color'] = $eyeColor;
-							if ($userAvatar && $userAvatar->eye_color == $eyeColor) {
-								$response['skin_colors'][$key]['selected'] = true;
-							}else{
-								$response['skin_colors'][$key]['selected'] = false;
-							}
-						}
-
-						/** Get the Eyes colors selected by the user. **/
-						$response['eyes_colors'] = [];
-						foreach ($avatar->eyes_colors as $key => $eyeColor) {
-							$response['eyes_colors'][$key]['color'] = $eyeColor;
-							if ($userAvatar && $userAvatar->eye_color == $eyeColor) {
-								$response['eyes_colors'][$key]['selected'] = true;
-							}else{
-								$response['eyes_colors'][$key]['selected'] = false;
-							}
-						}
-
-						/** Get the Hair colors selected by the user. **/
-						$response['hairs_colors'] = [];
-						foreach ($avatar->hairs_colors as $key => $eyeColor) {
-							$response['hairs_colors'][$key]['color'] = $eyeColor;
-							if ($userAvatar && $userAvatar->eye_color == $eyeColor) {
-								$response['hairs_colors'][$key]['selected'] = true;
-							}else{
-								$response['hairs_colors'][$key]['selected'] = false;
-							}
-						}
-
-						$avatar->skin_colors = $response['skin_colors'];
-						$avatar->eyes_colors = $response['eyes_colors'];
-						$avatar->hairs_colors = $response['hairs_colors'];
-						return $avatar;
-					});
-
-		/* Return the response */
+	public static function getAvatars($user)
+	{
+		$avatars = Avatar::select('_id','name','gender','eyes_colors','hairs_colors','skin_colors')->get();
 		return $avatars;
 	}
 

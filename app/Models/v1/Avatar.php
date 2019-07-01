@@ -16,15 +16,5 @@ class Avatar extends Eloquent
     protected $fillable = [
         'name', 'gender', 'skin_colors', 'hairs_colors', 'eyes_colors'
     ];
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    // protected $casts = [
-    //     'skin_colors' 	=> 'array',
-    //     'hairs_colors'  => 'array',
-    //     'eyes_colors'   => 'array',
-    // ];
+    
 }

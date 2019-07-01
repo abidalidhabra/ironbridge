@@ -18,7 +18,25 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'first_name', 'last_name', 'email', 'password', 'username', 'dob', 'gender', 'referral_id', 'reffered_by', 'firebase_ids', 'otp', 'location', 'address','registration_completed', 'gold_balance','settings','device_type'
+        'first_name',
+        'last_name',
+        'email',
+        'password',
+        'username',
+        'dob',
+        'gender',
+        'referral_id',
+        'reffered_by',
+        'firebase_ids',
+        'otp',
+        'location',
+        'address',
+        'registration_completed',
+        'gold_balance',
+        'settings',
+        'device_type',
+        'widgets',
+        'avatar'
     ];
 
     /**
@@ -56,6 +74,8 @@ class User extends Authenticatable implements JWTSubject
             'sound_fx' => true,
             'music_fx' => true,
         ],
+        // 'user_widgets' => [],
+        // 'used_widgets' => [],
     ];
 
     /**
@@ -83,10 +103,10 @@ class User extends Authenticatable implements JWTSubject
     //  * Get the avatar selected by the user
     //  * @var object
     //  */
-    public function avatar()
-    {
-        return $this->hasOne('App\Models\v1\UserAvatar');
-    }
+    // public function avatar()
+    // {
+    //     return $this->hasOne('App\Models\v1\UserAvatar');
+    // }
 
     /**
      *

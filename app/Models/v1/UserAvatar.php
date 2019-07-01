@@ -13,6 +13,6 @@ class UserAvatar extends Eloquent
      * @var array
      */
     protected $fillable = [
-        'user_id', 'avatar_id', 'skin_color', 'hairs_color', 'eyes_color'
+        'user_id', 'avatar_id', 'skin_color', 'hairs_color', 'eyes_color', 'widgets', 'used_widgets'
     ];
 }

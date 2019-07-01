@@ -17,6 +17,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 	return $request->user();
 });
 
+Route::post('addComplexityWiseTarget', 'Api\v1\PrepareController@addComplexityWiseTarget');
+Route::post('addGames', 'Api\v1\PrepareController@addGames');
+Route::post('addWidgets', 'Api\v1\PrepareController@addWidgets');
+Route::post('addWidgets', 'Api\v1\PrepareController@addWidgets');
+
 Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 
 	Route::post('login', 'AuthController@login');
@@ -47,6 +52,8 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 
 
 		Route::post('getPayloadData', 'UserController@getPayloadData');
+		Route::post('unlockWidgetItem', 'UserController@unlockWidgetItem');
+		// Route::post('selectkWidgetItem', 'UserController@selectkWidgetItem');
 		Route::post('setMyAvatar', 'UserController@setMyAvatar');
 		Route::get('getWarehouseData', 'UserController@getWarehouseData');
 		
