@@ -5,14 +5,14 @@
 <input type="hidden" name="variationSize" value="0">
 
 <div class="form-group col-md-6">
-	<label class="form-label">Row</label>
+	<label class="form-label">Row <small class="form-text text-muted">must of [4,6,8]</small></label>
 	<input type="text" name="row" id="row" class="form-control">
 </div>
 <div class="form-group col-md-6">
-	<label class="form-label">Column</label>
+	<label class="form-label">Column <small class="form-text text-muted">must of [4,6,8]</small></label>
 	<input type="text"  name="column" id="column" class="form-control">
 </div>
 <div class="form-group col-md-6">
-	<label class="form-label">Target</label>
+	<label class="form-label">Target <small class="form-text text-muted">must of [1024,2048,4096]</small></label>
 	<input type="text"  name="target" id="target" class="form-control">
 </div>

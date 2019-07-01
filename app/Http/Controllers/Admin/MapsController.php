@@ -24,9 +24,11 @@ class MapsController extends Controller
     }
 
     public function getMaps(Request $request){
-    	$city = Hunt::select('latitude','longitude','place_name','city','province','country','name','updated_at')
-    						->get();
-    	return DataTables::of($city)
+    	$skip = (int)$request->get('start');
+        $take = (int)$request->get('length');
+        $city = Hunt::select('latitude','longitude','place_name','city','province','country','name','updated_at')->skip($skip)->take($take)->get();
+    	$count = Hunt::count();
+        return DataTables::of($city)
         ->addIndexColumn()
         ->editColumn('name', function($city){
             if ($city->name) {
@@ -52,6 +54,8 @@ class MapsController extends Controller
         //             }
                     
         //         })
+        ->setTotalRecords($count)
+        ->skipPaging()
         ->rawColumns(['map','action'])
         ->make(true);
     }

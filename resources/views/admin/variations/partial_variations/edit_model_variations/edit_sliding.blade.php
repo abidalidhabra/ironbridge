@@ -4,7 +4,7 @@
 </div>
 <div class="form-group col-md-6">
 	<label class="form-label">Variation Image</label>
-	<input type="file"  name="variation_image[]" id="variation_image" class="form-control" multiple>
+	<input type="file"  name="variation_image[]" class="form-control">
 </div>
 <input type="hidden" name="sudoku_id" value="0">
 <input type="hidden" name="row" value="0">

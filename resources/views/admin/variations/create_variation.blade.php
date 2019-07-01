@@ -46,7 +46,7 @@
             </div>
             <div id="game_wise_data"></div>
             <div class="form-group col-md-12">
-                <button type="submit" class="btn btn-success">Submit</button>
+                <button type="submit" class="btn btn-success btnSubmit">Submit</button>
             </div>
     </form>
     </div>
@@ -55,9 +55,26 @@
 @endsection
 
 @section('scripts')
-<!-- <script src="http://jqueryvalidation.org/files/dist/additional-methods.min.js"></script> -->
     <script type="text/javascript">
         $(document).ready(function() {
+            //limit image
+            $(document).on("change",'#variation_image',function() {
+                    var input = document.getElementById('variation_image');
+                    if(input.files.length == 3){
+                        $(".btnSubmit").attr("disabled", false);
+                    } else {
+                        $('.error1').remove();
+                        $('#variation_image').after('<label class="error error1">Only 3 image upload</label>');
+                        $(".btnSubmit").attr("disabled", true);
+                    }
+            });
+
+            /*$(document).on("change",'input[name="row"]',function() {
+                var select_game = $('select[name="game_id"]').find(':selected').data('identifier');
+                console.log(select_game);
+            });*/
+
+
             $(document).on('change','select[name="game_id"]',function(){
                 var identifier = $(this).find(':selected').data('identifier');
                 $('input[name="identifier"]').val(identifier);
@@ -94,6 +111,9 @@
             })
 
 
+            
+
+
             //ADD VARIATION
             $('#form_validation').submit(function(e) {
                     e.preventDefault();
@@ -116,7 +136,7 @@
                         digits:true,
                         required:function(){
                             let gameIdfentifier = $('#game_id').find(':selected').attr('data-identifier');
-                            if(gameIdfentifier == 'sudoku' || gameIdfentifier == 'jigsaw' || gameIdfentifier == 'slidingphoto'){
+                            if(gameIdfentifier == 'sudoku' || gameIdfentifier == 'jigsaw' || gameIdfentifier == 'sliding'){
                                 return true;
                             } else {
                                 return false;
@@ -137,7 +157,7 @@
                         digits:true,
                         required:function(){
                             let gameIdfentifier = $('#game_id').find(':selected').attr('data-identifier');
-                            if(gameIdfentifier == '2048' || gameIdfentifier == 'wordsearch' || gameIdfentifier == 'blockgame' || gameIdfentifier == 'hexa' || gameIdfentifier == 'slices' || gameIdfentifier == 'yatzy'|| gameIdfentifier == 'snake'|| gameIdfentifier == 'domino'){
+                            if(gameIdfentifier == '2048' || gameIdfentifier == 'word_search' || gameIdfentifier == 'block' || gameIdfentifier == 'hexa' || gameIdfentifier == 'slices' || gameIdfentifier == 'yatzy'|| gameIdfentifier == 'snake'|| gameIdfentifier == 'domino' || gameIdfentifier == 'bubble_shooter'){
                                 return true;
                             } else {
                                 return false;
@@ -148,7 +168,7 @@
                         digits:true,
                         required:function(){
                             let gameIdfentifier = $('#game_id').find(':selected').attr('data-identifier');
-                            if(gameIdfentifier == '2048' || gameIdfentifier == 'wordsearch' || gameIdfentifier == 'blockgame' || gameIdfentifier == 'numbersearch'){
+                            if(gameIdfentifier == '2048' || gameIdfentifier == 'word_search' || gameIdfentifier == 'block' || gameIdfentifier == 'number_search'){
                                 return true;
                             } else {
                                 return false;
@@ -159,7 +179,7 @@
                         digits:true,
                         required:function(){
                             let gameIdfentifier = $('#game_id').find(':selected').attr('data-identifier');
-                            if(gameIdfentifier == '2048' || gameIdfentifier == 'wordsearch' || gameIdfentifier == 'blockgame' || gameIdfentifier == 'numbersearch'){
+                            if(gameIdfentifier == '2048' || gameIdfentifier == 'word_search' || gameIdfentifier == 'block' || gameIdfentifier == 'number_search'){
                                 return true;
                             } else {
                                 return false;
@@ -170,24 +190,24 @@
                         digits:true,
                         required:function(){
                             let gameIdfentifier = $('#game_id').find(':selected').attr('data-identifier');
-                            if(gameIdfentifier == 'numbersearch'){
+                            if(gameIdfentifier == 'number_search'){
                                 return true;
                             } else {
                                 return false;
                             }
                         }
                     },
-                    // "variation_image[]":{
-                    //     extension:"jpg|png|jpeg|gif",
-                    //     required:function(){
-                    //         let gameIdfentifier = $('#game_id').find(':selected').attr('data-identifier');
-                    //         if(gameIdfentifier == 'slidingphoto' || gameIdfentifier == 'jigsaw'){
-                    //             return true;
-                    //         } else {
-                    //             return false;
-                    //         }
-                    //     }
-                    // },
+                    "variation_image[]":{
+                        accept: "image/jpg,image/jpeg,image/png,image/gif",
+                        required:function(){
+                            let gameIdfentifier = $('#game_id').find(':selected').attr('data-identifier');
+                            if(gameIdfentifier == 'sliding' || gameIdfentifier == 'jigsaw'){
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }
+                    },
                     no_of_balls:{
                         digits:true,
                         required:function(){
