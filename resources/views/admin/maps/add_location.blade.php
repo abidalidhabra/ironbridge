@@ -64,6 +64,7 @@
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success">Save</button>
                     <button type="button" class="btn btn-danger btn-cancel">Cancel</button>
+                    <input type="button" id="resetPolygon" value="Reset" style="display: none;" />
                 </div>
             </form>
         </div>
@@ -78,6 +79,7 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
+
             $('.btn-cancel').click(function(){
                 location.reload();
             })
@@ -183,7 +185,7 @@
                 });
 
 
-
+                
                 /*var drawingManager = new google.maps.drawing.DrawingManager({
                     drawingMode: google.maps.drawing.OverlayType.MARKER,
                     drawingControl: true,
@@ -203,14 +205,49 @@
                 });*/
 
                 drawingManager.setMap(map);
-                google.maps.event.addListener(drawingManager, "overlaycomplete", function(event) {
+
+
+                /*google.maps.event.addListener(drawingManager, "overlaycomplete", function(event) {
                     var newShape = event.overlay;
                     newShape.type = event.type;
-                });
+                });*/
+                
                 var coordinates = [];
+                var all_overlays = [];
+
+                function clearSelection() {
+                    if (selectedShape) {
+                        selectedShape.setEditable(false);
+                        selectedShape = null;
+                    }
+                }
+                function setSelection(shape) {
+                    clearSelection();
+                    selectedShape = shape;
+                    shape.setEditable(true);
+                }
+
                 google.maps.event.addListener(drawingManager, "overlaycomplete", function(event){
-                    overlayClickListener(event.overlay);
+                    
+                    // overlayClickListener(event.overlay);
                     // $('#boundary_arr').val(event.overlay.getPath().getArray());
+                    all_overlays.push(event);
+                      if (event.type != google.maps.drawing.OverlayType.MARKER) {
+                        // Switch back to non-drawing mode after drawing a shape.
+                        drawingManager.setDrawingMode(null);
+
+                        // Add an event listener that selects the newly-drawn shape when the user
+                        // mouses down on it.
+                        var newShape = event.overlay;
+                        newShape.type = event.type;
+                        google.maps.event.addListener(newShape, 'click', function() {
+                          setSelection(newShape);
+                        });
+                        setSelection(newShape);
+                      }
+
+
+
                     var boundary_arr = [];
                     var i=1;
                     event.overlay.getPath().getArray().forEach((value, key) => {
@@ -268,7 +305,20 @@
                     var j=1;
                     // $('#boundary_box').val(polygon.getBounds());
                     $('#boundary_box').val(JSON.stringify(polygon.getBounds()));
+                    //$('#resetPolygon').show();
                 });
+                google.maps.event.addListener(drawingManager, 'polygoncomplete', function(polygon) {
+                    //$('#resetPolygon').show();
+                    //alert('hello');
+                });
+                /*$('#resetPolygon').click(function() {
+                    if (selectedShape) {
+                        selectedShape.setMap(null);
+                    }
+                    drawingManager.setMap(null);
+                });*/
+                
+
             }    
             function getPlaceInformation(place){
                 placeInfo = [];

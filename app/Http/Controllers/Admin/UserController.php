@@ -20,7 +20,10 @@ class UserController extends Controller
     //GET USER
     public function getUsers(Request $request)
     {	
-    	$user = User::select('first_name','last_name','username', 'email', 'mobile_no', 'dob', 'created_at')->orderBy('created_at','DESC')->get();
+        $skip = (int)$request->get('start');
+        $take = (int)$request->get('length');
+    	$user = User::select('first_name','last_name','username', 'email', 'mobile_no', 'dob', 'created_at')->orderBy('created_at','DESC')->skip($skip)->take($take)->get();
+        $count = User::count();
         return DataTables::of($user)
         ->addIndexColumn()
         ->addColumn('name', function($user){
@@ -40,6 +43,8 @@ class UserController extends Controller
                     }
                     
                 })
+        ->setTotalRecords($count)
+        ->skipPaging()
         ->make(true);
     }
 }

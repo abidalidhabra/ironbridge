@@ -43,7 +43,10 @@ class GameController extends Controller
 
     //GAME LIST
     public function getGameList(Request $request){
-        return DataTables::of(Game::orderBy('created_at','DESC')->get())
+        $skip = (int)$request->get('start');
+        $take = (int)$request->get('length');
+        $count = Game::count();
+        return DataTables::of(Game::orderBy('created_at','DESC')->skip($skip)->take($take)->get())
         ->addIndexColumn()
         ->addColumn('action', function($game){
             // return '<a href="javascript:void(0)" class="edit_game" data-action="edit" data-id="'.$game->id.'" data-identifier="'.$game->identifier.'" data-name="'.$game->name.'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>
@@ -59,6 +62,8 @@ class GameController extends Controller
                     }
                     
                 })
+        ->setTotalRecords($count)
+        ->skipPaging()
         ->make(true);
     }
 

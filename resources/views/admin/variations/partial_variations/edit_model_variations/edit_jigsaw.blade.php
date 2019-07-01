@@ -1,10 +1,12 @@
 <div class="form-group col-md-6">
-    <label class="form-label">Variation size</label>
+    <label class="form-label">Variation size <small class="form-text text-muted">must of [12,35,70,140]</small></label>
     <input type="text"  name="variationSize" value="{{ $variations->variation_size }}" id="variationSize" class="form-control">
 </div>
 <div class="form-group col-md-6">
-	<label class="form-label">Variation Image</label>
+	<label class="form-label">Variation Image <small class="form-text text-muted">must be 2000*1440 dimension</small></label>
 	<input type="file"  name="variation_image[]" id="variation_image" class="form-control" multiple>
+	<br/>
+	<button type="button" class="btn btn-primary" id="reset_file">Reset File</button>
 </div>
 
 <input type="hidden" name="row" value="0">

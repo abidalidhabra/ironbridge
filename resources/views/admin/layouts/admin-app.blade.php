@@ -38,6 +38,8 @@
     <script src="{{ asset('admin_assets/js/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('admin_assets/js/bootstrap-confirmation.min.js') }}"></script>
     <script src="{{ asset('admin_assets/js/jquery.fancybox.min.js') }}"></script>
+    <script src="{{ asset('admin_assets/js/additional-methods.min.js') }}"></script>
+
     @yield('styles')
 </head>
 

@@ -59,10 +59,6 @@
                             @forelse ($location->hunt_complexities[0]->hunt_clues as $key => $gamedetails)
                                 <div class="game_section{{ $key }} selected_game" id="game_{{ str_replace('.','_',substr($gamedetails->location['coordinates'][0], 0, 12).substr($gamedetails->location['coordinates'][1],0,12)) }}">
                                     <div class="form-group col-md-8">
-                                        <label>EST Completion(Second):</label>
-                                        <input type="number" name="est_completion[]" class="form-control" placeholder="EST completion(second)" value="{{ $gamedetails->est_completion }}">
-                                    </div>
-                                    <div class="form-group col-md-8">
                                         <label>Game:</label>
                                         <select name="game_id[]" class="form-control" data-id="{{ $key }}">
                                             <option value="">Select game</option>
@@ -200,12 +196,17 @@
                     // Iterate over the vertices.
                     var boundary_arr = [];
                     var games = <?php echo json_encode($games) ?>;
+
                     var option_game = "'<option value=''>Select game</option>";
-                    $.each(games, function(i, k) {
+                    var option_game_variation1 = "'<option value=''>Select game variation</option>";
+
+                    /*$.each(games, function(i, k) {
                         option_game += '<option value="'+k._id+'">'+k.name+'</option>';
-                    });
+                    });*/
                     var coordinates = [];
                     for (var i =0; i < vertices.getLength(); i++) {
+
+
                         var xy = vertices.getAt(i);
                         /*boundary_arr[i] = xy.lng() +','+ xy.lat();*/
                         var arr = [];
@@ -214,11 +215,30 @@
                         coordinates.push(arr);
                         var gameId = xy.lng().toString().slice(0,12)+xy.lat().toString().slice(0,12);
                         if($('#game_'+gameId.replace(/\./g,'_')).length == 0){
+                            var random_game = games[Math.floor(Math.random()*games.length)];
+                            $.each(games, function(i, k) {
+                                var selected = '';
+                                if (k._id == random_game._id) {
+                                    var selected = 'selected'; 
+                                }
+
+                                option_game += '<option value="'+k._id+'" '+selected+'>'+k.name+'</option>';
+                            });
+                            
+
+                            var random_game_variation = random_game.game_variation[Math.floor(Math.random()*random_game.game_variation.length)];
+                            console.log(random_game_variation);
+                            $.each(random_game.game_variation, function(i, k) {
+                                var selected1 = '';
+                                console.log(k)
+                                if (k._id == random_game_variation._id) {
+                                    var selected1 = 'selected'; 
+                                }
+
+                                option_game_variation1 += '<option value="'+k._id+'" '+ selected1 +'>'+k.variation_name+'</option>';
+                            });
+                            
                             $('.selected_game:nth-child('+i+')').after('<div class="game_section'+i+' selected_game" id="game_'+gameId.replace(/\./g,'_')+'">\
-                                                    <div class="form-group col-md-8">\
-                                                        <label>EST Completion(Second):</label>\
-                                                        <input type="number" name="est_completion[]" class="form-control" placeholder="EST completion(second)" value="">\
-                                                    </div>\
                                                     <div class="form-group col-md-8">\
                                                         <label>Game:</label>\
                                                         <select name="game_id[]" data-action="game_id'+i+'" data-id="'+i+'" class="form-control">\
@@ -227,10 +247,11 @@
                                                     <div class="form-group col-md-8">\
                                                         <label>Game Variations:</label>\
                                                         <select name="game_variation_id[]" id="game_variation_id'+i+'" class="form-control">\
-                                                            <option value="">Select game variation</option>\
+                                                            '+option_game_variation1+'\
                                                         </select>\
                                                     <div>\
                                                 <div>');
+
                         } else {
                             // alert('fail');
                         }
@@ -272,16 +293,33 @@
                     });
                     var i;
                     var games = <?php echo json_encode($games) ?>;
-                    var option_game = "'<option value=''>Select game</option>";
-                    $.each(games, function(i, k) {
-                        option_game += '<option value="'+k._id+'">'+k.name+'</option>';
-                    });
+
+
                     for (i = 0; i < JSON.stringify(coordinates.length); i++) {
+                        var option_game = "'<option value=''>Select game</option>";
+                        var option_game_variation = "'<option value=''>Select game variation</option>";
+                        var random_game = games[Math.floor(Math.random()*games.length)];
+                        $.each(games, function(i, k) {
+                            var selected = '';
+                            if (k._id == random_game._id) {
+                                var selected = 'selected'; 
+                            }
+
+                            option_game += '<option value="'+k._id+'" '+selected+'>'+k.name+'</option>';
+                        });
+                        
+
+                        var random_game_variation = random_game.game_variation[Math.floor(Math.random()*random_game.game_variation.length)];
+                        $.each(random_game.game_variation, function(i, k) {
+                            var selected1 = '';
+                            if (k._id == random_game_variation._id) {
+                                var selected1 = 'selected'; 
+                            }
+
+                            option_game_variation += '<option value="'+k._id+'" '+ selected1 +'>'+k.variation_name+'</option>';
+                        });
+
                         var html = '<div class="game_section'+i+'">\
-                                        <div class="form-group col-md-8">\
-                                            <label>EST Completion(Second):</label>\
-                                            <input type="number" name="est_completion[]" class="form-control" placeholder="EST completion(second)" value="">\
-                                        </div>\
                                         <div class="form-group col-md-8">\
                                             <label>Game:</label>\
                                             <select name="game_id[]" data-action="game_id'+i+'" data-id="'+i+'" class="form-control">\
@@ -290,8 +328,7 @@
                                         <div class="form-group col-md-8">\
                                             <label>Game Variations:</label>\
                                             <select name="game_variation_id[]" id="game_variation_id'+i+'" class="form-control">\
-                                                <option value="">Select game variation</option>\
-                                            </select>\
+                                            '+option_game_variation+'</select>\
                                         <div>\
                                     <div>';
                         $('#game_box').append(html);

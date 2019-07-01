@@ -24,9 +24,11 @@ class MapsController extends Controller
     }
 
     public function getMaps(Request $request){
-    	$city = Hunt::select('latitude','longitude','place_name','city','province','country','name','updated_at')
-    						->get();
-    	return DataTables::of($city)
+    	$skip = (int)$request->get('start');
+        $take = (int)$request->get('length');
+        $city = Hunt::select('latitude','longitude','place_name','city','province','country','name','updated_at')->skip($skip)->take($take)->get();
+    	$count = Hunt::count();
+        return DataTables::of($city)
         ->addIndexColumn()
         ->editColumn('name', function($city){
             if ($city->name) {
@@ -52,6 +54,8 @@ class MapsController extends Controller
         //             }
                     
         //         })
+        ->setTotalRecords($count)
+        ->skipPaging()
         ->rawColumns(['map','action'])
         ->make(true);
     }
@@ -95,7 +99,7 @@ class MapsController extends Controller
             }
         }
         // echo "<pre>";
-        // print_r($cluesCoordinates);
+        // print_r($games->toArray());
         // exit();
         // $clueLocation = 
         return view('admin.maps.start_complexity',compact('location','complexity','complexitySuf','id','complexityarr','games','cluesCoordinates'));
@@ -122,7 +126,6 @@ class MapsController extends Controller
                         'hunt_id'   => 'required',
                         'game_id.*'   => 'required',
                         'game_variation_id.*' => 'required',
-                        'est_completion.*' => 'required|integer',
                         'coordinates'=> 'required|json',
                     ]);
         
@@ -136,18 +139,38 @@ class MapsController extends Controller
         $complexity = (int)$request->get('complexity');
         $gameId = $request->get('game_id');
         $gameVariationId = $request->get('game_variation_id');
-        $estCompletion = $request->get('est_completion');
         $hunt = Hunt::where('_id',$id)->first();
-       
+        $coordinates = json_decode($request->get('coordinates'));
         $locationdata = [];
-        foreach (json_decode($request->get('coordinates')) as $key => $value) {
+        
+        if($complexity == 1){
+            $distance = 50*count($coordinates);
+        } elseif($complexity == 2){
+            $distance = 100*count($coordinates);
+        } elseif($complexity == 3){
+            $distance = 250*count($coordinates);
+        } elseif($complexity == 4){
+            $distance = 500*count($coordinates);
+        } elseif($complexity == 5){
+            $distance = 1000*count($coordinates);
+        }
+
+        foreach ($coordinates as $key => $value) {
             $location['Type'] = 'Point';
             $location['coordinates'] = [
                                             $value[0],
                                             $value[1]
                                         ];
-            // $locationdata[] = $location;
-            $huntComplexities = $hunt->hunt_complexities()->updateOrCreate(['hunt_id'=>$id,'complexity'=>$complexity],['hunt_id'=>$id,'complexity'=>$complexity]);
+            /** est time **/
+            $km = $distance/1000;
+            //4.5 km = 6o min
+            // $avg_km = $km/4.5;   
+            $mins = 60/4.5 * $km;
+            $fixClueMins = count($coordinates)*5;
+            $estTime =  $mins + $fixClueMins;
+            /** end est time **/
+
+            $huntComplexities = $hunt->hunt_complexities()->updateOrCreate(['hunt_id'=>$id,'complexity'=>$complexity],['hunt_id'=>$id,'complexity'=>$complexity,'est_completion'=>(int)round($estTime),'distance'=>$distance]);
 
             $huntComplexities->hunt_clues()->updateOrCreate([
                                 'hunt_complexity_id' =>  $huntComplexities->_id,
@@ -158,7 +181,6 @@ class MapsController extends Controller
                                 'location'           => $location,
                                 'game_id'            => $gameId[$key],
                                 'game_variation_id'  => $gameVariationId[$key],
-                                'est_completion'     => (int)$estCompletion[$key]
                             ]);
         }
 

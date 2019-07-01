@@ -17,7 +17,8 @@ class HuntUser extends Eloquent
         'skeleton',
         'started_at',
         'ended_at',
-        'est_completion'
+        'est_completion',
+        'complexity'
     ];
 
     protected $dates = [

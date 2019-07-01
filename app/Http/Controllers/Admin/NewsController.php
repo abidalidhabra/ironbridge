@@ -142,7 +142,10 @@ class NewsController extends Controller
     }
 
     public function getNewsList(Request $request){
-        return DataTables::of(News::orderBy('created_at','DESC')->get())
+        $skip = (int)$request->get('start');
+        $take = (int)$request->get('length');
+        $count =News::count();
+        return DataTables::of(News::orderBy('created_at','DESC')->skip($skip)->take($take)->get())
         ->addIndexColumn()
         ->editColumn('valid_till', function($news){
             return Carbon::parse($news->valid_till)->format('d-M-Y');
@@ -161,6 +164,8 @@ class NewsController extends Controller
                     }
                     
                 })
+        ->setTotalRecords($count)
+        ->skipPaging()
         ->make(true);
     }
 }
