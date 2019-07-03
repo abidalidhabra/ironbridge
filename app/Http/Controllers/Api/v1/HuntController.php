@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\v1\ParticipateRequest;
+use App\Models\v1\Game;
 use App\Models\v1\Hunt;
 use App\Models\v1\HuntComplexitie;
 use App\Models\v1\HuntUser;
 use App\Models\v1\HuntUserDetail;
-use App\Models\v1\Game;
-use Validator;
 use Auth;
-use MongoDB\BSON\UTCDateTime as MongoDBDate;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use MongoDB\BSON\UTCDateTime as MongoDBDate;
+use Validator;
 
 class HuntController extends Controller
 {
@@ -775,5 +776,100 @@ class HuntController extends Controller
                                 'message' => 'Previous hunt has been retrieved successfully',
                                 'data'    => $data
                             ]);
+    }
+
+
+
+
+
+
+
+
+
+
+
+    public function participateInHuntV1(ParticipateRequest $request)
+    {
+
+        $user       = Auth::User();
+        $complexity = (int)$request->star;
+        $huntId     = $request->hunt_id;
+        $huntMode   = $request->hunt_mode;
+
+        $huntComplexitie = HuntComplexity::with('hunt_clues')
+                            ->with('hunt:_id,name,fees')
+                            ->where(['complexity'=> $complexity, 'hunt_id'=> $huntId])
+                            ->first();
+
+        if(!$huntComplexitie){
+            return response()->json(['message'=> 'Hunt is not exist with the requested difficulty.'], 422);
+        }
+
+        $huntParticipation = $user->hunt_user()->where(['hunt_id' => $huntId])->latest()->first();
+
+        if ($huntParticipation->status == 'participated') {
+            return response()->json(['message'=> 'You already participated in this hunt.'], 422);
+        }
+
+        $endedDate = $huntUserQuery->ended_at->addDays(1);
+        if ($huntParticipation->status == 'completed' && ($endedDate > now())) {
+            return response()->json(['message'=> 'You have to wait 24 hours after completion of the hunt'], 422);
+        }
+
+        if ($huntMode == 'challenge') {
+            
+            if ($user->gold_balance < $huntComplexitie->hunt->fees) {
+                return response()->json([ 'message'=>"you don't have enough balance"], 422);
+            }
+            $coin = $user->gold_balance - $huntComplexitie->hunt->fees;
+            $user->gold_balance->decrement($coin);
+        }
+
+        $huntUser = $user->hunt_user()->create([
+                        'user_id'            => $user->_id,
+                        'hunt_id'            => $huntId,
+                        'hunt_complexity_id' => $huntComplexitie->id,
+                        'valid'              => false,
+                        'status'             => 'participated',
+                        'hunt_mode'          => $huntMode,
+                        'started_at'         => null,
+                        'ended_at'           => null,
+                        'est_completion'     => $huntComplexitie->est_completion,
+                        'complexity'         => $complexity
+                    ]);
+
+        $skeleton        = [];
+        $huntUserDetails = [];
+        foreach ($huntComplexitie->hunt_clues as $key => $value) {
+            $huntUserDetails[] = new HuntUserDetail([
+                'hunt_user_id'      => $huntUser->id,
+                'location'          => $value->location,
+                'game_id'           => $value->game_id,
+                'game_variation_id' => $value->game_variation_id,
+                'revealed_at'       => null,
+                'finished_in'       => 0,
+                'status'            => 'tobestart',
+                'started_at'        => null,
+                'ended_at'          => null,
+            ]);
+            
+            $skeleton[] = [
+                'key'       => substr(str_shuffle(str_repeat("0123456789abcdefghijklmnopqrstuvwxyz", 10)), 0, 10),
+                'used'      => false ,
+                'used_date' => null
+            ];
+        }
+        $huntUser->skeleton = $skeleton;
+        $huntUser->save();
+        $huntUser->hunt_user_details->saveMany($huntUserDetails);
+
+        $request->request->add(['hunt_user_id'=>$huntUser->id]);
+        $participationDetailData = (new HuntController)->getHuntParticipationDetails($request);
+        
+        return response()->json([
+            'message'=>'user has been successfully participants',
+            'remaining_coins' => $user->gold_balance,
+            'data'  => $participationDetailData->original['data'],
+        ]);
     }
 }
