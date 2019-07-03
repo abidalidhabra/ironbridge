@@ -338,20 +338,21 @@ class HuntController extends Controller
                                     // ->whereIn('status',['participated','progress'])
                             ->latest()
                             ->first();
+        if($huntUserQuery){
+            if($huntUserQuery->status == 'participated' || $huntUserQuery->status == 'progress'){
+                return response()->json([
+                                    'message'=>'You already participated in this hunt.',
+                                ],422);
+            }
 
-        // print_r($huntUserDetail->ended_at);
-        if($huntUserQuery->status == 'participated' || $huntUserQuery->status == 'progress'){
-            return response()->json([
-                                'message'=>'You already participated in this hunt.',
-                            ],422);
+            $endedDate = $huntUserQuery->ended_at->addDays(1);
+            if (Carbon::now() < $endedDate) {
+                return response()->json([
+                                    'message'=>'You have to wait 24 hours after completion of the hunt',
+                                ],422);
+            }     
         }
 
-        $endedDate = $huntUserQuery->ended_at->addDays(1);
-        if (Carbon::now() < $endedDate) {
-            return response()->json([
-                                'message'=>'You have to wait 24 hours after completion of the hunt',
-                            ],422);
-        }     
 
         if ($huntMode == 'challenge') {
             if ($user->gold_balance < $huntComplexitie->hunt->fees) {
