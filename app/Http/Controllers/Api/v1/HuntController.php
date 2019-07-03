@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\v1;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\v1\Hunt;
-use App\Models\v1\HuntComplexitie;
+use App\Models\v1\HuntComplexity;
 use App\Models\v1\HuntUser;
 use App\Models\v1\HuntUserDetail;
 use App\Models\v1\Game;
@@ -315,7 +315,7 @@ class HuntController extends Controller
         $star = (int)$request->get('star');
         $huntId = $request->get('hunt_id');
         $huntMode = $request->get('hunt_mode');
-        $huntComplexitie = HuntComplexitie::with('hunt_clues')
+        $huntComplexitie = HuntComplexity::with('hunt_clues')
                                             ->with('hunt:_id,name,fees')
                                             ->where([
                                                         'complexity' => $star,
@@ -427,7 +427,7 @@ class HuntController extends Controller
         $star = (int)$request->get('star');
         $huntId = $request->get('hunt_id');
 
-        $huntComplexitie = HuntComplexitie::with('hunt_clues')
+        $huntComplexitie = HuntComplexity::with('hunt_clues')
                                             ->where([
                                                         'complexity' => $star,
                                                         'hunt_id'    => $huntId,

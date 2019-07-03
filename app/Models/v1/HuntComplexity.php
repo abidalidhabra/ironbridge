@@ -5,7 +5,7 @@ namespace App\Models\v1;
 //use Illuminate\Database\Eloquent\Model;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
-class HuntComplexitie extends Eloquent
+class HuntComplexity extends Eloquent
 {
     protected $fillable = [
         'hunt_id', 
