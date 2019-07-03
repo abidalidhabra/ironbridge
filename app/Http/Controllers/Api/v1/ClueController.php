@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\ActionOnClueRequest;
 use App\Models\v1\Hunt;
-use App\Models\v1\HuntComplexitie;
+use App\Models\v1\HuntComplexity;
 use App\Models\v1\HuntUser;
 use App\Models\v1\HuntUserDetail;
 use Auth;
@@ -230,7 +230,7 @@ class ClueController extends Controller
         $user = Auth::User();
         $star = (int)$request->get('star');
         $huntId = $request->get('hunt_id');
-        $huntComplexitie = HuntComplexitie::with('hunt_users')
+        $huntComplexitie = HuntComplexity::with('hunt_users')
                                             ->where([
                                                         'complexity' => $star,
                                                         'hunt_id'    => $huntId,

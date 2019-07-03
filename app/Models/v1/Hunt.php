@@ -31,7 +31,7 @@ class Hunt extends Eloquent
     // ];
     public function hunt_complexities()
     {
-        return $this->hasMany('App\Models\v1\HuntComplexitie','hunt_id');
+        return $this->hasMany('App\Models\v1\HuntComplexity','hunt_id');
     }
 
     public function hunt_users()

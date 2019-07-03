@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\ParticipateRequest;
 use App\Models\v1\Game;
 use App\Models\v1\Hunt;
-use App\Models\v1\HuntComplexitie;
+use App\Models\v1\HuntComplexity;
 use App\Models\v1\HuntUser;
 use App\Models\v1\HuntUserDetail;
 use Auth;
@@ -316,7 +316,7 @@ class HuntController extends Controller
         $star = (int)$request->get('star');
         $huntId = $request->get('hunt_id');
         $huntMode = $request->get('hunt_mode');
-        $huntComplexitie = HuntComplexitie::with('hunt_clues')
+        $huntComplexitie = HuntComplexity::with('hunt_clues')
                                             ->with('hunt:_id,name,fees')
                                             ->where([
                                                         'complexity' => $star,
@@ -428,7 +428,7 @@ class HuntController extends Controller
         $star = (int)$request->get('star');
         $huntId = $request->get('hunt_id');
 
-        $huntComplexitie = HuntComplexitie::with('hunt_clues')
+        $huntComplexitie = HuntComplexity::with('hunt_clues')
                                             ->where([
                                                         'complexity' => $star,
                                                         'hunt_id'    => $huntId,

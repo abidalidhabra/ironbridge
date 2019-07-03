@@ -9,7 +9,7 @@ use Yajra\DataTables\EloquentDataTable;
 use App\Models\v1\TreasureLocation;
 use App\Models\v1\Hunt;
 use App\Models\v1\PlaceStar;
-use App\Models\v1\HuntComplexitie;
+use App\Models\v1\HuntComplexity;
 use Validator;
 use Carbon\Carbon;
 use App\Models\v1\Game;
@@ -87,7 +87,7 @@ class MapsController extends Controller
                         }])
                         ->first();
         $complexitySuf = $this->addOrdinalNumberSuffix($complexity);
-        $complexityarr = HuntComplexitie::select('id','hunt_id','complexity')
+        $complexityarr = HuntComplexity::select('id','hunt_id','complexity')
                                 ->where('hunt_id',$id)
                                 ->pluck('complexity')
                                 ->toArray();
@@ -357,7 +357,7 @@ class MapsController extends Controller
     public function removeStar(Request $request){
         $id = $request->get('id');
         $complexity = $request->get('complexity');
-        $placeStar = HuntComplexitie::where([
+        $placeStar = HuntComplexity::where([
                             'hunt_id'   => $id,
                             'complexity' => (int)$complexity,
                         ])
