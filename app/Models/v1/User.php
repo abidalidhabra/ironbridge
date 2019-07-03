@@ -132,4 +132,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany('App\Models\v1\HuntUser');
     }
+
+    public function hunt_user_v1()
+    {
+        return $this->hasMany('App\Models\v2\HuntUser');
+    }
 }

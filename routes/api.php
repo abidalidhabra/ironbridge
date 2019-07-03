@@ -78,7 +78,8 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 		Route::get('getHuntsByDifficulty', 'HuntController@getHuntsByDifficulty');
 		Route::get('getHuntDetails', 'HuntController@getHuntDetails');
 		Route::post('participateInHunt', 'HuntController@participateInHunt');
-		Route::post('participateInHuntV1', 'HuntController@participateInHuntV1');
+		Route::post('participateInHuntV2', 'HuntController@participateInHuntV2');
+		Route::get('getHuntParticipationDetailsV2', 'HuntController@getHuntParticipationDetailsV2');
 		Route::post('getHuntParticipationDetails', 'HuntController@getHuntParticipationDetails');
 		Route::get('getNearByHunts', 'HuntController@getNearByHunts');
 		Route::post('getHuntUser', 'HuntController@getHuntUser');
@@ -87,11 +88,11 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 
 
 		/** Clues related requests  **/
-		Route::post('revealTheClueV1', 'ClueController@revealTheClueV1');
-		Route::post('startTheClueV1', 'ClueController@startTheClueV1');
-		Route::post('pauseTheClueV1', 'ClueController@pauseTheClueV1');
-		Route::post('endTheClueV1', 'ClueController@endTheClueV1');
-		Route::post('useTheSkeletonKey', 'ClueController@useTheSkeletonKey');
+		Route::post('revealTheClueV2', 'ClueController@revealTheClueV2');
+		Route::post('startTheClueV2', 'ClueController@startTheClueV2');
+		Route::post('pauseTheClueV2', 'ClueController@pauseTheClueV2');
+		Route::post('endTheClueV2', 'ClueController@endTheClueV2');
+		Route::post('useTheSkeletonKeyV2', 'ClueController@useTheSkeletonKeyV2');
 
 		Route::post('revealTheClue', 'ClueController@revealTheClue');
 		Route::get('quitTheHunt', 'ClueController@quitTheHunt');

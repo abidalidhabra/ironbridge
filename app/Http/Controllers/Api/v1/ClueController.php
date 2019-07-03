@@ -13,6 +13,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use MongoDB\BSON\UTCDateTime as MongoDBDate;
 use Validator;
+use App\Models\v2\HuntUser as HuntUserV2;
+use App\Models\v2\HuntUserDetail as HuntUserDetailV2;
 
 class ClueController extends Controller
 {
@@ -398,8 +400,7 @@ class ClueController extends Controller
 
 
 
-    public function revealTheClueV1(ActionOnClueRequest $request){
-
+    public function revealTheClueV2(ActionOnClueRequest $request){
 
         $huntUserDetailId = $request->hunt_user_details_id;
         $user   = auth()->user();
@@ -407,19 +408,23 @@ class ClueController extends Controller
         
         $huntUserDetail = $this->checkParticipationFromClue($userId, $huntUserDetailId);
 
+        if ($huntUserDetail->revealed_at != null) {
+            return response()->json(['message'=>'You cannot reveal this clue, as it already revealed.'], 422);
+        }
+
         if ($huntUserDetail) {
             
-            $huntUserDetail->revealed_at = new MongoDBDate();
-            $huntUserDetail->status = 'progress';
+            $huntUserDetail->revealed_at = now();
+            $huntUserDetail->started_at = now();
+            $huntUserDetail->status = 'running';
             $huntUserDetail->save();
             return response()->json(['message'=>'Clue has been revealed successfully. now you can play the game.']);
         }else{
             return response()->json(['message'=>'You are not participated in the hunt, you requested.'], 422);
         }
-
     }
 
-    public function startTheClueV1(ActionOnClueRequest $request){
+    public function startTheClueV2(ActionOnClueRequest $request){
 
         $huntUserDetailId = $request->hunt_user_details_id;
         $user   = auth()->user();
@@ -430,7 +435,7 @@ class ClueController extends Controller
         if ($huntUserDetail) {
             
             $huntUserDetail->started_at = new MongoDBDate();
-            $huntUserDetail->status = 'progress';
+            $huntUserDetail->status = 'running';
             $huntUserDetail->save();
             return response()->json(['message'=>'Clue Timer has been started successfully.']);
         }else{
@@ -438,7 +443,7 @@ class ClueController extends Controller
         }
     }
 
-    public function pauseTheClueV1(ActionOnClueRequest $request){
+    public function pauseTheClueV2(ActionOnClueRequest $request){
 
         $huntUserDetailId = $request->hunt_user_details_id;
         $user   = auth()->user();
@@ -455,7 +460,7 @@ class ClueController extends Controller
         }
     }
 
-    public function endTheClueV1(ActionOnClueRequest $request){
+    public function endTheClueV2(ActionOnClueRequest $request){
 
         $huntUserDetailId = $request->hunt_user_details_id;
         $user   = auth()->user();
@@ -475,7 +480,7 @@ class ClueController extends Controller
         }   
     }
 
-    public function useTheSkeletonKey(ActionOnClueRequest $request){
+    public function useTheSkeletonKeyV2(ActionOnClueRequest $request){
 
         $huntUserDetailId = $request->hunt_user_details_id;
         $user   = Auth::User();
@@ -515,7 +520,7 @@ class ClueController extends Controller
     
     public function checkParticipationFromClue($userId, $huntUserDetailId)
     {
-        $huntUserDetail = HuntUserDetail::where('_id',$huntUserDetailId)
+        $huntUserDetail = HuntUserDetailV2::where('_id',$huntUserDetailId)
                             ->whereHas('hunt_user', function($query) use ($userId){
                                 $query->where('user_id', $userId);
                             })
@@ -539,11 +544,11 @@ class ClueController extends Controller
 
     public function markHuntAsComplete($huntUserDetail){
 
-        $this->calculateTheTimer($huntUserDetail);
+        $this->calculateTheTimer($huntUserDetail, 'completed');
 
         $stillRemain = $huntUserDetail->whereIn('status', ['tobestart','progress','pause'])->count();
         if (!$stillRemain) {
-            HuntUser::where([ '_id'=>$huntUserDetail->hunt_user_id, 'user_id'=>$user->id])
+            HuntUserV2::where([ '_id'=>$huntUserDetail->hunt_user_id, 'user_id'=>$user->id])
             ->update([ 'status'=>'completed', 'ended_at'=> new MongoDBDate()]);
             return true;
         }
