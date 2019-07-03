@@ -39,7 +39,6 @@ class ClueController extends Controller
                     'revealed_at' => new MongoDBDate(),
                     // 'finished_in' => (int)$request->get('time'),
                     'status'      => 'progress',
-                    'started_at'  => new MongoDBDate(),
                 ];
 
         $huntUserDetail = HuntUserDetail::where('_id',$id)->first();
