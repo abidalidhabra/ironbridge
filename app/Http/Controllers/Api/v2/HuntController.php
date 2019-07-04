@@ -108,7 +108,7 @@ class HuntController extends Controller
                     ]);
                 });
 
-        return response()->json(['message'=>'Hunt has been retrieved successfully','data'=>$hunts]);
+        return response()->json(['message'=>'Hunts has been retrieved successfully','data'=>$hunts]);
     }
 
     public function getNearByHunts(NearByHuntsRequest $request){
@@ -242,11 +242,20 @@ class HuntController extends Controller
         $user = auth()->user();
         $huntUserId = $request->hunt_user_id;
 
-        $huntUserDetails = HuntUserDetail::where(['hunt_user_id' => $huntUserId])->get();
+        $huntUserDetails = HuntUserDetail::where(['hunt_user_id' => $huntUserId])
+                            ->with('game:_id,name,identifier','game_variation:_id,variation_name,variation_complexity,target,no_of_balls,bubble_level_id,game_id')
+                            ->select('_id','finished_in','status','location','game_id','game_variation_id','hunt_user_id')
+                            ->get();
         
+        $hunt = $huntUserDetails->first()->hunt_user()->select('_id', 'user_id', 'hunt_id', 'status')->first();
+
         /** Pause the clue if running **/
         (new ClueController)->calculateTheTimer($huntUserDetails,'paused');
-        return response()->json(['message' => 'Clues details of hunt in which user is participated, has been retrieved successfully.', 'data'=> $huntUserDetails]);
+        return response()->json([
+            'message' => 'Clues details of hunt in which user is participated, has been retrieved successfully.', 
+            'hunt'=> $hunt,
+            'clues_data'=> $huntUserDetails
+        ]);
     }
 
     public function participateInHunt(ParticipateRequest $request){
@@ -329,7 +338,7 @@ class HuntController extends Controller
         $huntId     = $request->hunt_id;
         $complexity = (int)$request->complexity;
 
-        $hunt = Hunt::where('_id', $huntId)->select('_id','name','location','fees')->first();
+        $hunt = Hunt::where('_id', $huntId)->select('_id','name','location','fees', 'status')->first();
 
         $huntDetails = $hunt->hunt_complexities()
                             ->where('complexity',$complexity)
@@ -344,9 +353,11 @@ class HuntController extends Controller
         $completedClues = 0;
         $timeTaken      = 0;
         $completedDist  = 0;
+        $status         = "";
         $userParticipation = $hunt->hunt_users()->where(['user_id'=> $userId, 'complexity'=> $complexity])->select()->first();
         if ($userParticipation) {
             $userClueDetails = $userParticipation->hunt_user_details;
+            $status = $userParticipation->status;
             $participated = true;
             $completedClues = $userClueDetails->where('status','completed')->count();
             $timeTaken = $userClueDetails->sum('finished_in');
@@ -363,6 +374,7 @@ class HuntController extends Controller
         $hunt->completed_clues  = $completedClues;           
         $hunt->time_taken       = $timeTaken;           
         $hunt->completed_dist   = $completedDist;           
+        $hunt->user_hunt_status = $status;           
 
         return response()->json(['message'=>'Hunt details has been retrieved successfully.','data'=>$hunt]);
     }
@@ -384,6 +396,6 @@ class HuntController extends Controller
                 ->select('_id', 'name', 'place_name', 'location')
                 ->get();
 
-        return response()->json(['message'=> 'In progress hunt has been retrieved successfully', 'data'=> $hunts]);
+        return response()->json(['message'=> 'In progress hunts has been retrieved successfully', 'data'=> $hunts]);
     }
 }
