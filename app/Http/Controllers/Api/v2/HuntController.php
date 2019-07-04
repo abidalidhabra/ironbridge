@@ -10,6 +10,7 @@ use App\Http\Requests\v1\NearByHuntsRequest;
 use App\Http\Requests\v1\ParticipateRequest;
 use App\Models\v2\Hunt;
 use App\Models\v2\HuntComplexity;
+use App\Models\v2\HuntUser;
 use App\Models\v2\HuntUserDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -17,8 +18,7 @@ use Illuminate\Support\Facades\Validator;
 class HuntController extends Controller
 {
     
-    public function __construct()
-    {
+    public function __construct(){
         if (version_compare(phpversion(), '7.1', '>=')) {
             ini_set( 'serialize_precision', -1 );
         }
@@ -229,6 +229,26 @@ class HuntController extends Controller
                             ]);
     }
 
+    public function getHuntsInProgress(Request $request){
+
+        $user = auth()->user();
+        $userId = $user->id;
+
+        $hunts = Hunt::whereHas('hunt_users',function($query) use ($userId){
+                    $query->where('user_id', $userId)
+                        ->whereHas('hunt_user_details',function($query){
+                            $query->whereIn('status',['tobestart','pause','progress']);
+                        });
+                })
+                ->with(['hunt_users' => function($query) use ($userId){
+                    $query->where('user_id', $userId)->select('_id','status','hunt_id','hunt_mode','complexity','user_id');
+                }])
+                ->select('_id', 'name', 'place_name', 'location')
+                ->get();
+
+        return response()->json(['message'=> 'In progress hunts has been retrieved successfully', 'data'=> $hunts]);
+    }
+
     public function getHuntParticipationDetails(Request $request){
         
         $validator = Validator::make($request->all(),[
@@ -379,23 +399,21 @@ class HuntController extends Controller
         return response()->json(['message'=>'Hunt details has been retrieved successfully.','data'=>$hunt]);
     }
 
-    public function getHuntsInProgress(Request $request){
+    public function pauseTheHunt(Request $request){
+        
+        $validator = Validator::make($request->all(),[
+            'hunt_user_id'=> "required|exists:hunt_users,_id",
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json(['message'=>$validator->messages()->first()],422);
+        }
 
         $user = auth()->user();
-        $userId = $user->id;
+        $huntUserId = $request->hunt_user_id;
 
-        $hunts = Hunt::whereHas('hunt_users',function($query) use ($userId){
-                    $query->where('user_id', $userId)
-                        ->whereHas('hunt_user_details',function($query){
-                            $query->whereIn('status',['tobestart','pause','progress']);
-                        });
-                })
-                ->with(['hunt_users' => function($query) use ($userId){
-                    $query->where('user_id', $userId)->select('_id','status','hunt_id','hunt_mode','complexity','user_id');
-                }])
-                ->select('_id', 'name', 'place_name', 'location')
-                ->get();
+        $huntUserDetails = HuntUser::where(['_id' => $huntUserId])->update(['status'=> 'paused']);
 
-        return response()->json(['message'=> 'In progress hunts has been retrieved successfully', 'data'=> $hunts]);
+        return response()->json(['message'=>'Hunt has been marked as paused successfully.']);
     }
 }

@@ -34,6 +34,8 @@ class ClueController extends Controller
 
         if ($huntUserDetail) {
             
+            $huntUserDetail->hunt_user()->update(['status'=> 'running']);
+            
             $huntUserDetail->revealed_at = now();
             $huntUserDetail->started_at = now();
             $huntUserDetail->status = 'running';
@@ -58,6 +60,8 @@ class ClueController extends Controller
 
         if ($huntUserDetail) {
             
+            $huntUserDetail->hunt_user()->update(['status'=> 'running']);
+
             $huntUserDetail->started_at = new MongoDBDate();
             $huntUserDetail->status = 'running';
             $huntUserDetail->save();
@@ -201,8 +205,9 @@ class ClueController extends Controller
 
         $stillRemain = $huntUserDetail->whereIn('status', ['tobestart','progress','pause'])->count();
         if (!$stillRemain) {
-            HuntUser::where([ '_id'=>$huntUserDetail->hunt_user_id, 'user_id'=>$user->id])
-            ->update([ 'status'=>'completed', 'ended_at'=> new MongoDBDate(), 'finished_in'=> $huntUserDetail->sum('finished_in')]);
+            $huntUserDetail->hunt_user()->update([ 'status'=>'completed', 'ended_at'=> new MongoDBDate(), 'finished_in'=> $huntUserDetail->sum('finished_in')]);
+            // HuntUser::where([ '_id'=>$huntUserDetail->hunt_user_id, 'user_id'=>$user->id])
+            // ->update([ 'status'=>'completed', 'ended_at'=> new MongoDBDate(), 'finished_in'=> $huntUserDetail->sum('finished_in')]);
             return true;
         }
         return false;

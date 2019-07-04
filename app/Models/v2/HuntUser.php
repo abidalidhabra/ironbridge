@@ -8,7 +8,7 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 class HuntUser extends Eloquent
 {
 
-    /** status ->  [participated, running, completed] **/
+    /** status ->  [participated, paused, running, completed] **/
     protected $fillable = [
         'user_id',
         'hunt_id',
@@ -18,6 +18,7 @@ class HuntUser extends Eloquent
         'status',
         'started_at',
         'ended_at',
+        'finished_in',
     ];
 
     protected $dates = [
@@ -28,7 +29,8 @@ class HuntUser extends Eloquent
     protected $attributes = [
         'status'     => 'participated',
         'started_at' => null,
-        'ended_at'   => null
+        'ended_at'   => null,
+        'finished_in'=> 0
     ];
 
     public function hunt()
