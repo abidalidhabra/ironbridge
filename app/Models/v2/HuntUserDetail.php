@@ -7,7 +7,7 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class HuntUserDetail extends Eloquent
 {
-    /** status ->  [tobestart, running, completed] **/
+    /** status ->  [tobestart, running, paused, completed] **/
     protected $fillable = [
     	'hunt_user_id',
 		'location',

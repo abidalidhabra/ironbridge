@@ -1,15 +1,12 @@
 <?php
 
-namespace App\Models\v1;
+namespace App\Models\v2;
 
 //use Illuminate\Database\Eloquent\Model;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class HuntComplexity extends Eloquent
 {
-
-    protected $table = 'hunt_complexities';
-    
     protected $fillable = [
         'hunt_id', 
         'complexity',
@@ -24,7 +21,7 @@ class HuntComplexity extends Eloquent
 
     public function hunt()
     {
-    	return $this->belongsTo('App\Models\v1\Hunt','hunt_id');
+    	return $this->belongsTo('App\Models\v2\Hunt','hunt_id');
     }
 
     public function hunt_clue()
@@ -39,6 +36,6 @@ class HuntComplexity extends Eloquent
 
     public function hunt_users()
     {
-        return $this->hasMany('App\Models\v1\HuntUser','hunt_complexity_id');
+        return $this->hasMany('App\Models\v2\HuntUser','hunt_complexity_id');
     }
 }

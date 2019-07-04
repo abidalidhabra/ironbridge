@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class ParticipateRequest extends FormRequest
+class NearByHuntsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,9 +26,10 @@ class ParticipateRequest extends FormRequest
     public function rules()
     {
         return [
-            'hunt_id'=> "required|string|exists:hunts,_id",
             'complexity'=> "required|integer|between:1,5",
-            'hunt_mode'=>'required|string|in:challenge,normal'
+            'page'      => 'required|integer|min:1',
+            'longitude' => 'required|numeric',
+            'latitude'  => 'required|numeric'
         ];
     }
 
