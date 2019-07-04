@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Http\Controllers\Api\v1\ClueController;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\v1\HuntByDiffRequest;
+use App\Http\Requests\v1\HuntDetailRequest;
+use App\Http\Requests\v1\NearByHuntsRequest;
 use App\Http\Requests\v1\ParticipateRequest;
 use App\Models\v1\Game;
 use App\Models\v1\Hunt;
+use App\Models\v1\Hunt as HuntV2;
 use App\Models\v1\HuntComplexity;
 use App\Models\v1\HuntUser;
 use App\Models\v1\HuntUserDetail;
@@ -14,6 +19,7 @@ use App\Models\v2\HuntUserDetail as HuntUserDetailV2;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use MongoDB\BSON\ObjectId as MongoDBId;
 use MongoDB\BSON\UTCDateTime as MongoDBDate;
 use Validator;
 
@@ -786,6 +792,236 @@ class HuntController extends Controller
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function getHuntsByDifficultyV2(HuntByDiffRequest $request){
+
+        $complexity = (int)$request->complexity;
+        $user       = auth()->User();
+        $userId     = $user->id;
+
+        // $hunts = Hunt::select('_id', 'location', 'name', 'place_name')
+                 //    ->whereHas('hunt_complexities', function ($query) use ($complexity,$userId) {
+                 //     $query->where('complexity',$complexity);
+                 //    })
+                 //    ->with(['hunt_users'=> function($query) use ($complexity,$userId){
+                 //     $query->where('user_id', $userId)
+                 //     ->where('status', '!=','completed')
+                 //     ->select('_id', 'user_id', 'hunt_id', 'hunt_mode', 'status', 'complexity');
+                 //    }])
+                 //    ->get();
+        $hunts = Hunt::raw(function($collection) use ($userId, $complexity){
+                    return $collection->aggregate([
+                        [
+                            '$addFields' => [
+                                'hunt_string_id' => [
+                                    '$toString' => '$_id'
+                                ]
+                            ]
+                        ],
+                        [
+                            '$lookup' => [
+                                'from' => 'hunt_complexities',
+                                'let'=> [ 'hunt_string_id'=> '$hunt_string_id'],
+                                'pipeline'=> [
+                                    [
+                                        '$match'=> [ 
+                                            '$expr'=> [ 
+                                                '$and'=> [
+                                                   [ '$eq'=> [ '$hunt_id',  '$$hunt_string_id' ] ],
+                                                   [ '$eq'=> [ '$complexity', $complexity ] ]
+                                                ]
+                                            ]
+                                        ]
+                                    ],
+                                    [
+                                        '$project' => [
+                                            '_id' => [ '$toString' => '$_id' ],
+                                            'hunt_id' => true,
+                                            'complexity' => true,
+                                        ]
+                                    ]
+                                ],
+                                'as' => 'hunt_complexities'
+                            ]
+                        ],
+                        ['$unwind' => '$hunt_complexities'],
+                        [
+                            '$lookup' => [
+                                'from' => 'hunt_users',
+                                'let'=> [ 'hunt_string_id'=> '$hunt_string_id'],
+                                'pipeline'=> [
+                                    [
+                                        '$match'=> [ 
+                                            '$expr'=> [ 
+                                                '$and'=> [
+                                                   [ '$eq'=> [ '$hunt_id',  '$$hunt_string_id' ] ],
+                                                   [ '$eq'=> [ '$user_id', $userId ] ],
+                                                   [ '$ne'=> [ '$status', 'completed' ] ]
+                                                ]
+                                            ]
+                                        ]
+                                    ],
+                                    [
+                                        '$project' => [
+                                            '_id' => [ '$toString' => '$_id' ],
+                                            'status' => true,
+                                            'hunt_id' => true,
+                                            'hunt_mode' => true,
+                                            'complexity' => true,
+                                            'user_id' => true,
+                                        ]
+                                    ]
+                                ],
+                                'as' => 'hunt_users'
+                            ]
+                        ],
+                        [
+                            '$project' => [
+                                '_id' => true,
+                                'name' => true,
+                                'place_name' => true,
+                                'location' => true,
+                                'hunt_users' => true,
+                            ]
+                        ]
+                    ]);
+                });
+
+        return response()->json(['message'=>'Hunt has been retrieved successfully','data'=>$hunts]);
+    }
+
+    public function getNearByHuntsV2(NearByHuntsRequest $request){
+
+        $complexity = (int)$request->complexity;
+        $page       = (int)$request->page;
+        $user       = auth()->User();
+        $userId     = $user->id;
+        $longitude  = (float)$request->longitude;
+        $latitude   = (float)$request->latitude;
+        $page       = $page -1;
+        $take       = 20;
+        $skip       = ($page * $take);
+        $distance   = 3000;
+        
+        $hunts = Hunt::raw(function($collection) use ($skip, $take, $userId, $complexity, $latitude, $longitude, $distance){
+                    return $collection->aggregate([
+                        [
+                            '$geoNear' => [ 
+                                'near' => [
+                                    'type' => 'Point',
+                                    'coordinates' => [$longitude,$latitude]
+                                ],
+                                'spherical' => true,
+                                'distanceField' => 'distance',
+                                'distanceMultiplier'=> 0.001,
+                                "includeLocs" => "location.coordinates",
+                                "maxDistance"=> $distance * 1000,
+                                "limit"=> 1000,
+                            ]
+                        ],
+                        [
+                            '$addFields' => [
+                                'hunt_string_id' => [
+                                    '$toString' => '$_id'
+                                ]
+                            ]
+                        ],
+                        [
+                            '$lookup' => [
+                                'from' => 'hunt_complexities',
+                                'let'=> [ 'hunt_string_id'=> '$hunt_string_id'],
+                                'pipeline'=> [
+                                    [
+                                        '$match'=> [ 
+                                            '$expr'=> [ 
+                                                '$and'=> [
+                                                   [ '$eq'=> [ '$hunt_id',  '$$hunt_string_id' ] ],
+                                                   [ '$eq'=> [ '$complexity', $complexity ] ]
+                                                ]
+                                            ]
+                                        ]
+                                    ],
+                                    [
+                                        '$project' => [
+                                            '_id' => [ '$toString' => '$_id' ],
+                                            'hunt_id' => true,
+                                            'complexity' => true,
+                                        ]
+                                    ]
+                                ],
+                                'as' => 'hunt_complexities'
+                            ]
+                        ],
+                        ['$unwind' => '$hunt_complexities'],
+                        [
+                            '$lookup' => [
+                                'from' => 'hunt_users',
+                                'let'=> [ 'hunt_string_id'=> '$hunt_string_id'],
+                                'pipeline'=> [
+                                    [
+                                        '$match'=> [ 
+                                            '$expr'=> [ 
+                                                '$and'=> [
+                                                   [ '$eq'=> [ '$hunt_id',  '$$hunt_string_id' ] ],
+                                                   [ '$eq'=> [ '$user_id', $userId ] ],
+                                                   [ '$eq'=> [ '$complexity', $complexity ] ],
+                                                   [ '$ne'=> [ '$status', 'completed' ] ]
+                                                ]
+                                            ]
+                                        ]
+                                    ],
+                                    [
+                                        '$project' => [
+                                            '_id' => [ '$toString' => '$_id' ],
+                                            'status' => true,
+                                            'hunt_id' => true,
+                                            'hunt_mode' => true,
+                                            'complexity' => true,
+                                            'user_id' => true,
+                                        ]
+                                    ]
+                                ],
+                                'as' => 'hunt_users'
+                            ]
+                        ],
+                        [ '$sort' => [ 'distance' => 1 ] ],
+                        ['$skip' => $skip],
+                        ['$limit' => $take+1],
+                        [
+                            '$project' => [
+                                '_id' => true,
+                                'name' => true,
+                                'place_name' => true,
+                                'location' => true,
+                                'hunt_users' => true,
+                            ]
+                        ]
+                    ]);
+                });
+
+        $hasNextPage = ($hunts->count() > 20)?true:false;
+        
+        return response()->json([
+                                'message' => 'Near by hunts has been retrieved successfully.',
+                                'data'    => $hunts,
+                                'has_next_page' => $hasNextPage
+                            ]);
+    }
+
     public function getHuntParticipationDetailsV2(Request $request){
         
         $validator = Validator::make($request->all(),[
@@ -796,24 +1032,20 @@ class HuntController extends Controller
             return response()->json(['message'=>$validator->messages()->first()],422);
         }
 
-        $user = Auth::user();
+        $user = auth()->user();
         $huntUserId = $request->hunt_user_id;
 
         $huntUserDetails = HuntUserDetailV2::where(['hunt_user_id' => $huntUserId])->get();
         
         /** Pause the clue if running **/
-        $this->calculateTheTimer($huntUserDetails,'paused');
-        
-        return response()->json(['message' => 'Clues details of hunt participation has been retrieved successfully.', 'data'=> $huntUserDetails]);
+        (new ClueController)->calculateTheTimer($huntUserDetails,'paused');
+        return response()->json(['message' => 'Clues details of hunt in which user is participated, has been retrieved successfully.', 'data'=> $huntUserDetails]);
     }
 
+    public function participateInHuntV2(ParticipateRequest $request){
 
-
-    public function participateInHuntV2(ParticipateRequest $request)
-    {
-
-        $user       = Auth::User();
-        $complexity = (int)$request->star;
+        $user       = auth()->User();
+        $complexity = (int)$request->complexity;
         $huntId     = $request->hunt_id;
         $huntMode   = $request->hunt_mode;
 
@@ -883,33 +1115,208 @@ class HuntController extends Controller
         ]);
     }
 
-    public function calculateTheTimer($huntUserDetails, $action){
+    public function getHuntDetailsV2(HuntDetailRequest $request){
+        
+        $user   = auth()->user();
+        $userId = $user->id;
+        $huntId     = $request->hunt_id;
+        $complexity = (int)$request->complexity;
 
-        if (is_a($huntUserDetails, 'Illuminate\Database\Eloquent\Collection')) {
+        $hunt = HuntV2::where('_id', $huntId)->select('_id','name','location','fees')->first();
 
-            $runningClues = $huntUserDetails->where('status', 'running');
-            $runningClues->map(function($clue) use ($action){
-                $startdate  = $clue->started_at;
-                $finishedIn = $clue->finished_in + now()->diffInSeconds($startdate);
+        $huntDetails = $hunt->hunt_complexities()
+                            ->where('complexity',$complexity)
+                            ->select('hunt_id', 'complexity','est_completion','distance')
+                            ->first();
 
-                $clue->finished_in = $finishedIn;
-                $clue->started_at  = null;
-                $clue->ended_at    = null;
-                $clue->status      = $action;
-                $clue->save();
-                return $clue;
-            });
-        }else{
+        $totalClues = $huntDetails->hunt_clues()->count();
 
-            $startdate  = $huntUserDetail->started_at;
-            $finishedIn = $huntUserDetail->finished_in + now()->diffInSeconds($startdate);
-
-            $huntUserDetail->finished_in = $finishedIn;
-            $huntUserDetail->started_at  = null;
-            $huntUserDetail->ended_at    = null;
-            $huntUserDetail->status      = $action;
-            $huntUserDetail->save();
+        $bestTime = $hunt->hunt_users()->pluck('finished_in')->min();
+        
+        $participated   = false;
+        $completedClues = 0;
+        $timeTaken      = 0;
+        $completedDist  = 0;
+        $userParticipation = $hunt->hunt_users()->where(['user_id'=> $userId, 'complexity'=> $complexity])->select()->first();
+        if ($userParticipation) {
+            $userClueDetails = $userParticipation->hunt_user_details;
+            $participated = true;
+            $completedClues = $userClueDetails->where('status','completed')->count();
+            $timeTaken = $userClueDetails->sum('finished_in');
+            $completedDist = (($huntDetails->distance / $totalClues) * $completedClues);
         }
-        return true;
+
+        $hunt->complexity       = $huntDetails->complexity;           
+        $hunt->est_completion   = $huntDetails->est_completion; /** Time in seconds **/   
+        $hunt->total_dist       = $huntDetails->distance;   /** Distance in meters **/
+        $hunt->total_clues      = $totalClues;           
+        $hunt->best_time        = ($bestTime !== null)?$bestTime:0; /** Time in meters **/
+        
+        $hunt->participated     = $participated;           
+        $hunt->completed_clues  = $completedClues;           
+        $hunt->time_taken       = $timeTaken;           
+        $hunt->completed_dist   = $completedDist;           
+
+        return response()->json(['message'=>'Hunt details has been retrieved successfully.','data'=>$hunt]);
     }
+
+    public function getHuntsInProgressV2(Request $request){
+
+        $user = auth()->user();
+        $userId = $user->id;
+
+        $hunts = HuntV2::whereHas('hunt_users',function($query) use ($userId){
+                                $query->where('user_id', $userId)
+                                    ->whereHas('hunt_user_details',function($query){
+                                        $query->whereIn('status',['tobestart','pause','progress']);
+                                    });
+                            })
+                            ->with(['hunt_users' => function($query) use ($userId){
+                                $query->where('user_id', $userId)->select('_id','status','hunt_id','hunt_mode','complexity','user_id');
+                            }])
+                            ->select('_id', 'name', 'place_name', 'location')
+                            ->get();
+
+        // $hunts = HuntUserV2::whereHas('hunt_user_details',function($query){
+        //                         $query->whereIn('status',['tobestart','pause','progress']);
+        //                     })
+        //                     ->select('_id','user_id','hunt_id')
+        //                     ->with(['hunt:_id,name,place_name,location'])
+        //                     ->where([
+        //                                 'user_id' => $user->_id,
+        //                             ])
+        //                     ->get();
+
+        return response()->json([
+                                'message' => 'In progress hunt has been retrieved successfully',
+                                'data'    => $hunts
+                            ]);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//     public function getTheHunts($conditions = [], $additionalData)
+//     {
+//         $mainCondition = $conditions['main_condition'];
+//         $sortCondition = $conditions['sort_condition'];
+//         $skipCondition = ($conditions['limit_condition'][0] < 0)?[]:$conditions['limit_condition'][0];
+//         $limitCondition = ($conditions['limit_condition'][1] < 0)?[]:$conditions['limit_condition'][1];
+// dd($conditions['limit_condition'][0]);
+//         $userId     = $additionalData['user_id'];
+//         $complexity = $additionalData['complexity'];
+
+//         $hunts = Hunt::raw(function($collection) use ($mainCondition,$sortCondition ,$skipCondition, $limitCondition, $userId, $complexity){
+//                     return $collection->aggregate([
+//                         $mainCondition,
+//                         [
+//                             '$addFields' => [
+//                                 'hunt_string_id' => [
+//                                     '$toString' => '$_id'
+//                                 ]
+//                             ]
+//                         ],
+//                         [
+//                             '$lookup' => [
+//                                 'from' => 'hunt_complexities',
+//                                 'let'=> [ 'hunt_string_id'=> '$hunt_string_id'],
+//                                 'pipeline'=> [
+//                                     [
+//                                         '$match'=> [ 
+//                                             '$expr'=> [ 
+//                                                 '$and'=> [
+//                                                    [ '$eq'=> [ '$hunt_id',  '$$hunt_string_id' ] ],
+//                                                    [ '$eq'=> [ '$complexity', $complexity ] ]
+//                                                 ]
+//                                             ]
+//                                         ]
+//                                     ],
+//                                     [
+//                                         '$project' => [
+//                                             '_id' => [ '$toString' => '$_id' ],
+//                                             'hunt_id' => true,
+//                                             'complexity' => true,
+//                                         ]
+//                                     ]
+//                                 ],
+//                                 'as' => 'hunt_complexities'
+//                             ]
+//                         ],
+//                         ['$unwind' => '$hunt_complexities'],
+//                         [
+//                             '$lookup' => [
+//                                 'from' => 'hunt_users',
+//                                 'let'=> [ 'hunt_string_id'=> '$hunt_string_id'],
+//                                 'pipeline'=> [
+//                                     [
+//                                         '$match'=> [ 
+//                                             '$expr'=> [ 
+//                                                 '$and'=> [
+//                                                    [ '$eq'=> [ '$hunt_id',  '$$hunt_string_id' ] ],
+//                                                    [ '$eq'=> [ '$user_id', $userId ] ],
+//                                                    [ '$eq'=> [ '$complexity', $complexity ] ],
+//                                                    [ '$ne'=> [ '$status', 'completed' ] ]
+//                                                 ]
+//                                             ]
+//                                         ]
+//                                     ],
+//                                     [
+//                                         '$project' => [
+//                                             '_id' => [ '$toString' => '$_id' ],
+//                                             'status' => true,
+//                                             'hunt_id' => true,
+//                                             'hunt_mode' => true,
+//                                             'complexity' => true,
+//                                             'user_id' => true,
+//                                         ]
+//                                     ]
+//                                 ],
+//                                 'as' => 'hunt_users'
+//                             ]
+//                         ],
+//                         $sortCondition,
+//                         $skipCondition,
+//                         $limitCondition,
+//                         [
+//                             '$project' => [
+//                                 '_id' => true,
+//                                 'name' => true,
+//                                 'place_name' => true,
+//                                 'location' => true,
+//                                 // 'hunt_complexities' = true,
+//                                 // 'hunt_users' = true,
+//                                 'already_participated' => [
+//                                     '$size' => '$hunt_users'
+//                                 ],
+//                             ]
+//                         ]
+//                     ]);
+//                 });
+//             return $hunts;
+//     }
 }

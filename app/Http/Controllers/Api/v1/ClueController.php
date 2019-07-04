@@ -432,6 +432,10 @@ class ClueController extends Controller
         
         $huntUserDetail = $this->checkParticipationFromClue($userId, $huntUserDetailId);
 
+        if ($huntUserDetail->status == 'running') {
+            return response()->json(['message'=>'You cannot start this clue, as it already started.'], 422);
+        }
+
         if ($huntUserDetail) {
             
             $huntUserDetail->started_at = new MongoDBDate();
@@ -451,6 +455,10 @@ class ClueController extends Controller
 
         $huntUserDetail = $this->checkParticipationFromClue($userId, $huntUserDetailId);
 
+        if ($huntUserDetail->status == 'paused') {
+            return response()->json(['message'=>'You cannot pause this clue, as it already paused.'], 422);
+        }
+
         if ($huntUserDetail) {
             
             $this->calculateTheTimer($huntUserDetail,'paused');
@@ -467,6 +475,10 @@ class ClueController extends Controller
         $userId = $user->id;
 
         $huntUserDetail = $this->checkParticipationFromClue($userId, $huntUserDetailId);
+
+        if ($huntUserDetail->status == 'completed') {
+            return response()->json(['message'=>'You cannot end this clue, as it already ended.'], 422);
+        }
 
         if ($huntUserDetail) {
             
@@ -488,6 +500,10 @@ class ClueController extends Controller
         
         $huntUserDetail = $this->checkParticipationFromClue($userId, $huntUserDetailId);
 
+
+        if ($huntUserDetail->status == 'completed') {
+            return response()->json(['message'=>'You cannot use skeleton key in this clue, as it already ended.'], 422);
+        }
 
         if ($huntUserDetail) {
             
@@ -518,8 +534,8 @@ class ClueController extends Controller
         }   
     }
     
-    public function checkParticipationFromClue($userId, $huntUserDetailId)
-    {
+    public function checkParticipationFromClue($userId, $huntUserDetailId){
+
         $huntUserDetail = HuntUserDetailV2::where('_id',$huntUserDetailId)
                             ->whereHas('hunt_user', function($query) use ($userId){
                                 $query->where('user_id', $userId);
@@ -529,18 +545,49 @@ class ClueController extends Controller
         return $huntUserDetail;
     }
     
-    public function calculateTheTimer($huntUserDetail, $action){
+    // public function calculateTheTimer($huntUserDetail, $action){
 
-        $startdate  = $huntUserDetail->started_at;
-        $finishedIn = $huntUserDetail->finished_in + now()->diffInSeconds($startdate);
+    //     $startdate  = $huntUserDetail->started_at;
+    //     $finishedIn = $huntUserDetail->finished_in + now()->diffInSeconds($startdate);
 
-        $huntUserDetail->finished_in = $finishedIn;
-        $huntUserDetail->started_at  = null;
-        $huntUserDetail->ended_at    = null;
-        $huntUserDetail->status      = $action;
-        $huntUserDetail->save();
+    //     $huntUserDetail->finished_in = $finishedIn;
+    //     $huntUserDetail->started_at  = null;
+    //     $huntUserDetail->ended_at    = null;
+    //     $huntUserDetail->status      = $action;
+    //     $huntUserDetail->save();
+    //     return true;
+    // }
+
+    public function calculateTheTimer($huntUserDetails, $action){
+
+        if (is_a($huntUserDetails, 'Illuminate\Database\Eloquent\Collection')) {
+
+            $runningClues = $huntUserDetails->where('status', 'running');
+            $runningClues->map(function($clue) use ($action){
+                $startdate  = $clue->started_at;
+                $finishedIn = $clue->finished_in + now()->diffInSeconds($startdate);
+
+                $clue->finished_in = $finishedIn;
+                $clue->started_at  = null;
+                $clue->ended_at    = null;
+                $clue->status      = $action;
+                $clue->save();
+                return $clue;
+            });
+        }else{
+
+            $startdate  = $huntUserDetails->started_at;
+            $finishedIn = $huntUserDetails->finished_in + now()->diffInSeconds($startdate);
+
+            $huntUserDetails->finished_in = $finishedIn;
+            $huntUserDetails->started_at  = null;
+            $huntUserDetails->ended_at    = null;
+            $huntUserDetails->status      = $action;
+            $huntUserDetails->save();
+        }
         return true;
     }
+
 
     public function markHuntAsComplete($huntUserDetail){
 
@@ -549,7 +596,7 @@ class ClueController extends Controller
         $stillRemain = $huntUserDetail->whereIn('status', ['tobestart','progress','pause'])->count();
         if (!$stillRemain) {
             HuntUserV2::where([ '_id'=>$huntUserDetail->hunt_user_id, 'user_id'=>$user->id])
-            ->update([ 'status'=>'completed', 'ended_at'=> new MongoDBDate()]);
+            ->update([ 'status'=>'completed', 'ended_at'=> new MongoDBDate(), 'finished_in'=> $huntUserDetail->sum('finished_in')]);
             return true;
         }
         return false;
