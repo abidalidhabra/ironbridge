@@ -81,15 +81,15 @@ class ClueController extends Controller
         $huntUser = $huntUserDetail
                         ->hunt_user
                         ->where('user_id',$user->id)
-                        ->where('skeleton.used',false)
+                        ->where('skeleton_keys.used',false)
                         ->first();
 
         if ($huntUser) {
             
-            $huntUser->where('skeleton.used',false)
+            $huntUser->where('skeleton_keys.used',false)
                     ->update([
-                        'skeleton.$.used'=>true, 
-                        'skeleton.$.used_date'=>new MongoDBDate()
+                        'skeleton_keys.$.used'=>true, 
+                        'skeleton_keys.$.used_date'=>new MongoDBDate()
                     ]);
         }else{
             return response()->json(['message'=>'You does not have any key to use.'], 422);
