@@ -38,7 +38,7 @@ class HuntController extends Controller
     	
     	$location = Hunt::select('location','place_name','place_id','boundaries_arr','boundingbox')
                                     ->with('hunt_complexities:_id,hunt_id')
-    								->whereIn('city',['Edmonton'])
+    								->whereIn('city',['Lloydminster','Camrose','Fort McMurry','Beaumont','Cold Lake','Brooks','Lacombe'])
     								->get()
     								->map(function($query){
     									if (count($query->hunt_complexities) > 0) {
@@ -89,7 +89,7 @@ class HuntController extends Controller
                     // $avg_km = $km/4.5;   
                     $mins = 60/4.5 * $km;
                     $fixClueMins = count($value['total_clues'])*5;
-                    $estTime =  $mins + $fixClueMins;
+                    $estTime =  ($mins + $fixClueMins)*60;
                     $huntComplexities = $hunt->hunt_complexities()->updateOrCreate(['hunt_id'=>$id,'complexity'=>$key],['hunt_id'=>$id,'complexity'=>$key,'distance'=>$distance,'est_completion'=>(int)round($estTime)]);
                     foreach ($value['total_clues'] as $latlng) {
                         $game = Game::whereHas('game_variation')

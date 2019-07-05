@@ -7,6 +7,9 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class HuntComplexity extends Eloquent
 {
+
+    protected $table = 'hunt_complexities';
+    
     protected $fillable = [
         'hunt_id', 
         'complexity',
