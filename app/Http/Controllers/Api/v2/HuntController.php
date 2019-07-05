@@ -338,7 +338,7 @@ class HuntController extends Controller
                 'used_date' => null
             ];
         }
-        $huntUser->skeleton = $skeleton;
+        $huntUser->skeleton_keys = $skeleton;
         $huntUser->save();
         $huntUser->hunt_user_details()->saveMany($huntUserDetails);
 
