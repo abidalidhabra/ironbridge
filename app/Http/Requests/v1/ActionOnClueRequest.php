@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\v1;
 
+use App\Rules\v1\CheckParticipationFromClue;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -25,8 +26,10 @@ class ActionOnClueRequest extends FormRequest
      */
     public function rules()
     {
+        $status = $this->status;
         return [
-            'hunt_user_details_id' => "required|exists:hunt_user_details,_id",
+            'status' => ["required", "in:reveal,running,paused,completed"],
+            'hunt_user_details_id' => ["required", "exists:hunt_user_details,_id", new CheckParticipationFromClue(auth()->user()->id, $status)]
         ];
     }
 

@@ -19,101 +19,50 @@ class ClueController extends Controller
         }
     }
 
+    public function actionOnClue(ActionOnClueRequest $request){
 
-    public function revealTheClue(ActionOnClueRequest $request){
-
+        $userId = auth()->user()->id;
         $huntUserDetailId = $request->hunt_user_details_id;
-        $user   = auth()->user();
-        $userId = $user->id;
+        $status = $request->status;
         
-        $huntUserDetail = $this->checkParticipationFromClue($userId, $huntUserDetailId);
+        $huntUserDetail = $this->getHuntUserDetail($userId, $huntUserDetailId);
 
-        if ($huntUserDetail->revealed_at != null) {
-            return response()->json(['message'=>'You cannot reveal this clue, as it already revealed.'], 422);
-        }
-
-        if ($huntUserDetail) {
+        $stillRemain;
+        switch ($status) {
             
-            $huntUserDetail->hunt_user()->update(['status'=> 'running']);
+            case 'reveal':
+                $huntAction = 'running';
+                $huntUserDetail->revealed_at = now();
+                $huntUserDetail->started_at = now();
+                $huntUserDetail->status = 'running';
+                break;
             
-            $huntUserDetail->revealed_at = now();
-            $huntUserDetail->started_at = now();
-            $huntUserDetail->status = 'running';
-            $huntUserDetail->save();
-            return response()->json(['message'=>'Clue has been revealed successfully. now you can play the game.']);
-        }else{
-            return response()->json(['message'=>'You are not participated in the hunt, you requested.'], 422);
+            case 'running':
+                $huntAction = 'running';
+                $huntUserDetail->started_at = new MongoDBDate();
+                $huntUserDetail->status = 'running';
+                break;
+
+            case 'paused':
+                $huntAction = 'paused';
+                $this->calculateTheTimer($huntUserDetail,'paused');
+                break;
+
+            case 'completed':
+                $this->calculateTheTimer($huntUserDetail,'completed');
+                $stillRemain = $huntUserDetail->whereIn('status', ['tobestart','progress','pause'])->count();
+                break;
         }
-    }
+        $huntUserDetail->save();
 
-    public function startTheClue(ActionOnClueRequest $request){
-
-        $huntUserDetailId = $request->hunt_user_details_id;
-        $user   = auth()->user();
-        $userId = $user->id;
-        
-        $huntUserDetail = $this->checkParticipationFromClue($userId, $huntUserDetailId);
-
-        if ($huntUserDetail->status == 'running') {
-            return response()->json(['message'=>'You cannot start this clue, as it already started.'], 422);
-        }
-
-        if ($huntUserDetail) {
-            
-            $huntUserDetail->hunt_user()->update(['status'=> 'running']);
-
-            $huntUserDetail->started_at = new MongoDBDate();
-            $huntUserDetail->status = 'running';
-            $huntUserDetail->save();
-            return response()->json(['message'=>'Clue Timer has been started successfully.']);
-        }else{
-            return response()->json(['message'=>'You are not participated in the hunt, you requested.'], 422);
-        }
-    }
-
-    public function pauseTheClue(ActionOnClueRequest $request){
-
-        $huntUserDetailId = $request->hunt_user_details_id;
-        $user   = auth()->user();
-        $userId = $user->id;
-
-        $huntUserDetail = $this->checkParticipationFromClue($userId, $huntUserDetailId);
-
-        if ($huntUserDetail->status == 'paused') {
-            return response()->json(['message'=>'You cannot pause this clue, as it already paused.'], 422);
+        if ($status == 'completed' && $stillRemain == 0) {
+            $fields = [ 'status'=>'completed', 'ended_at'=> new MongoDBDate(), 'finished_in'=> $huntUserDetail->sum('finished_in') ];
+            $this->takeActionOnHuntUser($huntUserDetail, '', $fields);
+        }else if($status != 'completed'){
+            $this->takeActionOnHuntUser($huntUserDetail, $huntAction);
         }
 
-        if ($huntUserDetail) {
-            
-            $this->calculateTheTimer($huntUserDetail,'paused');
-            return response()->json(['message'=>'Clue Timer has been paused successfully.']);
-        }else{
-            return response()->json(['message'=>'You are not participated in the hunt, you requested.'], 422);
-        }
-    }
-
-    public function endTheClue(ActionOnClueRequest $request){
-
-        $huntUserDetailId = $request->hunt_user_details_id;
-        $user   = auth()->user();
-        $userId = $user->id;
-
-        $huntUserDetail = $this->checkParticipationFromClue($userId, $huntUserDetailId);
-
-        if ($huntUserDetail->status == 'completed') {
-            return response()->json(['message'=>'You cannot end this clue, as it already ended.'], 422);
-        }
-
-        if ($huntUserDetail) {
-            
-            $huntFinished = $this->markHuntAsComplete($huntUserDetail);
-            return response()->json([
-                'message'=> 'Clue Timer has been ended successfully.',
-                'hunt_finished'=> $huntFinished
-            ]);
-        }else{
-            return response()->json(['message'=>'You are not participated in the hunt, you requested.'], 422);
-        }   
+        return response()->json(['message'=>'Action on clue has been taken successfully.']);
     }
 
     public function useTheSkeletonKey(ActionOnClueRequest $request){
@@ -122,43 +71,36 @@ class ClueController extends Controller
         $user   = auth()->User();
         $userId = $user->id;
         
-        $huntUserDetail = $this->checkParticipationFromClue($userId, $huntUserDetailId);
+        $huntUserDetail = $this->getHuntUserDetail($userId, $huntUserDetailId);
 
 
         if ($huntUserDetail->status == 'completed') {
             return response()->json(['message'=>'You cannot use skeleton key in this clue, as it already ended.'], 422);
         }
 
-        if ($huntUserDetail) {
+        $huntUser = $huntUserDetail
+                        ->hunt_user
+                        ->where('user_id',$user->id)
+                        ->where('skeleton.used',false)
+                        ->first();
+
+        if ($huntUser) {
             
-            $huntUser = $huntUserDetail
-                            ->hunt_user
-                            ->where('user_id',$user->id)
-                            ->where('skeleton.used',false)
-                            ->first();
-
-            if ($huntUser) {
-                
-                $huntUser->where('skeleton.used',false)
-                        ->update([
-                            'skeleton.$.used'=>true, 
-                            'skeleton.$.used_date'=>new MongoDBDate()
-                        ]);
-            }else{
-                return response()->json(['message'=>'You does not have any key to use.'], 422);
-            }
-
-            $huntFinished = $this->markHuntAsComplete($huntUserDetail);
-            return response()->json([
-                'message'=> 'Clue Timer has been ended successfully.',
-                'hunt_finished'=> $huntFinished
-            ]);
+            $huntUser->where('skeleton.used',false)
+                    ->update([
+                        'skeleton.$.used'=>true, 
+                        'skeleton.$.used_date'=>new MongoDBDate()
+                    ]);
         }else{
-            return response()->json(['message'=>'You are not participated in the hunt, you requested.'], 422);
-        }   
+            return response()->json(['message'=>'You does not have any key to use.'], 422);
+        }
+
+        $huntFinished = $this->takeActionOnClue($huntUserDetail, 'completed');
+        return response()->json(['message'=> 'Clue Timer has been ended successfully.', 'hunt_finished'=> $huntFinished
+        ]);
     }
 
-    public function checkParticipationFromClue($userId, $huntUserDetailId){
+    public function getHuntUserDetail($userId, $huntUserDetailId){
 
         $huntUserDetail = HuntUserDetail::where('_id',$huntUserDetailId)
                             ->whereHas('hunt_user', function($query) use ($userId){
@@ -199,17 +141,11 @@ class ClueController extends Controller
         return true;
     }
 
-    public function markHuntAsComplete($huntUserDetail){
-
-        $this->calculateTheTimer($huntUserDetail, 'completed');
-
-        $stillRemain = $huntUserDetail->whereIn('status', ['tobestart','progress','pause'])->count();
-        if (!$stillRemain) {
-            $huntUserDetail->hunt_user()->update([ 'status'=>'completed', 'ended_at'=> new MongoDBDate(), 'finished_in'=> $huntUserDetail->sum('finished_in')]);
-            // HuntUser::where([ '_id'=>$huntUserDetail->hunt_user_id, 'user_id'=>$user->id])
-            // ->update([ 'status'=>'completed', 'ended_at'=> new MongoDBDate(), 'finished_in'=> $huntUserDetail->sum('finished_in')]);
-            return true;
+    public function takeActionOnHuntUser($huntUserDetail, $action, $fields = []){
+        if (count($fields) == 0) {
+            $fields = ['status'=> $action];
         }
-        return false;
+        $huntUserDetail->hunt_user()->update($fields);
+        return true;
     }
 }

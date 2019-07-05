@@ -132,10 +132,11 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
 		Route::post('pauseTheHunt', 'HuntController@pauseTheHunt');
 
 		/** Clues related requests  **/
-		Route::post('revealTheClue', 'ClueController@revealTheClue');
-		Route::post('startTheClue', 'ClueController@startTheClue');
-		Route::post('pauseTheClue', 'ClueController@pauseTheClue');
-		Route::post('endTheClue', 'ClueController@endTheClue');
+		Route::post('actionOnClue', 'ClueController@actionOnClue');
+		// Route::post('revealTheClue', 'ClueController@revealTheClue');
+		// Route::post('startTheClue', 'ClueController@startTheClue');
+		// Route::post('pauseTheClue', 'ClueController@pauseTheClue');
+		// Route::post('endTheClue', 'ClueController@endTheClue');
 		Route::post('useTheSkeletonKey', 'ClueController@useTheSkeletonKey');
 	});
 });
