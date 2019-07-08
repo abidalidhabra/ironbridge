@@ -23,6 +23,7 @@
                     <th width="7%">Sr</th>
                     <th>Identifier</th>
                     <th>Name</th>
+                    <th>Status</th>
                     <th width="5%">Action</th>
                 </tr>
             </thead>
@@ -52,6 +53,15 @@
                                 <div class="newstitlebox_inputbox">
                                     <div class="form-group">
                                         <input type="text" name="name" placeholder="name">
+                                    </div>
+                                </div>
+                                 <div class="newstitlebox_inputbox">
+                                    <div class="form-group">
+                                        <select name="status">
+                                            <option value="">Please select status</option>
+                                            <option value="active">Active</option>
+                                            <option value="inactive">Inactive</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -86,6 +96,15 @@
                                 <div class="newstitlebox_inputbox">
                                     <div class="form-group">
                                         <input type="text" name="name" placeholder="name">
+                                    </div>
+                                </div>
+                                <div class="newstitlebox_inputbox">
+                                    <div class="form-group">
+                                        <select name="status">
+                                            <option value="">Please select status</option>
+                                            <option value="active">Active</option>
+                                            <option value="inactive">Inactive</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -129,6 +148,7 @@
                     { data:'DT_RowIndex',name:'_id' },
                     { data:'identifier',name:'identifier'},
                     { data:'name',name:'name' },
+                    { data:'status',name:'status' },
                     { data:'action',name:'action' },
                 ],
 
@@ -144,6 +164,7 @@
                 rules: {
                     identifier: { required: true },
                     name: { required: true },
+                    status: { required: true },
                 },
                 submitHandler: function (form) {
                     var formData = new FormData(form);
@@ -206,6 +227,12 @@
                 $("#editGame input[name='identifier']").val($(this).data('identifier'));
                 $("#editGame input[name='name']").val($(this).data('name'));
                 $("#editGame input[name='game_id']").val($(this).data('id'));
+                // $("#editGame select[name='status']").val($(this).data('status'));
+                if ($(this).data('status') == true) {
+                    $("#editGame select[name='status']").find('option[value="active"]').attr('selected','selected');
+                } else if($(this).data('status') == false){
+                    $("#editGame select[name='status']").find('option[value="inactive"]').attr('selected','selected');
+                }
                 $('#editGame').modal('show');
             });
 
@@ -220,6 +247,7 @@
                 rules: {
                     identifier: { required: true },
                     name: { required: true },
+                    status: { required: true },
                 },
                 submitHandler: function (form) {
                     var formData = new FormData(form);

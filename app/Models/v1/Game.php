@@ -16,6 +16,7 @@ class Game extends Eloquent
     protected $fillable = [
         'identifier', 
         'name',
+        'status'
     ];
 
     public function game_variation()

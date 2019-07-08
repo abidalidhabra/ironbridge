@@ -23,6 +23,7 @@ class GameController extends Controller
     	$validator = Validator::make($request->all(),[
                         'identifier' => 'required',
                         'name' 		 => 'required',
+                        'status'     => 'required|in:active,inactive',
                     ]);
         
         if ($validator->fails())
@@ -32,6 +33,7 @@ class GameController extends Controller
         }
 
         $data = $request->all();
+        $data['status'] = ($data['status'] == 'active')?true:false;
 		Game::create($data);
         
         return response()->json([
@@ -49,11 +51,17 @@ class GameController extends Controller
         return DataTables::of(Game::orderBy('created_at','DESC')->skip($skip)->take($take)->get())
         ->addIndexColumn()
         ->addColumn('action', function($game){
-            // return '<a href="javascript:void(0)" class="edit_game" data-action="edit" data-id="'.$game->id.'" data-identifier="'.$game->identifier.'" data-name="'.$game->name.'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>
-            // <a href="javascript:void(0)" class="delete_company" data-action="delete" data-placement="left" data-id="'.$game->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>
-            // </a>';
-            return '<a href="javascript:void(0)" class="edit_game" data-action="edit" data-id="'.$game->id.'" data-identifier="'.$game->identifier.'" data-name="'.$game->name.'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>
-                <a href="javascript:void(0)" class="delete_game" data-action="delete" data-placement="left" data-id="'.$game->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>';
+            return '<a href="javascript:void(0)" class="edit_game" data-action="edit" data-id="'.$game->id.'" data-identifier="'.$game->identifier.'" data-name="'.$game->name.'" data-status="'.$game->status.'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+
+            /*return '<a href="javascript:void(0)" class="edit_game" data-action="edit" data-id="'.$game->id.'" data-identifier="'.$game->identifier.'" data-name="'.$game->name.'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>
+            <a href="javascript:void(0)" class="delete_game" data-action="delete" data-placement="left" data-id="'.$game->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>';*/
+        })
+        ->editColumn('status', function($game){
+            if ($game->status) {
+                return 'Active';
+            } else {
+                return 'Inactive';
+            }
         })
         ->rawColumns(['action'])
         ->order(function ($query) {
@@ -73,6 +81,7 @@ class GameController extends Controller
         $validator = Validator::make($request->all(),[
                         'identifier' => 'required',
                         'name' 		 => 'required',
+                        'status'     => 'required|in:active,inactive',
                     ]);
         
         if ($validator->fails())
@@ -86,6 +95,7 @@ class GameController extends Controller
 		Game::where('_id',$gameId)->update([
 												'identifier' => $request->get('identifier'),
 												'name' => $request->get('name'),
+                                                'status' => ($request->get('status')== 'active')?true:false,
 											]);
 		
 		return response()->json([

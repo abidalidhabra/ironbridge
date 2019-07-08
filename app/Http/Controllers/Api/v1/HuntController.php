@@ -94,7 +94,7 @@ class HuntController extends Controller
                     foreach ($value['total_clues'] as $latlng) {
                         $game = Game::whereHas('game_variation')
                                     ->with('game_variation')
-                                    ->where('identifier','!=','word_search')
+                                    ->where('status',true)
                                     ->get()
                                     ->random(1);
                         
