@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateHuntUsersTable extends Migration
+class CreateWidgetItemsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,8 @@ class CreateHuntUsersTable extends Migration
      */
     public function up()
     {
-        Schema::table('hunt_users', function ($collection) {
-             $collection->index('user_id');
-             $collection->index('hunt_id');
-             $collection->index('complexity');
+        Schema::table('widget_items', function ($collection) {
+            $collection->index('avatar_id');
         });
     }
 
@@ -27,6 +25,6 @@ class CreateHuntUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('hunt_users');
+        Schema::dropIfExists('widget_items');
     }
 }
