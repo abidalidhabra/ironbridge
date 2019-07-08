@@ -31,6 +31,16 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
+        // \App\Models\v2\HuntComplexity::where('created_at','<',today())
+        // ->orderBy('created_at', 'desc')
+        // ->get()
+        // ->map(function($complexity, $index){
+        //     // dd($complexity->created_at);
+        //     $complexity->est_completion = $complexity->est_completion * 60;
+        //     $complexity->save();
+        //     return $complexity; 
+        // });
+        // exit;
         $request['username'] = strtolower($request->get('username'));
         $validator = Validator::make($request->all(),[
                         'username' => "required|exists:users,username",

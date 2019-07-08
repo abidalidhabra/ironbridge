@@ -12,6 +12,7 @@ use App\Models\v1\Game;
 use App\Models\v1\Hunt;
 use App\Models\v1\Hunt as HuntV2;
 use App\Models\v1\HuntComplexity;
+use App\Models\v1\ComplexityTarget;
 use App\Models\v1\HuntUser;
 use App\Models\v1\HuntUserDetail;
 use App\Models\v2\HuntUser as HuntUserV2;
@@ -38,7 +39,7 @@ class HuntController extends Controller
     	
     	$location = Hunt::select('location','place_name','place_id','boundaries_arr','boundingbox')
                                     ->with('hunt_complexities:_id,hunt_id')
-    								->whereIn('city',['Lloydminster','Camrose','Fort McMurry','Beaumont','Cold Lake','Brooks','Lacombe'])
+    								->whereIn('city',['Campbell River','Whiterock','Maple Ridge','Fort Saskatchewan','Lethbridge','St. Albert','Medicine Hat','Grande Prairie','Airdrie','Spruce Grove','Leduc','Lloydminster','Camrose','Fort McMurry','Beaumont','Cold Lake','Brooks','Lacombe'])
     								->get()
     								->map(function($query){
     									if (count($query->hunt_complexities) > 0) {
@@ -58,14 +59,15 @@ class HuntController extends Controller
     //UPDATE LOCATION
     public function updateClues(Request $request){
         \Log::info($request->data);
-        /*$subject ="updated clues";
-        $email = 'arshikweb@gmail.com';
-        //$email = 'abidalidhabra@gmail.com';
-        $from="support@ironbridge1779.com";
-        $message = $request->get('data');
-        $headers = "From:".$from;
-        mail($email,$subject,$message,$headers);
-        */
+        // $subject ="updated clues";
+        // $email = 'arshikweb@gmail.com';
+        // //$email = 'abidalidhabra@gmail.com';
+        // $from="support@ironbridge1779.com";
+        // $message = $request->get('data');
+        // $headers = "From:".$from;
+        // mail($email,$subject,$message,$headers);
+        // exit();
+        
 
         $validator = Validator::make($request->all(),[
                         'data'       => "required",
@@ -295,7 +297,7 @@ class HuntController extends Controller
                     'longitude'     => $location[0],
                     'clue'          => $huntClues,
                     'total_clue'    => count($huntClues),
-                    'est_complete'  => $est_completion,
+                    'est_complete'  => round($est_completion/60),
                     'best_time'     => $bestTime,
                     'cost'          => $hunt->fees,
                     'complexity'    => $clueId,
