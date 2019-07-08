@@ -360,10 +360,16 @@ class HuntController extends Controller
 
         $hunt = Hunt::where('_id', $huntId)->select('_id','name','location','fees', 'status')->first();
 
-        $huntDetails = $hunt->hunt_complexities()
-                            ->where('complexity',$complexity)
-                            ->select('hunt_id', 'complexity','est_completion','distance')
-                            ->first();
+        $huntComplexities = $hunt->hunt_complexities;
+        $maxComplexity = $huntComplexities->max('complexity');
+        $huntDetails   = $huntComplexities->where('complexity',$complexity)->first();
+
+        // $maxComplexity = $hunt->hunt_complexities()->max('complexity');
+
+        // $huntDetails = $hunt->hunt_complexities()
+        //                     ->where('complexity',$complexity)
+        //                     ->select('hunt_id', 'complexity','est_completion','distance')
+        //                     ->first();
 
         $totalClues = $huntDetails->hunt_clues()->count();
 
@@ -395,7 +401,8 @@ class HuntController extends Controller
         $hunt->time_taken       = $timeTaken;           
         $hunt->completed_dist   = $completedDist;           
         $hunt->user_hunt_status = $status;           
-
+        $hunt->max_complexity   = $maxComplexity;           
+        unset($hunt->hunt_complexities);
         return response()->json(['message'=>'Hunt details has been retrieved successfully.','data'=>$hunt]);
     }
 
@@ -417,7 +424,6 @@ class HuntController extends Controller
         return response()->json(['message'=>'Hunt has been marked as paused successfully.']);
     }
 
-     //UPDATE LOCATION
     public function updateClues(Request $request){
         
         \Log::info($request->data);

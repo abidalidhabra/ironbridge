@@ -226,47 +226,47 @@ class UserController extends Controller
     }
 
 
-    public function checkMyBalance(Request $request)
-    {
-        $user = Auth::user();
-        $userId = $user->id;
+    // public function checkMyBalance(Request $request)
+    // {
+    //     $user = Auth::user();
+    //     $userId = $user->id;
 
-        $data = UserBalancesheet::raw(function($collection) use ($userId){
-            return $collection->aggregate([
-                [
-                    '$match' => [
-                        'user_id' => $userId
-                    ] 
-                ],
-                [
-                    '$group' => [
-                        '_id' => '$user_id',
-                        'total_credit' => [ '$sum' => '$credit' ],
-                        'total_debit' => [ '$sum' => '$debit' ],
-                    ]
-                ],
-                 [
-                    '$addFields' => [
-                        'account_balance' => [ '$subtract' => ['$total_credit','$total_debit'] ],
-                    ]
-                ],
-            ]);
-        });
+    //     $data = UserBalancesheet::raw(function($collection) use ($userId){
+    //         return $collection->aggregate([
+    //             [
+    //                 '$match' => [
+    //                     'user_id' => $userId
+    //                 ] 
+    //             ],
+    //             [
+    //                 '$group' => [
+    //                     '_id' => '$user_id',
+    //                     'total_credit' => [ '$sum' => '$credit' ],
+    //                     'total_debit' => [ '$sum' => '$debit' ],
+    //                 ]
+    //             ],
+    //              [
+    //                 '$addFields' => [
+    //                     'account_balance' => [ '$subtract' => ['$total_credit','$total_debit'] ],
+    //                 ]
+    //             ],
+    //         ]);
+    //     });
 
-        return response()->json(['data'=>$data], 200);
-    }
+    //     return response()->json(['data'=>$data], 200);
+    // }
 
-    public function getWarehouseData(Request $request)
-    {
+    // public function getWarehouseData(Request $request)
+    // {
 
-        $avatars = Avatar::all();
-        $userAvatar =auth()->user()->avatar()->first();
+    //     $avatars = Avatar::all();
+    //     $userAvatar =auth()->user()->avatar()->first();
 
-        return response()->json([
-            'avatars' => $avatars,
-            'user_avatar' => $userAvatar
-        ]);
-    }
+    //     return response()->json([
+    //         'avatars' => $avatars,
+    //         'user_avatar' => $userAvatar
+    //     ]);
+    // }
 
     public function getParks(Request $request)
     {
