@@ -37,6 +37,9 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	//User List
 	Route::get('/userList', 'UserController@index')->name('userList');
 	Route::get('/getUsers', 'UserController@getUsers')->name('getUsers');
+	Route::get('/usersParticipatedList', 'UserController@usersParticipatedList')->name('usersParticipatedList');
+	Route::get('/getUsertParticipatedList', 'UserController@getUsertParticipatedList')->name('getUsertParticipatedList');
+	Route::get('/userHuntDetails/{id}', 'UserController@userHuntDetails')->name('userHuntDetails');
 
 	//News
 	Route::resource('news', 'NewsController');
@@ -75,6 +78,12 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::resource('gameVariation', 'GameVariationController');
 	Route::get('getGameVariationList', 'GameVariationController@getGameVariationList')->name('getGameVariationList');
 	Route::get('deleteImage', 'GameVariationController@deleteImage')->name('deleteImage');
+
+
+	//TARGET COMPLEXITY
+	Route::get('complexityTarget', 'ComplexityTargetController@index')->name('complexityTarget.index');
+	Route::get('getComplexityTarget', 'ComplexityTargetController@getComplexityTarget')->name('getComplexityTarget');
+	Route::put('editComplexityTarget', 'ComplexityTargetController@editComplexityTarget')->name('editComplexityTarget');
 
 });
 

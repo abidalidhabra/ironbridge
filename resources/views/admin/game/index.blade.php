@@ -228,6 +228,7 @@
                 $("#editGame input[name='name']").val($(this).data('name'));
                 $("#editGame input[name='game_id']").val($(this).data('id'));
                 // $("#editGame select[name='status']").val($(this).data('status'));
+                $('#editGame select[name="status"] option').removeAttr('selected');
                 if ($(this).data('status') == true) {
                     $("#editGame select[name='status']").find('option[value="active"]').attr('selected','selected');
                 } else if($(this).data('status') == false){
@@ -265,7 +266,7 @@
                         {
                             if (response.status == true) {
                                 toastr.success(response.message);
-                                $('input[name="subject"] , textarea[name="description"] , input[name="valid_till"]').val('');
+                                $('input[name="identifier"] , input[name="name"] , select[name="status"]').val('');
                                 $('#editGame').modal('hide');
                                 table.ajax.reload();
                             } else {

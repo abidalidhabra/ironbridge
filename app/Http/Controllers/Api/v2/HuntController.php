@@ -321,7 +321,8 @@ class HuntController extends Controller
         $huntUser = $user->hunt_user_v1()->create([
                         'hunt_id'    => $huntId,
                         'hunt_mode'  => $huntMode,
-                        'complexity' => $complexity
+                        'complexity' => $complexity,
+                        'hunt_complexity_id' => $huntComplexity->id
                     ]);
         $skeleton        = [];
         $huntUserDetails = [];

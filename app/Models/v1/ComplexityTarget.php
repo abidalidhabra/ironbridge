@@ -10,4 +10,9 @@ class ComplexityTarget extends Eloquent
     protected $fillable = [
         'game_id', 'complexity', 'target'
     ];
+
+    public function game()
+    {
+        return $this->belongsTo('App\Models\v1\Game','game_id');
+    }
 }

@@ -7,9 +7,9 @@ use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Yajra\DataTables\EloquentDataTable;
 use App\Models\v1\TreasureLocation;
-use App\Models\v1\Hunt;
+use App\Models\v2\Hunt;
 use App\Models\v1\PlaceStar;
-use App\Models\v1\HuntComplexity;
+use App\Models\v2\HuntComplexity;
 use Validator;
 use Carbon\Carbon;
 use App\Models\v1\Game;
@@ -91,7 +91,13 @@ class MapsController extends Controller
                                 ->where('hunt_id',$id)
                                 ->pluck('complexity')
                                 ->toArray();
-        $games = Game::with('game_variation:_id,variation_name,game_id')->get();
+        $games = Game::whereHas('game_variation')
+                        ->with('game_variation:_id,variation_name,game_id,status')
+                        ->where('status',true)
+                        ->get();
+
+        
+        
         $cluesCoordinates = [];
         if (!empty($location->hunt_complexities[0]->hunt_clues)) {
             foreach($location->hunt_complexities[0]->hunt_clues as $clues){
@@ -386,26 +392,27 @@ class MapsController extends Controller
         }*/
 
         /* HUNT RECORD STORE */
-        // $cityInfo = TreasureLocation::get();
-        // foreach ($cityInfo as $key => $value) {
-        //     $location['Type'] = 'Point';
-        //     $location['coordinates'] = [
-        //                                     (float)$value->longitude,
-        //                                     (float)$value->latitude
-        //                                 ];
-        //     $objectID = new ObjectID($value->_id);
-        //     $hunt['_id'] = $objectID;
-        //     $hunt['name'] = $value->custom_name;
-        //     $hunt['location'] = $location;
-        //     $hunt['city'] = $value->city;
-        //     $hunt['place_name'] = $value->place_name;
-        //     $hunt['province'] = $value->province;
-        //     $hunt['country'] = $value->country;
-        //     $hunt['boundaries_arr'] = $value->boundary_arr;
-        //     $hunt['boundingbox'] = $value->boundingbox;
+        //$cityInfo = TreasureLocation::get();
+
+        /*foreach ($cityInfo as $key => $value) {
+            $location['Type'] = 'Point';
+            $location['coordinates'] = [
+                                            (float)$value->longitude,
+                                            (float)$value->latitude
+                                        ];
+            $objectID = new ObjectID($value->_id);
+            $hunt['_id'] = $objectID;
+            $hunt['name'] = $value->place_name;
+            $hunt['location'] = $location;
+            $hunt['city'] = $value->city;
+            $hunt['place_name'] = $value->place_name;
+            $hunt['province'] = $value->province;
+            $hunt['country'] = $value->country;
+            $hunt['boundaries_arr'] = $value->boundary_arr[0];
+            $hunt['boundingbox'] = $value->boundingbox;
             
-        //     Hunt::create($hunt);
-        // }
+            Hunt::create($hunt);
+        }*/
 
 
         //HuntComplexitie STORE
