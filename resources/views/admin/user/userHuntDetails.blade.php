@@ -11,7 +11,7 @@
                     <h3>Hunt Users Details</h3>
                 </div>
                 <div class="col-md-6 text-right">
-                    <a href="{{ route('admin.usersParticipatedList') }}" class="btn back-btn">Back</a>
+                    <a href="{{ route('admin.treasureHunts',$id) }}" class="btn back-btn">Back</a>
                 </div>
             </div>
         </div>

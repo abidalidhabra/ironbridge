@@ -40,6 +40,10 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('/usersParticipatedList', 'UserController@usersParticipatedList')->name('usersParticipatedList');
 	Route::get('/getUsertParticipatedList', 'UserController@getUsertParticipatedList')->name('getUsertParticipatedList');
 	Route::get('/userHuntDetails/{id}', 'UserController@userHuntDetails')->name('userHuntDetails');
+	Route::get('/accountInfo/{id}', 'UserController@accountInfo')->name('accountInfo');
+	Route::get('/treasureHunts/{id}', 'UserController@treasureHunts')->name('treasureHunts');
+	Route::get('/getTreasureHunts', 'UserController@getTreasureHunts')->name('getTreasureHunts');
+	Route::get('/activity/{id}', 'UserController@activity')->name('activity');
 
 	//News
 	Route::resource('news', 'NewsController');

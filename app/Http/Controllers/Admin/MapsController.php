@@ -26,8 +26,30 @@ class MapsController extends Controller
     public function getMaps(Request $request){
     	$skip = (int)$request->get('start');
         $take = (int)$request->get('length');
-        $city = Hunt::select('latitude','longitude','place_name','city','province','country','name','updated_at')->skip($skip)->take($take)->orderBy('updated_at', 'DESC')->get();
-    	$count = Hunt::count();
+        $search = $request->get('search')['value'];
+        $city = Hunt::select('latitude','longitude','place_name','city','province','country','name','updated_at');
+        if($search != ''){
+            $city->where(function($query) use ($search){
+                $query->orWhere('place_name','like','%'.$search.'%')
+                ->orWhere('city','like','%'.$search.'%')
+                ->orWhere('province','like','%'.$search.'%')
+                ->orWhere('country','like','%'.$search.'%')
+                ->orWhere('name','like','%'.$search.'%')
+                ->orWhere('updated_at','like','%'.$search.'%');
+            });
+        }
+        $city = $city->skip($skip)->take($take)->orderBy('updated_at', 'DESC')->get();
+        $count = Hunt::count();
+        if($search != ''){
+            $count = Hunt::where(function($query) use ($search){
+                $query->orWhere('place_name','like','%'.$search.'%')
+                ->orWhere('city','like','%'.$search.'%')
+                ->orWhere('province','like','%'.$search.'%')
+                ->orWhere('country','like','%'.$search.'%')
+                ->orWhere('name','like','%'.$search.'%')
+                ->orWhere('updated_at','like','%'.$search.'%');
+            })->count();
+        }
         return DataTables::of($city)
         ->addIndexColumn()
         ->editColumn('name', function($city){
@@ -54,6 +76,7 @@ class MapsController extends Controller
             }
         })
         ->setTotalRecords($count)
+        ->setFilteredRecords($count)
         ->skipPaging()
         ->rawColumns(['map','action'])
         ->make(true);

@@ -29,7 +29,7 @@ class UserController extends Controller
         return DataTables::of($user)
         ->addIndexColumn()
         ->addColumn('name', function($user){
-            return $user->first_name.' '.$user->last_name;
+            return '<a href="'.route('admin.accountInfo',$user->id).'">'.$user->first_name.' '.$user->last_name.'</a>';
         })
         ->editColumn('created_at', function($user){
             return Carbon::parse($user->created_at)->format('d-M-Y @ h:i A');
@@ -38,7 +38,7 @@ class UserController extends Controller
             return Carbon::parse($user->dob)->format('d-M-Y');
             // return $user->dob;
         })
-        //->rawColumns(['created_at','photos','unlocked','profile_view','social_links','verified_detail','name','profile_photo'])
+        ->rawColumns(['name'])
         ->order(function ($query) {
                     if (request()->has('created_at')) {
                         $query->orderBy('created_at', 'DESC');
@@ -140,14 +140,136 @@ class UserController extends Controller
 
     //USER HUNT DETAILS
     public function userHuntDetails($id){
-        $huntUserDetail = HuntUserDetail::select('hunt_user_id','game_id','game_variation_id','revealed_at','finished_in','status')
-                                        ->where('hunt_user_id',$id)
+        $huntUserDetail = HuntUserDetail::select('hunt_user_id','game_id','game_variation_id','revealed_at','finished_in','status')      
+                                        ->with('hunt_user:id,user_id')
                                         ->with(['game:_id,name','game_variation:_id,variation_name'])
+                                        ->where('hunt_user_id',$id)
                                         ->get();
-        // echo "<pre>";
-        // print_r($huntUserDetail->toArray());
-        // exit();
-        return view('admin.user.userHuntDetails',compact('huntUserDetail'));
+        $id = $huntUserDetail[0]->hunt_user->user_id;
+        
+        return view('admin.user.userHuntDetails',compact('huntUserDetail','id'));
+    }
+
+
+
+    //ACCOUNT INFO
+    public function accountInfo($id){
+        $user = User::with('hunt_user_v1:user_id,hunt_id,hunt_complexity_id,status,hunt_mode,complexity','hunt_user_v1.hunt:_id,fees')
+                    ->where('_id',$id)
+                    ->first(); 
+        
+        $data['usedGold'] = 0;
+        $data['currentGold'] = 0;
+        $data['totalGold'] = 0;
+
+        if($user){
+            $data['usedGold'] = $user->hunt_user_v1->where('hunt_mode','challenge')->pluck('hunt.fees')->sum();
+            $data['currentGold'] = $user->gold_balance;
+            $data['totalGold'] = $data['usedGold'] + $data['currentGold'];
+        }
+
+        return view('admin.user.accountInfo',compact('id','user','data'));
+    }
+
+    //user treasureHunts
+    public function treasureHunts($id){
+        return view('admin.user.treasureHunts',compact('id'));
+    }
+
+    //LIST TREASUREHUNTS
+    public function getTreasureHunts(Request $request){
+        $skip = (int)$request->get('start');
+        $take = (int)$request->get('length');
+        $userId = $request->get('user_id');
+        $status = $request->get('status');
+        
+        $status_value = ['participated', 'paused', 'running', 'completed'];
+        if ($status == 'completed') {
+            $status_value = ['completed'];
+        } else if ($status == 'progress') {
+            $status_value = ['participated', 'paused', 'running'];
+        }
+            $huntUser = HuntUser::select('hunt_id','user_id','status','created_at','hunt_complexity_id')
+                        ->with([
+                                'hunt_user_details:_id,hunt_user_id,status,finished_in',
+                                'hunt_complexities:_id,distance'
+                            ])
+                        ->where('user_id',$userId)
+                        ->whereIn('status',$status_value)
+                        ->orderBy('created_at','DESC')
+                        ->skip($skip)
+                        ->take($take)
+                        ->get();
+
+        
+        $count = HuntUser::count();
+        
+        
+
+        return DataTables::of($huntUser)
+        ->addIndexColumn()
+        ->addColumn('hunt_name', function($user){
+            return $user->hunt->name;
+        })
+        ->editColumn('created_at', function($user){
+            return Carbon::parse($user->created_at)->format('d-M-Y @ h:i A');
+        })
+        ->addColumn('status', function($user){
+            return ucfirst($user->status);
+        })
+        ->addColumn('fees', function($user){
+            return $user->hunt->fees;
+        })
+        ->addColumn('clue_progress', function($user){
+            $completedClue = $user->hunt_user_details()->where('status','completed')->count();
+            $totalClue = $user->hunt_user_details()->count();
+            
+            return $completedClue.'/'.$totalClue;
+        })
+        ->addColumn('distance_progress', function($user){
+                    $completedClues = 0;
+                    $completedDist  = 0;
+                    $totalClues = $user->hunt_user_details()->count();
+                    $completedClues = $user->hunt_user_details()->where('status','completed')->count();
+                    $totalDistance = $user->hunt_complexities->distance;
+                    $completedDist = (($user->hunt_complexities->distance / $totalClues) * $completedClues);
+                    
+                    
+                    return $completedDist.' / '.$totalDistance;
+        })
+        ->addColumn('view', function($user){
+            return '<a href="'.route('admin.userHuntDetails',$user->id).'" >More</a>';
+        })
+        ->rawColumns(['view'])
+        ->order(function ($query) {
+                    if (request()->has('created_at')) {
+                        $query->orderBy('created_at', 'DESC');
+                    }
+                    
+                })
+        ->setTotalRecords($count)
+        ->skipPaging()
+        ->make(true);
+    }
+
+    //activity
+    public function activity($id){
+        $user = User::select('gold_balance')
+                    ->whereHas('hunt_user_v1')
+                    ->with('hunt_user_v1:user_id,hunt_id,hunt_complexity_id,status,hunt_mode,complexity','hunt_user_v1.hunt:_id,fees')
+                    ->where('_id',$id)
+                    ->first(); 
+        $data['usedGold'] = 0;
+        $data['currentGold'] = 0;
+        $data['totalGold'] = 0;
+
+        if ($user) {
+            $data['usedGold'] = $user->hunt_user_v1->where('hunt_mode','challenge')->pluck('hunt.fees')->sum();
+            $data['currentGold'] = $user->gold_balance;
+            $data['totalGold'] = $data['usedGold'] + $data['currentGold'];
+        }
+
+        return view('admin.user.activity',compact('id','data'));
     }
 
 }
