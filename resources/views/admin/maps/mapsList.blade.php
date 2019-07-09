@@ -49,7 +49,7 @@
                 processing: true,
                 responsive: true,
                 serverSide: true,
-                order: [[6, 'asc']],
+                //order: [[6, 'asc']],
                 lengthMenu: [[10, 50, 100, -1], [10, 50, 100, "All"]],
                 ajax: {
                     type: "get",

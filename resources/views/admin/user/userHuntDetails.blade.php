@@ -6,7 +6,14 @@
 @section('content')
     <div class="right_paddingboxpart">
         <div class="users_datatablebox userstextset">
-            <h3>Hunt Users Details</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>Hunt Users Details</h3>
+                </div>
+                <div class="col-md-6 text-right">
+                    <a href="{{ route('admin.usersParticipatedList') }}" class="btn back-btn">Back</a>
+                </div>
+            </div>
         </div>
         <div class="customdatatable_box">
             <table class="table table-striped table-hover datatables" style="width: 100%;" id="dataTable">

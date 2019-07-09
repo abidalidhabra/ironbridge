@@ -26,7 +26,7 @@ class MapsController extends Controller
     public function getMaps(Request $request){
     	$skip = (int)$request->get('start');
         $take = (int)$request->get('length');
-        $city = Hunt::select('latitude','longitude','place_name','city','province','country','name','updated_at')->skip($skip)->take($take)->get();
+        $city = Hunt::select('latitude','longitude','place_name','city','province','country','name','updated_at')->skip($skip)->take($take)->orderBy('updated_at', 'DESC')->get();
     	$count = Hunt::count();
         return DataTables::of($city)
         ->addIndexColumn()
@@ -48,12 +48,11 @@ class MapsController extends Controller
                 <a href="javascript:void(0)" class="delete_location" data-action="delete" data-placement="left" data-id="'.$city->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>
             </a>';
         })
-        // ->order(function ($city) {
-        //             if (request()->has('updated_at')) {
-        //                 $city->orderBy('updated_at', 'DESC');
-        //             }
-                    
-        //         })
+        ->order(function ($city) {
+            if (request()->has('updated_at')) {
+                $city->orderBy('updated_at', 'DESC');
+            }
+        })
         ->setTotalRecords($count)
         ->skipPaging()
         ->rawColumns(['map','action'])

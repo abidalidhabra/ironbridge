@@ -100,7 +100,7 @@ class GameController extends Controller
 		
 		return response()->json([
             'status' => true,
-            'message'=>'Updated game has been created successfully',
+            'message'=>'Game has been successfully updated',
         ]);
     }
 
