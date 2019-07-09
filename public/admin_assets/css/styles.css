@@ -698,7 +698,7 @@ header{
     width: 100%;
     padding-bottom: 8px;
 }
-.newstitlebox_inputbox input{
+.newstitlebox_inputbox input , .newstitlebox_inputbox select{
     border: 1px solid #ddd;
     font-size: 15px;
     font-family: 'Montserrat-Regular';

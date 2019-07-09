@@ -22,8 +22,14 @@
 					<a href="{{ route('admin.gameVariation.index') }}">Game Variations</a>
 				</li>
 				<li  class="@if(Route::currentRouteName() == 'admin.mapsList' ||Route::currentRouteName() == 'admin.add_location' || Route::currentRouteName() == 'admin.boundary_map' || Route::currentRouteName() == 'admin.starComplexityMap' || Route::currentRouteName() == 'admin.edit_location') {{ 'activelist' }} @endif">
-					<a href="{{ route('admin.mapsList') }}">Treasure locations</a>
-				</li>	           
+					<a href="{{ route('admin.mapsList') }}">Treasure Locations</a>
+				</li>
+				<li  class="@if(Route::currentRouteName() == 'admin.usersParticipatedList' || Route::currentRouteName() == 'admin.userHuntDetails') {{ 'activelist' }} @endif">
+					<a href="{{ route('admin.usersParticipatedList') }}">Users Participated</a>
+				</li>
+				<li  class="@if(Route::currentRouteName() == 'admin.complexityTarget.index') {{ 'activelist' }} @endif">
+					<a href="{{ route('admin.complexityTarget.index') }}">Complexity Targets</a>
+				</li>           
 	        </ul>
 	    </div>
 	</div>

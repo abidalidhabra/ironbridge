@@ -13,6 +13,7 @@ class HuntUserDetail extends Eloquent
 		'location',
 		'game_id',
 		'game_variation_id',
+        'target',
 		'revealed_at',
 		'finished_in',
         'status',

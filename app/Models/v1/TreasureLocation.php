@@ -8,7 +8,7 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 class TreasureLocation extends Eloquent
 {
 
-	protected $table = 'city_info_old';
+	protected $table = 'new_city_info';
 
 	/**
      * The attributes that are mass assignable.

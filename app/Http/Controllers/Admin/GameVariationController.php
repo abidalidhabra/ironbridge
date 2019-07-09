@@ -35,7 +35,8 @@ class GameVariationController extends Controller
      */
     public function create()
     {
-        $games = Game::get();
+        $games = Game::where('status',true)
+                        ->get();
         return view('admin.variations.create_variation',compact('games'));
     }
 
@@ -336,6 +337,9 @@ class GameVariationController extends Controller
         ->editColumn('game_name', function($query){
             return $query->game->name;
         })
+        ->editColumn('variation_complexity', function($query){
+            return ucfirst($query->variation_complexity);
+        })
         ->editColumn('variation_image', function($query){
             if(is_array($query->variation_image) && !empty($query->variation_image)){
                 $images = '';
@@ -350,6 +354,8 @@ class GameVariationController extends Controller
         ->editColumn('variation_size', function($query){
             if ($query->variation_size) {
                 return $query->variation_size;
+            } else if($query->row != 0 && $query->column != 0) {
+                return $query->row.' * '.$query->column;
             } else {
                 return '-';
             }

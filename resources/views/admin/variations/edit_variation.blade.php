@@ -134,7 +134,7 @@
                 } else {
                     total_image = 3-total_image;
                     $('.error1').remove();
-                    $('#variation_image').after('<label class="error error1">Only '+total_image+' image upload</label>');
+                    $('#variation_image').after('<label class="error error1">You must have to upload only '+total_image+' images.</label>');
                     $(".btnSubmit").attr("disabled", true);
                     // $('#variation_image').attr("disabled", false);
                 }
@@ -174,7 +174,7 @@
                         // $('#variation_image').attr("disabled", false);
                         total_image = 3-total_image;
                         $('.error1').remove();
-                        $('#variation_image').after('<label class="error error1">Only '+total_image+' image upload</label>');
+                        $('#variation_image').after('<label class="error error1">You must have to upload only '+total_image+' images.</label>');
                         $(".btnSubmit").attr("disabled", true);
                     }
             });

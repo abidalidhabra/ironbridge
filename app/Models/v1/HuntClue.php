@@ -12,6 +12,7 @@ class HuntClue extends Eloquent
         'location',
         'game_id',
         'game_variation_id',
+        'target',
         //'est_completion',
     ];
 

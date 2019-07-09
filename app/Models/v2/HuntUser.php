@@ -19,6 +19,7 @@ class HuntUser extends Eloquent
         'started_at',
         'ended_at',
         'finished_in',
+        'hunt_complexity_id'
     ];
 
     protected $dates = [
@@ -50,6 +51,6 @@ class HuntUser extends Eloquent
 
     public function hunt_complexities()
     {
-        return $this->belongsTo('App\Models\v1\HuntComplexity','hunt_complexity_id');
+        return $this->belongsTo('App\Models\v2\HuntComplexity','hunt_complexity_id');
     }
 }
