@@ -71,7 +71,7 @@ class ComplexityTargetController extends Controller
 		
 		return response()->json([
             'status' => true,
-            'message'=>'Complexity target has been updated successfully',
+            'message'=>'Complexity target has been updated successfully.',
         ]);
     }
 }

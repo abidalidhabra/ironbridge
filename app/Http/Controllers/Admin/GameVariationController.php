@@ -136,7 +136,7 @@ class GameVariationController extends Controller
             
             GameVariation::create($data);
 
-            return response()->json(['status'=>true,'message'=>'Add game variation has been created successfully']);
+            return response()->json(['status'=>true,'message'=>'Game variation has been added successfully.']);
               
         } catch (Exception $e) {
             return response()->json(['status'=>false,'message'=>'Please try again']);   
@@ -307,7 +307,7 @@ class GameVariationController extends Controller
             );
             // $gameVariation->update($data);
             GameVariation::where('_id',$id)->update($data);
-            return response()->json(['status'=>true,'message'=>'Game variation has been updated successfully']);
+            return response()->json(['status'=>true,'message'=>'Game variation has been updated successfully.']);
         } catch (Exception $e) {
             return response()->json(['status'=>false,'message'=>'Please try again']);
         }
@@ -324,7 +324,7 @@ class GameVariationController extends Controller
         GameVariation::where('_id', $id)->delete();
         return response()->json([
             'status' => true,
-            'message'=>'Game variation has been successfully deleted',
+            'message'=>'Game variation has been deleted successfully.',
         ]);
     }
 

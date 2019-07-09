@@ -191,7 +191,7 @@ class MapsController extends Controller
 
         return response()->json([
             'status' => true,
-            'message'=>'Clues has been added successfully',
+            'message'=>'Clues has been added successfully inside the selected hunt.',
         ]);
     }
 
@@ -204,7 +204,7 @@ class MapsController extends Controller
         $location->hunt_complexities()->delete();
         return response()->json([
             'status' => true,
-            'message'=>'Clues has been removed successfully',
+            'message'=>'Clues has been cleared from map successfully.',
         ]);
     }
 
@@ -268,7 +268,7 @@ class MapsController extends Controller
 
         return response()->json([
             'status' => true,
-            'message'=>'Location has been updated successfully',
+            'message'=>'Treasure hunt location has been updated successfully.',
         ]);
     }
 
@@ -337,7 +337,7 @@ class MapsController extends Controller
         $location = Hunt::create($data);
         return response()->json([
             'status' => true,
-            'message'=>'Location has been created successfully',
+            'message'=>'Treasure hunt location has been created successfully.',
             'id'     => $location->_id,
         ]);
     }
@@ -354,7 +354,7 @@ class MapsController extends Controller
 
         return response()->json([
             'status' => true,
-            'message'=>'Location deleted successfully',
+            'message'=>'Treasure hunt location has been deleted successfully.',
         ]);
     }
 

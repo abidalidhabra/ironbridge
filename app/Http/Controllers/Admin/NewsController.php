@@ -62,7 +62,7 @@ class NewsController extends Controller
         
         return response()->json([
             'status' => true,
-            'message'=>'Add news has been created successfully',
+            'message'=>'News has been added successfully.',
         ]);
     }
 
@@ -122,7 +122,7 @@ class NewsController extends Controller
 
         return response()->json([
             'status' => true,
-            'message'=>'Updated news has been created successfully',
+            'message'=>'News has been updated successfully.',
         ]);
     }
 
@@ -137,7 +137,7 @@ class NewsController extends Controller
         News::where('_id', $id)->delete();
         return response()->json([
             'status' => true,
-            'message'=>'News has been successfully deleted',
+            'message'=>'News has been deleted successfully.',
         ]);
     }
 

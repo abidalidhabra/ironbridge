@@ -38,7 +38,7 @@ class GameController extends Controller
         
         return response()->json([
             'status' => true,
-            'message'=>'Add game has been created successfully',
+            'message'=>'Game has been added successfully.',
         ]);
     }
 
@@ -100,7 +100,7 @@ class GameController extends Controller
 		
 		return response()->json([
             'status' => true,
-            'message'=>'Game has been successfully updated',
+            'message'=>'Game has been updated successfully.',
         ]);
     }
 
@@ -112,7 +112,7 @@ class GameController extends Controller
         $game->delete();
         return response()->json([
             'status' => true,
-            'message'=>'Game has been successfully deleted',
+            'message'=>'Game has been deleted successfully.',
         ]);
     }
 }
