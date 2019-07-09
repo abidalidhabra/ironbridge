@@ -27,7 +27,7 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 	Route::post('login', 'AuthController@login');
 	Route::post('checkUsernameEmail', 'AuthController@checkUsernameEmail');
 	Route::post('register', 'UserController@register');
-	Route::get('checkMyBalance', 'UserController@checkMyBalance');
+	// Route::get('checkMyBalance', 'UserController@checkMyBalance');
 	Route::get('getParks', 'UserController@getParks');
 	Route::get('watercheck/{lat}/{long}', 'UserController@watercheck');
 	
@@ -55,7 +55,7 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 		Route::post('unlockWidgetItem', 'UserController@unlockWidgetItem');
 		// Route::post('selectkWidgetItem', 'UserController@selectkWidgetItem');
 		Route::post('setMyAvatar', 'UserController@setMyAvatar');
-		Route::get('getWarehouseData', 'UserController@getWarehouseData');
+		// Route::get('getWarehouseData', 'UserController@getWarehouseData');
 		
 		/** Plans related requets **/
 		Route::get('getThePlans', 'PlanController@getThePlans');
@@ -84,16 +84,12 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 		Route::get('getHuntsInProgress', 'HuntController@getHuntsInProgress');
 		Route::get('getPreviousHuntDetails', 'HuntController@getPreviousHuntDetails');
 
-
-
-
-		Route::get('getHuntsByDifficultyV2', 'HuntController@getHuntsByDifficultyV2');
-		Route::post('participateInHuntV2', 'HuntController@participateInHuntV2');
-		Route::get('getHuntParticipationDetailsV2', 'HuntController@getHuntParticipationDetailsV2');
-		Route::get('getNearByHuntsV2', 'HuntController@getNearByHuntsV2');
-		Route::get('getHuntDetailsV2', 'HuntController@getHuntDetailsV2');
-		Route::get('getHuntsInProgressV2', 'HuntController@getHuntsInProgressV2');
-
+		// Route::get('getHuntsByDifficultyV2', 'HuntController@getHuntsByDifficultyV2');
+		// Route::post('participateInHuntV2', 'HuntController@participateInHuntV2');
+		// Route::get('getHuntParticipationDetailsV2', 'HuntController@getHuntParticipationDetailsV2');
+		// Route::get('getNearByHuntsV2', 'HuntController@getNearByHuntsV2');
+		// Route::get('getHuntDetailsV2', 'HuntController@getHuntDetailsV2');
+		// Route::get('getHuntsInProgressV2', 'HuntController@getHuntsInProgressV2');
 
 		/** Clues related requests  **/
 		Route::post('revealTheClueV2', 'ClueController@revealTheClueV2');
@@ -125,18 +121,14 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
 		/** Hunt related requests **/
 		Route::get('getHuntsByDifficulty', 'HuntController@getHuntsByDifficulty');
 		Route::get('getNearByHunts', 'HuntController@getNearByHunts');
-		Route::get('getHuntParticipationDetails', 'HuntController@getHuntParticipationDetails');
-		Route::post('participateInHunt', 'HuntController@participateInHunt');
 		Route::get('getHuntDetails', 'HuntController@getHuntDetails');
+		Route::post('participateInHunt', 'HuntController@participateInHunt');
+		Route::get('getHuntParticipationDetails', 'HuntController@getHuntParticipationDetails');
 		Route::get('getHuntsInProgress', 'HuntController@getHuntsInProgress');
 		Route::post('pauseTheHunt', 'HuntController@pauseTheHunt');
 
 		/** Clues related requests  **/
 		Route::post('actionOnClue', 'ClueController@actionOnClue');
-		// Route::post('revealTheClue', 'ClueController@revealTheClue');
-		// Route::post('startTheClue', 'ClueController@startTheClue');
-		// Route::post('pauseTheClue', 'ClueController@pauseTheClue');
-		// Route::post('endTheClue', 'ClueController@endTheClue');
 		Route::post('useTheSkeletonKey', 'ClueController@useTheSkeletonKey');
 	});
 });
