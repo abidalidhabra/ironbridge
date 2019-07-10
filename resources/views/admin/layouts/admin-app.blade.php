@@ -90,7 +90,11 @@
     };*/
     $(document).on("click",".myBtn",function() {
         $(this).parent('li').find(".myDropdown").toggleClass("show");
-        $(this).find("i").toggleClass("fa-minus");
+        if ($(this).find(".fa-minus").length > 0) {
+            $(this).find("i").addClass("fa-plus").removeClass("fa-minus");
+        } else {
+            $(this).find("i").addClass("fa-minus").removeClass("fa-plus");
+        }
     })
 </script>
 </html>

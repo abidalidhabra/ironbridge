@@ -23,7 +23,7 @@
 						<a href="{{ route('admin.gameVariation.index') }}">Game Variations</a>
 					</li> -->
 					<li >
-						<a href="javascript:void(0)" class="plusbttnbox myBtn">Manage Games <i class="fa fa-plus" aria-hidden="true"></i></a>
+						<a href="javascript:void(0)" class="plusbttnbox myBtn">Manage Games <i class="fa @if(Route::currentRouteName() == 'admin.game.index' || Route::currentRouteName() == 'admin.gameVariation.index' || Route::currentRouteName() == 'admin.gameVariation.create' || Route::currentRouteName() == 'admin.gameVariation.show') {{ 'fa-minus' }} @else {{ 'fa-plus' }} @endif" aria-hidden="true"></i></a>
 						<div class="dropdown custmenbox">
 							<!-- <button id="myBtn" class="dropbtn">Dropdown</button> -->
 							<div  class="dropdown-content myDropdown @if(Route::currentRouteName() == 'admin.game.index' || Route::currentRouteName() == 'admin.gameVariation.index' || Route::currentRouteName() == 'admin.gameVariation.create' || Route::currentRouteName() == 'admin.gameVariation.show') {{ 'show' }} @endif">
@@ -33,7 +33,7 @@
 						</div>
 					</li>
 					<li >
-						<a href="javascript:void(0)" class="plusbttnbox myBtn" >Manage Hunts <i class="fa fa-plus" aria-hidden="true"></i></a>
+						<a href="javascript:void(0)" class="plusbttnbox myBtn" >Manage Hunts <i class="fa @if(Route::currentRouteName() == 'admin.mapsList' ||Route::currentRouteName() == 'admin.add_location' || Route::currentRouteName() == 'admin.boundary_map' || Route::currentRouteName() == 'admin.starComplexityMap' || Route::currentRouteName() == 'admin.edit_location' || Route::currentRouteName() == 'admin.complexityTarget.index') {{ 'fa-minus' }} @else {{ 'fa-plus' }} @endif" aria-hidden="true"></i></a>
 						<div class="dropdown custmenbox">
 							<!-- <button id="myBtn" class="dropbtn">Dropdown</button> -->
 							<div  class="dropdown-content myDropdown @if(Route::currentRouteName() == 'admin.mapsList' ||Route::currentRouteName() == 'admin.add_location' || Route::currentRouteName() == 'admin.boundary_map' || Route::currentRouteName() == 'admin.starComplexityMap' || Route::currentRouteName() == 'admin.edit_location' || Route::currentRouteName() == 'admin.complexityTarget.index') {{ 'show' }} @endif">
