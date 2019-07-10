@@ -39,7 +39,7 @@ class HuntController extends Controller
     	
     	$location = Hunt::select('location','place_name','place_id','boundaries_arr','boundingbox')
                                     ->with('hunt_complexities:_id,hunt_id')
-    								->whereIn('city',['Nanaimo'])
+    								->whereIn('city',['Kamloops','Chilliwack','Prince George','Vernon','Courtenay','Penticton','Mission','Parksville','Duncan','Ladner','Tsawwassen','Port Alberni','Fort St. John','Cranbrook','Squamish','Terrace','Salmon Arm','Trail-Fruitvale','Powell River','Quesnel','Aldergrove','Prince Rupert','Dawson Creek','Nelson','Ladysmith','Williams Lake','Okotoks','Cochrane','Stony Plain','Sylvan Lake','Strathmore','High River','Wetaskiwin','Canmore'])
     								->get()
     								->map(function($query){
     									if (count($query->hunt_complexities) > 0) {
@@ -160,7 +160,8 @@ class HuntController extends Controller
                                     //     }]);
                                     // }])
                                     ->with(['hunt_users'=>function($query) use ($clue,$userId){
-                                        $query->where('user_id',$userId)->where('complexity',$clue);
+                                        // $query->where('user_id',$userId)->where('complexity',$clue);
+                                        $query->where('user_id',$userId);
                                     }])
                                     ->get()
                                     ->map(function($query){
@@ -290,6 +291,7 @@ class HuntController extends Controller
             $bestTime = min(array_diff($huntUser->pluck('finished_in')->toArray(), array(0)));
         }
         
+        $maxComplexity = Hunt::where('_id',$huntId)->first()->hunt_complexities()->max('complexity');
         $data = [
                     'hunt_id'       => $hunt->id,
                     'name'          => ($hunt->name != "")?$hunt->name:$hunt->place_name,
@@ -302,6 +304,7 @@ class HuntController extends Controller
                     'cost'          => $hunt->fees,
                     'complexity'    => $clueId,
                     'distance'      => number_format($hunt->hunt_complexities[0]->distance/1000,1),
+                    'max_complexity'=> $maxComplexity,
                 ];
 
         return response()->json(['message'=>'Hunt clues has been retrieved successfully','data'=>$data]);
@@ -634,7 +637,7 @@ class HuntController extends Controller
                                                             '$and'=> [
                                                                [ '$eq'=> [ '$hunt_id',  '$$hunt_string_id' ] ],
                                                                [ '$eq'=> [ '$user_id', $userId ] ],
-                                                               [ '$eq'=> [ '$complexity', $star ] ]
+                                                               // [ '$eq'=> [ '$complexity', $star ] ]
                                                             ]
                                                         ]
                                                     ]

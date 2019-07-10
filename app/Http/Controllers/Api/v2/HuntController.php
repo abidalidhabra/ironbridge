@@ -402,7 +402,8 @@ class HuntController extends Controller
         $hunt->time_taken       = $timeTaken;           
         $hunt->completed_dist   = $completedDist;           
         $hunt->user_hunt_status = $status;           
-        $hunt->max_complexity   = $maxComplexity;           
+        $hunt->max_complexity   = $maxComplexity;       
+        $hunt->hunt_user_details= $userParticipation->hunt_user_details()->select('_id', 'hunt_user_id', 'location')->get();       
         unset($hunt->hunt_complexities);
         return response()->json(['message'=>'Hunt details has been retrieved successfully.','data'=>$hunt]);
     }
