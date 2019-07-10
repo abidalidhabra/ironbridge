@@ -144,8 +144,26 @@ class NewsController extends Controller
     public function getNewsList(Request $request){
         $skip = (int)$request->get('start');
         $take = (int)$request->get('length');
-        $count =News::count();
-        return DataTables::of(News::orderBy('created_at','DESC')->skip($skip)->take($take)->get())
+        $search = $request->get('search')['value'];
+        $news = News::select('subject','description','valid_till');
+        if($search != ''){
+            $news->where(function($query) use ($search){
+                $query->where('subject','like','%'.$search.'%')
+                ->orWhere('description','like','%'.$search.'%')
+                ->orWhere('valid_till','like','%'.$search.'%');
+            });
+        }
+
+        $news = $news->orderBy('created_at','DESC')->skip($skip)->take($take)->get();
+        $count = News::count();
+        if($search != ''){
+            $count = News::where(function($query) use ($search){
+                $query->where('subject','like','%'.$search.'%')
+                ->orWhere('description','like','%'.$search.'%')
+                ->orWhere('valid_till','like','%'.$search.'%');
+            })->count();
+        }
+        return DataTables::of($news)
         ->addIndexColumn()
         ->editColumn('valid_till', function($news){
             return Carbon::parse($news->valid_till)->format('d-M-Y');
@@ -165,6 +183,7 @@ class NewsController extends Controller
                     
                 })
         ->setTotalRecords($count)
+        ->setFilteredRecords($count)
         ->skipPaging()
         ->make(true);
     }

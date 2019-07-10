@@ -47,8 +47,25 @@ class GameController extends Controller
     public function getGameList(Request $request){
         $skip = (int)$request->get('start');
         $take = (int)$request->get('length');
+        $search = $request->get('search')['value'];
+        $game = Game::select('identifier','name','status');
+        if($search != ''){
+            $game->where(function($query) use ($search){
+                $query->where('identifier','like','%'.$search.'%')
+                ->orWhere('name','like','%'.$search.'%')
+                ->orWhere('status','like','%'.$search.'%');
+            });
+        }
+        $game = $game->orderBy('created_at','DESC')->skip($skip)->take($take)->get();
         $count = Game::count();
-        return DataTables::of(Game::orderBy('created_at','DESC')->skip($skip)->take($take)->get())
+        if($search != ''){
+            $count = Game::where(function($query) use ($search){
+                $query->where('identifier','like','%'.$search.'%')
+                ->orWhere('name','like','%'.$search.'%')
+                ->orWhere('status','like','%'.$search.'%');
+            })->count();
+        }
+        return DataTables::of($game)
         ->addIndexColumn()
         ->addColumn('action', function($game){
             return '<a href="javascript:void(0)" class="edit_game" data-action="edit" data-id="'.$game->id.'" data-identifier="'.$game->identifier.'" data-name="'.$game->name.'" data-status="'.$game->status.'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
@@ -71,6 +88,7 @@ class GameController extends Controller
                     
                 })
         ->setTotalRecords($count)
+        ->setFilteredRecords($count)
         ->skipPaging()
         ->make(true);
     }

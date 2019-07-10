@@ -89,7 +89,8 @@
         }
     };*/
     $(document).on("click",".myBtn",function() {
-        $(this).parent('li').find(".myDropdown").toggleClass("show"); 
+        $(this).parent('li').find(".myDropdown").toggleClass("show");
+        $(this).find("i").toggleClass("fa-minus");
     })
 </script>
 </html>

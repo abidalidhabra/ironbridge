@@ -24,8 +24,33 @@ class UserController extends Controller
     {	
         $skip = (int)$request->get('start');
         $take = (int)$request->get('length');
-    	$user = User::select('first_name','last_name','username', 'email', 'mobile_no', 'dob', 'created_at')->orderBy('created_at','DESC')->skip($skip)->take($take)->get();
+        $search = $request->get('search')['value'];
+
+    	$user = User::select('first_name','last_name','username', 'email', 'mobile_no', 'dob', 'created_at');
+        if($search != ''){
+            $user->where(function($query) use ($search){
+                $query->where('first_name','like','%'.$search.'%')
+                ->orWhere('last_name','like','%'.$search.'%')
+                ->orWhere('username','like','%'.$search.'%')
+                ->orWhere('email','like','%'.$search.'%')
+                ->orWhere('mobile_no','like','%'.$search.'%')
+                ->orWhere('dob','like','%'.$search.'%')
+                ->orWhere('created_at','like','%'.$search.'%');
+            });
+        }
+        $user = $user->orderBy('created_at','DESC')->skip($skip)->take($take)->get();
         $count = User::count();
+        if($search != ''){
+            $count = User::where(function($query) use ($search){
+                $query->where('first_name','like','%'.$search.'%')
+                ->orWhere('last_name','like','%'.$search.'%')
+                ->orWhere('username','like','%'.$search.'%')
+                ->orWhere('email','like','%'.$search.'%')
+                ->orWhere('mobile_no','like','%'.$search.'%')
+                ->orWhere('dob','like','%'.$search.'%')
+                ->orWhere('created_at','like','%'.$search.'%');
+            })->count();
+        }
         return DataTables::of($user)
         ->addIndexColumn()
         ->addColumn('name', function($user){
@@ -36,9 +61,11 @@ class UserController extends Controller
         })
         ->editColumn('dob', function($user){
             return Carbon::parse($user->dob)->format('d-M-Y');
-            // return $user->dob;
         })
-        ->rawColumns(['name'])
+        ->addColumn('action', function($user){
+            return '<a href="'.route('admin.accountInfo',$user->id).'"><i class="fa fa-eye iconsetaddbox"></i></a>';
+        })
+        ->rawColumns(['name','action'])
         ->order(function ($query) {
                     if (request()->has('created_at')) {
                         $query->orderBy('created_at', 'DESC');
@@ -46,6 +73,7 @@ class UserController extends Controller
                     
                 })
         ->setTotalRecords($count)
+        ->setFilteredRecords($count)
         ->skipPaging()
         ->make(true);
     }
@@ -180,6 +208,8 @@ class UserController extends Controller
     public function getTreasureHunts(Request $request){
         $skip = (int)$request->get('start');
         $take = (int)$request->get('length');
+        $search = $request->get('search')['value'];
+        
         $userId = $request->get('user_id');
         $status = $request->get('status');
         
@@ -189,20 +219,23 @@ class UserController extends Controller
         } else if ($status == 'progress') {
             $status_value = ['participated', 'paused', 'running'];
         }
-            $huntUser = HuntUser::select('hunt_id','user_id','status','created_at','hunt_complexity_id')
-                        ->with([
+
+        $huntUser = HuntUser::select('hunt_id','user_id','status','created_at','hunt_complexity_id')
+                            ->with([
                                 'hunt_user_details:_id,hunt_user_id,status,finished_in',
                                 'hunt_complexities:_id,distance'
                             ])
-                        ->where('user_id',$userId)
-                        ->whereIn('status',$status_value)
-                        ->orderBy('created_at','DESC')
-                        ->skip($skip)
-                        ->take($take)
-                        ->get();
+                            ->where('user_id',$userId)
+                            ->whereIn('status',$status_value)
+                            ->orderBy('created_at','DESC')
+                            //->skip($skip)
+                            //->take($take)
+                            ->get(); 
 
         
-        $count = HuntUser::count();
+        $count = HuntUser::where('user_id',$userId)
+                           ->whereIn('status',$status_value)
+                           ->count();
         
         
 
@@ -227,6 +260,7 @@ class UserController extends Controller
             return $completedClue.'/'.$totalClue;
         })
         ->addColumn('distance_progress', function($user){
+                    return 0;
                     $completedClues = 0;
                     $completedDist  = 0;
                     $totalClues = $user->hunt_user_details()->count();
@@ -247,8 +281,8 @@ class UserController extends Controller
                     }
                     
                 })
-        ->setTotalRecords($count)
-        ->skipPaging()
+        //->setTotalRecords($count)
+        //->skipPaging()
         ->make(true);
     }
 

@@ -45,7 +45,7 @@
                             </div>
                             <div class="accountinfoname_left">
                                 <p>Gold</p>
-                                <h4>{{ $data['usedGold'].'/'.$data['totalGold'] }}</h4>
+                                <h4>{{ $data['currentGold'] }}</h4>
                             </div>                            
                         </div>
                     </div>
@@ -60,12 +60,12 @@
                     </div>
                     <div class="accountcerated_text">
                         <p>Time Zone</p>
-                        <h4></h4>
+                        <h4>-</h4>
                     </div>
-                    <div class="accountcerated_text">
+                    <!-- <div class="accountcerated_text">
                         <p>App Installed Status</p>
                         <h4>Uninstalled</h4>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>

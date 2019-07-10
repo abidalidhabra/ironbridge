@@ -48,12 +48,12 @@
         $(document).ready(function() {
             //GET USER LIST
             var table = $('#dataTable').DataTable({
-                pageLength: 10,
+                pageLength: 50,
                 processing: true,
                 responsive: true,
                 serverSide: true,
-                order: [[1, 'desc']],
-                lengthMenu: [[10, 50, 100, -1], [10, 50, 100, "All"]],
+                // order: [[1, 'desc']],
+                lengthMenu: [[50, 100, 200, -1], [50, 100, 200, "All"]],
                 ajax: {
                     type: "get",
                     url: "{{ route('admin.getTreasureHunts') }}",
