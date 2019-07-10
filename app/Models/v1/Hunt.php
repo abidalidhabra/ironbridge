@@ -19,11 +19,13 @@ class Hunt extends Eloquent
         'country',
         'fees',
         'replay_after',
+        'verified',
     ];
 
     protected $attributes = [
         'fees' => 0,
         'replay_after' => 0,
+        'verified' => false,
     ];
 
     // protected $casts = [

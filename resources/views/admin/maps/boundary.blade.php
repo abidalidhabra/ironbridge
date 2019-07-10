@@ -49,6 +49,9 @@
                 <div class="locatininfoinerbtn">
                     <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>5]) }}" class="btn btn-info btn-md @if(in_array(5,$complexityarr)) active_btn @endif">5 Stars</a>
                 </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" name="verified" @if($location->verified){{ 'checked' }}@endif>Verified?</label>
+                </div>
             </div>
              <div class="customdatatable_box">
                 <div id="map"></div>
@@ -134,6 +137,33 @@
             });
             bermudaTriangle.setMap(map);
         }
+
+
+        //verified
+        $(document).on('click',"input[name='verified']",function(e){
+            if ($(this).is(":checked")){
+                var status = "true";
+            } else {
+                var status = "false";
+            }
+            $.ajax({
+                type: "post",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '{{ route("admin.verifiedUpdate") }}',
+                data: {id:'{{ $location->_id }}',status : status},
+                success: function(response)
+                {
+                    if (response.status == true) {
+                        toastr.success(response.message);
+                        location.reload();
+                    } else {
+                        toastr.warning(response.message);
+                    }
+                }
+            });
+        });
     </script>
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0AzhRBk1LARqw9SDz9qwpAkTYDaQNe6o&callback=initMap">

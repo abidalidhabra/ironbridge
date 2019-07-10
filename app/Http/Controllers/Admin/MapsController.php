@@ -14,6 +14,7 @@ use Validator;
 use Carbon\Carbon;
 use App\Models\v1\Game;
 use App\Models\v1\GameVariation;
+use App\Models\v1\ComplexityTarget;
 use MongoDB\BSON\ObjectID;
 
 class MapsController extends Controller
@@ -27,13 +28,14 @@ class MapsController extends Controller
     	$skip = (int)$request->get('start');
         $take = (int)$request->get('length');
         $search = $request->get('search')['value'];
-        $city = Hunt::select('latitude','longitude','place_name','city','province','country','name','updated_at');
+        $city = Hunt::select('latitude','longitude','place_name','city','province','verified','country','name','updated_at');
         if($search != ''){
             $city->where(function($query) use ($search){
                 $query->orWhere('place_name','like','%'.$search.'%')
                 ->orWhere('city','like','%'.$search.'%')
                 ->orWhere('province','like','%'.$search.'%')
                 ->orWhere('country','like','%'.$search.'%')
+                ->orWhere('verified','like','%'.$search.'%')
                 ->orWhere('name','like','%'.$search.'%')
                 ->orWhere('updated_at','like','%'.$search.'%');
             });
@@ -46,6 +48,7 @@ class MapsController extends Controller
                 ->orWhere('city','like','%'.$search.'%')
                 ->orWhere('province','like','%'.$search.'%')
                 ->orWhere('country','like','%'.$search.'%')
+                ->orWhere('verified','like','%'.$search.'%')
                 ->orWhere('name','like','%'.$search.'%')
                 ->orWhere('updated_at','like','%'.$search.'%');
             })->count();
@@ -64,6 +67,13 @@ class MapsController extends Controller
         })
         ->addColumn('map', function($city){
             return '<a href="'.route('admin.boundary_map',$city->id).'" ><img src="'.asset('admin_assets/svg/map-marke-icon.svg').'"</a>';
+        })
+        ->addColumn('verified', function($city){
+            if ($city->verified) {
+                return 'Verified';
+            } else {
+                return 'Not Verified';
+            }
         })
         ->addColumn('action', function($city){
             return '<a href="'.route('admin.edit_location',$city->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>
@@ -113,11 +123,26 @@ class MapsController extends Controller
                                 ->where('hunt_id',$id)
                                 ->pluck('complexity')
                                 ->toArray();
+        
+        $usedGameId = [];
+        if (count($location->hunt_complexities) > 0) {
+            $usedGameId = $location->hunt_complexities[0]->hunt_clues->pluck('game_id')->toArray();
+        }
+        
+
         $games = Game::whereHas('game_variation')
                         ->with('game_variation:_id,variation_name,game_id,status')
                         ->where('status',true)
                         ->get();
+        
+        $usedGame = array_values($games->whereNotIn('_id',$usedGameId)->toArray());
 
+        
+        /*echo "<pre>";
+        print_r($games->toArray());
+        print_r($usedGame->toArray());
+        exit;*/
+        // $usedGame = Game::        
         
         
         $cluesCoordinates = [];
@@ -126,11 +151,8 @@ class MapsController extends Controller
                 $cluesCoordinates[] = [$clues->location['coordinates'][0],$clues->location['coordinates'][1]];
             }
         }
-        // echo "<pre>";
-        // print_r($games->toArray());
-        // exit();
-        // $clueLocation = 
-        return view('admin.maps.start_complexity',compact('location','complexity','complexitySuf','id','complexityarr','games','cluesCoordinates'));
+        
+        return view('admin.maps.start_complexity',compact('location','complexity','complexitySuf','id','complexityarr','games','cluesCoordinates','usedGame'));
     }
 
     //GET VARIATION
@@ -183,6 +205,16 @@ class MapsController extends Controller
             $distance = 1000*count($coordinates);
         }
 
+        $placeStar = HuntComplexity::where([
+                            'hunt_id'   => $id,
+                            'complexity' => $complexity,
+                        ])
+                        ->first();
+        if ($placeStar) {
+            $placeStar->hunt_clues()->delete();
+            $placeStar->delete();
+        }
+
         foreach ($coordinates as $key => $value) {
             $location['Type'] = 'Point';
             $location['coordinates'] = [
@@ -200,6 +232,13 @@ class MapsController extends Controller
 
             $huntComplexities = $hunt->hunt_complexities()->updateOrCreate(['hunt_id'=>$id,'complexity'=>$complexity],['hunt_id'=>$id,'complexity'=>$complexity,'est_completion'=>(int)round($estTime),'distance'=>$distance]);
 
+            $target = ComplexityTarget::where([
+                                    'game_id' => $gameId[$key], 
+                                    'complexity'=> $complexity
+                                ])
+                                ->pluck('target')
+                                ->first();
+                                
             $huntComplexities->hunt_clues()->updateOrCreate([
                                 'hunt_complexity_id' =>  $huntComplexities->_id,
                                 'location.coordinates.0' =>  $value[0],
@@ -209,6 +248,7 @@ class MapsController extends Controller
                                 'location'           => $location,
                                 'game_id'            => $gameId[$key],
                                 'game_variation_id'  => $gameVariationId[$key],
+                                'target'             => $target
                             ]);
         }
 
@@ -402,6 +442,18 @@ class MapsController extends Controller
     //TEST 
     public function testLocation(Request $request){
         return view('admin.maps.test_location');        
+    }
+
+    //VERIFIED UPDATE
+    public function verifiedUpdate(Request $request){
+        $status = $request->get('status'); 
+        $id = $request->get('id'); 
+        Hunt::where('_id',$id)
+            ->update(['verified' => ($status == 'true')?true:false]);
+        return response()->json([
+            'status' => true,
+            'message'=>'verified has been updated successfully',
+        ]);
     }
 
     //CUSTOM STORE
