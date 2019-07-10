@@ -25,7 +25,7 @@
                         <th>Update Date</th>
                         <th>Name</th>
                         <th>Place Name</th>
-                        <th>Country</th>
+                        <th>Verified</th>
                         <th>Province</th>
                         <th>City</th>
                         <th>Open in Map</th>
@@ -68,7 +68,7 @@
                     { data:'updated_at',name:'updated_at' },
                     { data:'name',name:'name' },
                     { data:'place_name',name:'place_name' },
-                    { data:'country',name:'country' },
+                    { data:'verified',name:'verified' },
                     { data:'province',name:'province' },
                     { data:'city',name:'city' },
                     { data:'map',name:'map'},

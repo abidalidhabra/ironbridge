@@ -195,8 +195,7 @@
                     var vertices = this.getPath();
                     // Iterate over the vertices.
                     var boundary_arr = [];
-                    var games = <?php echo json_encode($games) ?>;
-
+                    var games = <?php echo json_encode($usedGame) ?>;
                     var option_game = "'<option value=''>Select game</option>";
                     var option_game_variation1 = "'<option value=''>Select game variation</option>";
 
@@ -227,10 +226,8 @@
                             
 
                             var random_game_variation = random_game.game_variation[Math.floor(Math.random()*random_game.game_variation.length)];
-                            console.log(random_game_variation);
                             $.each(random_game.game_variation, function(i, k) {
                                 var selected1 = '';
-                                console.log(k)
                                 if (k._id == random_game_variation._id) {
                                     var selected1 = 'selected'; 
                                 }
@@ -238,6 +235,9 @@
                                 option_game_variation1 += '<option value="'+k._id+'" '+ selected1 +'>'+k.variation_name+'</option>';
                             });
                             
+                            //GAME SELECT REMOVE
+                            games.splice($.inArray(random_game, games),1);
+
                             $('.selected_game:nth-child('+i+')').after('<div class="game_section'+i+' selected_game" id="game_'+gameId.replace(/\./g,'_')+'">\
                                                     <div class="form-group col-md-8">\
                                                         <label>Game:</label>\
@@ -318,6 +318,9 @@
 
                             option_game_variation += '<option value="'+k._id+'" '+ selected1 +'>'+k.variation_name+'</option>';
                         });
+
+                         //GAME SELECT REMOVE
+                        games.splice($.inArray(random_game, games),1);
 
                         var html = '<div class="game_section'+i+'">\
                                         <div class="form-group col-md-8">\

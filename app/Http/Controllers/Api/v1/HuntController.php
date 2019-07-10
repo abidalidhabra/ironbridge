@@ -10,7 +10,7 @@ use App\Http\Requests\v1\NearByHuntsRequest;
 use App\Http\Requests\v1\ParticipateRequest;
 use App\Models\v1\Game;
 use App\Models\v1\Hunt;
-use App\Models\v1\Hunt as HuntV2;
+use App\Models\v2\Hunt as HuntV2;
 use App\Models\v1\HuntComplexity;
 use App\Models\v1\ComplexityTarget;
 use App\Models\v1\HuntUser;
@@ -78,6 +78,7 @@ class HuntController extends Controller
 
         $data  = json_decode($request->get('data'),true);
         $id = $data['_id'];
+
         $hunt = Hunt::where('_id',$id)->first();
         if (!$hunt) {
             return response()->json(['message' => 'Hunt not found successfully'],422); 
@@ -93,13 +94,22 @@ class HuntController extends Controller
                     $fixClueMins = count($value['total_clues'])*5;
                     $estTime =  ($mins + $fixClueMins)*60;
                     $huntComplexities = $hunt->hunt_complexities()->updateOrCreate(['hunt_id'=>$id,'complexity'=>$key],['hunt_id'=>$id,'complexity'=>$key,'distance'=>$distance,'est_completion'=>(int)round($estTime)]);
+                    
+                    $gameUsedId = [];
                     foreach ($value['total_clues'] as $latlng) {
                         $game = Game::whereHas('game_variation')
                                     ->with('game_variation')
+                                    ->whereNotIn('_id',$gameUsedId)
                                     ->where('status',true)
-                                    ->get()
-                                    ->random(1);
+                                    ->get();
+                        if ($game->count() == 0) {
+                            return response()->json(['message' => 'Please new game created'],422);
+                        }
                         
+                        $game = $game->random(1);
+
+                        $gameUsedId[] = $game[0]->id;
+
                         $rand_variation = rand(0,$game[0]['game_variation']->count()-1);
                         $gameVariationId = $game[0]['game_variation'][$rand_variation]->id;
 

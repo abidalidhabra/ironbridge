@@ -56,6 +56,7 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('/star_complexity_map/{id}/{complexity}', 'MapsController@starComplexityMap')->name('starComplexityMap');
 	Route::post('/store_star_complexity', 'MapsController@storeStarComplexity')->name('storeStarComplexity');
 	Route::delete('/clearAllClues/{id}', 'MapsController@clearAllClues')->name('clearAllClues');
+	Route::post('/verifiedUpdate', 'MapsController@verifiedUpdate')->name('verifiedUpdate');
 
 
 	Route::get('/add_location', 'MapsController@addLocation')->name('add_location');
