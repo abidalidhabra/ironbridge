@@ -79,25 +79,32 @@ class PrepareController extends Controller
 
 	public function addWidgets(Request $Request){
 
-		$widgets = collect(['Hats', 'Tops', 'Bottom', 'Outfits']);
+		$widgets = collect([
+						['name'=> 'Hats', 'limit'=> 12], 
+						['name'=> 'Tops', 'limit'=> 12], 
+						['name'=> 'Bottom', 'limit'=> 12], 
+						['name'=> 'Feets', 'limit'=> 12], 
+						['name'=> 'Outfits', 'limit'=> 12]
+					]);
 		$avatars = Avatar::all();
 
 		$avatars->map(function($avatar, $index) use ($widgets){
 			
 			// for ($i=0; $i < 5; $i++) { 
 				
-				$widgets->map(function($widgetName, $index) use ($avatar){
-
-					for ($i=0; $i < 10; $i++) { 
-						WidgetItem::create([
-							'widget_name' => $widgetName,
-							'item_name' => $widgetName.' '.rand(50,999),
-							'gold_price' => rand(0,999),
-							'avatar_id' => $avatar->_id
-						]);
-					}
-					return $widgetName;
-				});
+				if ($index == 1) {
+					$widgets->map(function($widgetName, $index) use ($avatar){
+						for ($i=0; $i < $widgetName['limit']; $i++) { 
+							WidgetItem::create([
+								'widget_name' => $widgetName['name'],
+								'item_name' => $widgetName['name'].' '.rand(50,999),
+								'gold_price' => rand(0,999),
+								'avatar_id' => $avatar->_id
+							]);
+						}
+						return $widgetName;
+					});
+				}
 			// }
 		});
 
