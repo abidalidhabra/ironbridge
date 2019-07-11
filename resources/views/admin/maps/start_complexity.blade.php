@@ -139,8 +139,10 @@
             var map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 18,
                 center: uluru,
-                mapTypeId: 'terrain'
+                mapTypeId: 'terrain',
+                scaleControl: true
             });
+
 
             
             var triangleCoords = [

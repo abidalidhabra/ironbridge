@@ -93,8 +93,9 @@
             function initialize() {
                 //static coordinates
                 var map = new google.maps.Map(document.getElementById('map'), {
-                  center: {lat: 51.048615, lng: -114.070847 },
-                  zoom: 18,
+                    center: {lat: 51.048615, lng: -114.070847 },
+                    zoom: 18,
+                    scaleControl: true
                 });
                 
                 

@@ -116,7 +116,9 @@
             var map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 16,
                 center: uluru,
-                mapTypeId: 'terrain'
+                mapTypeId: 'terrain',
+                scaleControl: true
+                
             });
 
             
