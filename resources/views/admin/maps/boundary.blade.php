@@ -26,8 +26,8 @@
                 <h2 class="locatininfobtn"><span>Location Info</span> 
                     <a href="javascript:void(0);" class="btn btn-info btn-md" id="clearAllClues" data-action='delete'>Clear Clues</a>
                 </h2>
-                @if($location->custom_name)
-                    <h3><span>Custom Name :</span> {{ $location->custom_name }}</h3>
+                @if($location->name)
+                    <h3><span>Name :</span> {{ $location->name }}</h3>
                 @endif
                 <h3><span>Place Name :</span> {{ $location->place_name }}</h3>
                 <h3><span>City :</span> {{ $location->city }}</h3>

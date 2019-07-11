@@ -19,17 +19,17 @@
                 <ul>
                     <li>
                         <img src="{{ asset('admin_assets/svg/user.svg') }}">
-                        <h3>0</h3>
+                        <h3>{{ $data['total_user'] }}</h3>
                         <p>Total Users</p>
                     </li>
                     <li>
                         <img src="{{ asset('admin_assets/svg/male-icon.svg') }}">
-                        <h3>0</h3>
+                        <h3>{{ $data['male'] }}</h3>
                         <p>Male</p>
                     </li>
                     <li>
                         <img src="{{ asset('admin_assets/svg/female-icon.svg') }}">
-                        <h3>0</h3>
+                        <h3>{{ $data['female'] }}</h3>
                         <p>Female</p>
                     </li>
                 </ul>

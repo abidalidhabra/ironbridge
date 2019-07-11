@@ -163,9 +163,14 @@
 
                 //DRAWING MANAGE
                 var selectedShape;
+                var polyOptions = {
+                    strokeWeight: 0,
+                    fillOpacity: 0.45,
+                    editable: true
+                };
 
                 var drawingManager = new google.maps.drawing.DrawingManager({
-                    drawingMode: google.maps.drawing.OverlayType.POLYGON,
+                    /*drawingMode: google.maps.drawing.OverlayType.POLYGON,
                         drawingControl: false,
                         drawingControlOptions: {
                             position: google.maps.ControlPosition.TOP_CENTER,
@@ -173,77 +178,109 @@
                     },
                     polygonOptions: {
                         editable: true
-                    }
+                    }*/
+                     drawingMode: google.maps.drawing.OverlayType.POLYGON,
+                    markerOptions: {
+                      draggable: true
+                    },
+                    polylineOptions: {
+                      editable: true
+                    },
+                    rectangleOptions: polyOptions,
+                    circleOptions: polyOptions,
+                    polygonOptions: polyOptions,
+                    map: map
                 });
 
-                polyLine = new google.maps.Polyline({
-                    map: map,
-                    path: [],
-                    strokeColor: "#222",
-                    strokeOpacity: 1,
-                    strokeWeight: 2,
-                    fillColor: "#000",
-                    fillOpacity: 0,
-                    zIndex: 0
-                });
+               
 
                 
-                var outlineMarkers = new Array();
-                google.maps.event.addListener(map, "click", function (event) {
+                //var outlineMarkers = new Array();
+                // google.maps.event.addListener(map, "click", function (event) {
                     
-                    //event.preventDefault();
-                    var markerIndex = polyLine.getPath().length;
-                    polyLine.setMap(map);
-                    var isFirstMarker = markerIndex === 0;
-                    var icon = {
-                        url: "{{ asset('admin_assets/images/blue_marker.png') }}",
-                        scaledSize: new google.maps.Size(20, 32),
-                    };
-                    var marker = new google.maps.Marker({
-                        map: map,
-                        position: event.latLng,
-                        draggable: true,
-                        icon:icon
-                    });
+                //     //event.preventDefault();
+                //     var markerIndex = polyLine.getPath().length;
+                //     polyLine.setMap(map);
+                //     var isFirstMarker = markerIndex === 0;
+                //     var icon = {
+                //         url: "{{ asset('admin_assets/images/blue_marker.png') }}",
+                //         scaledSize: new google.maps.Size(20, 32),
+                //     };
+                //     var marker = new google.maps.Marker({
+                //         map: map,
+                //         position: event.latLng,
+                //         draggable: true,
+                //         icon:icon
+                //     });
                     
-                    if (isFirstMarker) {
-                        google.maps.event.addListener(marker, 'click', function () {
-                        console.log(isFirstMarker);
-                            var path = polyLine.getPath();
-                            polyGon.setPath(path);
-                            polyGon.setMap(Map);
-                        });
-                    } else {
-                        //    marker.setIcon(yellowIcon);
-                    }
+                //     if (isFirstMarker) {
+                //         google.maps.event.addListener(marker, 'click', function () {
+                //         console.log(isFirstMarker);
+                //             var path = polyLine.getPath();
+                //             polyGon.setPath(path);
+                //             polyGon.setMap(Map);
+                //         });
+                //     } else {
+                //         //    marker.setIcon(yellowIcon);
+                //     }
                     
                     
-                    google.maps.event.addListener(polyLine, 'click', function(clickEvent){
-                        //did you want to do something here??
-                    });
+                //     google.maps.event.addListener(polyLine, 'click', function(clickEvent){
+                //         //did you want to do something here??
+                //     });
                     
-                    polyLine.getPath().push(event.latLng);
+                //     polyLine.getPath().push(event.latLng);
                     
-                    //different colored markers so user can tell which was the first marker the placed
-                    //if(markerIndex > 1)
-                    //    outlineMarkers[markerIndex-1].setIcon(blueIcon);
+                //     //different colored markers so user can tell which was the first marker the placed
+                //     //if(markerIndex > 1)
+                //     //    outlineMarkers[markerIndex-1].setIcon(blueIcon);
                     
-                    outlineMarkers.push(marker);
+                //     outlineMarkers.push(marker);
                             
-                    google.maps.event.addListener(marker, 'drag', function (dragEvent) {
-                        polyLine.getPath().setAt(markerIndex, dragEvent.latLng);
-                        updateDistance(outlineMarkers);
-                    });
+                //     google.maps.event.addListener(marker, 'drag', function (dragEvent) {
+                //         polyLine.getPath().setAt(markerIndex, dragEvent.latLng);
+                //         updateDistance(outlineMarkers);
+                //     });
 
                             
-                    updateDistance(outlineMarkers);
-                }); 
+                //     updateDistance(outlineMarkers);
+                // }); 
 
+                // drawingManager.setMap(map);
 
                 //drawingManager.setMap(map);
-                google.maps.event.addListener(drawingManager, "overlaycomplete", function(event) {
-                    var newShape = event.overlay;
-                    newShape.type = event.type;
+                google.maps.event.addListener(drawingManager, "overlaycomplete", function(e) {
+                    if (e.type != google.maps.drawing.OverlayType.MARKER) {
+                      // Switch back to non-drawing mode after drawing a shape.
+                      drawingManager.setDrawingMode(null);
+
+                      // Add an event listener that selects the newly-drawn shape when the user
+                      // mouses down on it.
+                      var newShape = e.overlay;
+                      newShape.type = e.type;
+                      google.maps.event.addListener(newShape, 'click', function() {
+                        setSelection(newShape);
+                      });
+
+                      var area = google.maps.geometry.spherical.computeArea(newShape.getPath());
+                      var length = google.maps.geometry.spherical.computeLength(newShape.getPath());
+                      //document.getElementById("area").innerHTML = "Area =" + area;
+                      //setSelection(newShape);
+                      alert(area);
+                      alert(length);
+                    }
+                });
+
+                google.maps.event.addListener(drawingManager, 'polygoncomplete', function(polygon) {
+                    //get the coordinate array of your polygon
+                    var path = polygon.getPath();
+                    //calculate area
+                    var area = google.maps.geometry.spherical.computeArea(path);
+                    //calculate length
+                    var length = google.maps.geometry.spherical.computeLength(path);
+                    //print the area & length
+                    console.log('Polygon Area: ' +  area/1000000 + ' km sqs');
+                    console.log('Polygon Length: ' +  length/1000 + ' kms');
                 });
 
                 google.maps.event.addListener(drawingManager, "overlaycomplete", function(event){

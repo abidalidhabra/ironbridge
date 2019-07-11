@@ -123,13 +123,13 @@ class MapsController extends Controller
                                 ->where('hunt_id',$id)
                                 ->pluck('complexity')
                                 ->toArray();
-        
         $usedGameId = [];
+        $totalDistance = '';
         if (count($location->hunt_complexities) > 0) {
             $usedGameId = $location->hunt_complexities[0]->hunt_clues->pluck('game_id')->toArray();
+            $totalDistance = number_format($location->hunt_complexities[0]->distance/1000,2).' KM';
         }
         
-
         $games = Game::whereHas('game_variation')
                         ->with('game_variation:_id,variation_name,game_id,status')
                         ->where('status',true)
@@ -152,7 +152,7 @@ class MapsController extends Controller
             }
         }
         
-        return view('admin.maps.start_complexity',compact('location','complexity','complexitySuf','id','complexityarr','games','cluesCoordinates','usedGame'));
+        return view('admin.maps.start_complexity',compact('location','complexity','complexitySuf','id','complexityarr','games','cluesCoordinates','usedGame','totalDistance'));
     }
 
     //GET VARIATION
@@ -173,10 +173,11 @@ class MapsController extends Controller
     //boundary map
     public function storeStarComplexity(Request $request){
         $validator = Validator::make($request->all(),[
-                        'hunt_id'   => 'required',
-                        'game_id.*'   => 'required',
+                        'hunt_id'       => 'required',
+                        'game_id.*'     => 'required',
                         'game_variation_id.*' => 'required',
-                        'coordinates'=> 'required|json',
+                        'coordinates'   => 'required|json',
+                        'distance'      => 'required',
                     ]);
         
         if ($validator->fails())
@@ -193,7 +194,7 @@ class MapsController extends Controller
         $coordinates = json_decode($request->get('coordinates'));
         $locationdata = [];
         
-        if($complexity == 1){
+        /*if($complexity == 1){
             $distance = 50*count($coordinates);
         } elseif($complexity == 2){
             $distance = 100*count($coordinates);
@@ -203,7 +204,8 @@ class MapsController extends Controller
             $distance = 500*count($coordinates);
         } elseif($complexity == 5){
             $distance = 1000*count($coordinates);
-        }
+        }*/
+        $distance = (int)round($request->get('distance'));
 
         $placeStar = HuntComplexity::where([
                             'hunt_id'   => $id,

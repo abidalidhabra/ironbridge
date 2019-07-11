@@ -37,6 +37,10 @@
                     <h3><span>City :</span> {{ $location->city }}</h3>
                     <h3><span>Province :</span> {{ $location->province }}</h3>
                     <h3><span>Country :</span> {{ $location->country }}</h3>
+                    <h3 id="totalDistance">
+                        <span>Total Distance :</span>
+                        {{ $totalDistance }}
+                    </h3>
                     {{--<h2>{{$complexitySuf}} Complexity Coordinates</h2>--}}
                     <div class="locatininfoinerbtn">
                         <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>1]) }}" class="btn btn-info btn-md @if($complexity == 1) active_btn @endif @if(in_array(1,$complexityarr)) border_black @endif">
@@ -97,6 +101,12 @@
                     ?>
                     <input type="hidden" name="hunt_id" value="{{ $location->_id }}">
                     <input type="hidden" name="complexity" value="{{ $complexity }}">
+                    <?php
+                        // echo "<pre>";
+                        // print_r($location->toArray());
+                        // exit();
+                    ?>
+                    <input type="hidden" name="distance" id="distance" value="{{ (count($location->hunt_complexities)>0)?$location->hunt_complexities[0]->distance:'0' }}">
                 </div>
                  <div class="customdatatable_box">
                     <div id="map"></div>
@@ -203,6 +213,12 @@
                         option_game += '<option value="'+k._id+'">'+k.name+'</option>';
                     });*/
                     var coordinates = [];
+                    // var distance = google.maps.geometry.spherical.computeArea(this.getPath());
+                    var distance = google.maps.geometry.spherical.computeLength(this.getPath());
+                    $('#distance').val(distance);
+                    var totalDistance = Math.round(distance);
+                    $('#totalDistance').html('<span>Total Distance :</span> '+parseFloat((totalDistance/1000).toFixed(2))+ 'KM');
+
                     for (var i =0; i < vertices.getLength(); i++) {
 
 
@@ -276,11 +292,36 @@
                     });
 
                 drawingManager.setMap(map);
-                google.maps.event.addListener(drawingManager, "overlaycomplete", function(event) {
-                        var newShape = event.overlay;
-                        newShape.type = event.type;
-                    });
+                /*google.maps.event.addListener(drawingManager, "overlaycomplete", function(e) {
+                    if (e.type != google.maps.drawing.OverlayType.MARKER) {
+                            drawingManager.setDrawingMode(null);
+                            var newShape = e.overlay;
+                            newShape.type = e.type;
+                            google.maps.event.addListener(newShape, 'click', function() {
+                                console.log('success');
+                                setSelection(newShape);
+                            });
+
+                        var area = google.maps.geometry.spherical.computeArea(newShape.getPath());
+                        console.log('area');
+                        // var length = google.maps.geometry.spherical.computeLength(newShape.getPath());
+                          
+                    }
+                });*/
                 google.maps.event.addListener(drawingManager, "overlaycomplete", function(event){
+                    if (event.type != google.maps.drawing.OverlayType.MARKER) {
+                            drawingManager.setDrawingMode(null);
+                            var newShape = event.overlay;
+                            newShape.type = event.type;
+                            google.maps.event.addListener(newShape, 'click', function() {
+                                setSelection(newShape);
+                            });
+
+                        var distance = google.maps.geometry.spherical.computeLength(newShape.getPath());
+                        $('#distance').val(distance);
+                        var totalDistance = Math.round(distance);
+                        $('#totalDistance').html('<span>Total Distance :</span> '+parseFloat((totalDistance/1000).toFixed(2))+ 'KM');
+                    }
                     overlayClickListener(event.overlay);
                     // $('#boundary_arr').val(event.overlay.getPath().getArray());
                     var boundary_arr = [];
@@ -346,7 +387,12 @@
                     $('#boundary_arr').val(overlay.getPath().getArray());
                     console.log(overlay.getPath().getArray());
                     console.log(overlay.getPath());
+                    var distance = google.maps.geometry.spherical.computeLength(overlay.getPath());
+                    $('#distance').val(distance);
+                    var totalDistance = Math.round(distance);
+                    $('#totalDistance').html('<span>Total Distance :</span> '+parseFloat((totalDistance/1000).toFixed(2))+ 'KM');
                 });
+
             }
 
         }
