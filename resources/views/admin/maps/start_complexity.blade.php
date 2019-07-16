@@ -110,7 +110,10 @@
                 </div>
                  <div class="customdatatable_box">
                     <div id="map"></div>
+                    <br/><br/>
+                    <label id="clue_info">{{ $complexity }} Star clues should be {{ (count($location->hunt_complexities)>0)?$location->hunt_complexities[0]->distance:'0' }} meter apart.</label>
                 </div>
+                
                 <div class="pull-right modal-footer">
                     <button type="submit" class="btn btn-success" id="saveCoordinates">Save</button>
                 </div>
@@ -219,6 +222,7 @@
                     var distance = google.maps.geometry.spherical.computeLength(this.getPath());
                     $('#distance').val(distance);
                     var totalDistance = Math.round(distance);
+                    $('#clue_info').html('{{ $complexity }} Star clues should be '+totalDistance+' meter apart.')
                     $('#totalDistance').html('<span>Total Distance :</span> '+parseFloat((totalDistance/1000).toFixed(2))+ 'KM');
 
                     for (var i =0; i < vertices.getLength(); i++) {
@@ -322,6 +326,7 @@
                         var distance = google.maps.geometry.spherical.computeLength(newShape.getPath());
                         $('#distance').val(distance);
                         var totalDistance = Math.round(distance);
+                        $('#clue_info').html('{{ $complexity }} Star clues should be '+totalDistance+' meter apart.')
                         $('#totalDistance').html('<span>Total Distance :</span> '+parseFloat((totalDistance/1000).toFixed(2))+ 'KM');
                     }
                     overlayClickListener(event.overlay);
@@ -392,6 +397,7 @@
                     var distance = google.maps.geometry.spherical.computeLength(overlay.getPath());
                     $('#distance').val(distance);
                     var totalDistance = Math.round(distance);
+                    $('#clue_info').html('{{ $complexity }} Star clues should be '+totalDistance+' meter apart.')
                     $('#totalDistance').html('<span>Total Distance :</span> '+parseFloat((totalDistance/1000).toFixed(2))+ 'KM');
                 });
 
