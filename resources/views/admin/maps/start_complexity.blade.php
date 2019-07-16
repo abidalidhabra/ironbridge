@@ -111,7 +111,17 @@
                  <div class="customdatatable_box">
                     <div id="map"></div>
                     <br/><br/>
-                    <label id="clue_info">{{ $complexity }} Star clues should be {{ (count($location->hunt_complexities)>0)?$location->hunt_complexities[0]->distance:'0' }} meter apart.</label>
+                    <?php if($complexity == 1){ ?>
+                        <label>1 Star clues should be 50 meter apart.</label>
+                    <?php } else if($complexity == 2){?>
+                        <label>2 Stars clues should be 100 meter apart.</label>
+                    <?php } else if($complexity == 3){?>
+                        <label>3 Stars clues should be 250 meter apart.</label>
+                    <?php } else if($complexity == 4){?>
+                        <label>4 Stars clues should be 500 meter apart.</label>
+                    <?php } else if($complexity == 5){?>
+                        <label>5 Stars clues should be 1000 meter apart.</label>
+                    <?php }?>
                 </div>
                 
                 <div class="pull-right modal-footer">
@@ -222,7 +232,7 @@
                     var distance = google.maps.geometry.spherical.computeLength(this.getPath());
                     $('#distance').val(distance);
                     var totalDistance = Math.round(distance);
-                    $('#clue_info').html('{{ $complexity }} Star clues should be '+totalDistance+' meter apart.')
+                    
                     $('#totalDistance').html('<span>Total Distance :</span> '+parseFloat((totalDistance/1000).toFixed(2))+ 'KM');
 
                     for (var i =0; i < vertices.getLength(); i++) {
@@ -326,7 +336,7 @@
                         var distance = google.maps.geometry.spherical.computeLength(newShape.getPath());
                         $('#distance').val(distance);
                         var totalDistance = Math.round(distance);
-                        $('#clue_info').html('{{ $complexity }} Star clues should be '+totalDistance+' meter apart.')
+                        
                         $('#totalDistance').html('<span>Total Distance :</span> '+parseFloat((totalDistance/1000).toFixed(2))+ 'KM');
                     }
                     overlayClickListener(event.overlay);
@@ -397,7 +407,6 @@
                     var distance = google.maps.geometry.spherical.computeLength(overlay.getPath());
                     $('#distance').val(distance);
                     var totalDistance = Math.round(distance);
-                    $('#clue_info').html('{{ $complexity }} Star clues should be '+totalDistance+' meter apart.')
                     $('#totalDistance').html('<span>Total Distance :</span> '+parseFloat((totalDistance/1000).toFixed(2))+ 'KM');
                 });
 
