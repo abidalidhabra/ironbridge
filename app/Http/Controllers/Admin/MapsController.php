@@ -343,7 +343,7 @@ class MapsController extends Controller
         $validator = Validator::make($request->all(),[
                         'name'  => 'required',
                         'boundary_arr' => 'required',
-                        'place_name'   => 'required',
+                        // 'place_name'   => 'required',
                         'latitude'     => 'required',
                         'longitude'    => 'required',
                         'city'         => 'required',
@@ -351,15 +351,16 @@ class MapsController extends Controller
                         'country'      => 'required',
                         'fees'         => 'required',
                     ]);
-        
         if ($validator->fails())
         {
             $message = $validator->messages()->first();
             return response()->json(['status' => false,'message' => $message]);
         }
 
-
         $data = $request->all();
+        if($data['place_name']==""){
+            $data['place_name'] = $data['name'];
+        }
         
         // $cityInfo = TreasureLocation::get();
         // foreach ($cityInfo as $key => $value) {
@@ -396,9 +397,11 @@ class MapsController extends Controller
 
         $data['boundaries_arr'] = $boundaries_arr;
         $data['fees'] = (float)$request->get('fees');
+        $data['google_location'] = (isset($data['google_location']) && $data['google_location']=="true"?true:false);
 
         $boundingbox = $request->get('boundary_box');
         $data['boundingbox'] = array_map('strval', array_values(json_decode($request->get('boundary_box'),true)));
+        
         $location = Hunt::create($data);
         return response()->json([
             'status' => true,
