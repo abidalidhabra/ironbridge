@@ -176,6 +176,8 @@ class MapsController extends Controller
                         'hunt_id'       => 'required',
                         'game_id.*'     => 'required',
                         'game_variation_id.*' => 'required',
+                        'longitude.*' => 'required|numeric',
+                        'latitude.*' => 'required|numeric',
                         'coordinates'   => 'required|json',
                         'distance'      => 'required',
                     ]);
@@ -192,6 +194,8 @@ class MapsController extends Controller
         $gameVariationId = $request->get('game_variation_id');
         $hunt = Hunt::where('_id',$id)->first();
         $coordinates = json_decode($request->get('coordinates'));
+        $longitude = $request->get('longitude');
+        $latitude = $request->get('latitude');
         $locationdata = [];
         
         /*if($complexity == 1){
@@ -216,12 +220,13 @@ class MapsController extends Controller
             $placeStar->hunt_clues()->delete();
             $placeStar->delete();
         }
-
+        
         foreach ($coordinates as $key => $value) {
             $location['Type'] = 'Point';
             $location['coordinates'] = [
-                                            $value[0],
-                                            $value[1]
+                                            //$value[0],
+                                            // $value[1]
+                                            (float)$longitude[$key],(float)$latitude[$key]
                                         ];
             /** est time **/
             $km = $distance/1000;
@@ -243,8 +248,11 @@ class MapsController extends Controller
                                 
             $huntComplexities->hunt_clues()->updateOrCreate([
                                 'hunt_complexity_id' =>  $huntComplexities->_id,
-                                'location.coordinates.0' =>  $value[0],
-                                'location.coordinates.1' =>  $value[1],
+                                // 'location.coordinates.0' =>  $value[0],
+                                // 'location.coordinates.0' =>  $value[0],
+                                 'location.coordinates.0' =>  (float)$longitude[$key],
+                                 'location.coordinates.1' =>  (float)$latitude[$key],
+
                             ],[
                                 'hunt_complexity_id' => $huntComplexities->_id,
                                 'location'           => $location,
@@ -400,7 +408,7 @@ class MapsController extends Controller
         $data['google_location'] = (isset($data['google_location']) && $data['google_location']=="true"?true:false);
 
         $boundingbox = $request->get('boundary_box');
-        $data['boundingbox'] = array_map('strval', array_values(json_decode($request->get('boundary_box'),true)));
+        $data['boundingbox'] = array_map('floatval', array_values(json_decode($request->get('boundary_box'),true)));
         
         $location = Hunt::create($data);
         return response()->json([

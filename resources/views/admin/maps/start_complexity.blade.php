@@ -58,11 +58,12 @@
                     <div class="locatininfoinerbtn">
                         <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>5]) }}" class="btn btn-info btn-md @if($complexity == 5) active_btn @endif @if(in_array(5,$complexityarr)) border_black @endif">5 Stars</a>
                     </div>
-                    <div class="row" id="game_box">
+                    <div class="cluecverbox" id="game_box">
                         @if(isset($location->hunt_complexities[0]))
                             @forelse ($location->hunt_complexities[0]->hunt_clues as $key => $gamedetails)
                                 <div class="game_section{{ $key }} selected_game" id="game_{{ str_replace('.','_',substr($gamedetails->location['coordinates'][0], 0, 12).substr($gamedetails->location['coordinates'][1],0,12)) }}">
-                                    <div class="form-group col-md-8">
+                                    <h5>Clue {{ $key+1 }}</h5>
+                                    <div class="form-group">
                                         <label>Game:</label>
                                         <select name="game_id[]" class="form-control" data-id="{{ $key }}">
                                             <option value="">Select game</option>
@@ -73,7 +74,7 @@
                                             @endforelse
                                         </select>
                                     </div>
-                                    <div class="form-group col-md-8">
+                                    <div class="form-group">
                                         <label>Game Variations:</label>
                                         <select name="game_variation_id[]" class="form-control">
                                             <?php
@@ -88,6 +89,17 @@
                                                 <option value="">Select game variation</option>
                                             @endif
                                         </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Location(latitude,longitude): </label>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <input type="text" class="form-control" name="latitude[]" value="{{ $gamedetails->location['coordinates'][1] }}">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="text" class="form-control" name="longitude[]" value="{{ $gamedetails->location['coordinates'][0] }}">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             @empty
@@ -166,7 +178,8 @@
             // var marker = new google.maps.Marker({position: coord, map: map});
             var i=0;
             var icon = {
-                url: "{{ asset('admin_assets/images/blue_marker.png') }}",
+                //url: "{{ asset('admin_assets/images/blue_marker.png') }}",
+                url: "{{ asset('admin_assets/images/purple_marker.png') }}",
                 scaledSize: new google.maps.Size(20, 32),
             };
 
@@ -181,6 +194,8 @@
             });
             bermudaTriangle.setMap(map);
             var coordinates = [];
+            var labels = '123456789';
+            var labelIndex = 0;
             <?php
                 if(count($location->hunt_complexities) > 0){
                     $coord = [];
@@ -197,6 +212,7 @@
                       position: { lat: {{ $coordinates[1] }} , lng: {{ $coordinates[0] }} },
                       map: map,
                       size:[10,10],
+                      label: {text: labels[labelIndex++ % labels.length], color: "white"},
                       icon:icon
                   });
                 <?php } ?>
@@ -234,7 +250,7 @@
                     var totalDistance = Math.round(distance);
                     
                     $('#totalDistance').html('<span>Total Distance :</span> '+parseFloat((totalDistance/1000).toFixed(2))+ 'KM');
-
+                    var p = 1;
                     for (var i =0; i < vertices.getLength(); i++) {
 
 
@@ -271,22 +287,35 @@
                             games.splice($.inArray(random_game, games),1);
 
                             $('.selected_game:nth-child('+i+')').after('<div class="game_section'+i+' selected_game" id="game_'+gameId.replace(/\./g,'_')+'">\
-                                                    <div class="form-group col-md-8">\
+                                                    <h5>Clue '+p+'</h5>\
+                                                    <div class="form-group">\
                                                         <label>Game:</label>\
                                                         <select name="game_id[]" data-action="game_id'+i+'" data-id="'+i+'" class="form-control">\
                                                         '+option_game+'</select>\
                                                     </div>\
-                                                    <div class="form-group col-md-8">\
+                                                    <div class="form-group">\
                                                         <label>Game Variations:</label>\
                                                         <select name="game_variation_id[]" id="game_variation_id'+i+'" class="form-control">\
                                                             '+option_game_variation1+'\
                                                         </select>\
-                                                    <div>\
+                                                    </div>\
+                                                    <div class="form-group">\
+                                                        <label>Location(latitude,longitude): </label>\
+                                                        <div class="row">\
+                                                            <div class="col-md-6">\
+                                                            <input type="text" class="form-control" name="latitude[]" value="'+xy.lat()+'">\
+                                                            </div>\
+                                                            <div class="col-md-6">\
+                                                            <input type="text" class="form-control" name="longitude[]" value="'+xy.lng()+'">\
+                                                            </div>\
+                                                        </div>\
+                                                    </div>\
                                                 <div>');
 
                         } else {
                             // alert('fail');
                         }
+                        p++;
                     }
                     $('#latitude').val(JSON.stringify(coordinates));
                 });
@@ -352,8 +381,9 @@
                     var i;
                     var games = <?php echo json_encode($games) ?>;
 
-
+                    var p=1;
                     for (i = 0; i < JSON.stringify(coordinates.length); i++) {
+                      
                         var option_game = "'<option value=''>Select game</option>";
                         var option_game_variation = "'<option value=''>Select game variation</option>";
                         var random_game = games[Math.floor(Math.random()*games.length)];
@@ -379,20 +409,33 @@
 
                          //GAME SELECT REMOVE
                         games.splice($.inArray(random_game, games),1);
-
-                        var html = '<div class="game_section'+i+'">\
-                                        <div class="form-group col-md-8">\
+                        
+                        var html = '<div class="game_section'+i+' selected_game">\
+                                        <h5>Clue '+p+'</h5>\
+                                        <div class="form-group">\
                                             <label>Game:</label>\
                                             <select name="game_id[]" data-action="game_id'+i+'" data-id="'+i+'" class="form-control">\
                                             '+option_game+'</select>\
                                         </div>\
-                                        <div class="form-group col-md-8">\
+                                        <div class="form-group">\
                                             <label>Game Variations:</label>\
                                             <select name="game_variation_id[]" id="game_variation_id'+i+'" class="form-control">\
                                             '+option_game_variation+'</select>\
                                         <div>\
+                                        <div class="form-group">\
+                                            <label>Location(latitude,longitude): </label>\
+                                            <div class="row">\
+                                                <div class="col-md-6">\
+                                                    <input type="text" class="form-control" name="latitude[]" value="'+coordinates[i][1]+'">\
+                                                </div>\
+                                                <div class="col-md-6">\
+                                                    <input type="text" class="form-control" name="longitude[]" value="'+coordinates[i][0]+'">\
+                                                </div>\
+                                            </div>\
+                                        </div>\
                                     <div>';
                         $('#game_box').append(html);
+                        p++;
                     }
                     $('#latitude').val(JSON.stringify(coordinates));
                 });
