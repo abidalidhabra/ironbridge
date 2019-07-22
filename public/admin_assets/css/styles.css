@@ -1453,7 +1453,9 @@ i.iconsetaddbox{
 
 
 
-
+.left_paretboxpart .dropdown{
+    width: 100%;
+}
 
 
 
