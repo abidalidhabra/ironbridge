@@ -84,10 +84,10 @@ class ClueController extends Controller
         }
 
         // $skeletonExists = User::where(['skeleton_keys.used_at' => null, '_id'=> $userId])->project(['_id'=> true, 'skeleton_keys.$'=>true])->first();
-        // $skeletonExists = User::where(['skeleton_keys.used_at' => null, '_id'=> $userId])->update(['skeleton_keys.$.used_at'=> new MongoDBDate()]);
-        // if (!$skeletonExists) {
-        //     return response()->json(['message'=>'You does not have any key to use.'], 422);
-        // }
+        $skeletonExists = User::where(['skeleton_keys.used_at' => null, '_id'=> $userId])->update(['skeleton_keys.$.used_at'=> new MongoDBDate()]);
+        if (!$skeletonExists) {
+            return response()->json(['message'=>'You does not have any key to use.'], 422);
+        }
 
         // $huntFinished = $this->actionOnClue($huntUserDetail, 'completed');
         $actionOnClueRequest = new ActionOnClueRequest();
