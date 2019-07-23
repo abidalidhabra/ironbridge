@@ -331,8 +331,34 @@ class GameVariationController extends Controller
     public function getGameVariationList(Request $request){
         $skip = (int)$request->get('start');
         $take = (int)$request->get('length');
-        $count = GameVariation::get()->count();
-        return DataTables::of(GameVariation::with('game:_id,name')->orderBy('created_at','DESC')->skip($skip)->take($take)->get())
+        $search = $request->get('search')['value'];
+        $gameVariation = GameVariation::select('variation_name','variation_size','variation_complexity','variation_image','row','game_id','column');
+
+        if($search != ''){
+            $gameVariation->where(function($query) use ($search){
+                $query->where('variation_name','like','%'.$search.'%')
+                ->orWhere('variation_size','like','%'.$search.'%')
+                ->orWhere('variation_complexity','like','%'.$search.'%')
+                ->orWhere('row','like','%'.$search.'%')
+                ->orWhere('game_id','like','%'.$search.'%')
+                ->orWhere('column','like','%'.$search.'%');
+            });
+        }
+
+        $gameVariation = $gameVariation->with('game:_id,name')->orderBy('created_at','DESC')->skip($skip)->take($take)->get();
+
+        $count = GameVariation::count();
+        if($search != ''){
+            $count = GameVariation::where(function($query) use ($search){
+                $query->where('variation_name','like','%'.$search.'%')
+                ->orWhere('variation_size','like','%'.$search.'%')
+                ->orWhere('variation_complexity','like','%'.$search.'%')
+                ->orWhere('row','like','%'.$search.'%')
+                ->orWhere('game_id','like','%'.$search.'%')
+                ->orWhere('column','like','%'.$search.'%');
+            })->count();
+        }
+        return DataTables::of($gameVariation)
         ->addIndexColumn()
         ->editColumn('game_name', function($query){
             return $query->game->name;
@@ -373,6 +399,7 @@ class GameVariationController extends Controller
                     
                 })
         ->setTotalRecords($count)
+        ->setFilteredRecords($count)
         ->skipPaging()
         ->make(true);
     }

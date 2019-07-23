@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\ActionOnClueRequest;
 use App\Models\v1\WidgetItem;
 use App\Models\v2\HuntReward;
+// use App\Models\v1\User;
 use App\Models\v2\HuntUser;
 use App\Models\v2\HuntUserDetail;
 use Illuminate\Http\Request;
@@ -69,7 +70,7 @@ class ClueController extends Controller
         return response()->json(['message'=>'Action on clue has been taken successfully.', 'game_info'=> $gameData]);
     }
 
-    public function useTheSkeletonKey(ActionOnClueRequest $request){
+    public function useTheSkeletonKey(Request $request){
 
         $huntUserDetailId = $request->hunt_user_details_id;
         $user   = auth()->User();
@@ -82,24 +83,25 @@ class ClueController extends Controller
             return response()->json(['message'=>'You cannot use skeleton key in this clue, as it already ended.'], 422);
         }
 
-        $huntUser = $huntUserDetail
-                        ->hunt_user
-                        ->where('user_id',$user->id)
-                        ->where('skeleton_keys.used',false)
-                        ->first();
+        // $huntUser = $huntUserDetail
+        //                 ->hunt_user
+        //                 ->where('user_id',$user->id)
+        //                 ->where('skeleton_keys.used',false)
+        //                 ->first();
 
-        if ($huntUser) {
+        // $key = User::where(['skeleton_keys.used_at' => null, '_id'=> $userId])->project(['_id'=> true, 'skeleton_keys.$'=>true])->first();
+        $skeletonExists = $user->where(['skeleton_keys.used_at' => null])->project(['_id'=> true, 'skeleton_keys.$'=>true])->first();
+        if ($skeletonExists) {
             
-            $huntUser->where('skeleton_keys.used',false)
+            $user->where('skeleton_keys.used_at',null)
                     ->update([
-                        'skeleton_keys.$.used'=>true, 
-                        'skeleton_keys.$.used_date'=>new MongoDBDate()
+                        'skeleton_keys.$.used_at'=> new MongoDBDate()
                     ]);
         }else{
             return response()->json(['message'=>'You does not have any key to use.'], 422);
         }
 
-        $huntFinished = $this->takeActionOnClue($huntUserDetail, 'completed');
+        $huntFinished = $this->actionOnClue($huntUserDetail, 'completed');
         return response()->json(['message'=> 'Clue Timer has been ended successfully.', 'hunt_finished'=> $huntFinished
         ]);
     }

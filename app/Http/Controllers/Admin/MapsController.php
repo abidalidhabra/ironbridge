@@ -14,6 +14,7 @@ use Validator;
 use Carbon\Carbon;
 use App\Models\v1\Game;
 use App\Models\v1\GameVariation;
+use App\Models\v1\ComplexityTarget;
 use MongoDB\BSON\ObjectID;
 
 class MapsController extends Controller
@@ -26,8 +27,32 @@ class MapsController extends Controller
     public function getMaps(Request $request){
     	$skip = (int)$request->get('start');
         $take = (int)$request->get('length');
-        $city = Hunt::select('latitude','longitude','place_name','city','province','country','name','updated_at')->skip($skip)->take($take)->orderBy('updated_at', 'DESC')->get();
-    	$count = Hunt::count();
+        $search = $request->get('search')['value'];
+        $city = Hunt::select('latitude','longitude','place_name','city','province','verified','country','name','updated_at');
+        if($search != ''){
+            $city->where(function($query) use ($search){
+                $query->orWhere('place_name','like','%'.$search.'%')
+                ->orWhere('city','like','%'.$search.'%')
+                ->orWhere('province','like','%'.$search.'%')
+                ->orWhere('country','like','%'.$search.'%')
+                ->orWhere('verified','like','%'.$search.'%')
+                ->orWhere('name','like','%'.$search.'%')
+                ->orWhere('updated_at','like','%'.$search.'%');
+            });
+        }
+        $city = $city->skip($skip)->take($take)->orderBy('updated_at', 'DESC')->get();
+        $count = Hunt::count();
+        if($search != ''){
+            $count = Hunt::where(function($query) use ($search){
+                $query->orWhere('place_name','like','%'.$search.'%')
+                ->orWhere('city','like','%'.$search.'%')
+                ->orWhere('province','like','%'.$search.'%')
+                ->orWhere('country','like','%'.$search.'%')
+                ->orWhere('verified','like','%'.$search.'%')
+                ->orWhere('name','like','%'.$search.'%')
+                ->orWhere('updated_at','like','%'.$search.'%');
+            })->count();
+        }
         return DataTables::of($city)
         ->addIndexColumn()
         ->editColumn('name', function($city){
@@ -43,6 +68,13 @@ class MapsController extends Controller
         ->addColumn('map', function($city){
             return '<a href="'.route('admin.boundary_map',$city->id).'" ><img src="'.asset('admin_assets/svg/map-marke-icon.svg').'"</a>';
         })
+        ->addColumn('verified', function($city){
+            if ($city->verified) {
+                return 'Verified';
+            } else {
+                return 'Not Verified';
+            }
+        })
         ->addColumn('action', function($city){
             return '<a href="'.route('admin.edit_location',$city->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>
                 <a href="javascript:void(0)" class="delete_location" data-action="delete" data-placement="left" data-id="'.$city->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>
@@ -54,6 +86,7 @@ class MapsController extends Controller
             }
         })
         ->setTotalRecords($count)
+        ->setFilteredRecords($count)
         ->skipPaging()
         ->rawColumns(['map','action'])
         ->make(true);
@@ -90,11 +123,26 @@ class MapsController extends Controller
                                 ->where('hunt_id',$id)
                                 ->pluck('complexity')
                                 ->toArray();
+        $usedGameId = [];
+        $totalDistance = '';
+        if (count($location->hunt_complexities) > 0) {
+            $usedGameId = $location->hunt_complexities[0]->hunt_clues->pluck('game_id')->toArray();
+            $totalDistance = number_format($location->hunt_complexities[0]->distance/1000,2).' KM';
+        }
+        
         $games = Game::whereHas('game_variation')
                         ->with('game_variation:_id,variation_name,game_id,status')
                         ->where('status',true)
                         ->get();
+        
+        $usedGame = array_values($games->whereNotIn('_id',$usedGameId)->toArray());
 
+        
+        /*echo "<pre>";
+        print_r($games->toArray());
+        print_r($usedGame->toArray());
+        exit;*/
+        // $usedGame = Game::        
         
         
         $cluesCoordinates = [];
@@ -103,11 +151,8 @@ class MapsController extends Controller
                 $cluesCoordinates[] = [$clues->location['coordinates'][0],$clues->location['coordinates'][1]];
             }
         }
-        // echo "<pre>";
-        // print_r($games->toArray());
-        // exit();
-        // $clueLocation = 
-        return view('admin.maps.start_complexity',compact('location','complexity','complexitySuf','id','complexityarr','games','cluesCoordinates'));
+        
+        return view('admin.maps.start_complexity',compact('location','complexity','complexitySuf','id','complexityarr','games','cluesCoordinates','usedGame','totalDistance'));
     }
 
     //GET VARIATION
@@ -128,10 +173,13 @@ class MapsController extends Controller
     //boundary map
     public function storeStarComplexity(Request $request){
         $validator = Validator::make($request->all(),[
-                        'hunt_id'   => 'required',
-                        'game_id.*'   => 'required',
+                        'hunt_id'       => 'required',
+                        'game_id.*'     => 'required',
                         'game_variation_id.*' => 'required',
-                        'coordinates'=> 'required|json',
+                        'longitude.*' => 'required|numeric',
+                        'latitude.*' => 'required|numeric',
+                        'coordinates'   => 'required|json',
+                        'distance'      => 'required',
                     ]);
         
         if ($validator->fails())
@@ -146,9 +194,11 @@ class MapsController extends Controller
         $gameVariationId = $request->get('game_variation_id');
         $hunt = Hunt::where('_id',$id)->first();
         $coordinates = json_decode($request->get('coordinates'));
+        $longitude = $request->get('longitude');
+        $latitude = $request->get('latitude');
         $locationdata = [];
         
-        if($complexity == 1){
+        /*if($complexity == 1){
             $distance = 50*count($coordinates);
         } elseif($complexity == 2){
             $distance = 100*count($coordinates);
@@ -158,13 +208,25 @@ class MapsController extends Controller
             $distance = 500*count($coordinates);
         } elseif($complexity == 5){
             $distance = 1000*count($coordinates);
-        }
+        }*/
+        $distance = (int)round($request->get('distance'));
 
+        $placeStar = HuntComplexity::where([
+                            'hunt_id'   => $id,
+                            'complexity' => $complexity,
+                        ])
+                        ->first();
+        if ($placeStar) {
+            $placeStar->hunt_clues()->delete();
+            $placeStar->delete();
+        }
+        
         foreach ($coordinates as $key => $value) {
             $location['Type'] = 'Point';
             $location['coordinates'] = [
-                                            $value[0],
-                                            $value[1]
+                                            //$value[0],
+                                            // $value[1]
+                                            (float)$longitude[$key],(float)$latitude[$key]
                                         ];
             /** est time **/
             $km = $distance/1000;
@@ -177,15 +239,26 @@ class MapsController extends Controller
 
             $huntComplexities = $hunt->hunt_complexities()->updateOrCreate(['hunt_id'=>$id,'complexity'=>$complexity],['hunt_id'=>$id,'complexity'=>$complexity,'est_completion'=>(int)round($estTime),'distance'=>$distance]);
 
+            $target = ComplexityTarget::where([
+                                    'game_id' => $gameId[$key], 
+                                    'complexity'=> $complexity
+                                ])
+                                ->pluck('target')
+                                ->first();
+                                
             $huntComplexities->hunt_clues()->updateOrCreate([
                                 'hunt_complexity_id' =>  $huntComplexities->_id,
-                                'location.coordinates.0' =>  $value[0],
-                                'location.coordinates.1' =>  $value[1],
+                                // 'location.coordinates.0' =>  $value[0],
+                                // 'location.coordinates.0' =>  $value[0],
+                                 'location.coordinates.0' =>  (float)$longitude[$key],
+                                 'location.coordinates.1' =>  (float)$latitude[$key],
+
                             ],[
                                 'hunt_complexity_id' => $huntComplexities->_id,
                                 'location'           => $location,
                                 'game_id'            => $gameId[$key],
                                 'game_variation_id'  => $gameVariationId[$key],
+                                'target'             => $target
                             ]);
         }
 
@@ -278,7 +351,7 @@ class MapsController extends Controller
         $validator = Validator::make($request->all(),[
                         'name'  => 'required',
                         'boundary_arr' => 'required',
-                        'place_name'   => 'required',
+                        // 'place_name'   => 'required',
                         'latitude'     => 'required',
                         'longitude'    => 'required',
                         'city'         => 'required',
@@ -286,15 +359,16 @@ class MapsController extends Controller
                         'country'      => 'required',
                         'fees'         => 'required',
                     ]);
-        
         if ($validator->fails())
         {
             $message = $validator->messages()->first();
             return response()->json(['status' => false,'message' => $message]);
         }
 
-
         $data = $request->all();
+        if($data['place_name']==""){
+            $data['place_name'] = $data['name'];
+        }
         
         // $cityInfo = TreasureLocation::get();
         // foreach ($cityInfo as $key => $value) {
@@ -331,9 +405,11 @@ class MapsController extends Controller
 
         $data['boundaries_arr'] = $boundaries_arr;
         $data['fees'] = (float)$request->get('fees');
+        $data['google_location'] = (isset($data['google_location']) && $data['google_location']=="true"?true:false);
 
         $boundingbox = $request->get('boundary_box');
-        $data['boundingbox'] = array_map('strval', array_values(json_decode($request->get('boundary_box'),true)));
+        $data['boundingbox'] = array_map('floatval', array_values(json_decode($request->get('boundary_box'),true)));
+        
         $location = Hunt::create($data);
         return response()->json([
             'status' => true,
@@ -379,6 +455,18 @@ class MapsController extends Controller
     //TEST 
     public function testLocation(Request $request){
         return view('admin.maps.test_location');        
+    }
+
+    //VERIFIED UPDATE
+    public function verifiedUpdate(Request $request){
+        $status = $request->get('status'); 
+        $id = $request->get('id'); 
+        Hunt::where('_id',$id)
+            ->update(['verified' => ($status == 'true')?true:false]);
+        return response()->json([
+            'status' => true,
+            'message'=>'verified has been updated successfully',
+        ]);
     }
 
     //CUSTOM STORE

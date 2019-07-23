@@ -18,6 +18,7 @@
                         <th>Email</th>
                         <th>Username</th>
                         <th>Date of birth</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -57,6 +58,7 @@
                     { data:'email',name:'email' },
                     { data:'username',name:'username' },
                     { data:'dob',name:'dob'},
+                    { data:'action',name:'action'},
                 ],
 
             });

@@ -26,8 +26,8 @@
                 <h2 class="locatininfobtn"><span>Location Info</span> 
                     <a href="javascript:void(0);" class="btn btn-info btn-md" id="clearAllClues" data-action='delete'>Clear Clues</a>
                 </h2>
-                @if($location->custom_name)
-                    <h3><span>Custom Name :</span> {{ $location->custom_name }}</h3>
+                @if($location->name)
+                    <h3><span>Name :</span> {{ $location->name }}</h3>
                 @endif
                 <h3><span>Place Name :</span> {{ $location->place_name }}</h3>
                 <h3><span>City :</span> {{ $location->city }}</h3>
@@ -48,6 +48,9 @@
                 </div>
                 <div class="locatininfoinerbtn">
                     <a href="{{ route('admin.starComplexityMap',['id'=>$location->_id,'complexity'=>5]) }}" class="btn btn-info btn-md @if(in_array(5,$complexityarr)) active_btn @endif">5 Stars</a>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" name="verified" @if($location->verified){{ 'checked' }}@endif>Verified?</label>
                 </div>
             </div>
              <div class="customdatatable_box">
@@ -113,7 +116,9 @@
             var map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 16,
                 center: uluru,
-                mapTypeId: 'terrain'
+                mapTypeId: 'terrain',
+                scaleControl: true
+                
             });
 
             
@@ -134,6 +139,33 @@
             });
             bermudaTriangle.setMap(map);
         }
+
+
+        //verified
+        $(document).on('click',"input[name='verified']",function(e){
+            if ($(this).is(":checked")){
+                var status = "true";
+            } else {
+                var status = "false";
+            }
+            $.ajax({
+                type: "post",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '{{ route("admin.verifiedUpdate") }}',
+                data: {id:'{{ $location->_id }}',status : status},
+                success: function(response)
+                {
+                    if (response.status == true) {
+                        toastr.success(response.message);
+                        location.reload();
+                    } else {
+                        toastr.warning(response.message);
+                    }
+                }
+            });
+        });
     </script>
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0AzhRBk1LARqw9SDz9qwpAkTYDaQNe6o&callback=initMap">

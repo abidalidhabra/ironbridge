@@ -10,7 +10,7 @@ use App\Http\Requests\v1\NearByHuntsRequest;
 use App\Http\Requests\v1\ParticipateRequest;
 use App\Models\v1\Game;
 use App\Models\v1\Hunt;
-use App\Models\v1\Hunt as HuntV2;
+use App\Models\v2\Hunt as HuntV2;
 use App\Models\v1\HuntComplexity;
 use App\Models\v1\ComplexityTarget;
 use App\Models\v1\HuntUser;
@@ -39,7 +39,8 @@ class HuntController extends Controller
     	
     	$location = Hunt::select('location','place_name','place_id','boundaries_arr','boundingbox')
                                     ->with('hunt_complexities:_id,hunt_id')
-    								->whereIn('city',['Nanaimo'])
+    								->whereIn('city',['Montréal','Québec','Gatineau','Sherbrooke','Trois-Rivières','Chicoutimi','Jonquière','Saint-Jean-sur-Richelieu','Châteauguay','Drummondville','Saint-Jérôme','Granby','Beloeil','Saint-Hyacinthe','Shawinigan','Joliette','Victoriaville','Salaberry-de-Valleyfield','Rimouski','Sorel','Alma','Saint-Georges','Rouyn-Noranda','Buckingham','Sept-Îles','Hudson','Thetford Mines','Magog','Varennes','Rivière-du-Loup','Les Coteaux','Port-Alfred-Bagotville','Dolbeau','Hauterive','Cowansville','Matane','Lachute','Sainte-Anne-des-Plaines','Lavaltrie','Sainte-Marie',"L'Assomption","Val-d'Or"])
+                                    ->where('boundaries_arr', '!=','')
     								->get()
     								->map(function($query){
     									if (count($query->hunt_complexities) > 0) {
@@ -78,6 +79,7 @@ class HuntController extends Controller
 
         $data  = json_decode($request->get('data'),true);
         $id = $data['_id'];
+
         $hunt = Hunt::where('_id',$id)->first();
         if (!$hunt) {
             return response()->json(['message' => 'Hunt not found successfully'],422); 
@@ -93,13 +95,22 @@ class HuntController extends Controller
                     $fixClueMins = count($value['total_clues'])*5;
                     $estTime =  ($mins + $fixClueMins)*60;
                     $huntComplexities = $hunt->hunt_complexities()->updateOrCreate(['hunt_id'=>$id,'complexity'=>$key],['hunt_id'=>$id,'complexity'=>$key,'distance'=>$distance,'est_completion'=>(int)round($estTime)]);
+                    
+                    $gameUsedId = [];
                     foreach ($value['total_clues'] as $latlng) {
                         $game = Game::whereHas('game_variation')
                                     ->with('game_variation')
+                                    ->whereNotIn('_id',$gameUsedId)
                                     ->where('status',true)
-                                    ->get()
-                                    ->random(1);
+                                    ->get();
+                        if ($game->count() == 0) {
+                            return response()->json(['message' => 'Please new game created'],422);
+                        }
                         
+                        $game = $game->random(1);
+
+                        $gameUsedId[] = $game[0]->id;
+
                         $rand_variation = rand(0,$game[0]['game_variation']->count()-1);
                         $gameVariationId = $game[0]['game_variation'][$rand_variation]->id;
 
@@ -160,7 +171,8 @@ class HuntController extends Controller
                                     //     }]);
                                     // }])
                                     ->with(['hunt_users'=>function($query) use ($clue,$userId){
-                                        $query->where('user_id',$userId)->where('complexity',$clue);
+                                        // $query->where('user_id',$userId)->where('complexity',$clue);
+                                        $query->where('user_id',$userId);
                                     }])
                                     ->get()
                                     ->map(function($query){
@@ -257,7 +269,7 @@ class HuntController extends Controller
                                 unset($query->hunt_user_details);
                                 return $query;
                             });
-        $hunt = Hunt::select('_id','name','location','place_name','fees')
+        $hunt = Hunt::select('_id','name','location','place_name','fees','boundaries_arr')
                     ->whereHas('hunt_complexities',function($query) use ($clueId){
                         $query->where('complexity',$clueId);
                     })
@@ -290,6 +302,7 @@ class HuntController extends Controller
             $bestTime = min(array_diff($huntUser->pluck('finished_in')->toArray(), array(0)));
         }
         
+        $maxComplexity = Hunt::where('_id',$huntId)->first()->hunt_complexities()->max('complexity');
         $data = [
                     'hunt_id'       => $hunt->id,
                     'name'          => ($hunt->name != "")?$hunt->name:$hunt->place_name,
@@ -302,6 +315,8 @@ class HuntController extends Controller
                     'cost'          => $hunt->fees,
                     'complexity'    => $clueId,
                     'distance'      => number_format($hunt->hunt_complexities[0]->distance/1000,1),
+                    'max_complexity'=> $maxComplexity,
+                    'boundaries_arr'=> $hunt->boundaries_arr,
                 ];
 
         return response()->json(['message'=>'Hunt clues has been retrieved successfully','data'=>$data]);
@@ -634,7 +649,7 @@ class HuntController extends Controller
                                                             '$and'=> [
                                                                [ '$eq'=> [ '$hunt_id',  '$$hunt_string_id' ] ],
                                                                [ '$eq'=> [ '$user_id', $userId ] ],
-                                                               [ '$eq'=> [ '$complexity', $star ] ]
+                                                               // [ '$eq'=> [ '$complexity', $star ] ]
                                                             ]
                                                         ]
                                                     ]

@@ -5,17 +5,21 @@ namespace App\Http\Controllers\Api\v1;
 use App\Helpers\TransactionHelper;
 use App\Http\Controllers\Controller;
 use App\Models\v1\Avatar;
+use App\Models\v1\CityInfo;
+use App\Models\v1\TreasureLocation;
 use App\Models\v1\User;
 use App\Models\v1\UserBalancesheet;
-use App\Models\v1\TreasureLocation;
-use App\Models\v1\CityInfo;
+use App\Models\v1\WidgetItem;
 use Auth;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use MongoDB\BSON\UTCDateTime as MongoDBDate;
+use MongoDB\BSON\ObjectId as MongoDBId;
 use Route;
 use UserHelper;
 use Validator;
-use MongoDB\BSON\UTCDateTime as MongoDBDate;
-use Carbon\Carbon;
+use stdClass;
+use Exception;
 
 class UserController extends Controller
 {
@@ -31,17 +35,19 @@ class UserController extends Controller
     }
 
     public function register(Request $request){
-    	
-    	/* Validate the incoming request */
+    	try {
+           
+
+        /* Validate the incoming request */
         $request['email'] = strtolower($request['email']);
         $request['username'] = strtolower($request['username']);
         $validator = Validator::make($request->all(),[
                         'first_name' => "required|string|max:20",
                         'last_name'  => "required|string|max:20",
                         'email'      => "required|string|email|unique:users,email",
-                        'password' 	 => "required|string|min:6",
+                        'password'   => "required|string|min:6",
                         'username'   => "required|string|unique:users,username",
-                        'dob'  		 => "required|date_format:d-m-Y",
+                        'dob'        => "required|date_format:d-m-Y",
                         'longitude' => 'required', 
                         'latitude'  => 'required',
                         'device_type'  => "nullable|string",
@@ -64,53 +70,63 @@ class UserController extends Controller
 
         // $data['dob'] = new MongoDBDate(Carbon::parse($dob));
         /* Get the parameters */
-		$firsNname  = $request->first_name;
-		$lastName 	= $request->last_name;
-		$email 		= $request->email;
-		$password 	= bcrypt($request->password);
-		$username 	= $request->username;
-		// $dob 		= $request->dob;
+        $firsNname  = $request->first_name;
+        $lastName   = $request->last_name;
+        $email      = $request->email;
+        $password   = bcrypt($request->password);
+        $username   = $request->username;
+        // $dob         = $request->dob;
         $dob        = new MongoDBDate(Carbon::parse($request->get('dob')));
-		$longitude 	= (float)$request->longitude;
-		$latitude 	= (float)$request->latitude;
-		$deviceType = $request->device_type;
-		$firebaseId = $request->firebase_id;
-		$refferedBy = $request->reffered_by;
+        $longitude  = (float)$request->longitude;
+        $latitude   = (float)$request->latitude;
+        $deviceType = $request->device_type;
+        $firebaseId = $request->firebase_id;
+        $refferedBy = $request->reffered_by;
         $goldBalance = 5000;
 
         /** Get the lcoation from coordinates **/
-        $address = UserHelper::getUserLocation($latitude, $longitude);
+        // $address = UserHelper::getUserLocation($latitude, $longitude);
         // print_r($request->all());
         // exit();
-		/* Insert the data into the database */
-		$user = User::create([
-			'first_name' 	=> $firsNname,
-			'last_name' 	=> $lastName,
-			'email' 		=> $email,
-			'password' 		=> $password,
-			'username' 		=> $username,
-			'dob' 			=> $dob,
-            'address'       => $address,
+        /* Insert the data into the database */
+        $user = User::create([
+            'first_name'    => $firsNname,
+            'last_name'     => $lastName,
+            'email'         => $email,
+            'password'      => $password,
+            'username'      => $username,
+            'dob'           => $dob,
+            'address'       => new stdClass(),
             'gold_balance'  => $goldBalance,
-			'location' => [
-				'type' => 'Point',
-				'coordinates' => [
-					$longitude,
-					$latitude,
-				],
-			],
-			'device_type' 	=> ($request->filled('device_type'))?$deviceType:null,
-			'firebase_ids' => [
-				'android_id' => ($deviceType == 'android')?$firebaseId:null,
-				'ios_id'	 => ($deviceType == 'ios')?$firebaseId:null,
-			],
-			'reffered_by' 	=> ($request->filled('reffered_by'))?$refferedBy:null,
+            'location' => [
+                'type' => 'Point',
+                'coordinates' => [
+                    $longitude,
+                    $latitude,
+                ],
+            ],
+            'device_type'   => ($request->filled('device_type'))?$deviceType:null,
+            'firebase_ids' => [
+                'android_id' => ($deviceType == 'android')?$firebaseId:null,
+                'ios_id'     => ($deviceType == 'ios')?$firebaseId:null,
+            ],
+            'reffered_by'   => ($request->filled('reffered_by'))?$refferedBy:null,
             'reffered_id'   => $reffered_id,
+            'avatar'   => [
+                "avatar_id" => "5c9b66739846f40e807a4498", 
+                "eyes_color" => "#F08081", 
+                "hairs_color" => "#F08082", 
+                "skin_color" => "#F08083"
+            ],
+            'widgets'   => [
+                ['id'=> "5d246f0c0b6d7b19fb5ab590", 'selected'=> false],
+                ['id'=> "5d246f230b6d7b1a0a232482", 'selected'=> true]
+            ],
             // 'settings'   => [
             //     'sound_fx' => true,
             //     'music_fx' => true,
             // ],
-		]);
+        ]);
 
         /** Add balance sheet data for the gold balance **/
         TransactionHelper::makePassbookEntry($user->id,'SIGNUP','REWARD','CR',$goldBalance);
@@ -121,9 +137,9 @@ class UserController extends Controller
         //     'credit' => $goldBalance,
         // ]));
 
-		/* return the response **/
+        /* return the response **/
         $credentials = $request->only('email', 'password');
-		if ($token = Auth::guard('api')->attempt($credentials)) {
+        if ($token = Auth::guard('api')->attempt($credentials)) {
             
             $request->request->add(['user_id'=>$user->id]);
             $apiResponse = (new UserController)->getPayloadData($request);
@@ -135,17 +151,22 @@ class UserController extends Controller
 
             // $user->delete();
             return response()->json([
-            	'token' => $token,
-            	'data'	=> $user,
+                'token' => $token,
+                'data'  => $user,
                 'default_data'  => $apiResponse->original['data'],
-            	'message' => 'Your registration has been completed successfully.',
+                'message' => 'Your registration has been completed successfully.',
             ],200);
         }else{
-        	
-        	return response()->json([
-            	'token'	=> "",
-            	'data'  => [],
-            	'message' => 'Something went wrong while doing your registration.',
+            
+            return response()->json([
+                'token' => "",
+                'data'  => [],
+                'message' => 'Something went wrong while doing your registration.',
+            ],500);
+        } 
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
             ],500);
         }
     }
@@ -185,13 +206,21 @@ class UserController extends Controller
             return response()->json(['message'=>$validator->messages()], 422);
         }
 
+        // $usersAll = User::where('widgets.id','!=','5d246f0c0b6d7b19fb5ab590')->get();
+        // $usersAll->map(function($user, $index){
+        //     $user->push('widgets',['id'=>'5d246f0c0b6d7b19fb5ab590','selected'=>false]);
+        //     $user->save();
+        //     return $user;
+        // });
+
     	$user       = Auth::user();
+        $userId     = $user->id;
     	$avatarId 	= $request->avatar_id;
 		$eyeColor 	= $request->eyes_color;
 		$hairColor  = $request->hairs_color;
 		$skinColors = $request->skin_color;
-        $widgets    = collect($request->widgets);
-       
+        $widgets    = $request->widgets;
+        
         $primaryAvatar = Avatar::where('_id',$avatarId)->select('_id','gender')->first();
         $user->gender = $primaryAvatar->gender;
         $user->avatar = [
@@ -202,9 +231,22 @@ class UserController extends Controller
         ];
         $user->save();
 
-        User::where('_id',$user->id)->where('widgets.selected', true)->update(['widgets.$.selected'=> false]);
-        User::where('_id',$user->id)->whereIn('widgets.id', $widgets)->update(['widgets.$.selected'=> true]);
-		return response()->json(['message' => 'Your avatar has been updated successfully.']);
+        User::where('_id',$user->id)
+            ->where('widgets.selected', true)
+            ->update(['widgets.$[].selected'=> false]);
+
+        User::where('_id',$user->id)
+            ->update(['widgets.$[identifier].selected'=> true],[
+                'arrayFilters'=> [ 
+                    [ "identifier.id"=> ['$in'=> $widgets] ] 
+                ]
+            ]);
+        
+        $user = User::where('_id', $userId)->select('_id', 'avatar', 'widgets')->first();
+		return response()->json([
+            'message' => 'Your avatar has been updated successfully.', 
+            'data'=> $user
+        ]);
     }
 
     public function unlockWidgetItem(Request $request)
@@ -220,9 +262,24 @@ class UserController extends Controller
         }
 
         $user = Auth::user();
-        $user->push('widgets',$request->widget_item_id, true);
+        $widgetItemId = $request->widget_item_id;
+        $widgetItem = WidgetItem::find($widgetItemId);
 
-        return response()->json(['message' => 'Your Widget has been added successfully.']);
+        if($widgetItem->gold_price > 0 && $user->gold_balance < $widgetItem->gold_price){
+            return response()->json(['message' => 'You dont have enough gold balance to unlock this widget.'], 422);
+        }
+
+        if ($widgetItem->gold_price > 0 && $user->gold_balance >= $widgetItem->gold_price) {
+            $user->gold_balance -= $widgetItem->gold_price;
+            $user->save();
+        }
+
+        User::where('_id',$user->id)->where('widgets.id', '!=', $widgetItemId)->push(['widgets'=> ['id'=> $widgetItemId, 'selected'=> false]]);
+        return response()->json([
+            'message' => 'Your Widget has been unlocked successfully.',
+            'remaining_coins' => $user->gold_balance,
+            'widget_item_id' => $widgetItemId
+        ]);
     }
 
 

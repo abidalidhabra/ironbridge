@@ -23,12 +23,32 @@ class ComplexityTargetController extends Controller
     public function getComplexityTarget(Request $request){
     	$skip = (int)$request->get('start');
         $take = (int)$request->get('length');
+        $search = $request->get('search')['value'];
+
+        $complexityTarget = ComplexityTarget::select('game_id','complexity','target','created_at');
+        
+        if($search != ''){
+            $complexityTarget->where(function($query) use ($search){
+                $query->where('game_id','like','%'.$search.'%')
+                ->orWhere('target','like','%'.(int)$search.'%')
+                ->orWhere('created_at','like','%'.$search.'%')
+                ->orWhere('complexity','like','%'.(int)$search.'%');
+            });
+        }
+
+        $complexityTarget = $complexityTarget->orderBy('created_at','DESC')->skip($skip)->take($take)->get();
+
+
         $count = ComplexityTarget::count();
-        $complexityTarget = ComplexityTarget::with('game:_id,name')
-        									->orderBy('created_at','DESC')
-        									->skip($skip)
-        									->take($take)
-        									->get();
+        if($search != ''){
+            $count = ComplexityTarget::where(function($query) use ($search){
+                $query->where('game_id','like','%'.$search.'%')
+                ->orWhere('target','like','%'.(int)$search.'%')
+                ->orWhere('created_at','like','%'.$search.'%')
+                ->orWhere('complexity','like','%'.(int)$search.'%');
+            })->count();
+        }
+
         return DataTables::of($complexityTarget)
         ->addIndexColumn()
         ->addColumn('action', function($complexity){
@@ -45,6 +65,7 @@ class ComplexityTargetController extends Controller
                     
                 })
         ->setTotalRecords($count)
+        ->setFilteredRecords($count)
         ->skipPaging()
         ->make(true);
     }
@@ -66,7 +87,7 @@ class ComplexityTargetController extends Controller
 
 		ComplexityTarget::where('_id',$id)
 						->update([
-							'target' => $request->get('target'),
+							'target' => (int)$request->get('target'),
 						]);
 		
 		return response()->json([

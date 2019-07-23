@@ -15,6 +15,7 @@ use App\Models\v2\HuntUser;
 use App\Models\v2\HuntUserDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Exception;
 
 class HuntController extends Controller
 {
@@ -252,32 +253,37 @@ class HuntController extends Controller
 
     public function getHuntParticipationDetails(Request $request){
         
-        $validator = Validator::make($request->all(),[
-            'hunt_user_id'=> "required|exists:hunt_users,_id",
-        ]);
-        
-        if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()->first()],422);
+        try {
+            
+            $validator = Validator::make($request->all(),[
+                'hunt_user_id'=> "required|exists:hunt_users,_id",
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['message'=>$validator->messages()->first()],422);
+            }
+
+            $user = auth()->user();
+            $huntUserId = $request->hunt_user_id;
+
+            $huntUserDetails = HuntUserDetail::where(['hunt_user_id' => $huntUserId])
+            ->with('game:_id,name,identifier','game_variation:_id,variation_name,variation_complexity,target,no_of_balls,bubble_level_id,game_id')
+            ->select('_id','finished_in','status','location','game_id','game_variation_id','hunt_user_id', 'radius')
+            ->get();
+
+            $hunt = $huntUserDetails->first()->hunt_user()->select('_id', 'user_id', 'hunt_id', 'status')->first();
+
+            /** Pause the clue if running **/
+            (new ClueController)->calculateTheTimer($huntUserDetails,'paused');
+            return response()->json([
+                'message' => 'Clues details of hunt in which user is participated, has been retrieved successfully.', 
+                'hunt'=> $hunt,
+                'clues_data'=> $huntUserDetails
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['message'=> $e->getMessage()], 500);
         }
 
-        $user = auth()->user();
-        $huntUserId = $request->hunt_user_id;
-
-        $huntUserDetails = HuntUserDetail::where(['hunt_user_id' => $huntUserId])
-                            ->with('game:_id,name,identifier','game_variation:_id,variation_name,variation_complexity,target,no_of_balls,bubble_level_id,game_id')
-                            ->select('_id','finished_in','status','location','game_id','game_variation_id','hunt_user_id')
-                            ->get();
-        
-        $hunt = $huntUserDetails->first()->hunt_user()->select('_id', 'user_id', 'hunt_id', 'status')->first();
-
-        /** Pause the clue if running **/
-        // $request->request->add(['status'=> 'paused'])
-        (new ClueController)->calculateTheTimer($huntUserDetails, 'paused');
-        return response()->json([
-            'message' => 'Clues details of hunt in which user is participated, has been retrieved successfully.', 
-            'hunt'=> $hunt,
-            'clues_data'=> $huntUserDetails
-        ]);
     }
 
     public function participateInHunt(ParticipateRequest $request){
@@ -357,57 +363,66 @@ class HuntController extends Controller
 
     public function getHuntDetails(HuntDetailRequest $request){
         
-        $user   = auth()->user();
-        $userId = $user->id;
-        $huntId     = $request->hunt_id;
-        $complexity = (int)$request->complexity;
+        try {
+            
+            $user   = auth()->user();
+            $userId = $user->id;
+            $huntId     = $request->hunt_id;
+            $complexity = (int)$request->complexity;
 
-        $hunt = Hunt::where('_id', $huntId)->select('_id','name','location','fees', 'status')->first();
+            $hunt = Hunt::where('_id', $huntId)->select('_id','name','location','fees', 'status', 'boundaries_arr')->first();
 
-        $huntComplexities = $hunt->hunt_complexities;
-        $maxComplexity = $huntComplexities->max('complexity');
-        $huntDetails   = $huntComplexities->where('complexity',$complexity)->first();
+            $huntComplexities = $hunt->hunt_complexities;
+            $maxComplexity = $huntComplexities->max('complexity');
+            $huntDetails   = $huntComplexities->where('complexity',$complexity)->first();
 
-        // $maxComplexity = $hunt->hunt_complexities()->max('complexity');
+            // $maxComplexity = $hunt->hunt_complexities()->max('complexity');
 
-        // $huntDetails = $hunt->hunt_complexities()
-        //                     ->where('complexity',$complexity)
-        //                     ->select('hunt_id', 'complexity','est_completion','distance')
-        //                     ->first();
+            // $huntDetails = $hunt->hunt_complexities()
+            //                     ->where('complexity',$complexity)
+            //                     ->select('hunt_id', 'complexity','est_completion','distance')
+            //                     ->first();
 
-        $totalClues = $huntDetails->hunt_clues()->count();
+            $huntUserDetails = $huntDetails->hunt_clues()->select('_id', 'hunt_user_id', 'location', 'radius')->get();
+            $totalClues = $huntDetails->hunt_clues()->count();
+            // $totalClues = $huntUserDetails->count();
 
-        $bestTime = $hunt->hunt_users()->pluck('finished_in')->min();
-        
-        $participated   = false;
-        $completedClues = 0;
-        $timeTaken      = 0;
-        $completedDist  = 0;
-        $status         = "";
-        $userParticipation = $hunt->hunt_users()->where(['user_id'=> $userId, 'complexity'=> $complexity])->select()->first();
-        if ($userParticipation) {
-            $userClueDetails = $userParticipation->hunt_user_details;
-            $status = $userParticipation->status;
-            $participated = true;
-            $completedClues = $userClueDetails->where('status','completed')->count();
-            $timeTaken = $userClueDetails->sum('finished_in');
-            $completedDist = (($huntDetails->distance / $totalClues) * $completedClues);
+            $bestTime = $hunt->hunt_users()->pluck('finished_in')->min();
+            
+            $participated   = false;
+            $completedClues = 0;
+            $timeTaken      = 0;
+            $completedDist  = 0;
+            $status         = "";
+            $userParticipation = $hunt->hunt_users()->where(['user_id'=> $userId, 'complexity'=> $complexity])->select()->first();
+            
+            if ($userParticipation) {
+                $userClueDetails = $userParticipation->hunt_user_details;
+                $status = $userParticipation->status;
+                $participated = true;
+                $completedClues = $userClueDetails->where('status','completed')->count();
+                $timeTaken = $userClueDetails->sum('finished_in');
+                $completedDist = (($huntDetails->distance / $totalClues) * $completedClues);
+            }
+
+            $hunt->complexity       = $huntDetails->complexity;           
+            $hunt->est_completion   = $huntDetails->est_completion; /** Time in seconds **/   
+            $hunt->total_dist       = $huntDetails->distance;   /** Distance in meters **/
+            $hunt->total_clues      = $totalClues;           
+            $hunt->best_time        = ($bestTime !== null)?$bestTime:0; /** Time in meters **/
+            
+            $hunt->participated     = $participated;           
+            $hunt->completed_clues  = $completedClues;           
+            $hunt->time_taken       = $timeTaken;           
+            $hunt->completed_dist   = $completedDist;           
+            $hunt->user_hunt_status = $status;           
+            $hunt->max_complexity   = $maxComplexity;       
+            $hunt->hunt_user_details = $huntUserDetails;
+            unset($hunt->hunt_complexities);
+            return response()->json(['message'=>'Hunt details has been retrieved successfully.','data'=>$hunt]);
+        } catch (Exception $e) {
+            return response()->json(['message'=> $e->getMessage()], 500);
         }
-
-        $hunt->complexity       = $huntDetails->complexity;           
-        $hunt->est_completion   = $huntDetails->est_completion; /** Time in seconds **/   
-        $hunt->total_dist       = $huntDetails->distance;   /** Distance in meters **/
-        $hunt->total_clues      = $totalClues;           
-        $hunt->best_time        = ($bestTime !== null)?$bestTime:0; /** Time in meters **/
-        
-        $hunt->participated     = $participated;           
-        $hunt->completed_clues  = $completedClues;           
-        $hunt->time_taken       = $timeTaken;           
-        $hunt->completed_dist   = $completedDist;           
-        $hunt->user_hunt_status = $status;           
-        $hunt->max_complexity   = $maxComplexity;           
-        unset($hunt->hunt_complexities);
-        return response()->json(['message'=>'Hunt details has been retrieved successfully.','data'=>$hunt]);
     }
 
     public function pauseTheHunt(Request $request){

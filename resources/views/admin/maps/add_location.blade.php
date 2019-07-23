@@ -34,12 +34,29 @@
                             <label class="control-label">Name:</label>
                             <input type="text" class="form-control" placeholder="Enter custom name" name="name" id="name">
                         </div>
-                        <div class="form-group">
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="google_location" id="google_location" value="true" checked>Google Location</label>
+                        </div>
+                        <div class="form-group placenameBox">
                             <label class="control-label">Place Name:</label>
                             <input type="text" class="form-control" placeholder="Enter place name" name="place_name" id="place_name" autocomplete="off">
-                            <input type="hidden" name="latitude" id="latitude"/>
-                            <input type="hidden" name="longitude" id="longitude"/>
+                            <!-- <input type="hidden" name="latitude" id="latitude"/>
+                            <input type="hidden" name="longitude" id="longitude"/> -->
                         </div>
+                        <div class="form-group row latlongBox" style="display: none;">
+                            <div class="col-md-6">
+                                <label class="control-label">Latitude:</label>
+                                <input type="number" class="form-control" placeholder="Enter latitude" name="latitude" id="latitude"/>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="control-label">Longitude:</label>
+                                <input type="number" class="form-control"  placeholder="Enter longitude" name="longitude" id="longitude" />
+                            </div>
+                            <div class="col-md-12">
+                                <input id="submit" type="button" value="Reverse Geocode">
+                            </div>
+                        </div>
+                        
                         <div class="form-group">
                             <label class="control-label">City:</label>
                             <input type="text" class="form-control" placeholder="Enter city name" name="city" id="city">
@@ -84,19 +101,75 @@
                 location.reload();
             })
 
+            $(document).on('change','#google_location',function(){
+                if ($(this).is(':checked')) {
+                    $('#place_name').val('');
+                    $('.latlongBox').hide();
+                    $('.placenameBox').show();
+                } else {
+                    $('#latitude , #longitude , #place_name').val('');
+                    $('.placenameBox').hide();
+                    $('.latlongBox').show();
+                }
+            })
+
             //ADD LOCATION
             $('#place_name').focus(function() {
                 $(this).attr('autocomplete', 'new-placeSearch');
             });
 
+            var latitude = 51.048615; 
+            var longitude = -114.070847;
+            $("#latitude , #longitude").focusout(function(){
+               if (($('#latitude').val()!="" && $('#latitude').val() != 51.048615) && ($('#longitude').val()!="" && $('#longitude').val() != -114.070847)) {
+
+               }
+            });
+
+            /*$("#longitude").focus(function(){
+               longitude = $('#longitude').val();
+                initialize();
+            });*/
+
 
             function initialize() {
                 //static coordinates
                 var map = new google.maps.Map(document.getElementById('map'), {
-                  center: {lat: 51.048615, lng: -114.070847 },
-                  zoom: 18,
+                    center: {lat: latitude, lng: longitude },
+                    zoom: 18,
+                    scaleControl: true
                 });
-                
+
+                 /* LAT LONG BASED ADDRESS FIND */
+                var geocoder = new google.maps.Geocoder;
+                var infowindow = new google.maps.InfoWindow;
+                document.getElementById('submit').addEventListener('click', function() {
+                    var lat = parseFloat(document.getElementById("latitude").value);
+                    var lng = parseFloat(document.getElementById("longitude").value);
+                    var latlng = new google.maps.LatLng(lat, lng);
+                    var geocoder = geocoder = new google.maps.Geocoder();
+                    geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+                        var marker = new google.maps.Marker({
+                            position: latlng,
+                            map: map
+                          });
+                        infowindow.setContent(results[0].formatted_address);
+                        infowindow.open(map, marker);
+                       
+                        for (var i = 0; i < results.length; i++) {
+                            if (results[i].types[0] === "locality") {
+                                var city = results[i].address_components[0].short_name;
+                                var state = results[i].address_components[2].long_name;
+                                var country = results[i].address_components[3].long_name;
+                                $('#city').val(city);
+                                $('#province').val(state);
+                                $('#country').val(country);
+                                console.log(results[i].address_components);
+                            }
+                        }
+
+                    });
+                });
                 
                 //set the autocomplete
                 var input = document.getElementById('place_name');
@@ -153,13 +226,14 @@
                     infowindowContent.children['place-address'].textContent = address;
                     infowindow.open(map, marker);*/
                     placeInfo = getPlaceInformation(place);
-                    console.log(placeInfo);
                     $('#latitude').val(placeInfo['latitude']);
                     $('#longitude').val(placeInfo['longitude']);
                     $('#country').val(placeInfo['country']);
                     $('#province').val(placeInfo['state']);
                     $('#city').val(placeInfo['city']);
                 });
+
+               
 
                 //update the street view on dragging of marker
                 google.maps.event.addListener(marker, 'dragend', function (event) {
@@ -184,25 +258,7 @@
                     }
                 });
 
-
                 
-                /*var drawingManager = new google.maps.drawing.DrawingManager({
-                    drawingMode: google.maps.drawing.OverlayType.MARKER,
-                    drawingControl: true,
-                    drawingControlOptions: {
-                        position: google.maps.ControlPosition.TOP_CENTER,
-                        drawingModes: ['marker', 'circle', 'polygon', 'polyline', 'rectangle']
-                    },
-                    markerOptions: {icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'},
-                    circleOptions: {
-                        fillColor: '#ffff00',
-                        fillOpacity: 1,
-                        strokeWeight: 5,
-                        clickable: false,
-                        editable: true,
-                        zIndex: 1
-                    }
-                });*/
 
                 drawingManager.setMap(map);
 
@@ -367,11 +423,23 @@
                 ignore: "",
                 rules: {
                     name: { required: true },
-                    place_name: { required: true },
+                    place_name:{
+                        required:function(){
+                            var google_location = $("#google_location").is(":checked");
+                            if(google_location == true){
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }
+                    },
+                    // place_name: { required: true },
                     city: { required: true },
                     province: { required: true },
                     country: { required: true },
                     fees: { required: true },
+                    latitude: { required: true },
+                    longitude: { required: true },
                 },
                 submitHandler: function (form) {
                     var formData = new FormData(form);

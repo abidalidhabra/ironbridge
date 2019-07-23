@@ -68,4 +68,33 @@
     });
 
 </script>
+<script>
+    // Get the button, and when the user clicks on it, execute myFunction
+    /*document.getElementById("myBtn").onclick = function () {myFunction();};
+    function myFunction() {
+        document.getElementById("myDropdown").classList.toggle("show");
+    }
+
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function (event) {
+        if (!event.target.matches('.dropbtn')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            // for (let i = 0; i < dropdowns.length; i++) {if (window.CP.shouldStopExecution(0)) break;
+            //   var openDropdown = dropdowns[i];
+            //   if (openDropdown.classList.contains('show')) {
+            //     openDropdown.classList.remove('show');
+            //   }
+            // }
+            window.CP.exitedLoop(0);
+        }
+    };*/
+    $(document).on("click",".myBtn",function() {
+        $(this).parent('li').find(".myDropdown").toggleClass("show");
+        if ($(this).find(".fa-minus").length > 0) {
+            $(this).find("i").addClass("fa-plus").removeClass("fa-minus");
+        } else {
+            $(this).find("i").addClass("fa-minus").removeClass("fa-plus");
+        }
+    })
+</script>
 </html>

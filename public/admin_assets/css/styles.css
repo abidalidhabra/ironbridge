@@ -5,7 +5,7 @@ body {color:#2b2a2a; background:#fff; font-family: Helvetica Neue, Segoe UI, san
 
 a,a:hover {transition:0.6s all !important;}
 
-.form-control:focus {box-shadow:0px 0px 5px #fed307 !important; border-color:#fed307;}
+.form-control:focus {box-shadow: inherit; border-color: inherit;}
 
 
 @font-face {
@@ -131,9 +131,14 @@ header{
     margin-bottom: 13px;
     margin-top: 13px;
 }
+.nav-offcanvas-menu ul li{
+    display: inline-block;
+    width: 100%;
+}
 .activelist {
     width: 95% !important;
     border-radius: 0px 26px 26px 0px;
+
     background: #000;
     /*background: url(../images/bgimg2.png);
     background-size: cover;*/
@@ -901,6 +906,8 @@ i.iconsetaddbox{
     position: relative;
 }
 
+
+
 .content-wrapper {
   /*height: 100vh;*/
   /*display: flex;
@@ -939,7 +946,8 @@ i.iconsetaddbox{
     
     width: 100%;
     display: inline-block;
-    font-family: 'Montserrat-Bold';
+    /*font-family: 'Montserrat-Bold';*/
+    font-family: 'Montserrat-Medium';
     font-size: 18px;
     color: #000;
     padding-left: 18px;
@@ -1079,6 +1087,386 @@ i.iconsetaddbox{
     height: 100%;
     object-fit: cover;
 }
+
+
+
+.dropbtn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+.dropbtn:hover,
+.dropbtn:focus {
+  background-color: #3e8e41;
+}
+.dropdown {
+  position: relative;
+  display: inline-block;
+  float: left;
+}
+.dropdown-content {
+  display: none;
+  position: relative;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  overflow: auto;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+}
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+.dropdown-content a.activelistsub:hover{
+    background: #000;
+}
+.show {
+  display: block;
+}
+
+
+.custmenbox{
+
+}
+.custmenbox .dropdown-content{
+    box-shadow: inherit;
+}
+.custmenbox .dropdown-content a{
+    margin-bottom: 0;
+    margin-top: 0;
+    font-size: 14px;
+    color: #000;
+}
+
+.plusbttnbox i{
+    margin-right: 50px;
+    margin-top: 6px;
+    float: right;
+}
+
+.activelistsub{
+    width: 95% !important;
+    border-radius: 0px 26px 26px 0px;
+    background: #000;
+    color: #C0B08C !important;
+}
+
+
+
+.accounttital_text {
+    display: inline-block;
+    width: 64%;
+    float: left;
+}
+
+.accountinfo_paretbox{
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 35px;
+}
+
+.accountinfo_paretbox h3 {
+    margin: 0px;
+    font-size: 23px;
+    color: #4D4F5C;
+    padding-bottom: 12px;
+    font-family: 'Roboto-Medium';
+}
+.accountinfo_leftbox {
+    display: inline-block;
+    width: 100%;
+    border-radius: 4px;
+    -webkit-box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
+    -moz-box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
+    box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
+}
+.accountinfo_child {
+    display: inline-block;
+    width: 100%;
+    float: left;
+    padding-left: 20px;
+    padding-top: 20px;
+    padding-right: 20px;
+    padding-bottom: 0px;
+    border-bottom: 1px solid #EAEAEA;
+}
+.accountinfoname_detlis {
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 23px;
+    float: left;
+}
+.accountinfoname_left {
+    display: inline-block;
+    width: 50%;
+    float: left;
+}
+
+
+.accountinfoname_left p {
+    margin: 0px;
+    font-size: 16px;
+    color: #6D717D;
+    padding-bottom: 5px;
+    font-family: 'Montserrat-Regular';
+}
+.accountinfoname_left h4 {
+    margin: 0px;
+    font-family: 'Montserrat-Medium';
+    font-size: 16px;
+    color: #000;
+}
+
+.accountinfo_paretboxone {
+    display: inline-block;
+    width: 36%;
+    float: left;
+    padding-left: 40px;
+}
+.accountinfo_paretbox h3 {
+    margin: 0px;
+    font-size: 23px;
+    color:#C0B08C;
+    padding-bottom: 12px;
+    font-family: 'Montserrat-Medium';
+}
+.accountinfo_rightbox {
+    display: inline-block;
+    width: 100%;
+    float: left;
+    padding: 20px 15px 12px 20px;
+    -webkit-box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
+    -moz-box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
+    box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
+    border-radius: 4px;
+}
+.accountcerated_text {
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 0px;
+}
+.accountcerated_text p {
+    margin: 0px;
+    font-size: 16px;
+    color: #6D717D;
+    padding-bottom: 0px;
+    font-family: 'Montserrat-Regular';
+}
+.accountcerated_text h4 {
+    margin: 0px;
+    font-family: 'Montserrat-Medium';
+    font-size: 16px;
+    color: #000;
+    margin-top: 6px;
+    margin-bottom: 18px;
+}
+
+.backbtn{
+    display: inline-block;
+    width: 100%;
+    text-align: right;
+    margin-bottom: 12px;
+}
+.backbtn a{
+    display: inline-block;
+    font-family: 'Montserrat-Medium';
+    background: #000;
+    color: #C0B08C;
+    font-size: 16px;
+    padding: 6px 14px 6px;
+}
+
+.datingactivity_box {
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 42px;
+}
+.datingactivity_box h3 {
+    margin: 0px;
+    font-size: 23px;
+    color: #C0B08C;
+    padding-bottom: 14px;
+    font-family: 'Montserrat-SemiBold';
+    width: 100%;
+}
+.innerdatingactivity {
+    display: inline-block;
+    width: 65%;
+    border-radius: 4px;
+    float: left;
+    -webkit-box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
+    -moz-box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
+    box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
+}
+.swoped_detlisbox {
+    display: inline-block;
+    width: 100%;
+    float: left;
+    padding: 12px 15px 12px 15px;
+    border-bottom: 1px solid #EAEAEA;
+}
+.swoped_detlisleft {
+    display: inline-block;
+    width: 45%;
+    float: left;
+}
+.swoped_detlisright {
+    display: inline-block;
+    width: 55%;
+    float: left;
+}
+.swoped_detlisleft p {
+    margin: 0px;
+    color: #6A7284;
+    font-family: 'Montserrat-Medium';
+    font-size: 16px;
+}
+.swoped_detlisright p {
+    margin: 0px;
+    color: #000;
+    font-family: 'Montserrat-Medium';
+    font-size: 16px;
+}
+
+.swoped_detlisright span {
+    color: #009E5F;
+    font-size: 18px;
+    font-family: 'Montserrat-Medium';
+}
+
+
+.srfrdbox{
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 20px;
+}
+.srfrdbox h3{
+    width: 100%;
+    margin: 0;
+    display: inline-block;
+    color: #C0B08C;
+    font-family: 'Montserrat-Medium';
+    font-size: 20px;
+}
+
+.custredbtn .selection {
+    margin-bottom: 0;
+    display: inline-block;
+    float: left;
+    margin-right: 14px;
+}
+.custredbtn .selection label {
+    display: inline-block;
+    width: 108px;
+    background-color: transparent;
+    border-radius: 2px;
+    color: #ffffff;
+    padding: 6px 10px 6px;
+    cursor: pointer;
+    text-align: center;
+    font-family: 'Montserrat-Medium';
+    font-weight: normal;
+    border: 1px solid #000;
+    color: #000000 !important;
+    
+}
+.custredbtn .selection label:hover {
+  background-color: #000000;
+  color: #C0B08C !important;
+}
+.custredbtn .selection input[type=radio] {
+  display: none;
+}
+.custredbtn .selection input[type=radio]:checked ~ label {
+  background-color: #000000;
+  color: #C0B08C !important;
+}
+.custredbtn{
+    display: inline-block;
+    width: 100%;
+    margin-top: 15px;
+}
+.custredbtn h4{
+    display: inline-block;
+    float: left;
+    margin: 0;
+    font-family: 'Montserrat-Medium';
+    font-size: 18px;
+    margin-top: 6px;
+    margin-right: 17px;
+}
+
+
+.left_paretboxpart .custmenbox .dropdown-content{
+    width: 100%;
+}
+.selected_game{
+    display: inline-block;
+    width: 100%;
+    border-bottom: 1px solid #000 !important;
+    border-top: 1px solid #000 !important;
+    padding-bottom: 10px;
+    padding-top: 15px;
+}
+.game_section0{
+    border-top: 2px solid #000 !important;
+}
+.selected_game:last-child{
+    border-bottom: 2px solid #000 !important;
+}
+.cluecverbox{
+    display: inline-block;
+    width: 100%;
+    padding-right: 25px;
+    margin-top: 28px;
+
+    /*border-top: 2px solid #000 !important;
+    margin-top: 28px;*/
+}
+
+.selected_game .form-group label{
+    display: inline-block;
+    width: 100%;
+    font-family: 'Montserrat-Medium';
+    font-weight: normal;
+    font-size: 15px;
+}
+.selected_game .form-group{
+    display: inline-block;
+    width: 100%;
+}
+
+.selected_game h5{
+    display: inline-block;
+    width: 100%;
+    font-family: 'Montserrat-SemiBold';
+    color: #000;
+    font-size: 18px;
+}   
+
+
+
+.left_paretboxpart .dropdown{
+    width: 100%;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
