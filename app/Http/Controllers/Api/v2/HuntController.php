@@ -332,23 +332,16 @@ class HuntController extends Controller
                         'complexity' => $complexity,
                         'hunt_complexity_id' => $huntComplexity->id
                     ]);
-        $skeleton        = [];
+
         $huntUserDetails = [];
         foreach ($huntComplexity->hunt_clues as $clue) {
             $huntUserDetails[] = new HuntUserDetail([
                 'location'          => $clue->location,
                 'game_id'           => $clue->game_id,
                 'game_variation_id' => $clue->game_variation_id,
+                'radius'            => $clue->radius,
             ]);
-            
-            $skeleton[] = [
-                'key'       => strtoupper(substr(str_shuffle(str_repeat("0123456789abcdefghijklmnopqrstuvwxyz", 10)), 0, 10)),
-                'used'      => false ,
-                'used_date' => null
-            ];
         }
-        $huntUser->skeleton_keys = $skeleton;
-        $huntUser->save();
         $huntUser->hunt_user_details()->saveMany($huntUserDetails);
 
         $request->request->add(['hunt_user_id'=>$huntUser->id]);
