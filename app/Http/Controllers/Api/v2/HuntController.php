@@ -283,7 +283,6 @@ class HuntController extends Controller
         } catch (Exception $e) {
             return response()->json(['message'=> $e->getMessage()], 500);
         }
-
     }
 
     public function participateInHunt(ParticipateRequest $request){
@@ -503,5 +502,25 @@ class HuntController extends Controller
         }
         
         return response()->json(['message' => 'Location has been updated successfully']); 
+    }
+
+    public function quitTheHunt(Request $request){
+
+        $validator = Validator::make($request->all(),[
+            'hunt_user_id'=> "required|exists:hunt_users,_id",
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message'=>$validator->messages()->first()],422);
+        }
+
+        $huntuserid = $request->hunt_user_id;
+        $huntUser = auth()->user()->hunt_user_v1()->where('_id',$huntuserid)->first();
+
+        if ($huntUser) {
+            $huntUser->hunt_user_details()->delete();
+            $huntUser->delete();
+        }
+        return response()->json(['message' => 'Hunt participation has been deleted successfully.']);
     }
 }

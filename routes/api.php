@@ -126,6 +126,7 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
 		Route::get('getHuntParticipationDetails', 'HuntController@getHuntParticipationDetails');
 		Route::get('getHuntsInProgress', 'HuntController@getHuntsInProgress');
 		Route::post('pauseTheHunt', 'HuntController@pauseTheHunt');
+		Route::post('quitTheHunt', 'HuntController@quitTheHunt');
 
 		/** Clues related requests  **/
 		Route::post('actionOnClue', 'ClueController@actionOnClue');
