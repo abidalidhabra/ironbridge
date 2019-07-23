@@ -12,9 +12,22 @@ class WidgetItem extends Eloquent
         'item_name',
         'gold_price',
         'avatar_id',
+        'widget_category',
     ];
 
     public function widget(){
     	return $this->belongsTo(WidgetItem::class);
+    }
+
+    public function avatar()
+    {
+        return $this->belongsTo('App\Models\v1\Avatar');
+    }
+
+    public function scopeHavingGender($query, $gender)
+    {
+        return $query->whereHas('avatar', function($query) use ($gender){
+            return $query->where('gender', $gender); 
+        });
     }
 }

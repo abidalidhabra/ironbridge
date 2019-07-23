@@ -36,7 +36,8 @@ class User extends Authenticatable implements JWTSubject
         'settings',
         'device_type',
         'widgets',
-        'avatar'
+        'avatar',
+        'skeleton_keys'
     ];
 
     /**
@@ -136,5 +137,10 @@ class User extends Authenticatable implements JWTSubject
     public function hunt_user_v1()
     {
         return $this->hasMany('App\Models\v2\HuntUser');
+    }
+
+    public function avatar_detail()
+    {
+        return $this->belongsTo('App\Models\v1\Avatar', 'avatar.avatar_id', '_id');
     }
 }

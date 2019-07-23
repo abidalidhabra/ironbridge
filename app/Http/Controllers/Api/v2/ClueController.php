@@ -4,10 +4,14 @@ namespace App\Http\Controllers\Api\v2;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\ActionOnClueRequest;
+use App\Models\v1\WidgetItem;
+use App\Models\v2\HuntReward;
 use App\Models\v2\HuntUser;
 use App\Models\v2\HuntUserDetail;
 use Illuminate\Http\Request;
+use MongoDB\BSON\ObjectId as MongoDBId;
 use MongoDB\BSON\UTCDateTime as MongoDBDate;
+use stdClass;
 
 class ClueController extends Controller
 {
@@ -57,12 +61,12 @@ class ClueController extends Controller
 
         if ($status == 'completed' && $stillRemain == 0) {
             $fields = [ 'status'=>'completed', 'ended_at'=> new MongoDBDate(), 'finished_in'=> $huntUserDetail->sum('finished_in') ];
-            $this->takeActionOnHuntUser($huntUserDetail, '', $fields);
+            $gameData = $this->takeActionOnHuntUser($huntUserDetail, '', $fields, true);
         }else if($status != 'completed'){
-            $this->takeActionOnHuntUser($huntUserDetail, $huntAction);
+            $gameData = $this->takeActionOnHuntUser($huntUserDetail, $huntAction);
         }
 
-        return response()->json(['message'=>'Action on clue has been taken successfully.']);
+        return response()->json(['message'=>'Action on clue has been taken successfully.', 'game_info'=> $gameData]);
     }
 
     public function useTheSkeletonKey(ActionOnClueRequest $request){
@@ -141,11 +145,97 @@ class ClueController extends Controller
         return true;
     }
 
-    public function takeActionOnHuntUser($huntUserDetail, $action, $fields = []){
+    public function takeActionOnHuntUser($huntUserDetail, $action, $fields = [], $gameCompleted = false){
+        
         if (count($fields) == 0) {
             $fields = ['status'=> $action];
         }
-        $huntUserDetail->hunt_user()->update($fields);
-        return true;
+        $huntUser = $huntUserDetail->hunt_user()->update($fields);
+        
+        if($gameCompleted){
+            return $this->generateReward($huntUserDetail);
+        }else{
+            return null;
+        }
+    }
+
+    public function generateReward($huntUserDetail)
+    {
+        /** Generate Reward **/
+        $randNumber  = rand(1, 1000);
+        // $randNumber  = 750;
+        $huntUser    = $huntUserDetail->hunt_user()->select('complexity','user_id')->first();
+        $complexity  = 1;
+        $user        = auth()->user();
+        // $userId      = $huntUser->user_id;
+        $userId      = $user->_id;
+        // $userGender  = $user->gender?:'male';
+        $userGender  = ($user->avatar_detail)?$user->avatar_detail->gender:'male';
+        $rewards     = HuntReward::all();
+
+        $selectedReward = $rewards->where('complexity',$complexity)->where('min_range', '<=', $randNumber)->where('max_range','>=',$randNumber)->first();
+        if (!$selectedReward) {
+            return [ 'reward_messages' => 'No reward found.', 'reward_data' => new stdClass()];
+        }
+
+        $rewardData['random_number'] = $randNumber;
+        if ($selectedReward->widgets_order && $selectedReward->widget_category) {
+            
+            $widgetCategory = $selectedReward->widget_category;
+            $widgetOrder = $selectedReward->widgets_order;
+
+            findWidget:
+            $countableWidget = $widgetOrder[0];
+            $userWidgets = collect($user->widgets)->pluck('id');
+            $widgetItems = WidgetItem::when($widgetCategory != 'all', function ($query) use ($widgetCategory){
+                                return $query->where('widget_category', $widgetCategory);
+                            })
+                            ->havingGender($userGender)
+                            ->where('widget_name',$countableWidget)
+                            ->whereNotIn('_id',$userWidgets)
+                            ->select('_id', 'widget_name', 'avatar_id', 'widget_category')
+                            ->first();
+
+            if (!$widgetItems) {
+                $widgetOrder = array_splice($widgetOrder, 1);
+                if (count($widgetOrder) == 0) { goto distSkeleton; }
+                goto findWidget; 
+            }
+
+            // User::where('_id',$user->id)->where('widgets.id', '!=', $widgetItemId)->push(['widgets'=> ['id'=> $widgetItemId, 'selected'=> false]]);
+            $widget = [
+                'id'=> $widgetItems->id,
+                'selected'=> false
+            ];
+            $user->push('widgets', $widget);
+            $message[] = 'Widget has been unlocked';
+            $rewardData['widget'] = $widgetItems;
+        }
+
+        if ($selectedReward->skeletons){
+            distSkeleton:
+            $skeletons = [];
+            for ($i=0; $i < $selectedReward->skeletons; $i++) { 
+                $skeletons[] = [
+                    'key'       => strtoupper(substr(uniqid(), 0, 10)),
+                    'created_at'=> new MongoDBDate() ,
+                    'used_at'   => null
+                ];
+            }
+            $user->push('skeleton_keys', $skeletons);
+            $message[] = 'Skeleton key provided';
+            $rewardData['skeleton_keys'] = $skeletons;
+        }
+
+        if ($selectedReward->gold_value){
+            distGold:
+            $user->gold_balance += $selectedReward->gold_value;
+            $user->save();
+            $message[] = 'Gold provided.';
+            $rewardData['golds'] = $selectedReward->gold_value;
+        }
+
+        unset($selectedReward->min_range, $selectedReward->max_range);
+        return [ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData];
     }
 }

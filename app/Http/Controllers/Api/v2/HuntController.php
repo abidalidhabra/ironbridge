@@ -8,6 +8,7 @@ use App\Http\Requests\v1\HuntByDiffRequest;
 use App\Http\Requests\v1\HuntDetailRequest;
 use App\Http\Requests\v1\NearByHuntsRequest;
 use App\Http\Requests\v1\ParticipateRequest;
+use App\Models\v1\WidgetItem;
 use App\Models\v2\Hunt;
 use App\Models\v2\HuntComplexity;
 use App\Models\v2\HuntUser;
@@ -270,7 +271,8 @@ class HuntController extends Controller
         $hunt = $huntUserDetails->first()->hunt_user()->select('_id', 'user_id', 'hunt_id', 'status')->first();
 
         /** Pause the clue if running **/
-        (new ClueController)->takeActionOnClue($huntUserDetails,'paused');
+        // $request->request->add(['status'=> 'paused'])
+        (new ClueController)->calculateTheTimer($huntUserDetails, 'paused');
         return response()->json([
             'message' => 'Clues details of hunt in which user is participated, has been retrieved successfully.', 
             'hunt'=> $hunt,
@@ -348,7 +350,8 @@ class HuntController extends Controller
         return response()->json([
             'message'=>'user has been successfully participants',
             'remaining_coins' => $user->gold_balance,
-            'data'  => $participationDetailData->original['data'],
+            'hunt'  => $participationDetailData->original['hunt'],
+            'clues_data'  => $participationDetailData->original['clues_data'],
         ]);
     }
 
