@@ -90,6 +90,12 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('getComplexityTarget', 'ComplexityTargetController@getComplexityTarget')->name('getComplexityTarget');
 	Route::put('editComplexityTarget', 'ComplexityTargetController@editComplexityTarget')->name('editComplexityTarget');
 
+
+	//AVATAR
+	Route::get('avarat', 'AvatarController@index')->name('avarat.index');
+	Route::get('/getAvatarsList', 'AvatarController@getAvatarsList')->name('getAvatarsList');
+	Route::get('/avatarDetails/{id}', 'AvatarController@avatarDetails')->name('avatarDetails');
+
 });
 
 Auth::routes();
