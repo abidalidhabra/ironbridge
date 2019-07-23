@@ -64,7 +64,8 @@ class UserHelper {
 		$location = app('geocoder')->reverse($lat,$long)->get();
 		$formatter = new \Geocoder\Formatter\StringFormatter();
 
-		if ($location->first()) {
+		$locationObj = (array)$location->first();
+		if (!empty($locationObj)) {
 
 			$streetNumber = $location->first()->getStreetNumber(); 
 			$streetName = $location->first()->getStreetName();
@@ -107,6 +108,7 @@ class UserHelper {
 			// }
 			return $response;
 		}else{
+			\Log::info('DONE NOW');
 			return null;
 		}
 	}

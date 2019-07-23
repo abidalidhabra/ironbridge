@@ -39,7 +39,8 @@ class HuntController extends Controller
     	
     	$location = Hunt::select('location','place_name','place_id','boundaries_arr','boundingbox')
                                     ->with('hunt_complexities:_id,hunt_id')
-    								->whereIn('city',['Kamloops','Chilliwack','Prince George','Vernon','Courtenay','Penticton','Mission','Parksville','Duncan','Ladner','Tsawwassen','Port Alberni','Fort St. John','Cranbrook','Squamish','Terrace','Salmon Arm','Trail-Fruitvale','Powell River','Quesnel','Aldergrove','Prince Rupert','Dawson Creek','Nelson','Ladysmith','Williams Lake','Okotoks','Cochrane','Stony Plain','Sylvan Lake','Strathmore','High River','Wetaskiwin','Canmore'])
+    								->whereIn('city',['Montréal','Québec','Gatineau','Sherbrooke','Trois-Rivières','Chicoutimi','Jonquière','Saint-Jean-sur-Richelieu','Châteauguay','Drummondville','Saint-Jérôme','Granby','Beloeil','Saint-Hyacinthe','Shawinigan','Joliette','Victoriaville','Salaberry-de-Valleyfield','Rimouski','Sorel','Alma','Saint-Georges','Rouyn-Noranda','Buckingham','Sept-Îles','Hudson','Thetford Mines','Magog','Varennes','Rivière-du-Loup','Les Coteaux','Port-Alfred-Bagotville','Dolbeau','Hauterive','Cowansville','Matane','Lachute','Sainte-Anne-des-Plaines','Lavaltrie','Sainte-Marie',"L'Assomption","Val-d'Or"])
+                                    ->where('boundaries_arr', '!=','')
     								->get()
     								->map(function($query){
     									if (count($query->hunt_complexities) > 0) {
@@ -268,7 +269,7 @@ class HuntController extends Controller
                                 unset($query->hunt_user_details);
                                 return $query;
                             });
-        $hunt = Hunt::select('_id','name','location','place_name','fees')
+        $hunt = Hunt::select('_id','name','location','place_name','fees','boundaries_arr')
                     ->whereHas('hunt_complexities',function($query) use ($clueId){
                         $query->where('complexity',$clueId);
                     })
@@ -315,6 +316,7 @@ class HuntController extends Controller
                     'complexity'    => $clueId,
                     'distance'      => number_format($hunt->hunt_complexities[0]->distance/1000,1),
                     'max_complexity'=> $maxComplexity,
+                    'boundaries_arr'=> $hunt->boundaries_arr,
                 ];
 
         return response()->json(['message'=>'Hunt clues has been retrieved successfully','data'=>$data]);
