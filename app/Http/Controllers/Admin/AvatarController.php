@@ -76,4 +76,49 @@ class AvatarController extends Controller
         
     	return view('admin.avatar.avatarDetails',compact('avatar','widgetItem'));
     }
+
+    /** widget item update **/
+    public function widgetPriceUpdate(Request $request){
+        $id = $request->get('id');
+        $gold_price = $request->get('gold_price');
+        WidgetItem::where('_id',$id)
+                    ->update([
+                        'gold_price'=>(float)$gold_price
+                    ]);
+
+        return response()->json([
+                                'status'  => true,
+                                'message' => 'Gold price updated successfully',
+                                //'data'    => []
+                            ]);          
+    }
+
+    /* color update */
+    public function avatarColorUpdate(Request $request){
+        $id     = $request->get('id');
+        $status = $request->get('status');
+        $index  = $request->get('index');
+        $color_code = $request->get('color_code');
+        
+        /*$colorCodeCheck = substr($color_code, 0, 1);
+        if ($colorCodeCheck != '#') {
+            return response()->json([
+                                'status'  => false,
+                                'message' => 'Please color code # used',
+                            ]);
+        }*/
+
+        if ($status == 'skin_color') {
+            Avatar::where('_id',$id)->update(['skin_colors.'.$index => $color_code]);
+        } elseif ($status == 'hairs_color') {
+            Avatar::where('_id',$id)->update(['hairs_colors.'.$index => $color_code]);
+        } elseif ($status == 'eyes_colors') {
+            Avatar::where('_id',$id)->update(['eyes_colors.'.$index => $color_code]);   
+        }
+
+        return response()->json([
+                                'status'  => true,
+                                'message' => 'color code updated successfully',
+                            ]);
+    }
 }

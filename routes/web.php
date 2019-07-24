@@ -95,6 +95,8 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('avarat', 'AvatarController@index')->name('avarat.index');
 	Route::get('/getAvatarsList', 'AvatarController@getAvatarsList')->name('getAvatarsList');
 	Route::get('/avatarDetails/{id}', 'AvatarController@avatarDetails')->name('avatarDetails');
+	Route::post('/widgetPriceUpdate', 'AvatarController@widgetPriceUpdate')->name('widgetPriceUpdate');
+	Route::post('/avatarColorUpdate', 'AvatarController@avatarColorUpdate')->name('avatarColorUpdate');
 
 });
 

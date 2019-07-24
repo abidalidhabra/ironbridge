@@ -180,6 +180,7 @@ class MapsController extends Controller
                         'latitude.*' => 'required|numeric',
                         'coordinates'   => 'required|json',
                         'distance'      => 'required',
+                        'radius.*' => 'required|numeric',
                     ]);
         
         if ($validator->fails())
@@ -196,6 +197,7 @@ class MapsController extends Controller
         $coordinates = json_decode($request->get('coordinates'));
         $longitude = $request->get('longitude');
         $latitude = $request->get('latitude');
+        $radius = $request->get('radius');
         $locationdata = [];
         
         /*if($complexity == 1){
@@ -220,6 +222,7 @@ class MapsController extends Controller
             $placeStar->hunt_clues()->delete();
             $placeStar->delete();
         }
+        
         
         foreach ($coordinates as $key => $value) {
             $location['Type'] = 'Point';
@@ -258,7 +261,8 @@ class MapsController extends Controller
                                 'location'           => $location,
                                 'game_id'            => $gameId[$key],
                                 'game_variation_id'  => $gameVariationId[$key],
-                                'target'             => $target
+                                'target'             => $target,
+                                'radius'             => (float)$radius[$key]
                             ]);
         }
 

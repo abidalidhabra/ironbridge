@@ -130,5 +130,7 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
 		/** Clues related requests  **/
 		Route::post('actionOnClue', 'ClueController@actionOnClue');
 		Route::post('useTheSkeletonKey', 'ClueController@useTheSkeletonKey');
+		
+		Route::post('generateReward', 'HuntController@generateReward');
 	});
 });
