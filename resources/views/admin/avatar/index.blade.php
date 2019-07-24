@@ -15,6 +15,11 @@
                         <th>Sr</th>
                         <!-- <th>Name</th> -->
                         <th>Gender</th>
+                        <th>Tops</th>
+                        <th>Feets</th>
+                        <th>Hats</th>
+                        <th>Outfits</th>
+                        <th>Bottom</th>
                         <th width="10%">Action</th>
                     </tr>
                 </thead>
@@ -52,6 +57,11 @@
                     { data:'DT_RowIndex',name:'_id' },
                     // { data:'name',name:'name' },
                     { data:'gender',name:'gender' },
+                    { data:'tops',name:'tops' },
+                    { data:'feets',name:'feets' },
+                    { data:'hats',name:'hats' },
+                    { data:'outfits',name:'outfits' },
+                    { data:'bottom',name:'bottom' },
                     { data:'action',name:'action'},
                 ],
 

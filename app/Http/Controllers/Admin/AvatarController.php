@@ -33,7 +33,7 @@ class AvatarController extends Controller
                 ->orWhere('gender','like','%'.$search.'%');
             });
         }
-        $avatar = $avatar->orderBy('created_at','DESC')->skip($skip)->take($take)->get();
+        $avatar = $avatar->with('widget_item:_id,avatar_id,widget_name')->orderBy('created_at','DESC')->skip($skip)->take($take)->get();
         $count = Avatar::count();
         if($search != ''){
             $count = Avatar::where(function($query) use ($search){
@@ -44,10 +44,25 @@ class AvatarController extends Controller
 
          return DataTables::of($avatar)
         ->addIndexColumn()
+        ->addColumn('bottom', function($avatar){
+            return $avatar->widget_item()->where('widget_name','Bottom')->count();
+        })
+        ->addColumn('feets', function($avatar){
+            return $avatar->widget_item()->where('widget_name','Feets')->count();
+        })
+        ->addColumn('hats', function($avatar){
+            return $avatar->widget_item()->where('widget_name','Hats')->count();
+        })
+        ->addColumn('outfits', function($avatar){
+            return $avatar->widget_item()->where('widget_name','Outfits')->count();
+        })
+        ->addColumn('tops', function($avatar){
+            return $avatar->widget_item()->where('widget_name','Tops')->count();
+        })
         ->addColumn('action', function($avatar){
             return '<a href="'.route('admin.avatarDetails',$avatar->id).'"><i class="fa fa-eye iconsetaddbox"></i></a>';
         })
-        ->rawColumns(['action'])
+        ->rawColumns(['action','bottom','feets','hats','outfits','tops'])
         ->order(function ($query) {
                     if (request()->has('created_at')) {
                         $query->orderBy('created_at', 'DESC');
