@@ -14,7 +14,6 @@ class HuntUser extends Eloquent
         'hunt_id',
         'complexity',
         'hunt_mode',
-        'skeleton_keys',
         'status',
         'started_at',
         'ended_at',

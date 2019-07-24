@@ -75,6 +75,7 @@ class User extends Authenticatable implements JWTSubject
             'sound_fx' => true,
             'music_fx' => true,
         ],
+        'skeleton_keys' => []
         // 'user_widgets' => [],
         // 'used_widgets' => [],
     ];

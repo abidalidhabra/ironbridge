@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\ActionOnClueRequest;
 use App\Models\v1\WidgetItem;
 use App\Models\v2\HuntReward;
-// use App\Models\v1\User;
+use App\Models\v1\User;
 use App\Models\v2\HuntUser;
 use App\Models\v2\HuntUserDetail;
 use Illuminate\Http\Request;
@@ -31,7 +31,7 @@ class ClueController extends Controller
         $status = $request->status;
         
         $huntUserDetail = $this->getHuntUserDetail($userId, $huntUserDetailId);
-
+        
         $stillRemain;
         switch ($status) {
             
@@ -59,15 +59,16 @@ class ClueController extends Controller
                 break;
         }
         $huntUserDetail->save();
-
+        
+        $gameData = null;
         if ($status == 'completed' && $stillRemain == 0) {
             $fields = [ 'status'=>'completed', 'ended_at'=> new MongoDBDate(), 'finished_in'=> $huntUserDetail->sum('finished_in') ];
             $gameData = $this->takeActionOnHuntUser($huntUserDetail, '', $fields, true);
         }else if($status != 'completed'){
-            $gameData = $this->takeActionOnHuntUser($huntUserDetail, $huntAction);
+            $this->takeActionOnHuntUser($huntUserDetail, $huntAction);
         }
 
-        return response()->json(['message'=>'Action on clue has been taken successfully.', 'game_info'=> $gameData]);
+        return response()->json(['message'=>'Action on clue has been taken successfully.', 'hunt_info'=> $gameData]);
     }
 
     public function useTheSkeletonKey(Request $request){
@@ -78,32 +79,23 @@ class ClueController extends Controller
         
         $huntUserDetail = $this->getHuntUserDetail($userId, $huntUserDetailId);
 
-
         if ($huntUserDetail->status == 'completed') {
             return response()->json(['message'=>'You cannot use skeleton key in this clue, as it already ended.'], 422);
         }
 
-        // $huntUser = $huntUserDetail
-        //                 ->hunt_user
-        //                 ->where('user_id',$user->id)
-        //                 ->where('skeleton_keys.used',false)
-        //                 ->first();
-
-        // $key = User::where(['skeleton_keys.used_at' => null, '_id'=> $userId])->project(['_id'=> true, 'skeleton_keys.$'=>true])->first();
-        $skeletonExists = $user->where(['skeleton_keys.used_at' => null])->project(['_id'=> true, 'skeleton_keys.$'=>true])->first();
-        if ($skeletonExists) {
-            
-            $user->where('skeleton_keys.used_at',null)
-                    ->update([
-                        'skeleton_keys.$.used_at'=> new MongoDBDate()
-                    ]);
-        }else{
+        // $skeletonExists = User::where(['skeleton_keys.used_at' => null, '_id'=> $userId])->project(['_id'=> true, 'skeleton_keys.$'=>true])->first();
+        $skeletonExists = User::where(['skeleton_keys.used_at' => null, '_id'=> $userId])->update(['skeleton_keys.$.used_at'=> new MongoDBDate()]);
+        if (!$skeletonExists) {
             return response()->json(['message'=>'You does not have any key to use.'], 422);
         }
 
-        $huntFinished = $this->actionOnClue($huntUserDetail, 'completed');
-        return response()->json(['message'=> 'Clue Timer has been ended successfully.', 'hunt_finished'=> $huntFinished
-        ]);
+        // $huntFinished = $this->actionOnClue($huntUserDetail, 'completed');
+        $actionOnClueRequest = new ActionOnClueRequest();
+        $actionOnClueRequest->setMethod('POST');
+        $actionOnClueRequest->request->add(['hunt_user_details_id'=> $huntUserDetailId, 'status'=> 'completed']);
+        $huntFinished = (new ClueController)->actionOnClue($actionOnClueRequest);
+
+        return response()->json(['message'=> 'Clue Timer has been ended successfully.', 'hunt_action'=> $huntFinished->original]);
     }
 
     public function getHuntUserDetail($userId, $huntUserDetailId){
@@ -161,13 +153,16 @@ class ClueController extends Controller
         }
     }
 
-    public function generateReward($huntUserDetail)
-    {
+    public function generateReward($huntUserDetail){
+
         /** Generate Reward **/
         $randNumber  = rand(1, 1000);
+        // $randNumber  = 12;
         // $randNumber  = 750;
+        // $randNumber  = 450;
         $huntUser    = $huntUserDetail->hunt_user()->select('complexity','user_id')->first();
-        $complexity  = 1;
+        $complexity  = $huntUser->complexity;
+        // $complexity  = 1;
         $user        = auth()->user();
         // $userId      = $huntUser->user_id;
         $userId      = $user->_id;
@@ -181,19 +176,22 @@ class ClueController extends Controller
         }
 
         $rewardData['random_number'] = $randNumber;
-        if ($selectedReward->widgets_order && $selectedReward->widget_category) {
+        
+        if ($selectedReward->widgets_order && is_array($selectedReward->widgets_order)) {
             
-            $widgetCategory = $selectedReward->widget_category;
-            $widgetOrder = $selectedReward->widgets_order;
-
+            $widgetOrder     = $selectedReward->widgets_order;
+            
             findWidget:
             $countableWidget = $widgetOrder[0];
+            $widgetCategory  = $countableWidget['type'];
+            $widgetName      = $countableWidget['widget_name'];
+
             $userWidgets = collect($user->widgets)->pluck('id');
             $widgetItems = WidgetItem::when($widgetCategory != 'all', function ($query) use ($widgetCategory){
                                 return $query->where('widget_category', $widgetCategory);
                             })
                             ->havingGender($userGender)
-                            ->where('widget_name',$countableWidget)
+                            ->where('widget_name',$widgetName)
                             ->whereNotIn('_id',$userWidgets)
                             ->select('_id', 'widget_name', 'avatar_id', 'widget_category')
                             ->first();

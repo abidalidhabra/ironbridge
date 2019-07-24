@@ -283,7 +283,6 @@ class HuntController extends Controller
         } catch (Exception $e) {
             return response()->json(['message'=> $e->getMessage()], 500);
         }
-
     }
 
     public function participateInHunt(ParticipateRequest $request){
@@ -332,23 +331,16 @@ class HuntController extends Controller
                         'complexity' => $complexity,
                         'hunt_complexity_id' => $huntComplexity->id
                     ]);
-        $skeleton        = [];
+
         $huntUserDetails = [];
         foreach ($huntComplexity->hunt_clues as $clue) {
             $huntUserDetails[] = new HuntUserDetail([
                 'location'          => $clue->location,
                 'game_id'           => $clue->game_id,
                 'game_variation_id' => $clue->game_variation_id,
+                'radius'            => $clue->radius,
             ]);
-            
-            $skeleton[] = [
-                'key'       => strtoupper(substr(str_shuffle(str_repeat("0123456789abcdefghijklmnopqrstuvwxyz", 10)), 0, 10)),
-                'used'      => false ,
-                'used_date' => null
-            ];
         }
-        $huntUser->skeleton_keys = $skeleton;
-        $huntUser->save();
         $huntUser->hunt_user_details()->saveMany($huntUserDetails);
 
         $request->request->add(['hunt_user_id'=>$huntUser->id]);
@@ -510,5 +502,25 @@ class HuntController extends Controller
         }
         
         return response()->json(['message' => 'Location has been updated successfully']); 
+    }
+
+    public function quitTheHunt(Request $request){
+
+        $validator = Validator::make($request->all(),[
+            'hunt_user_id'=> "required|exists:hunt_users,_id",
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message'=>$validator->messages()->first()],422);
+        }
+
+        $huntuserid = $request->hunt_user_id;
+        $huntUser = auth()->user()->hunt_user_v1()->where('_id',$huntuserid)->first();
+
+        if ($huntUser) {
+            $huntUser->hunt_user_details()->delete();
+            $huntUser->delete();
+        }
+        return response()->json(['message' => 'Hunt participation has been deleted successfully.']);
     }
 }

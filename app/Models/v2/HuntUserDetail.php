@@ -19,6 +19,7 @@ class HuntUserDetail extends Eloquent
         'status',
         'started_at',
         'ended_at',
+        'radius'
 	];
 
     protected $attributes = [
