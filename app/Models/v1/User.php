@@ -80,6 +80,10 @@ class User extends Authenticatable implements JWTSubject
         // 'used_widgets' => [],
     ];
 
+    protected $appends = [
+        'available_skeleton_keys'
+    ];
+    
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
@@ -145,4 +149,8 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo('App\Models\v1\Avatar', 'avatar.avatar_id', '_id');
     }
 
+    public function getAvailableSkeletonKeysAttribute($value)
+    {
+        return ($value)? collect($value)->where('used_at', null)->count():0;
+    }
 }

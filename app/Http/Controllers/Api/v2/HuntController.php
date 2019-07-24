@@ -271,14 +271,24 @@ class HuntController extends Controller
             ->select('_id','finished_in','status','location','game_id','game_variation_id','hunt_user_id', 'radius')
             ->get();
 
-            $hunt = $huntUserDetails->first()->hunt_user()->select('_id', 'user_id', 'hunt_id', 'status')->first();
+            $huntUser = $huntUserDetails->first()->hunt_user()->select('_id', 'user_id', 'hunt_id', 'status', 'hunt_complexity_id')->first();
 
+            $huntDetails    = $huntUser->hunt_complexity->select('_id', 'est_completion', 'distance', 'hunt_id', 'complexity')->first();
+            $totalClues     = $huntUserDetails->count();
+            $completedClues = $huntUserDetails->where('status','completed')->count();
+            $timeTaken      = $huntUserDetails->sum('finished_in');
+            $completedDist  = (($huntDetails->distance / $totalClues) * $completedClues);
+            
             /** Pause the clue if running **/
             (new ClueController)->calculateTheTimer($huntUserDetails,'paused');
+            
+            $huntUser->completed_clues  = $completedClues;           
+            $huntUser->time_taken       = $timeTaken;           
+            $huntUser->completed_dist   = $completedDist;
+            unset($huntUser->hunt_complexity);
             return response()->json([
                 'message' => 'Clues details of hunt in which user is participated, has been retrieved successfully.', 
-                'hunt'=> $hunt,
-                'clues_data'=> $huntUserDetails
+                'hunt'=> $huntUser, 'clues_data'=> $huntUserDetails
             ]);
         } catch (Exception $e) {
             return response()->json(['message'=> $e->getMessage()], 500);

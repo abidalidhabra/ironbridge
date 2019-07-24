@@ -52,4 +52,9 @@ class HuntUser extends Eloquent
     {
         return $this->belongsTo('App\Models\v2\HuntComplexity','hunt_complexity_id');
     }
+
+    public function hunt_complexity()
+    {
+        return $this->belongsTo('App\Models\v2\HuntComplexity','hunt_complexity_id');
+    }
 }
