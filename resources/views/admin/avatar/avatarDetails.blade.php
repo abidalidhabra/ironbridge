@@ -70,10 +70,10 @@
                     <img class="card-img-top" src="{{ asset('admin_assets/images/FullDressup.png') }}">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-9">
                                 <h5 class="card-title">${{ $widget->gold_price }}</h5>
                             </div>
-                            <div class="col-md-6 text-right">
+                            <div class="col-md-3 text-right">
                                 <a href="javascript:void(0)" class="widget_edit" id="widget_edit{{ $widget->id}}" data-gold="{{ $widget->gold_price }}" data-id="{{ $widget->id}}"><i class="fa fa-pencil iconsetaddbox"></i>
                                 </a>    
                                 <a href="javascript:void(0)" class="widget_save hidden" id="widget_save{{ $widget->id}}" data-id="{{ $widget->id}}"><i class="fa fa-save iconsetaddbox"></i></a> 
