@@ -42,7 +42,7 @@
 							</div>
 						</div>
 					</li>
-					<li  class="@if(Route::currentRouteName() == 'admin.avarat.index') {{ 'activelist' }} @endif">
+					<li  class="@if(Route::currentRouteName() == 'admin.avarat.index' || Route::currentRouteName() == 'admin.avatarDetails') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.avarat.index') }}">Avatars</a>
 					</li>
 					

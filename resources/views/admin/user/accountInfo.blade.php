@@ -80,10 +80,9 @@
                 <h4>{{ $key }}</h4>
                 @forelse($widgetlist as $widget)
                 <div class="avtarimgtextiner">
-                    <img class="card-img-top" src="{{ asset('admin_assets/images/FullDressup.png') }}">
+                    <img class="card-img-top" src="{{ asset('admin_assets/widgets/'.$widget->id.'.png') }}">
                     <div class="card-body">
-                        <h5 class="card-title">${{ $widget->gold_price }}</h5>
-                        <p class="card-text">{{ $widget->id}}</p>
+                        <h5 class="card-title">{{ $widget->gold_price }} Gold</h5>
                     </div>
                 </div>
                 @empty
