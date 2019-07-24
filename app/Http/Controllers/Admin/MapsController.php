@@ -19,6 +19,13 @@ use MongoDB\BSON\ObjectID;
 
 class MapsController extends Controller
 {
+    public function __construct()
+    {
+        if (version_compare(phpversion(), '7.1', '>=')) {
+            ini_set('memory_limit', '2048M');
+        }
+    }
+    
     public function index(Request $request)
     {
     	return view('admin.maps.mapsList');

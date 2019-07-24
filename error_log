@@ -1,0 +1,2 @@
+[24-Jul-2019 09:37:37 UTC] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 524288 bytes) in /home/fddev/public_html/ironbridge1779/vendor/jenssegers/mongodb/src/Jenssegers/Mongodb/Query/Builder.php on line 397
+[24-Jul-2019 09:37:37 UTC] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 524288 bytes) in /home/fddev/public_html/ironbridge1779/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php on line 136
