@@ -91,6 +91,10 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
+                                        <label>Radius:</label>
+                                        <input type="number" name="radius[]" value="{{ $gamedetails->radius }}" class="form-control">
+                                    </div>
+                                    <div class="form-group">
                                         <label>Location(latitude,longitude): </label>
                                         <div class="row">
                                             <div class="col-md-6">
@@ -300,6 +304,10 @@
                                                         </select>\
                                                     </div>\
                                                     <div class="form-group">\
+                                                        <label>Radius:</label>\
+                                                        <input type="number" name="radius[]" class="form-control" value="5000">\
+                                                    </div>\
+                                                    <div class="form-group">\
                                                         <label>Location(latitude,longitude): </label>\
                                                         <div class="row">\
                                                             <div class="col-md-6">\
@@ -422,6 +430,10 @@
                                             <select name="game_variation_id[]" id="game_variation_id'+i+'" class="form-control">\
                                             '+option_game_variation+'</select>\
                                         <div>\
+                                        <div class="form-group">\
+                                            <label>Radius:</label>\
+                                            <input type="number" name="radius[]" class="form-control" value="5000">\
+                                        </div>\
                                         <div class="form-group">\
                                             <label>Location(latitude,longitude): </label>\
                                             <div class="row">\

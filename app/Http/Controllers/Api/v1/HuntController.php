@@ -135,7 +135,8 @@ class HuntController extends Controller
                                             'location'           => $location,
                                             'game_id'            => $game[0]->id,
                                             'game_variation_id'  => $gameVariationId,
-                                            'target'  => $target
+                                            'target'  => $target,
+                                            'radius'  => 5000.0,
                                         ]);
                     }
                 }
