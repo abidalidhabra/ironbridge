@@ -173,14 +173,15 @@ class MapsController extends Controller
     //boundary map
     public function storeStarComplexity(Request $request){
         $validator = Validator::make($request->all(),[
-                        'hunt_id'       => 'required',
-                        'game_id.*'     => 'required',
+                        'hunt_id'             => 'required',
+                        'game_id.*'           => 'required',
                         'game_variation_id.*' => 'required',
-                        'longitude.*' => 'required|numeric',
-                        'latitude.*' => 'required|numeric',
-                        'coordinates'   => 'required|json',
-                        'distance'      => 'required',
-                        'radius.*' => 'required|numeric',
+                        'longitude.*'         => 'required|numeric',
+                        'latitude.*'          => 'required|numeric',
+                        'coordinates'         => 'required|json',
+                        'distance'            => 'required',
+                        'radius.*'            => 'required|numeric',
+                        'title.*'             => 'required',
                     ]);
         
         if ($validator->fails())
@@ -198,7 +199,11 @@ class MapsController extends Controller
         $longitude = $request->get('longitude');
         $latitude = $request->get('latitude');
         $radius = $request->get('radius');
+        $title = $request->get('title');
+        $description = $request->get('description');
         $locationdata = [];
+        
+
         
         /*if($complexity == 1){
             $distance = 50*count($coordinates);
@@ -262,7 +267,9 @@ class MapsController extends Controller
                                 'game_id'            => $gameId[$key],
                                 'game_variation_id'  => $gameVariationId[$key],
                                 'target'             => $target,
-                                'radius'             => (float)$radius[$key]
+                                'radius'             => (float)$radius[$key],
+                                'title'              => $title[$key],
+                                'description'        => $description[$key],
                             ]);
         }
 
@@ -475,7 +482,15 @@ class MapsController extends Controller
 
     //CUSTOM STORE
     public function customRecordStore(){
-        
+        // $huntComplexity = HuntComplexity::with('hunt_clues')->get();
+        // foreach ($huntComplexity as $key => $complexity) {
+        //     $star = $complexity->complexity;
+        //     foreach ($complexity->hunt_clues as $key => $hunt_clues) {
+        //         $hunt_clues['title'] = 'clue '.$star;
+        //         $hunt_clues['description'] = null;
+        //         $hunt_clues->save();
+        //     }
+        // }
         /*$hunts = Hunt::get();
         foreach ($hunts as $key => $hunt) {
             $hunt->name = ($hunt->name!="")?$hunt->name:$hunt->place_name;

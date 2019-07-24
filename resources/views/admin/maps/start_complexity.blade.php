@@ -91,7 +91,7 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label>Radius:</label>
+                                        <label>Radius(meter):</label>
                                         <input type="number" name="radius[]" value="{{ $gamedetails->radius }}" class="form-control">
                                     </div>
                                     <div class="form-group">
@@ -104,6 +104,14 @@
                                                 <input type="text" class="form-control" name="longitude[]" value="{{ $gamedetails->location['coordinates'][0] }}">
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Title:</label>
+                                        <input type="text" name="title[]" value="{{ $gamedetails->title }}" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Description:</label>
+                                        <textarea name="description[]" class="form-control">{{ $gamedetails->description }}</textarea>
                                     </div>
                                 </div>
                             @empty
@@ -304,7 +312,7 @@
                                                         </select>\
                                                     </div>\
                                                     <div class="form-group">\
-                                                        <label>Radius:</label>\
+                                                        <label>Radius(meter):</label>\
                                                         <input type="number" name="radius[]" class="form-control" value="5000">\
                                                     </div>\
                                                     <div class="form-group">\
@@ -317,6 +325,14 @@
                                                             <input type="text" class="form-control" name="longitude[]" value="'+xy.lng()+'">\
                                                             </div>\
                                                         </div>\
+                                                    </div>\
+                                                    <div class="form-group">\
+                                                        <label>Title:</label>\
+                                                        <input type="text" name="title[]" value="Clue {{ $complexity }}" class="form-control">\
+                                                    </div>\
+                                                    <div class="form-group">\
+                                                        <label>Description:</label>\
+                                                        <textarea name="description[]" value="" class="form-control"></textarea>\
                                                     </div>\
                                                 <div>');
 
@@ -429,9 +445,9 @@
                                             <label>Game Variations:</label>\
                                             <select name="game_variation_id[]" id="game_variation_id'+i+'" class="form-control">\
                                             '+option_game_variation+'</select>\
-                                        <div>\
+                                        </div>\
                                         <div class="form-group">\
-                                            <label>Radius:</label>\
+                                            <label>Radius(meter):</label>\
                                             <input type="number" name="radius[]" class="form-control" value="5000">\
                                         </div>\
                                         <div class="form-group">\
@@ -444,6 +460,14 @@
                                                     <input type="text" class="form-control" name="longitude[]" value="'+coordinates[i][0]+'">\
                                                 </div>\
                                             </div>\
+                                        </div>\
+                                        <div class="form-group">\
+                                            <label>Title:</label>\
+                                            <input type="text" name="title[]" value="Clue {{ $complexity }}" class="form-control">\
+                                        </div>\
+                                        <div class="form-group">\
+                                            <label>Description:</label>\
+                                            <textarea name="description[]" value="" class="form-control"></textarea>\
                                         </div>\
                                     <div>';
                         $('#game_box').append(html);

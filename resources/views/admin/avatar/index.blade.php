@@ -13,7 +13,7 @@
                 <thead>
                     <tr>
                         <th>Sr</th>
-                        <th>Name</th>
+                        <!-- <th>Name</th> -->
                         <th>Gender</th>
                         <th width="10%">Action</th>
                     </tr>
@@ -50,7 +50,7 @@
                 },
                 columns:[
                     { data:'DT_RowIndex',name:'_id' },
-                    { data:'name',name:'name' },
+                    // { data:'name',name:'name' },
                     { data:'gender',name:'gender' },
                     { data:'action',name:'action'},
                 ],

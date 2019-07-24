@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use App\Models\v1\User;
 use App\Models\v2\HuntUser;
 use App\Models\v2\HuntUserDetail;
+use App\Models\v1\WidgetItem;
 
 class UserController extends Controller
 {
@@ -182,18 +183,39 @@ class UserController extends Controller
 
     //ACCOUNT INFO
     public function accountInfo($id){
-        $user = User::with('hunt_user_v1:user_id,hunt_id,hunt_complexity_id,status,hunt_mode,complexity','hunt_user_v1.hunt:_id,fees')
+
+        $user = User::with([
+                            'hunt_user_v1:user_id,hunt_id,hunt_complexity_id,status,hunt_mode,complexity',
+                            'hunt_user_v1.hunt:_id,fees',
+                        ])
                     ->where('_id',$id)
                     ->first(); 
         
         $data['usedGold'] = 0;
         $data['currentGold'] = 0;
         $data['totalGold'] = 0;
-
+        $data['skeleton'] = 0;
+        
+        $widgetsId =  collect($user->widgets)->pluck('id');
+        
+        $data['widget'] = WidgetItem::select('_id','widget_name','item_name','avatar_id','gold_price')
+                                ->whereIn('_id',$widgetsId)
+                                ->orderBy('widget_name','desc')
+                                ->get()
+                                ->groupBy('widget_name');  
+        
         if($user){
             $data['usedGold'] = $user->hunt_user_v1->where('hunt_mode','challenge')->pluck('hunt.fees')->sum();
             $data['currentGold'] = $user->gold_balance;
             $data['totalGold'] = $data['usedGold'] + $data['currentGold'];
+            if($user->skeleton_keys){
+                $userSkKeys = collect($user->skeleton_keys);
+                $availSkKeys = $userSkKeys->where('used_at', null)->count();
+                // $totalKey  = count(array_column($user->skeleton_keys,'used_at'));
+                // $usedKey  = count(array_filter(array_column($user->skeleton_keys,'used_at')));
+                // $data['skeleton'] = $totalKey-$usedKey;
+                $data['skeleton'] = $availSkKeys;
+            }
         }
 
         return view('admin.user.accountInfo',compact('id','user','data'));

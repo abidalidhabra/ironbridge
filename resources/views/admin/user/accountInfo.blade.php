@@ -46,6 +46,12 @@
                             <div class="accountinfoname_left">
                                 <p>Gold</p>
                                 <h4>{{ $data['currentGold'] }}</h4>
+                            </div>                           
+                        </div>
+                        <div class="accountinfoname_detlis">
+                            <div class="accountinfoname_left">
+                                <p>Available Skeleton Keys</p>
+                                <h4>{{ $data['skeleton'] }}</h4>
                             </div>                            
                         </div>
                     </div>
@@ -68,6 +74,24 @@
                     </div> -->
                 </div>
             </div>
+        </div>
+        <div class="avtardetailbox">
+            @forelse($data['widget'] as $key => $widgetlist)
+                <h4>{{ $key }}</h4>
+                @forelse($widgetlist as $widget)
+                <div class="avtarimgtextiner">
+                    <img class="card-img-top" src="{{ asset('admin_assets/images/FullDressup.png') }}">
+                    <div class="card-body">
+                        <h5 class="card-title">${{ $widget->gold_price }}</h5>
+                        <p class="card-text">{{ $widget->id}}</p>
+                    </div>
+                </div>
+                @empty
+                @endforelse
+            @empty
+            @endforelse
+
+            
         </div>
     </div>
 

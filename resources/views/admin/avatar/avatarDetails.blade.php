@@ -7,18 +7,18 @@
     <div class="right_paddingboxpart">
         <div class="datingactivity_box">
             <div class="backbtn">
-                <a href="{{ route('admin.userList') }}">Back</a>
+                <a href="{{ route('admin.avarat.index') }}">Back</a>
             </div>
             <h3>Avatar Details</h3>
             <div class="innerdatingactivity">
-                <div class="swoped_detlisbox">
+                <!-- <div class="swoped_detlisbox">
                     <div class="swoped_detlisleft">
                        <p>Name</p> 
                     </div>
                     <div class="swoped_detlisright">
                         <span>{{ $avatar->name }}</span>
                     </div>
-                </div>
+                </div> -->
                 <div class="swoped_detlisbox">
                     <div class="swoped_detlisleft">
                        <p>Gender</p> 
@@ -134,13 +134,14 @@
             $(document).on('click','.colors',function(){
                 var status = $(this).attr('data-status');
                 var color_code = $(this).attr('data-colorcode');
-                $('.color_code').remove();
-                $(this).parents('.swoped_detlisright').append('<input type="text" data-id="'+$(this).attr('data-index')+'" data-status="'+status+'" value="'+color_code+'" class="color_code">');
+                $('.color_code , .color_code1').remove();
+                $(this).parents('.swoped_detlisright').append('<input type="text" value="'+color_code+'" class="color_code1"><a href="JavaScript:Void(0)" data-id="'+$(this).attr('data-index')+'" data-status="'+status+'" class="color_code">   <i class="fa fa-save iconsetaddbox"></i></a> ');
             });
 
-            $(document).on('focusout','.color_code',function(){
+            //$(document).on('focusout','.color_code',function(){
+            $(document).on('click','.color_code',function(){
                 var status = $(this).attr('data-status');
-                var color_code = $(this).val();
+                var color_code = $(this).parents('.swoped_detlisright').find('.color_code1').val();
                 var index = $(this).attr('data-id');
                 var id = '{{ $avatar->id }}';
 
@@ -158,7 +159,7 @@
                             if (response.status == true) {
                                 toastr.success(response.message);
                                 $('#'+status+index).css("background",color_code);
-                                $('.color_code').remove();                            
+                                $('.color_code , .color_code1').remove();                          
                             } else {
                                 toastr.warning(response.message);
                             }

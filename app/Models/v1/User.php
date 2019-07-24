@@ -144,4 +144,5 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsTo('App\Models\v1\Avatar', 'avatar.avatar_id', '_id');
     }
+
 }
