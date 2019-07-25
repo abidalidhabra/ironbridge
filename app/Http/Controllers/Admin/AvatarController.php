@@ -149,7 +149,7 @@ class AvatarController extends Controller
 
         return response()->json([
                                 'status'  => true,
-                                'message' => 'Gold price updated successfully',
+                                'message' => 'Widget category updated successfully',
                             ]);
     }
 }
