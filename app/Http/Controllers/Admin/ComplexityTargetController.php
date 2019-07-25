@@ -57,6 +57,9 @@ class ComplexityTargetController extends Controller
         ->addColumn('game_name', function($complexity){
             return $complexity->game->name;
         })
+        ->editColumn('complexity', function($complexity){
+            return $complexity->complexity.' star';
+        })
         ->rawColumns(['action'])
         ->order(function ($query) {
                     if (request()->has('created_at')) {

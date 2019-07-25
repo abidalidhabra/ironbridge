@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use MongoDB\BSON\UTCDateTime as MongoDBDate;
 use Yajra\Datatables\Datatables;
 use Yajra\DataTables\EloquentDataTable;
+use App\Models\v1\PracticeGamesTarget;
 
 class GameController extends Controller
 {
@@ -131,6 +132,57 @@ class GameController extends Controller
         return response()->json([
             'status' => true,
             'message'=>'Game has been deleted successfully.',
+        ]);
+    }
+
+    /* practice games target */
+    public function practiceGame(Request $request){
+        $practiceGames = PracticeGamesTarget::with('game:_id,name,status')
+                                                    ->get();
+        return view('admin.game.practice_games',compact('practiceGames'));
+    }    
+
+    /*  */
+    public function gameTargetUpdate(Request $request){
+        $gameId = $request->get('game_id');
+        
+        if ($gameId == '5c188ab5719a1408746c473b') {
+            $rules = [
+                        'target' => 'required|in:1024,2048,4096',
+                    ];
+        }elseif ($gameId == '5b0e304b51b2010ec820fb4e') {
+            $rules = [
+                        'target' => 'required|in:12,35,70,140',
+                    ];
+        } else {
+            $rules = [
+                        'target' => 'required',
+                    ];
+        }
+
+        $validator = Validator::make($request->all(),$rules);
+        
+        if ($validator->fails())
+        {
+            $message = $validator->messages()->first();
+            return response()->json(['status' => false,'message' => $message]);
+        }
+
+        $id     = $request->get('id');
+        $target = $request->get('target');
+
+        if($gameId == '5b0e304b51b2010ec820fb4e'){
+            $data['variation_size']=(int)$target;
+        } else {
+            $data['target']=(int)$target;
+        }
+
+        PracticeGamesTarget::where('_id',$id)
+                            ->update($data);
+
+        return response()->json([
+            'status' => true,
+            'message'=>'Target has been updated successfully.',
         ]);
     }
 }

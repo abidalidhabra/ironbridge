@@ -6,7 +6,7 @@
 	    </button>
 	    <div class="nav-offcanvas-menu">
 	        <ul>
-	        	@if(Route::currentRouteName() == 'admin.dashboards' || Route::currentRouteName() == 'admin.userList' || Route::currentRouteName() == 'admin.news.index' || Route::currentRouteName() == 'admin.game.index' || Route::currentRouteName() == 'admin.gameVariation.index' || Route::currentRouteName() == 'admin.gameVariation.create' || Route::currentRouteName() == 'admin.gameVariation.show' || Route::currentRouteName() == 'admin.usersParticipatedList' || Route::currentRouteName() == 'admin.complexityTarget.index' || Route::currentRouteName() == 'admin.mapsList' ||Route::currentRouteName() == 'admin.add_location' || Route::currentRouteName() == 'admin.boundary_map' || Route::currentRouteName() == 'admin.starComplexityMap' || Route::currentRouteName() == 'admin.edit_location' || Route::currentRouteName() == 'admin.test_location' || Route::currentRouteName() == 'admin.avatar.index'|| Route::currentRouteName() == 'admin.avatarDetails')
+	        	@if(Route::currentRouteName() == 'admin.dashboards' || Route::currentRouteName() == 'admin.userList' || Route::currentRouteName() == 'admin.news.index' || Route::currentRouteName() == 'admin.game.index' || Route::currentRouteName() == 'admin.gameVariation.index' || Route::currentRouteName() == 'admin.gameVariation.create' || Route::currentRouteName() == 'admin.gameVariation.show' || Route::currentRouteName() == 'admin.usersParticipatedList' || Route::currentRouteName() == 'admin.complexityTarget.index' || Route::currentRouteName() == 'admin.mapsList' ||Route::currentRouteName() == 'admin.add_location' || Route::currentRouteName() == 'admin.boundary_map' || Route::currentRouteName() == 'admin.starComplexityMap' || Route::currentRouteName() == 'admin.edit_location' || Route::currentRouteName() == 'admin.test_location' || Route::currentRouteName() == 'admin.avatar.index'|| Route::currentRouteName() == 'admin.avatarDetails' || Route::currentRouteName() == 'admin.practiceGame')
 		        	<li  class="@if(Route::currentRouteName() == 'admin.dashboards') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.dashboards') }}">Dashboard</a>
 					</li>
@@ -23,12 +23,13 @@
 						<a href="{{ route('admin.gameVariation.index') }}">Game Variations</a>
 					</li> -->
 					<li >
-						<a href="javascript:void(0)" class="plusbttnbox myBtn">Manage Games <i class="fa @if(Route::currentRouteName() == 'admin.game.index' || Route::currentRouteName() == 'admin.gameVariation.index' || Route::currentRouteName() == 'admin.gameVariation.create' || Route::currentRouteName() == 'admin.gameVariation.show') {{ 'fa-minus' }} @else {{ 'fa-plus' }} @endif" aria-hidden="true"></i></a>
+						<a href="javascript:void(0)" class="plusbttnbox myBtn">Manage Games <i class="fa @if(Route::currentRouteName() == 'admin.game.index' || Route::currentRouteName() == 'admin.gameVariation.index' || Route::currentRouteName() == 'admin.gameVariation.create' || Route::currentRouteName() == 'admin.gameVariation.show' || Route::currentRouteName() == 'admin.practiceGame') {{ 'fa-minus' }} @else {{ 'fa-plus' }} @endif" aria-hidden="true"></i></a>
 						<div class="dropdown custmenbox">
 							<!-- <button id="myBtn" class="dropbtn">Dropdown</button> -->
-							<div  class="dropdown-content myDropdown @if(Route::currentRouteName() == 'admin.game.index' || Route::currentRouteName() == 'admin.gameVariation.index' || Route::currentRouteName() == 'admin.gameVariation.create' || Route::currentRouteName() == 'admin.gameVariation.show') {{ 'show' }} @endif">
+							<div  class="dropdown-content myDropdown @if(Route::currentRouteName() == 'admin.game.index' || Route::currentRouteName() == 'admin.gameVariation.index' || Route::currentRouteName() == 'admin.gameVariation.create' || Route::currentRouteName() == 'admin.gameVariation.show' || Route::currentRouteName() == 'admin.practiceGame') {{ 'show' }} @endif">
 								<a href="{{ route('admin.game.index') }}" class="@if(Route::currentRouteName() == 'admin.game.index') {{ 'activelistsub' }} @endif" >Games</a>
 								<a href="{{ route('admin.gameVariation.index') }}" class="@if(Route::currentRouteName() == 'admin.gameVariation.index' || Route::currentRouteName() == 'admin.gameVariation.create' || Route::currentRouteName() == 'admin.gameVariation.show') {{ 'activelistsub' }} @endif">Game Variations</a>
+								<a href="{{ route('admin.practiceGame') }}" class="@if(Route::currentRouteName() == 'admin.practiceGame') {{ 'activelistsub' }} @endif" >Practice Games Targets</a>
 							</div>
 						</div>
 					</li>
@@ -38,7 +39,7 @@
 							<!-- <button id="myBtn" class="dropbtn">Dropdown</button> -->
 							<div  class="dropdown-content myDropdown @if(Route::currentRouteName() == 'admin.mapsList' ||Route::currentRouteName() == 'admin.add_location' || Route::currentRouteName() == 'admin.boundary_map' || Route::currentRouteName() == 'admin.starComplexityMap' || Route::currentRouteName() == 'admin.edit_location' || Route::currentRouteName() == 'admin.complexityTarget.index') {{ 'show' }} @endif">
 								<a href="{{ route('admin.mapsList') }}" class="@if(Route::currentRouteName() == 'admin.mapsList' ||Route::currentRouteName() == 'admin.add_location' || Route::currentRouteName() == 'admin.boundary_map' || Route::currentRouteName() == 'admin.starComplexityMap' || Route::currentRouteName() == 'admin.edit_location') {{ 'activelistsub' }} @endif">Treasure Locations</a>
-								<a href="{{ route('admin.complexityTarget.index') }}" class="@if(Route::currentRouteName() == 'admin.complexityTarget.index') {{ 'activelistsub' }} @endif">Complexity Targets</a>
+								<a href="{{ route('admin.complexityTarget.index') }}" class="@if(Route::currentRouteName() == 'admin.complexityTarget.index') {{ 'activelistsub' }} @endif">Games Targets</a>
 							</div>
 						</div>
 					</li>
