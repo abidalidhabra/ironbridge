@@ -69,12 +69,12 @@
                 <div class="avtarimgtextiner">
                     <img class="card-img-top" src="{{ asset('admin_assets/widgets/'.$widget->id.'.png') }}">
                     <div class="card-body">
-                        <div class="col-md-9">
+                        <div class="col-md-8">
                             <div class="row">
                                 <h5 class="card-title">{{ $widget->gold_price }} Gold</h5>
                             </div>
                         </div>
-                        <div class="col-md-3 text-right">
+                        <div class="col-md-4 text-right">
                             <div class="row">
                                 <a href="javascript:void(0)" class="widget_edit" id="widget_edit{{ $widget->id}}" data-gold="{{ $widget->gold_price }}" data-id="{{ $widget->id}}"><i class="fa fa-pencil iconsetaddbox"></i>
                                 </a>    
@@ -83,12 +83,16 @@
                             </div>
                         </div>
                         <div class="row">
-                            <label class="radio-inline">
-                                <input type="radio" class="widget_category" name="widget_category{{ $widget->id}}" data-id="{{ $widget->id}}" value="basic" {{ (($widget->widget_category == 'basic')?'checked':'') }}>Basic
-                            </label>
-                            <label class="radio-inline">
-                                <input type="radio" class="widget_category" name="widget_category{{ $widget->id}}" data-id="{{ $widget->id}}" value="delux" {{ (($widget->widget_category == 'delux')?'checked':'') }}>Delux
-                            </label>
+                            <div class="radiobtnbox">
+                                <label class="radio-inline">
+                                    <input type="radio" class="widget_category" name="widget_category{{ $widget->id}}" data-id="{{ $widget->id}}" value="basic" {{ (($widget->widget_category == 'basic')?'checked':'') }}>Basic
+                                </label>
+                            </div>
+                            <div class="radiobtnbox">
+                                <label class="radio-inline">
+                                    <input type="radio" class="widget_category" name="widget_category{{ $widget->id}}" data-id="{{ $widget->id}}" value="delux" {{ (($widget->widget_category == 'delux')?'checked':'') }}>Delux
+                                </label>
+                            </div>
                         </div>
                         <!-- <p class="card-text">{{ $widget->id}}</p> -->
                     </div>

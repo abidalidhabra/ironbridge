@@ -79,11 +79,11 @@
             @forelse($data['widget'] as $key => $widgetlist)
                 <h4>{{ $key }}</h4>
                 @forelse($widgetlist as $widget)
-                <div class="avtarimgtextiner">
+                <div class="avtarimgtextiner boxheightset">
                     @if($data['widgetsIdSelected'][$widget->id] == true)
-                        <label>selected</label>
+                        <span class="selectedtext">selected</span>
                     @endif
-                    <label>{{ $widget->widget_category }}</label>
+                    <span class="basdistext">{{ $widget->widget_category }}</span>
                     <img class="card-img-top" src="{{ asset('admin_assets/widgets/'.$widget->id.'.png') }}">
                     <div class="card-body">
                         <h5 class="card-title">
