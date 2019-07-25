@@ -6,7 +6,7 @@
 	    </button>
 	    <div class="nav-offcanvas-menu">
 	        <ul>
-	        	@if(Route::currentRouteName() == 'admin.dashboards' || Route::currentRouteName() == 'admin.userList' || Route::currentRouteName() == 'admin.news.index' || Route::currentRouteName() == 'admin.game.index' || Route::currentRouteName() == 'admin.gameVariation.index' || Route::currentRouteName() == 'admin.gameVariation.create' || Route::currentRouteName() == 'admin.gameVariation.show' || Route::currentRouteName() == 'admin.usersParticipatedList' || Route::currentRouteName() == 'admin.complexityTarget.index' || Route::currentRouteName() == 'admin.mapsList' ||Route::currentRouteName() == 'admin.add_location' || Route::currentRouteName() == 'admin.boundary_map' || Route::currentRouteName() == 'admin.starComplexityMap' || Route::currentRouteName() == 'admin.edit_location' || Route::currentRouteName() == 'admin.test_location' || Route::currentRouteName() == 'admin.avarat.index'|| Route::currentRouteName() == 'admin.avatarDetails')
+	        	@if(Route::currentRouteName() == 'admin.dashboards' || Route::currentRouteName() == 'admin.userList' || Route::currentRouteName() == 'admin.news.index' || Route::currentRouteName() == 'admin.game.index' || Route::currentRouteName() == 'admin.gameVariation.index' || Route::currentRouteName() == 'admin.gameVariation.create' || Route::currentRouteName() == 'admin.gameVariation.show' || Route::currentRouteName() == 'admin.usersParticipatedList' || Route::currentRouteName() == 'admin.complexityTarget.index' || Route::currentRouteName() == 'admin.mapsList' ||Route::currentRouteName() == 'admin.add_location' || Route::currentRouteName() == 'admin.boundary_map' || Route::currentRouteName() == 'admin.starComplexityMap' || Route::currentRouteName() == 'admin.edit_location' || Route::currentRouteName() == 'admin.test_location' || Route::currentRouteName() == 'admin.avatar.index'|| Route::currentRouteName() == 'admin.avatarDetails')
 		        	<li  class="@if(Route::currentRouteName() == 'admin.dashboards') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.dashboards') }}">Dashboard</a>
 					</li>
@@ -42,8 +42,8 @@
 							</div>
 						</div>
 					</li>
-					<li  class="@if(Route::currentRouteName() == 'admin.avarat.index' || Route::currentRouteName() == 'admin.avatarDetails') {{ 'activelist' }} @endif">
-						<a href="{{ route('admin.avarat.index') }}">Avatars</a>
+					<li  class="@if(Route::currentRouteName() == 'admin.avatar.index' || Route::currentRouteName() == 'admin.avatarDetails') {{ 'activelist' }} @endif">
+						<a href="{{ route('admin.avatar.index') }}">Avatars</a>
 					</li>
 					
 				@else

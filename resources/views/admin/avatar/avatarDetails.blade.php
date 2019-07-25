@@ -7,7 +7,7 @@
     <div class="right_paddingboxpart">
         <div class="datingactivity_box">
             <div class="backbtn">
-                <a href="{{ route('admin.avarat.index') }}">Back</a>
+                <a href="{{ route('admin.avatar.index') }}">Back</a>
             </div>
             <h3>Avatar Details</h3>
             <div class="innerdatingactivity">
@@ -69,21 +69,27 @@
                 <div class="avtarimgtextiner">
                     <img class="card-img-top" src="{{ asset('admin_assets/widgets/'.$widget->id.'.png') }}">
                     <div class="card-body">
-                        
-                            <div class="col-md-9">
-                                <div class="row">
-                                    <h5 class="card-title">{{ $widget->gold_price }} Gold</h5>
-                                </div>
+                        <div class="col-md-9">
+                            <div class="row">
+                                <h5 class="card-title">{{ $widget->gold_price }} Gold</h5>
                             </div>
-                            <div class="col-md-3 text-right">
-                                <div class="row">
-                                    <a href="javascript:void(0)" class="widget_edit" id="widget_edit{{ $widget->id}}" data-gold="{{ $widget->gold_price }}" data-id="{{ $widget->id}}"><i class="fa fa-pencil iconsetaddbox"></i>
-                                    </a>    
-                                    <a href="javascript:void(0)" class="widget_save hidden text-left" id="widget_save{{ $widget->id}}" data-id="{{ $widget->id}}"><i class="fa fa-save iconsetaddbox"></i></a>
-                                    <a href="javascript:void(0)" class="widget_close hidden text-right" id="widget_close{{ $widget->id}}"><i class="fa fa-times iconsetaddbox"></i></a>
-                                </div>
+                        </div>
+                        <div class="col-md-3 text-right">
+                            <div class="row">
+                                <a href="javascript:void(0)" class="widget_edit" id="widget_edit{{ $widget->id}}" data-gold="{{ $widget->gold_price }}" data-id="{{ $widget->id}}"><i class="fa fa-pencil iconsetaddbox"></i>
+                                </a>    
+                                <a href="javascript:void(0)" class="widget_save hidden text-left" id="widget_save{{ $widget->id}}" data-id="{{ $widget->id}}"><i class="fa fa-save iconsetaddbox"></i></a>
+                                <a href="javascript:void(0)" class="widget_close hidden text-right" id="widget_close{{ $widget->id}}"><i class="fa fa-times iconsetaddbox"></i></a>
                             </div>
-                       
+                        </div>
+                        <div class="row">
+                            <label class="radio-inline">
+                                <input type="radio" class="widget_category" name="widget_category{{ $widget->id}}" data-id="{{ $widget->id}}" value="basic" {{ (($widget->widget_category == 'basic')?'checked':'') }}>Basic
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" class="widget_category" name="widget_category{{ $widget->id}}" data-id="{{ $widget->id}}" value="delux" {{ (($widget->widget_category == 'delux')?'checked':'') }}>Delux
+                            </label>
+                        </div>
                         <!-- <p class="card-text">{{ $widget->id}}</p> -->
                     </div>
                 </div>
@@ -132,11 +138,16 @@
                     },
                     url: '{{ route("admin.widgetPriceUpdate") }}',
                     data: {id : id,gold_price:gold},
+                    beforeSend: function() {
+                        $('#widget_save'+id).find('i').addClass('fa-spinner').removeClass('fa-save');
+                        $('#widget_close'+id).addClass('hidden');
+                    },
                     success: function(response)
                     {
                         if (response.status == true) {
                             toastr.success(response.message);
                             $('#widget_save'+id).addClass('hidden');
+                            $('#widget_save'+id).find('i').removeClass('fa-spinner').addClass('fa-save');
                             $('#widget_close'+id).addClass('hidden');
                             $('#widget_edit'+id).removeClass('hidden').attr('data-gold',gold);
                             $('#widget_edit'+id).parents('.card-body').find('.card-title').removeClass('hidden').text(gold+' Gold');
@@ -173,6 +184,10 @@
                         },
                         url: '{{ route("admin.avatarColorUpdate") }}',
                         data: {id : id,status:status,color_code:color_code,index:index},
+                        beforeSend: function() {
+                            $('.color_code').find('i').addClass('fa-spinner');
+                            $('.remove_color_code').remove();
+                        },
                         success: function(response)
                         {
                             if (response.status == true) {
@@ -193,6 +208,30 @@
             $(document).on('click','.remove_color_code',function(){
                  $('.color_code , .color_code1 , .remove_color_code').remove();
             })
+
+            /** widget category **/
+            $(document).on('click','.widget_category',function(){
+                if($(this).is(":checked")){
+                    var category = $(this).val();
+                }
+                var id = $(this).data('id');
+                $.ajax({
+                    type: "POST",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '{{ route("admin.widgetCategoryUpdate") }}',
+                    data: {id : id,category:category},
+                    success: function(response)
+                    {
+                        if (response.status == true) {
+                            toastr.success(response.message);      
+                        } else {
+                            toastr.warning(response.message);
+                        }
+                    }
+                });
+            });
         });
     </script>
 @endsection
