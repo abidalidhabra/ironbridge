@@ -1,7 +1,6 @@
 @section('title','Ironbridge1779 | Practice Games')
 @extends('admin.layouts.admin-app')
 @section('styles')
-    <!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->
 @endsection
 @section('content')
     <div class="right_paddingboxpart">
@@ -36,8 +35,46 @@
                 @endforelse
             </div>
         </div>
+        <div class="datingactivity_box">
+            <h3>More Games</h3>
+            <div class="innerdatingactivity">
+                <form id="formPracticeGames" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group col-md-6">
+                        <label class="form-label">Game Name</label>
+                        <select name="game_id" class="form-control game_id">
+                            @forelse($moregame as $game)
+                                <option value="{{ $game->game->id }}" data-id="{{ $game->id }}">{{ $game->game->name }}</option>
+                            @empty
+                            @endforelse  
+                        </select>
+                    </div>
+                    <div class="variation_box">
+                        
+                    </div>
+                    
+                    <div class="form-group col-md-6">
+                        <br/>
+                        <input type="submit" name="submit" class="btn btn-success" value="Submit">
+                    </div>
+                </form>
+            </div>
+        </div>
         
     </div>
+@forelse($moregame as $game)
+    <div id="variation{{$game->id}}" style="display: none;">
+        <div class="form-group col-md-6">
+            <label class="form-label">Variation size <small class="hidden size_hint">must of [12,35,70,140]</small></label>
+            <input type="text" name="variation_size" class="form-control">
+        </div>
+        <div class="form-group col-md-6">
+            <label class="form-label">Variation Image <small class="hidden image_hit">must be 2000*1440 dimension </small></label>
+            <input type="file" name="variation_image[]" class="form-control variation_image">
+        </div>
+    </div>
+@empty
+@endforelse
 
 @endsection
 
@@ -93,5 +130,43 @@
             $('.practice_edit , .target_text').removeClass('hidden');
             $('.target , .practice_save , .practice_close').remove();
         });
+
+        /* game select */
+        $(document).on('change','.game_id',function(){
+            var game_id = $(this).val();
+            var id = $(this).find(':selected').data('id');
+            
+            if (game_id == '5b0e304b51b2010ec820fb4e') {
+                $('.variation_box').html($('#variation'+id).html());
+                $('.variation_image').attr('multiple',true);
+                $('.image_hit , .size_hint').removeClass('hidden');
+            } else {
+                $('.image_hit , .size_hint').addClass('hidden');
+                $('.variation_image').attr('multiple',false);
+            }
+        });
+
+        /* submit form */
+        $('#formPracticeGames').submit(function(e) {
+            var formData = new FormData(this);
+            $.ajax({
+                type:'POST',
+                url:'{{ route("admin.variationSizeUpdate") }}',
+                data: formData,
+                cache:false,
+                contentType: false,
+                processData: false,
+                beforeSend:function(){},
+                success:function(response) {
+                    if (response.status == true) {
+                        toastr.success(response.message);
+                    } else {
+                        toastr.warning(response.message);
+                    }
+                },
+                complete:function(){},
+                error:function(){}
+            });
+        })
     </script>
 @endsection

@@ -68,7 +68,7 @@ class GameVariationController extends Controller
             $rules = [
                         'row'    => 'required|in:4,6,8',   
                         'column' => 'required|in:4,6,8|same:row',   
-                        'target' => 'required|in:1024,2048,4096',   
+                        'target' => 'required|in:512,1024,2048,4096',   
                     ];
         }
 

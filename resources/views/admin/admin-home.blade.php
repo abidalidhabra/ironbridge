@@ -129,12 +129,12 @@
                 <li>
                     <img src="{{ asset('admin_assets/svg/map.svg') }}">
                     <h3>{{ $data['huntCompleted'] }}</h3>
-                    <p>Hunt Complete</p>
+                    <p>Completed Hunt</p>
                 </li>
                 <li>
                     <img src="{{ asset('admin_assets/svg/map.svg') }}">
                     <h3>{{ $data['huntProgress'] }}</h3>
-                    <p>Hunt Progress</p>
+                    <p>In Progress Hunt</p>
                 </li>
             </ul>
         </div>

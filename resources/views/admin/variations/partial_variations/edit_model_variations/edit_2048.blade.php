@@ -14,6 +14,6 @@
     <input type="text" value="{{ $variations->column }}" name="column" id="column" class="form-control">
 </div>
 <div class="form-group col-md-6">
-    <label class="form-label">Target <small class="form-text text-muted">must of [1024,2048,4096]</small></label>
+    <label class="form-label">Target <small class="form-text text-muted">must of [512,1024,2048,4096]</small></label>
     <input type="text" value="{{ $variations->target }}" name="target" id="target" class="form-control">
 </div>

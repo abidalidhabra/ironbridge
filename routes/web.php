@@ -79,6 +79,7 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::delete('deleteGame', 'GameController@deleteGame')->name('deleteGame');
 	Route::get('practiceGamesTargets', 'GameController@practiceGame')->name('practiceGame');
 	Route::post('gameTargetUpdate', 'GameController@gameTargetUpdate')->name('gameTargetUpdate');
+	Route::post('variationSizeUpdate', 'GameController@variationSizeUpdate')->name('variationSizeUpdate');
 
 
 	//GameVariationController

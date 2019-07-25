@@ -35,8 +35,13 @@ class AdminController extends Controller
                             ->whereHas('hunt')
                             ->whereHas('user')
                             ->get();
+
         $data['huntCompleted'] = $huntUser->where('status','completed')->count();
         $data['huntProgress'] = $huntUser->whereIn('status',['participated', 'paused', 'running'])->count();
+
+        // echo "<pre>";
+        // print_r($huntUser->toArray());
+        // exit();
         
         return view('admin.admin-home',compact('data'));
 

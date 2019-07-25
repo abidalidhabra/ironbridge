@@ -138,8 +138,13 @@ class GameController extends Controller
     /* practice games target */
     public function practiceGame(Request $request){
         $practiceGames = PracticeGamesTarget::with('game:_id,name,status')
-                                                    ->get();
-        return view('admin.game.practice_games',compact('practiceGames'));
+                                            ->whereNotIn('game_id',['5b0e306951b2010ec820fb4f','5b0e304b51b2010ec820fb4e'])
+                                            ->get();
+        $moregame = PracticeGamesTarget::with('game:_id,name,status')
+                                        ->whereIn('game_id',['5b0e306951b2010ec820fb4f','5b0e304b51b2010ec820fb4e'])
+                                        ->get();
+
+        return view('admin.game.practice_games',compact('practiceGames','moregame'));
     }    
 
     /*  */
@@ -184,5 +189,27 @@ class GameController extends Controller
             'status' => true,
             'message'=>'Target has been updated successfully.',
         ]);
+    }
+
+    public function variationSizeUpdate(Request $request){
+        $gameId = $request->get('game_id');
+        
+        if ($gameId == '5b0e304b51b2010ec820fb4e') {
+            $rules = [
+                        'target' => 'required|in:12,35,70,140',
+                    ];
+        } else {
+            $rules = [
+                        'target' => 'required',
+                    ];
+        }
+
+        $validator = Validator::make($request->all(),$rules);
+        
+        if ($validator->fails())
+        {
+            $message = $validator->messages()->first();
+            return response()->json(['status' => false,'message' => $message]);
+        }
     }
 }
