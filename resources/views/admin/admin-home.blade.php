@@ -9,10 +9,10 @@
             <div class="signeup_lefttextbox">
                 <p>Signed up</p>
             </div>
-            <div class="date_textboxpart">
+            <!-- <div class="date_textboxpart">
                 <img src="{{ asset('admin_assets/images/datepicker.png') }}">
                 <input type="text" name="datefilter" value="2 November, 2018 - 2 December 2018">
-            </div>
+            </div> -->
         </div>
         <div class="signeup_innerborderbox">
             <div class="total_usersdetlis">
@@ -51,23 +51,47 @@
                     </div>
                 </div>
                 <div class="city_childbox">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="hunt-number">{{ $data['huntProgress'] }}</p>
+                            <p class="hunt-text">In Progress Hunts</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="hunt-number">{{ $data['huntCompleted'] }}</p>
+                            <p class="hunt-text">Completed Hunts</p>
+                        </div>
+                    </div>
+
+                    <br/>
                     <div class="devicetital_text">
-                        <p>City</p>
+                        <p>Top 5 Hunts</p>
                     </div>
-                    <div class="citycategory_box">
-                        <div class="leftcity_textbox">
-                            <p>No records found</p>
+                    <?php
+                        $i = 1;
+                    ?>
+                    @forelse($data['huntTop'] as $key => $hunt)
+                        <div class="citycategory_box">
+                            <div class="leftcity_textbox">
+                                <p>{{ $hunt }}</p>
+                            </div>
+                            <div class="rightcity_textbox">
+                                <p>{{ $key }}</p>
+                            </div>
                         </div>
-                    </div>
-                    <!-- <div class="citycategory_box">
-                        <div class="leftcity_textbox">
-                            <p>Abc</p>
+                        <?php
+                            $i++;
+                            if ($i == 6) {
+                                break;
+                            }
+                        ?>
+                    @empty
+                        <div class="citycategory_box">
+                            <div class="leftcity_textbox">
+                                <p>No records found</p>
+                            </div>
                         </div>
-                        <div class="rightcity_textbox">
-                            <p>92,333(42%)</p>
-                        </div>
-                    </div>
-                    <div class="citycategory_box">
+                    @endforelse
+                    <!--<div class="citycategory_box">
                         <div class="leftcity_textbox">
                             <p>Abc</p>
                         </div>
@@ -126,7 +150,7 @@
                     <h3>{{ $data['treasure_locations'] }}</h3>
                     <p>Total Treasure Locations</p>
                 </li>         
-                <li>
+                <!-- <li>
                     <img src="{{ asset('admin_assets/svg/map.svg') }}">
                     <h3>{{ $data['huntCompleted'] }}</h3>
                     <p>Completed Hunt</p>
@@ -135,7 +159,7 @@
                     <img src="{{ asset('admin_assets/svg/map.svg') }}">
                     <h3>{{ $data['huntProgress'] }}</h3>
                     <p>In Progress Hunt</p>
-                </li>     
+                </li> -->     
             </ul>
         </div>
     </div>

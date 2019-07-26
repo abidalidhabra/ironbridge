@@ -39,8 +39,17 @@ class AdminController extends Controller
                             ->whereHas('hunt')
                             ->whereHas('user')
                             ->get();
-        $data['huntCompleted'] = $huntUser->where('status','completed')->count();
-        $data['huntProgress'] = $huntUser->whereIn('status',['participated', 'paused', 'running'])->count();
+        $data['huntCompleted'] = $huntUser->where('status','completed')->groupBy('hunt_id')->count();
+        $data['huntProgress'] = $huntUser->whereIn('status',['participated', 'paused', 'running'])->groupBy('hunt_id')->count();
+
+        $userHuntId = $huntUser->pluck('hunt_id')->toArray();
+        $userHuntIdValue = array_count_values($userHuntId);
+        arsort($userHuntIdValue);
+        $data['huntTop'] = [];
+        foreach ($userHuntIdValue as $key => $value) {
+            $hunt = Hunt::select('name')->where('_id',$key)->first();
+            $data['huntTop'][$value] = $hunt->name;
+        }
 
         return view('admin.admin-home',compact('data'));
 

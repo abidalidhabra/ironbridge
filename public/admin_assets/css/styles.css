@@ -1700,6 +1700,25 @@ table i.iconsetaddbox{
     font-family: 'Montserrat-Medium';
 }
 
+.hunt-number{
+    margin: 0px;
+    font-size: 22px;
+    color: #4D4F5C;
+    padding-bottom: 3px;
+    font-family: 'Montserrat-SemiBold';
+}
+
+.hunt-text{
+    margin: 0px;
+    font-size: 14px;
+    color: #6A7284;
+    font-family: 'Montserrat-Medium'
+}
+
+
+
+
+
 
 
 
