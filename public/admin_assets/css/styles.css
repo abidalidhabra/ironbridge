@@ -785,6 +785,14 @@ i.iconsetaddbox{
     margin-top: 2px;
     float: right;
 }
+
+table i.iconsetaddbox{
+    font-size: 17px;
+    color: #C0B08C;
+    margin-right: 5px;
+    margin-top: 2px;
+    float: left;
+}
 .customdatatable_box .dataTables_wrapper .dataTables_filter input {
     margin-left: 0.5em;
     border: 1px solid #ddd;
@@ -1635,14 +1643,62 @@ i.iconsetaddbox{
 }
 
 
+.adduserdetbox .modal-content .modal-header h4{
+    margin: 0px;
+    font-size: 20px;
+    color: #C0B08C;
+    padding-top: 4px;
+    letter-spacing: 0.5px;
+    font-family: 'Montserrat-Bold';
+}
+.adduserdetbox .modal-body{
 
+}
+.adduserdetailbox{
 
+}
+.userdeta_titlebox{
+    display: inline-block;
+    width: 100%;
+}
+.userdeta_titlebox h5{
+    margin: 0px;
+    font-size: 16px;
+    color: #C0B08C;
+    padding-top: 0px;
+    letter-spacing: 0.5px;
+    font-family: 'Montserrat-SemiBold';
+    margin-bottom: 6px;
+}
 
+.alltitandchebox{
+    display: inline-block;
+    width: 100%;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 18px;
+    margin-bottom: 25px;
+}
 
+.checkuserditbox{
+    display: inline-block;
+    width: 100%;
+}
 
+.colmd4box{
+    display: inline-block;
+    width: 33.33%;
+    float: left;
+}
+.checkuserditbox .checkbox{
+    margin-bottom: 1px;
+}
 
-
-
+.checkuserditbox .checkbox label{
+    margin: 0px;
+    font-size: 14px;
+    color: #6A7284;
+    font-family: 'Montserrat-Medium';
+}
 
 
 

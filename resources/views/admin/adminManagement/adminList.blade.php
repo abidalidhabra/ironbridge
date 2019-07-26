@@ -32,7 +32,7 @@
 </div>
 <div class="container">  
     <div class="addnewsmodal_box">
-        <div class="modal fade bd-example-modal-lg" id="addAdmin" role="dialog">
+        <div class="modal fade bd-example-modal-lg adduserdetbox" id="addAdmin" role="dialog">
             <div class="modal-dialog modal-lg">
                 <!-- Modal content-->
                 <div class="modal-content">
@@ -43,21 +43,32 @@
                     <form method="post" id="addAdminForm">
                         @csrf
                         <div class="modal-body">
-                            <div class="modalbodysetbox">
+                            <div class="modalbodysetbox adduserdetailbox">
                                 <div class="newstitlebox_inputbox">
                                     <div class="form-group">
                                         <input type="text" name="email" placeholder="email">
                                     </div>
                                 </div>
+                                @foreach($permissions as $key => $permissionData)
                                 <?php $module=""; ?>             
-                                @foreach($permissions as $permission)
-                                @if($module != $permission->module)<div class="clearfix"></div> <h5>{{$permission->module}}</h5> <hr><div class="clearfix"></div>@endif
-                                <div class="col-md-4 ml-auto">
-                                    <div class="checkbox">
-                                        <label><input type="checkbox" name="permissions[]" id="{{$permission->id}}" value="{{$permission->name}}">{{$permission->name}}</label>
-                                    </div>
-                                </div>
-                                <?php $module = $permission->module; ?>             
+                                        
+                                        <div class="alltitandchebox">
+                                            <div class="userdeta_titlebox">
+                                                <h5>{{ $key }}</h5>
+                                            </div>
+                                            <div class="checkuserditbox">
+                                                @forelse($permissionData  as $permission)
+                                                <div class="colmd4box">
+                                                    <div class="checkbox">
+                                                        <label><input type="checkbox" name="permissions[]" id="{{$permission->id}}" value="{{$permission->name}}">{{$permission->name}}</label>
+                                                    </div>
+                                                </div>
+                                                <?php $module = $permission->module; ?>             
+                                                @empty
+                                                @endforelse
+                                            </div>
+                                        </div>
+                                    
                                 @endforeach
                                 <label for="permissions[]" class="error"></label>
                             </div>
@@ -70,7 +81,8 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade bd-example-modal-lg" id="editAdmin" role="dialog">
+        
+        <div class="modal fade bd-example-modal-lg adduserdetbox" id="editAdmin" role="dialog">
             <div class="modal-dialog  modal-lg">
                 <!-- Modal content>-->
                 <div class="modal-content">

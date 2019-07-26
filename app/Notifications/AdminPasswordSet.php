@@ -42,9 +42,8 @@ class AdminPasswordSet extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-        ->line('Set Your Password')
-        ->action('Notification Action', route('admin.setPassword',$this->token))
-        ->line('Thank you for using our application!');
+        ->line('Please create your password using below link!')
+        ->action('Click here', route('admin.setPassword',$this->token));
     }
 
 

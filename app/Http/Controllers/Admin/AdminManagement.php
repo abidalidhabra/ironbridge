@@ -25,7 +25,10 @@ class AdminManagement extends Controller
      */
     public function index()
     {
-        $permissions = Permission::all();
+        // $permissions = Permission::get();
+        $permissions = Permission::get()
+                                ->groupBy('module');
+        
         return view('admin.adminManagement.adminList',compact('permissions'));
     }
 
@@ -140,7 +143,9 @@ class AdminManagement extends Controller
     {
        $admin = Admin::where('_id',$id)->first();
        $assignedPermissions = $admin->getAllPermissions()->pluck('_id')->toArray();
-       $permissions = Permission::all();
+       //$permissions = Permission::all();
+        $permissions = Permission::get()
+                                ->groupBy('module');
        return view('admin.adminManagement.editAdmin',compact('admin','assignedPermissions','permissions'));
 
    }
