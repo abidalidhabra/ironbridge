@@ -1,0 +1,2 @@
+[26-Jul-2019 09:41:26 UTC] PHP Fatal error:  Trait 'Maklad\Permission\Traits\HasRoles' not found in /home/fddev/public_html/ironbridge1779/app/Models/v1/Admin.php on line 18
+[26-Jul-2019 09:43:01 UTC] PHP Fatal error:  Trait 'Maklad\Permission\Traits\HasRoles' not found in /home/fddev/public_html/ironbridge1779/app/Models/v1/Admin.php on line 18
