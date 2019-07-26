@@ -1062,6 +1062,22 @@ i.iconsetaddbox{
     position: relative;
 }
 
+.imageslibbox1 ul{
+    display: inline-block;
+    width: 100%;
+    padding-left: 0;
+    margin: 0px;
+}
+
+.imageslibbox1 ul li{
+    display: inline-block;
+    width: 33.33%;
+    float: left;
+    padding-bottom: 20px;
+    padding-right: 20px;
+    position: relative;
+}
+
 .closeicon{
     position: absolute;
     right: 31px;

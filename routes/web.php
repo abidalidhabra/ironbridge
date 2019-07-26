@@ -80,6 +80,7 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('practiceGamesTargets', 'GameController@practiceGame')->name('practiceGame');
 	Route::post('gameTargetUpdate', 'GameController@gameTargetUpdate')->name('gameTargetUpdate');
 	Route::post('variationSizeUpdate', 'GameController@variationSizeUpdate')->name('variationSizeUpdate');
+	Route::post('practiceDeleteImage', 'GameController@practiceDeleteImage')->name('practiceDeleteImage');
 
 
 	//GameVariationController
