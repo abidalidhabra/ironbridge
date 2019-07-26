@@ -196,14 +196,19 @@ class UserController extends Controller
         $data['totalGold'] = 0;
         $data['skeleton'] = 0;
         
+        $data['widgetsIdSelected'] = [];
+        foreach ($user->widgets as $key => $value) {
+            $data['widgetsIdSelected'][$value['id']] = ($value['selected'])?true:false;
+        }
+
         $widgetsId =  collect($user->widgets)->pluck('id');
         
-        $data['widget'] = WidgetItem::select('_id','widget_name','item_name','avatar_id','gold_price')
+        $data['widget'] = WidgetItem::select('_id','widget_name','item_name','avatar_id','gold_price','widget_category')
                                 ->whereIn('_id',$widgetsId)
                                 ->orderBy('widget_name','desc')
                                 ->get()
                                 ->groupBy('widget_name');  
-        
+                                            
         if($user){
             $data['usedGold'] = $user->hunt_user_v1->where('hunt_mode','challenge')->pluck('hunt.fees')->sum();
             $data['currentGold'] = $user->gold_balance;

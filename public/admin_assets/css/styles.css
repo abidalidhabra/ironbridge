@@ -781,7 +781,9 @@ header{
 i.iconsetaddbox{
     font-size: 17px;
     color: #C0B08C;
-    margin-right: 5px;
+    margin-right: 0px;
+    margin-top: 2px;
+    float: right;
 }
 .customdatatable_box .dataTables_wrapper .dataTables_filter input {
     margin-left: 0.5em;
@@ -1060,6 +1062,22 @@ i.iconsetaddbox{
     position: relative;
 }
 
+.imageslibbox1 ul{
+    display: inline-block;
+    width: 100%;
+    padding-left: 0;
+    margin: 0px;
+}
+
+.imageslibbox1 ul li{
+    display: inline-block;
+    width: 33.33%;
+    float: left;
+    padding-bottom: 20px;
+    padding-right: 20px;
+    position: relative;
+}
+
 .closeicon{
     position: absolute;
     right: 31px;
@@ -1309,8 +1327,12 @@ i.iconsetaddbox{
     display: inline-block;
     width: 100%;
     float: left;
-    padding: 12px 15px 12px 15px;
+    padding: 12px 15px 9px 15px;
     border-bottom: 1px solid #EAEAEA;
+}
+.color_code1{
+    height: 21px;
+    float: left;
 }
 .swoped_detlisleft {
     display: inline-block;
@@ -1458,9 +1480,11 @@ i.iconsetaddbox{
 }
 
 .px20_20{
-    width:20px;
+    width: 20px;
     height: 20px;
-    display: inline-block;   
+    display: inline-block;
+    float: left;
+    margin-right: 3px;
 }
 
 
@@ -1471,7 +1495,7 @@ i.iconsetaddbox{
 .avtarimgtextiner{
     text-align: center;
     display: inline-block;
-    width: 23%;
+    width: 18%;
     float: left;
     border: 1px solid #EAEAEA;
     border-radius: 6px;
@@ -1481,15 +1505,20 @@ i.iconsetaddbox{
     -webkit-box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
     -moz-box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
     box-shadow: 0px 0px 5px 0px rgba(210, 210, 210, 0.88);
+    position: relative;
 }
 .avtarimgtextiner .card-body{
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-bottom: 3px;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-bottom: 5px;
     border-top: 1px solid #EAEAEA;
-    padding-top: 8px;
+    padding-top: 5px;
     background: #000000;
     text-align: left;
+    display: inline-block;
+    width: 100%;
+    float: left;
+    min-height: 65px;
 }
 .avtarimgtextiner .card-body h5{
     display: inline-block;
@@ -1498,8 +1527,8 @@ i.iconsetaddbox{
     color: #C0B08C;
     margin: 0;
     font-size: 16px;
-    margin-bottom: 8px;
-    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-top: 7px;
 }
 .avtarimgtextiner .card-body p{
     font-family: 'Montserrat-Medium';
@@ -1510,8 +1539,8 @@ i.iconsetaddbox{
     color: #C0B08C;
 }
 .avtarimgtextiner img.card-img-top{
-    width: 200px;
-    height: 200px;
+    width: 140px;
+    height: 140px;
     object-fit: cover;
 }
 
@@ -1525,17 +1554,85 @@ i.iconsetaddbox{
     font-family: 'Montserrat-SemiBold';
     
 }
+.width-100{
+    width: 100%;
+}
 
 
+.selectedtext{
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    font-family: 'Montserrat-Medium';
+    font-size: 14px;
+    color: #000;
+}
+.basdistext{
+    position: absolute;
+    right: 5px;
+    top: 2px;
+    font-family: 'Montserrat-Medium';
+    font-size: 14px;
+    color: #000;
+}
 
+.widget_save{
+    float: left;
+}
 
+.iconsetaddbox{
 
+}
+.remove_color_code{
+        display: inline-block;
+    margin-left: 0;
+    margin-right: 0px;
+    margin-top: 0;
+    float: left;
+}
+.color_code{
+    display: inline-block;
+    margin-left: 4px;
+    margin-right: 3px;
+    margin-top: 0;
+    float: left;
+}
 
+.widget_edit{
+    margin-top: 4px;
+    float: right;
+}
+.widget_save{
+    margin-left: 8px;
+    margin-top: 2px;
+    margin-right: 4px;
+}
+.widget_close{
+    margin-top: 2px;
+    float: left;
+    margin-left: 2px;
+}
 
+.radiobtnbox{
+    display: inline-block;
+    padding-left: 11px;
+    padding-top: 2px;
+}
+.radiobtnbox .radio-inline{
+    display: inline-block;
+    width: 100%;
+    font-family: 'Montserrat-Medium';
+    color: #C0B08C;
+    margin: 0;
+    font-size: 16px;
+}
+.gold_price{
+    margin-bottom: 3px;
+}
 
-
-
-
+.boxheightset .card-body{
+    min-height: auto;
+}
 
 
 

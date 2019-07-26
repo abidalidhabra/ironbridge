@@ -42,7 +42,12 @@ class AddRolesAndPermission extends Controller
 
 		Permission::create(['name' => 'View Avatars','guard_name' => 'admin', 'module'=>'Avatars']);
 		Permission::create(['name' => 'Edit Avatars','guard_name' => 'admin', 'module'=>'Avatars']);
+		Permission::create(['name' => 'Practice Games Targets','guard_name' => 'admin', 'module'=>'practiceGamesTargets']);
 
+		/*$data = [
+					['name' => 'Practice Games Targets','guard_name' => 'admin', 'module'=>'practiceGamesTargets'],
+					
+				]*/
 		  // Auth::user()->givePermissionTo('Dashboard');
     //     Auth::user()->givePermissionTo('View Users');
 

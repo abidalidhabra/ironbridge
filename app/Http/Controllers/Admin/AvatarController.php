@@ -44,6 +44,21 @@ class AvatarController extends Controller
 
          return DataTables::of($avatar)
         ->addIndexColumn()
+        ->addColumn('bottom', function($avatar){
+            return $avatar->widget_item()->where('widget_name','Bottom')->count();
+        })
+        ->addColumn('feets', function($avatar){
+            return $avatar->widget_item()->where('widget_name','Feets')->count();
+        })
+        ->addColumn('hats', function($avatar){
+            return $avatar->widget_item()->where('widget_name','Hats')->count();
+        })
+        ->addColumn('outfits', function($avatar){
+            return $avatar->widget_item()->where('widget_name','Outfits')->count();
+        })
+        ->addColumn('tops', function($avatar){
+            return $avatar->widget_item()->where('widget_name','Tops')->count();
+        })
         ->addColumn('action', function($avatar){
             return '<a href="'.route('admin.avatarDetails',$avatar->id).'"><i class="fa fa-eye iconsetaddbox"></i></a>';
         })
@@ -119,6 +134,21 @@ class AvatarController extends Controller
         return response()->json([
                                 'status'  => true,
                                 'message' => 'color code updated successfully',
+                            ]);
+    }
+
+    /* widget category update */
+    public function widgetCategoryUpdate(Request $request){
+        $id = $request->get('id');
+        $category = $request->get('category');
+        WidgetItem::where('_id',$id)
+                    ->update([
+                        'widget_category'=>$category
+                    ]);
+
+        return response()->json([
+                                'status'  => true,
+                                'message' => 'Widget category updated successfully',
                             ]);
     }
 }

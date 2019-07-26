@@ -8,7 +8,8 @@ use App\Models\v1\Admin;
 use App\Models\v1\AdminPasswordSetLink;
 use App\Models\v1\News;
 use App\Models\v1\User;
-use App\Models\v1\Hunt;
+use App\Models\v2\Hunt;
+use App\Models\v2\HuntUser;
 use Carbon\Carbon;
 use Validator;
 use Auth;
@@ -31,6 +32,15 @@ class AdminController extends Controller
         $data['male']       = $user->where('gender','male')->count();
         $data['female']     = $user->where('gender','female')->count();
         $data['total_user'] = $user->count();
+        
+
+        /* huntuser */
+        $huntUser = HuntUser::select('user_id','hunt_id','status')
+                            ->whereHas('hunt')
+                            ->whereHas('user')
+                            ->get();
+        $data['huntCompleted'] = $huntUser->where('status','completed')->count();
+        $data['huntProgress'] = $huntUser->whereIn('status',['participated', 'paused', 'running'])->count();
 
         return view('admin.admin-home',compact('data'));
 

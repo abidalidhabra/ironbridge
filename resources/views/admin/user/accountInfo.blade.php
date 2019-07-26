@@ -44,7 +44,7 @@
                                 <h4>{{ $user->email }}</h4>
                             </div>
                             <div class="accountinfoname_left">
-                                <p>Gold</p>
+                                <p>Available Gold Balance</p>
                                 <h4>{{ $data['currentGold'] }}</h4>
                             </div>                           
                         </div>
@@ -79,11 +79,20 @@
             @forelse($data['widget'] as $key => $widgetlist)
                 <h4>{{ $key }}</h4>
                 @forelse($widgetlist as $widget)
-                <div class="avtarimgtextiner">
-                    <img class="card-img-top" src="{{ asset('admin_assets/images/FullDressup.png') }}">
+                <div class="avtarimgtextiner boxheightset">
+                    @if($data['widgetsIdSelected'][$widget->id] == true)
+                        <span class="selectedtext">selected</span>
+                    @endif
+                    <span class="basdistext">{{ $widget->widget_category }}</span>
+                    <img class="card-img-top" src="{{ asset('admin_assets/widgets/'.$widget->id.'.png') }}">
                     <div class="card-body">
-                        <h5 class="card-title">${{ $widget->gold_price }}</h5>
-                        <p class="card-text">{{ $widget->id}}</p>
+                        <h5 class="card-title">
+                            @if($widget->gold_price == '0')
+                                Free gold
+                            @else
+                                {{ $widget->gold_price }} Gold
+                            @endif
+                        </h5>
                     </div>
                 </div>
                 @empty

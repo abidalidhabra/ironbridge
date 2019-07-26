@@ -126,16 +126,16 @@
                     <h3>{{ $data['treasure_locations'] }}</h3>
                     <p>Total Treasure Locations</p>
                 </li>         
-                <!-- <li>
-                    <img src="{{ asset('admin_assets/images/instagram.png') }}">
-                    <h3>30,000</h3>
-                    <p>Instagram Connections</p>
+                <li>
+                    <img src="{{ asset('admin_assets/svg/map.svg') }}">
+                    <h3>{{ $data['huntCompleted'] }}</h3>
+                    <p>Completed Hunt</p>
                 </li>
                 <li>
-                    <img src="{{ asset('admin_assets/images/youtub.png') }}">
-                    <h3>30,000</h3>
-                    <p>Total Ads Watched</p>
-                </li>  -->        
+                    <img src="{{ asset('admin_assets/svg/map.svg') }}">
+                    <h3>{{ $data['huntProgress'] }}</h3>
+                    <p>In Progress Hunt</p>
+                </li>     
             </ul>
         </div>
     </div>

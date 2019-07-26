@@ -85,6 +85,11 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::put('editGame', [ 'middleware' => ['permission:Edit Games'], 'uses' => 'GameController@editGame' ])->name('editGame');
 	Route::delete('deleteGame', [ 'middleware' => ['permission:View Games'], 'uses' => 'GameController@deleteGame' ])->name('deleteGame');
 
+	Route::get('practiceGamesTargets',[ 'middleware' => ['permission:Practice Games Targets'],  'uses' => 'GameController@practiceGame' ])->name('practiceGame');
+	Route::post('gameTargetUpdate',[ 'middleware' => ['permission:Practice Games Targets'],  'uses' => 'GameController@gameTargetUpdate' ])->name('gameTargetUpdate');
+	Route::post('variationSizeUpdate',[ 'middleware' => ['permission:Practice Games Targets'],  'uses' => 'GameController@variationSizeUpdate'])->name('variationSizeUpdate');
+	Route::post('practiceDeleteImage',[ 'middleware' => ['permission:Practice Games Targets'],  'uses' => 'GameController@practiceDeleteImage'])->name('practiceDeleteImage');
+
 
 	//GameVariationController
 	Route::group(['middleware' => ['permission:View Game Variations']], function () {
@@ -101,11 +106,13 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 
 
 	//AVATAR
-	Route::get('avarat', [ 'middleware' => ['permission:View Avatars'], 'uses' => 'AvatarController@index' ])->name('avarat.index');
+	Route::get('avatar', [ 'middleware' => ['permission:View Avatars'], 'uses' => 'AvatarController@index' ])->name('avatar.index');
 	Route::get('/getAvatarsList', [ 'middleware' => ['permission:View Avatars'], 'uses' => 'AvatarController@getAvatarsList' ])->name('getAvatarsList');
 	Route::get('/avatarDetails/{id}', [ 'middleware' => ['permission:View Avatars'], 'uses' => 'AvatarController@avatarDetails' ])->name('avatarDetails');
 	Route::post('/widgetPriceUpdate', [ 'middleware' => ['permission:Edit Avatars'], 'uses' => 'AvatarController@widgetPriceUpdate' ])->name('widgetPriceUpdate');
 	Route::post('/avatarColorUpdate', [ 'middleware' => ['permission:Edit Avatars'], 'uses' => 'AvatarController@avatarColorUpdate' ])->name('avatarColorUpdate');
+	Route::post('/widgetCategoryUpdate', 'AvatarController@widgetCategoryUpdate')->name('widgetCategoryUpdate');
+
 
 	Route::group(['middleware' => ['role:Super Admin']], function () {
 		Route::resource('adminManagement', 'AdminManagement');

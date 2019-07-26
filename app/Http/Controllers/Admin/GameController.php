@@ -10,6 +10,11 @@ use Carbon\Carbon;
 use MongoDB\BSON\UTCDateTime as MongoDBDate;
 use Yajra\Datatables\Datatables;
 use Yajra\DataTables\EloquentDataTable;
+use App\Models\v1\PracticeGamesTarget;
+use File;
+use Image;
+use stdClass;
+use Storage;
 use Auth;
 
 class GameController extends Controller
@@ -138,5 +143,148 @@ class GameController extends Controller
             'status' => true,
             'message'=>'Game has been deleted successfully.',
         ]);
+    }
+
+    /* practice games target */
+    public function practiceGame(Request $request){
+        $practiceGames = PracticeGamesTarget::with('game:_id,name,status')
+                                            ->whereNotIn('game_id',['5b0e306951b2010ec820fb4f','5b0e304b51b2010ec820fb4e'])
+                                            ->get();
+        $moregame = PracticeGamesTarget::with('game:_id,name,status')
+                                        ->whereIn('game_id',['5b0e306951b2010ec820fb4f','5b0e304b51b2010ec820fb4e'])
+                                        ->get();
+
+        return view('admin.game.practice_games',compact('practiceGames','moregame'));
+    }    
+
+    /*  */
+    public function gameTargetUpdate(Request $request){
+        $gameId = $request->get('game_id');
+        
+        if ($gameId == '5c188ab5719a1408746c473b') {
+            $rules = [
+                        'target' => 'required|in:1024,2048,4096',
+                    ];
+        }elseif ($gameId == '5b0e304b51b2010ec820fb4e') {
+            $rules = [
+                        'target' => 'required|in:12,35,70,140',
+                    ];
+        } else {
+            $rules = [
+                        'target' => 'required',
+                    ];
+        }
+
+        $validator = Validator::make($request->all(),$rules);
+        
+        if ($validator->fails())
+        {
+            $message = $validator->messages()->first();
+            return response()->json(['status' => false,'message' => $message]);
+        }
+
+        $id     = $request->get('id');
+        $target = $request->get('target');
+
+        if($gameId == '5b0e304b51b2010ec820fb4e'){
+            $data['variation_size']=(int)$target;
+        } else {
+            $data['target']=(int)$target;
+        }
+
+        PracticeGamesTarget::where('_id',$id)
+                            ->update($data);
+
+        return response()->json([
+            'status' => true,
+            'message'=>'Target has been updated successfully.',
+        ]);
+    }
+
+    public function variationSizeUpdate(Request $request){
+        $gameId = $request->get('game_id');
+        
+        if ($gameId == '5b0e304b51b2010ec820fb4e') {
+            $rules = [
+                'variation_size' => 'required|in:12,35,70,140',   
+                'variation_image.*' => 'mimes:jpeg,jpg,png|dimensions:width=2000,height=1440',                      
+            ];
+        } else {
+            $rules = [
+                'variation_size' => 'required',                         
+            ];
+        }
+
+        $validator = Validator::make($request->all(),$rules);
+        
+        if ($validator->fails())
+        {
+            $message = $validator->messages()->first();
+            return response()->json(['status' => false,'message' => $message]);
+        }
+
+        $id = $request->get('practice_game');
+        $pathOfImageTobeSave = storage_path('app/public/practice_games');
+        $variation_image = [];
+        $practiceGame = PracticeGamesTarget::where('_id',$id)->first();
+        if ($practiceGame->variation_image) {
+            foreach ($practiceGame->variation_image as $key => $value) {
+                $variation_image[] = substr(strrchr($value,'/'),1);
+            }
+        }
+
+
+        if(!File::exists($pathOfImageTobeSave)){
+            File::makeDirectory($pathOfImageTobeSave,0755,true);
+        }
+
+        $imageUniqueName = new stdClass();
+        if ($request->hasFile('variation_image') && $request->hasFile('variation_image')!="") {
+            $variationImages     = $request->file('variation_image');
+            foreach ($variationImages as $key => $variationImage) {
+                $extension = $variationImage->getClientOriginalExtension();
+                $img = Image::make($variationImage);
+                $jsonIndex = $key+1;
+                $imageUniqueName->$jsonIndex = uniqid('practice_'.uniqid(true).'_').'.'.$extension;
+                $img->save($pathOfImageTobeSave.'/'.$imageUniqueName->$jsonIndex);
+            }
+        }  else {
+            $variationImages     = $variation_image;
+            $imageUniqueName = $variationImages;
+        }
+
+        $practiceGame['variation_size'] =  (int)$request->get('variation_size');
+        $practiceGame['variation_image'] = $imageUniqueName;
+        $practiceGame->save();
+        
+        return response()->json([
+            'status' => true,
+            'message'=>'Practice games has been updated successfully.',
+        ]);
+    }
+
+
+    public function practiceDeleteImage(Request $request){
+        $id = $request->get('id');
+        $image = substr(strrchr($request->get('image'),'/'),1);
+
+        $practiceGame = PracticeGamesTarget::where('_id',$id)->first();   
+        $variation_image = [];
+        $index = '';
+        if ($practiceGame->variation_image) {
+            foreach ($practiceGame->variation_image as $key => $value) {
+                $convert_image = substr(strrchr($value,'/'),1);  
+                $variation_image[] = $convert_image;  
+                if ($image == $convert_image) {
+                    $index = $key;
+                }
+            }
+        }
+
+        $practiceGame  = PracticeGamesTarget::where('_id',$id)->where('variation_image','practice_15d3ac983768d4_5d3ac98376cbc.png')->first();
+
+        // $practiceGame->variation_image[0]->delete();
+        //print_r($practiceGame->variation_image[0]->delete());
+        exit();
     }
 }
