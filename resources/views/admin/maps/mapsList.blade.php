@@ -1,48 +1,52 @@
 @section('title','Ironbridge1779 | Maps')
 @extends('admin.layouts.admin-app')
 @section('styles')
-    <!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->
+<!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->
 @endsection
 @section('content')
-    <div class="right_paddingboxpart">
-        <div class="users_datatablebox">
-            <div class="row">
-                <div class="col-md-6">
-                    <h3>Treasure hunt locations</h3>
-                </div>
-                <div class="col-md-6 text-right modalbuttonadd">
-                    <a href="{{ route('admin.add_location') }}" class="btn btn-info btn-md">Add Location</a>
-                </div>
+<div class="right_paddingboxpart">
+    <div class="users_datatablebox">
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Treasure hunt locations</h3>
             </div>
-        </div>
-        <br/>
-        <br/>
-        <div class="customdatatable_box">
-            <table class="table table-striped table-hover datatables" style="width: 100%;" id="dataTable">
-                <thead>
-                    <tr>
-                        <th>Sr</th>
-                        <th>Update Date</th>
-                        <th>Name</th>
-                        <th>Place Name</th>
-                        <th>Verified</th>
-                        <th>Province</th>
-                        <th>City</th>
-                        <th>Open in Map</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+            @if(auth()->user()->hasPermissionTo('Add Treasure Locations'))
+            <div class="col-md-6 text-right modalbuttonadd">
+                <a href="{{ route('admin.add_location') }}" class="btn btn-info btn-md">Add Location</a>
+            </div>
+            @endif
         </div>
     </div>
+    <br/>
+    <br/>
+    <div class="customdatatable_box">
+        <table class="table table-striped table-hover datatables" style="width: 100%;" id="dataTable">
+            <thead>
+                <tr>
+                    <th>Sr</th>
+                    <th>Update Date</th>
+                    <th>Name</th>
+                    <th>Place Name</th>
+                    <th>Verified</th>
+                    <th>Province</th>
+                    <th>City</th>
+                    <th>Open in Map</th>
+                    @if(auth()->user()->hasPermissionTo('Edit Treasure Locations') || auth()->user()->hasPermissionTo('Delete Treasure Locations'))
+                    <th>Action</th>
+                    @endif
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
 
 @endsection
 
 @section('scripts')
-    <!-- <script type="text/javascript" src="{{ asset('js/toastr.min.js') }}"></script> -->
-    <script type="text/javascript">
-        $(document).ready(function() {
+<!-- <script type="text/javascript" src="{{ asset('js/toastr.min.js') }}"></script> -->
+<script type="text/javascript">
+    $(document).ready(function() {
             //GET USER LIST
             var table = $('#dataTable').DataTable({
                 pageLength: 10,
@@ -64,15 +68,17 @@
                     }
                 },
                 columns:[
-                    { data:'DT_RowIndex',name:'_id' },
-                    { data:'updated_at',name:'updated_at' },
-                    { data:'name',name:'name' },
-                    { data:'place_name',name:'place_name' },
-                    { data:'verified',name:'verified' },
-                    { data:'province',name:'province' },
-                    { data:'city',name:'city' },
-                    { data:'map',name:'map'},
-                    { data:'action',name:'action'},
+                { data:'DT_RowIndex',name:'_id' },
+                { data:'updated_at',name:'updated_at' },
+                { data:'name',name:'name' },
+                { data:'place_name',name:'place_name' },
+                { data:'verified',name:'verified' },
+                { data:'province',name:'province' },
+                { data:'city',name:'city' },
+                { data:'map',name:'map'},
+                @if(auth()->user()->hasPermissionTo('Edit Treasure Locations') || auth()->user()->hasPermissionTo('Delete Treasure Locations'))
+                { data:'action',name:'action'},
+                @endif
                 ],
 
             });
@@ -108,4 +114,4 @@
             }
         });
     </script>
-@endsection
+    @endsection

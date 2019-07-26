@@ -16,16 +16,10 @@ use App\Models\v1\Game;
 use App\Models\v1\GameVariation;
 use App\Models\v1\ComplexityTarget;
 use MongoDB\BSON\ObjectID;
+use Auth;
 
 class MapsController extends Controller
 {
-    public function __construct()
-    {
-        if (version_compare(phpversion(), '7.1', '>=')) {
-            ini_set('memory_limit', '2048M');
-        }
-    }
-    
     public function index(Request $request)
     {
     	return view('admin.maps.mapsList');
@@ -36,6 +30,8 @@ class MapsController extends Controller
         $take = (int)$request->get('length');
         $search = $request->get('search')['value'];
         $city = Hunt::select('latitude','longitude','place_name','city','province','verified','country','name','updated_at');
+        $admin = Auth::user();
+
         if($search != ''){
             $city->where(function($query) use ($search){
                 $query->orWhere('place_name','like','%'.$search.'%')
@@ -82,10 +78,16 @@ class MapsController extends Controller
                 return 'Not Verified';
             }
         })
-        ->addColumn('action', function($city){
-            return '<a href="'.route('admin.edit_location',$city->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>
-                <a href="javascript:void(0)" class="delete_location" data-action="delete" data-placement="left" data-id="'.$city->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>
-            </a>';
+        ->addColumn('action', function($city) use ($admin){
+            $data = '';
+            if($admin->hasPermissionTo('Edit Treasure Locations')){
+                $data .=  '<a href="'.route('admin.edit_location',$city->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+            }
+            if($admin->hasPermissionTo('Delete Treasure Locations')){
+                $data .=  '<a href="javascript:void(0)" class="delete_location" data-action="delete" data-placement="left" data-id="'.$city->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i></a>';
+            }
+
+            return $data;
         })
         ->order(function ($city) {
             if (request()->has('updated_at')) {

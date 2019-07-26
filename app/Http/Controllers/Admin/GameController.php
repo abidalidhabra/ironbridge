@@ -11,6 +11,11 @@ use MongoDB\BSON\UTCDateTime as MongoDBDate;
 use Yajra\Datatables\Datatables;
 use Yajra\DataTables\EloquentDataTable;
 use App\Models\v1\PracticeGamesTarget;
+use File;
+use Image;
+use stdClass;
+use Storage;
+use Auth;
 
 class GameController extends Controller
 {
@@ -22,11 +27,11 @@ class GameController extends Controller
     //ADD GAME
     public function addgame(Request $request){
     	$validator = Validator::make($request->all(),[
-                        'identifier' => 'required',
-                        'name' 		 => 'required',
-                        'status'     => 'required|in:active,inactive',
-                    ]);
-        
+            'identifier' => 'required',
+            'name' 		 => 'required',
+            'status'     => 'required|in:active,inactive',
+        ]);
+
         if ($validator->fails())
         {
             $message = $validator->messages()->first();
@@ -35,7 +40,7 @@ class GameController extends Controller
 
         $data = $request->all();
         $data['status'] = ($data['status'] == 'active')?true:false;
-		Game::create($data);
+        Game::create($data);
         
         return response()->json([
             'status' => true,
@@ -50,6 +55,8 @@ class GameController extends Controller
         $take = (int)$request->get('length');
         $search = $request->get('search')['value'];
         $game = Game::select('identifier','name','status');
+        $admin = Auth::user();
+
         if($search != ''){
             $game->where(function($query) use ($search){
                 $query->where('identifier','like','%'.$search.'%')
@@ -68,9 +75,12 @@ class GameController extends Controller
         }
         return DataTables::of($game)
         ->addIndexColumn()
-        ->addColumn('action', function($game){
-            return '<a href="javascript:void(0)" class="edit_game" data-action="edit" data-id="'.$game->id.'" data-identifier="'.$game->identifier.'" data-name="'.$game->name.'" data-status="'.$game->status.'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+        ->addColumn('action', function($game) use ($admin){
+            if($admin->hasPermissionTo('Edit Games')){
 
+                return '<a href="javascript:void(0)" class="edit_game" data-action="edit" data-id="'.$game->id.'" data-identifier="'.$game->identifier.'" data-name="'.$game->name.'" data-status="'.$game->status.'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+            }
+            return '';
             /*return '<a href="javascript:void(0)" class="edit_game" data-action="edit" data-id="'.$game->id.'" data-identifier="'.$game->identifier.'" data-name="'.$game->name.'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>
             <a href="javascript:void(0)" class="delete_game" data-action="delete" data-placement="left" data-id="'.$game->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>';*/
         })
@@ -83,11 +93,11 @@ class GameController extends Controller
         })
         ->rawColumns(['action'])
         ->order(function ($query) {
-                    if (request()->has('created_at')) {
-                        $query->orderBy('created_at', 'DESC');
-                    }
-                    
-                })
+            if (request()->has('created_at')) {
+                $query->orderBy('created_at', 'DESC');
+            }
+
+        })
         ->setTotalRecords($count)
         ->setFilteredRecords($count)
         ->skipPaging()
@@ -98,10 +108,10 @@ class GameController extends Controller
     public function editGame(Request $request)
     {
         $validator = Validator::make($request->all(),[
-                        'identifier' => 'required',
-                        'name' 		 => 'required',
-                        'status'     => 'required|in:active,inactive',
-                    ]);
+            'identifier' => 'required',
+            'name' 		 => 'required',
+            'status'     => 'required|in:active,inactive',
+        ]);
         
         if ($validator->fails())
         {
@@ -111,13 +121,13 @@ class GameController extends Controller
 
         $gameId = $request->get('game_id');
 
-		Game::where('_id',$gameId)->update([
-												'identifier' => $request->get('identifier'),
-												'name' => $request->get('name'),
-                                                'status' => ($request->get('status')== 'active')?true:false,
-											]);
-		
-		return response()->json([
+        Game::where('_id',$gameId)->update([
+            'identifier' => $request->get('identifier'),
+            'name' => $request->get('name'),
+            'status' => ($request->get('status')== 'active')?true:false,
+        ]);
+
+        return response()->json([
             'status' => true,
             'message'=>'Game has been updated successfully.',
         ]);
@@ -196,12 +206,13 @@ class GameController extends Controller
         
         if ($gameId == '5b0e304b51b2010ec820fb4e') {
             $rules = [
-                        'target' => 'required|in:12,35,70,140',
-                    ];
+                'variation_size' => 'required|in:12,35,70,140',   
+                'variation_image.*' => 'mimes:jpeg,jpg,png|dimensions:width=2000,height=1440',                      
+            ];
         } else {
             $rules = [
-                        'target' => 'required',
-                    ];
+                'variation_size' => 'required',                         
+            ];
         }
 
         $validator = Validator::make($request->all(),$rules);
@@ -211,5 +222,69 @@ class GameController extends Controller
             $message = $validator->messages()->first();
             return response()->json(['status' => false,'message' => $message]);
         }
+
+        $id = $request->get('practice_game');
+        $pathOfImageTobeSave = storage_path('app/public/practice_games');
+        $variation_image = [];
+        $practiceGame = PracticeGamesTarget::where('_id',$id)->first();
+        if ($practiceGame->variation_image) {
+            foreach ($practiceGame->variation_image as $key => $value) {
+                $variation_image[] = substr(strrchr($value,'/'),1);
+            }
+        }
+
+
+        if(!File::exists($pathOfImageTobeSave)){
+            File::makeDirectory($pathOfImageTobeSave,0755,true);
+        }
+
+        $imageUniqueName = new stdClass();
+        if ($request->hasFile('variation_image') && $request->hasFile('variation_image')!="") {
+            $variationImages     = $request->file('variation_image');
+            foreach ($variationImages as $key => $variationImage) {
+                $extension = $variationImage->getClientOriginalExtension();
+                $img = Image::make($variationImage);
+                $jsonIndex = $key+1;
+                $imageUniqueName->$jsonIndex = uniqid('practice_'.uniqid(true).'_').'.'.$extension;
+                $img->save($pathOfImageTobeSave.'/'.$imageUniqueName->$jsonIndex);
+            }
+        }  else {
+            $variationImages     = $variation_image;
+            $imageUniqueName = $variationImages;
+        }
+
+        $practiceGame['variation_size'] =  (int)$request->get('variation_size');
+        $practiceGame['variation_image'] = $imageUniqueName;
+        $practiceGame->save();
+        
+        return response()->json([
+            'status' => true,
+            'message'=>'Practice games has been updated successfully.',
+        ]);
+    }
+
+
+    public function practiceDeleteImage(Request $request){
+        $id = $request->get('id');
+        $image = substr(strrchr($request->get('image'),'/'),1);
+
+        $practiceGame = PracticeGamesTarget::where('_id',$id)->first();   
+        $variation_image = [];
+        $index = '';
+        if ($practiceGame->variation_image) {
+            foreach ($practiceGame->variation_image as $key => $value) {
+                $convert_image = substr(strrchr($value,'/'),1);  
+                $variation_image[] = $convert_image;  
+                if ($image == $convert_image) {
+                    $index = $key;
+                }
+            }
+        }
+
+        $practiceGame  = PracticeGamesTarget::where('_id',$id)->where('variation_image','practice_15d3ac983768d4_5d3ac98376cbc.png')->first();
+
+        // $practiceGame->variation_image[0]->delete();
+        //print_r($practiceGame->variation_image[0]->delete());
+        exit();
     }
 }

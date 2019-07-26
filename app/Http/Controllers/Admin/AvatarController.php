@@ -33,7 +33,7 @@ class AvatarController extends Controller
                 ->orWhere('gender','like','%'.$search.'%');
             });
         }
-        $avatar = $avatar->with('widget_item:_id,avatar_id,widget_name')->orderBy('created_at','DESC')->skip($skip)->take($take)->get();
+        $avatar = $avatar->orderBy('created_at','DESC')->skip($skip)->take($take)->get();
         $count = Avatar::count();
         if($search != ''){
             $count = Avatar::where(function($query) use ($search){
@@ -62,7 +62,7 @@ class AvatarController extends Controller
         ->addColumn('action', function($avatar){
             return '<a href="'.route('admin.avatarDetails',$avatar->id).'"><i class="fa fa-eye iconsetaddbox"></i></a>';
         })
-        ->rawColumns(['action','bottom','feets','hats','outfits','tops'])
+        ->rawColumns(['action'])
         ->order(function ($query) {
                     if (request()->has('created_at')) {
                         $query->orderBy('created_at', 'DESC');
@@ -81,7 +81,7 @@ class AvatarController extends Controller
     	$avatar = Avatar::where('_id',$id)
                         ->with(['widget_item'=>function($query){
                             $query->orderBy('widget_name','desc')
-                            ->select('_id','widget_name','item_name','gold_price','avatar_id','widget_category');
+                            ->select('_id','widget_name','item_name','gold_price','avatar_id');
                             return $query;
                         }])
                         ->first();
@@ -136,7 +136,6 @@ class AvatarController extends Controller
                                 'message' => 'color code updated successfully',
                             ]);
     }
-
 
     /* widget category update */
     public function widgetCategoryUpdate(Request $request){

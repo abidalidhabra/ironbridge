@@ -136,7 +136,7 @@ class HuntController extends Controller
                                             'game_id'            => $game[0]->id,
                                             'game_variation_id'  => $gameVariationId,
                                             'target'             => $target,
-                                            'radius'             => 5.0,
+                                            'radius'             => 5000.0,
                                             'title'              => 'Clue '.$key,
                                             'description'        => null,
                                         ]);

@@ -64,14 +64,33 @@
     </div>
 @forelse($moregame as $game)
     <div id="variation{{$game->id}}" style="display: none;">
+        <input type="hidden" name="practice_game" value="{{ $game->id }}">
         <div class="form-group col-md-6">
             <label class="form-label">Variation size <small class="hidden size_hint">must of [12,35,70,140]</small></label>
-            <input type="text" name="variation_size" class="form-control">
+            <input type="text" name="variation_size" value="{{ $game->variation_size }}" class="form-control">
         </div>
         <div class="form-group col-md-6">
             <label class="form-label">Variation Image <small class="hidden image_hit">must be 2000*1440 dimension </small></label>
             <input type="file" name="variation_image[]" class="form-control variation_image">
         </div>
+    </div>
+    <div id="photo_section" class="imageslibbox1">
+        <h3>{{ $game->game->name }}</h3>
+        <ul>
+        @forelse($game->variation_image as $variation_image)
+            <li>
+                <div class="closeicon">
+                    <a target="_blank" href="javascript:void(0)" data-action="delete" data-id="{{ $game->id }}"  data-image="{{ $variation_image }}">
+                        <img src="{{ asset('admin_assets/svg/close.svg') }}">
+                    </a>
+                </div>
+                <div class="photosboxset">
+                    <img width="100" src="{{ $variation_image }}">
+                </div>
+            </li>
+        @empty
+        @endforelse 
+        </ul>
     </div>
 @empty
 @endforelse
@@ -80,6 +99,12 @@
 
 @section('scripts')
     <script type="text/javascript">
+        $(window).load(function() {
+            var id = $('.game_id').find(':selected').data('id');
+            $('.variation_box').html($('#variation'+id).html());
+
+        });
+
         $(document).on('click','.practice_edit',function(){
             var id = $(this).data('id');
             var target = $(this).data('target');
@@ -141,6 +166,7 @@
                 $('.variation_image').attr('multiple',true);
                 $('.image_hit , .size_hint').removeClass('hidden');
             } else {
+                $('.variation_box').html($('#variation'+id).html());
                 $('.image_hit , .size_hint').addClass('hidden');
                 $('.variation_image').attr('multiple',false);
             }
@@ -148,6 +174,7 @@
 
         /* submit form */
         $('#formPracticeGames').submit(function(e) {
+            e.preventDefault();
             var formData = new FormData(this);
             $.ajax({
                 type:'POST',
@@ -168,5 +195,28 @@
                 error:function(){}
             });
         })
+
+        /* delete image */
+        $(document).on("click",'a[data-action="delete"]',function() {
+            var id = $(this).data('id');
+            var image = $(this).data('image');
+            $.ajax({
+                type: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '{{ route("admin.practiceDeleteImage") }}',
+                data: {id : id , image:image},
+                success: function(response)
+                {
+                    if (response.status == true) {
+                        toastr.success(response.message);
+                        table.ajax.reload();
+                    } else {
+                        toastr.warning(response.message);
+                    }
+                }
+            });
+        });
     </script>
 @endsection

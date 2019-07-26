@@ -11,6 +11,7 @@ use Yajra\Datatables\Datatables;
 use Yajra\DataTables\EloquentDataTable;
 use App\Models\v1\ComplexityTarget;
 use App\Models\v1\Game;
+use Auth;
 
 class ComplexityTargetController extends Controller
 {
@@ -24,6 +25,7 @@ class ComplexityTargetController extends Controller
     	$skip = (int)$request->get('start');
         $take = (int)$request->get('length');
         $search = $request->get('search')['value'];
+        $admin = Auth::user();
 
         $complexityTarget = ComplexityTarget::select('game_id','complexity','target','created_at');
         
@@ -51,14 +53,15 @@ class ComplexityTargetController extends Controller
 
         return DataTables::of($complexityTarget)
         ->addIndexColumn()
-        ->addColumn('action', function($complexity){
-            return '<a href="javascript:void(0)" class="edit_complexity" data-action="edit" data-id="'.$complexity->id.'" data-complexity="'.$complexity->complexity.'" data-target="'.$complexity->target.'" data-game_id="'.$complexity->game_id.'"  data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+        ->addColumn('action', function($complexity)  use ($admin){
+            if($admin->hasPermissionTo('Edit Complexity Targets')){
+
+                return '<a href="javascript:void(0)" class="edit_complexity" data-action="edit" data-id="'.$complexity->id.'" data-complexity="'.$complexity->complexity.'" data-target="'.$complexity->target.'" data-game_id="'.$complexity->game_id.'"  data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+            }
+            return '';
         })
         ->addColumn('game_name', function($complexity){
             return $complexity->game->name;
-        })
-        ->editColumn('complexity', function($complexity){
-            return $complexity->complexity.' star';
         })
         ->rawColumns(['action'])
         ->order(function ($query) {

@@ -1,7 +1,7 @@
 @section('title','Ironbridge1779 | NEWS')
 @extends('admin.layouts.admin-app')
 @section('styles')
-    <!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->
+<!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->
 @endsection
 @section('content')
 <div class="right_paddingboxpart">      
@@ -10,9 +10,11 @@
             <div class="col-md-6">
                 <h3>Games</h3>
             </div>
+            @if(auth()->user()->hasPermissionTo('Add Games'))
             <div class="col-md-6 text-right modalbuttonadd">
                 <button type="button" class="btn btn-info btn-md" data-toggle="modal" data-target="#addNews">Add Game</button>
             </div>
+            @endif
         </div>
     </div>
     <br/><br/>
@@ -24,7 +26,9 @@
                     <th>Identifier</th>
                     <th>Name</th>
                     <th>Status</th>
+                    @if(auth()->user()->hasPermissionTo('Edit Games'))
                     <th width="5%">Action</th>
+                    @endif
                 </tr>
             </thead>
             <tbody></tbody>
@@ -55,7 +59,7 @@
                                         <input type="text" name="name" placeholder="name">
                                     </div>
                                 </div>
-                                 <div class="newstitlebox_inputbox">
+                                <div class="newstitlebox_inputbox">
                                     <div class="form-group">
                                         <select name="status">
                                             <option value="">Please select status</option>
@@ -122,8 +126,8 @@
 @endsection
 
 @section('scripts')
-    <script type="text/javascript">
-        $(document).ready(function() {
+<script type="text/javascript">
+    $(document).ready(function() {
             //GET USER LIST
             var table = $('#dataTable').DataTable({
                 pageLength: 10,
@@ -145,19 +149,21 @@
                     }
                 },
                 columns:[
-                    { data:'DT_RowIndex',name:'_id' },
-                    { data:'identifier',name:'identifier'},
-                    { data:'name',name:'name' },
-                    { data:'status',name:'status' },
-                    { data:'action',name:'action' },
+                { data:'DT_RowIndex',name:'_id' },
+                { data:'identifier',name:'identifier'},
+                { data:'name',name:'name' },
+                { data:'status',name:'status' },
+                @if(auth()->user()->hasPermissionTo('Edit Games'))
+                { data:'action',name:'action' },
+                @endif
                 ],
 
             });
-           
+
             //ADD NEWS
             $('#addGameForm').submit(function(e) {
-                    e.preventDefault();
-                })
+                e.preventDefault();
+            })
             .validate({
                 focusInvalid: false, 
                 ignore: "",
@@ -240,8 +246,8 @@
 
             //EDIT NEWS
             $('#editGameForm').submit(function(e) {
-                    e.preventDefault();
-                })
+                e.preventDefault();
+            })
             .validate({
                 focusInvalid: false, 
                 ignore: "",
@@ -278,4 +284,4 @@
             });
         });
     </script>
-@endsection
+    @endsection

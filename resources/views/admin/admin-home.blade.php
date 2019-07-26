@@ -125,7 +125,7 @@
                     <img src="{{ asset('admin_assets/svg/map.svg') }}">
                     <h3>{{ $data['treasure_locations'] }}</h3>
                     <p>Total Treasure Locations</p>
-                </li>
+                </li>         
                 <li>
                     <img src="{{ asset('admin_assets/svg/map.svg') }}">
                     <h3>{{ $data['huntCompleted'] }}</h3>
@@ -135,7 +135,7 @@
                     <img src="{{ asset('admin_assets/svg/map.svg') }}">
                     <h3>{{ $data['huntProgress'] }}</h3>
                     <p>In Progress Hunt</p>
-                </li>
+                </li>     
             </ul>
         </div>
     </div>

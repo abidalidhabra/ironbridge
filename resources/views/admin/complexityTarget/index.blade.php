@@ -1,7 +1,7 @@
 @section('title','Ironbridge1779 | NEWS')
 @extends('admin.layouts.admin-app')
 @section('styles')
-    <!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->
+<!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->
 @endsection
 @section('content')
 <div class="right_paddingboxpart">      
@@ -21,7 +21,9 @@
                     <th>Complexity</th>
                     <th>Game Name</th>
                     <th>Target</th>
+                    @if(auth()->user()->hasPermissionTo('Edit Complexity Targets'))
                     <th>Action</th>
+                    @endif
                 </tr>
             </thead>
             <tbody></tbody>
@@ -53,9 +55,9 @@
                                     <div class="form-group">
                                         <select name="game" disabled>
                                             @forelse($games as $game)
-                                                <option value="{{ $game->id }}">{{ $game->name }}</option>
+                                            <option value="{{ $game->id }}">{{ $game->name }}</option>
                                             @empty
-                                                <option value="">No game found</option>
+                                            <option value="">No game found</option>
                                             @endforelse
                                         </select>
                                     </div>
@@ -80,8 +82,8 @@
 @endsection
 
 @section('scripts')
-    <script type="text/javascript">
-        $(document).ready(function() {
+<script type="text/javascript">
+    $(document).ready(function() {
             //GET USER LIST
             var table = $('#dataTable').DataTable({
                 pageLength: 10,
@@ -102,11 +104,13 @@
                     }
                 },
                 columns:[
-                    { data:'DT_RowIndex',name:'_id' },
-                    { data:'complexity',name:'complexity'},
-                    { data:'game_name',name:'game_name' },
-                    { data:'target',name:'target' },
-                    { data:'action',name:'action' },
+                { data:'DT_RowIndex',name:'_id' },
+                { data:'complexity',name:'complexity'},
+                { data:'game_name',name:'game_name' },
+                { data:'target',name:'target' },
+                @if(auth()->user()->hasPermissionTo('Edit Complexity Targets'))
+                { data:'action',name:'action' },
+                @endif
                 ],
 
             });
@@ -129,8 +133,8 @@
 
             //EDIT NEWS
             $('#editComplexityForm').submit(function(e) {
-                    e.preventDefault();
-                })
+                e.preventDefault();
+            })
             .validate({
                 focusInvalid: false, 
                 ignore: "",
@@ -165,4 +169,4 @@
             });
         });
     </script>
-@endsection
+    @endsection

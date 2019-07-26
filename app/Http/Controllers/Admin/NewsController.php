@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use MongoDB\BSON\UTCDateTime as MongoDBDate;
 use Yajra\Datatables\Datatables;
 use Yajra\DataTables\EloquentDataTable;
+use Auth;
 
 class NewsController extends Controller
 {
@@ -42,10 +43,10 @@ class NewsController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(),[
-                        'subject'     => 'required',
-                        'description' => 'required',
-                        'valid_till'  => 'required',
-                    ]);
+            'subject'     => 'required',
+            'description' => 'required',
+            'valid_till'  => 'required',
+        ]);
         
         if ($validator->fails())
         {
@@ -57,7 +58,7 @@ class NewsController extends Controller
         
         $data = $request->all();
         $data['valid_till'] = date('Y-m-d H:i:s',strtotime($request->get('valid_till')));
-       
+
         News::create($data);
         
         return response()->json([
@@ -74,7 +75,7 @@ class NewsController extends Controller
      */
     public function show($id)
     {
-        
+
     }
 
     /**
@@ -98,17 +99,17 @@ class NewsController extends Controller
     public function update(Request $request,$id)
     {
         $data = [
-                    'subject'     => $request->get('subject'),
-                    'description' => $request->get('description'),
-                    'valid_till'  => $request->get('valid_till'),
-                    'news_id'     => $request->get('news_id'),
-                ];
+            'subject'     => $request->get('subject'),
+            'description' => $request->get('description'),
+            'valid_till'  => $request->get('valid_till'),
+            'news_id'     => $request->get('news_id'),
+        ];
 
         $validator = Validator::make($data, [
-                        'subject' => 'required',
-                        'description' => 'required',
-                        'valid_till' => 'required',
-                    ]);
+            'subject' => 'required',
+            'description' => 'required',
+            'valid_till' => 'required',
+        ]);
 
         if ($validator->fails()){
             $message = $validator->messages()->first();
@@ -118,7 +119,7 @@ class NewsController extends Controller
 
         
         $news = News::where('_id',$id)
-                    ->update($data);
+        ->update($data);
 
         return response()->json([
             'status' => true,
@@ -146,6 +147,8 @@ class NewsController extends Controller
         $take = (int)$request->get('length');
         $search = $request->get('search')['value'];
         $news = News::select('subject','description','valid_till');
+        $admin = Auth::user();
+
         if($search != ''){
             $news->where(function($query) use ($search){
                 $query->where('subject','like','%'.$search.'%')
@@ -168,20 +171,27 @@ class NewsController extends Controller
         ->editColumn('valid_till', function($news){
             return Carbon::parse($news->valid_till)->format('d-M-Y');
         })
-        ->addColumn('action', function($news){
+        ->addColumn('action', function($news) use ($admin){
             $date = Carbon::parse($news->valid_till)->format('d-m-Y');
             
-            return '<a href="javascript:void(0)" class="edit_company" data-action="edit" data-id="'.$news->id.'" data-subject="'.$news->subject.'" data-valid_till="'.$date.'" data-description="'.$news->description.'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>
-            <a href="javascript:void(0)" class="delete_company" data-action="delete" data-placement="left" data-id="'.$news->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>
-            </a>';
+            $data = '';
+            if($admin->hasPermissionTo('Edit News')){
+                $data .=  '<a href="javascript:void(0)" class="edit_company" data-action="edit" data-id="'.$news->id.'" data-subject="'.$news->subject.'" data-valid_till="'.$date.'" data-description="'.$news->description.'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+            }
+            if($admin->hasPermissionTo('Delete News')){
+                $data .=  '<a href="javascript:void(0)" class="delete_company" data-action="delete" data-placement="left" data-id="'.$news->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>
+                </a>';
+            }
+
+            return $data;
         })
         ->rawColumns(['action'])
         ->order(function ($query) {
-                    if (request()->has('created_at')) {
-                        $query->orderBy('created_at', 'DESC');
-                    }
-                    
-                })
+            if (request()->has('created_at')) {
+                $query->orderBy('created_at', 'DESC');
+            }
+
+        })
         ->setTotalRecords($count)
         ->setFilteredRecords($count)
         ->skipPaging()

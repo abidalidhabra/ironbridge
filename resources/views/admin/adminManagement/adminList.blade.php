@@ -1,20 +1,18 @@
-@section('title','Ironbridge1779 | NEWS')
+@section('title','Ironbridge1779 | User')
 @extends('admin.layouts.admin-app')
 @section('styles')
 <!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->
 @endsection
 @section('content')
-<div class="right_paddingboxpart">      
+<div class="right_paddingboxpart">
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Game Variations</h3>
+                <h3>Admins</h3>
             </div>
-            @if(auth()->user()->hasPermissionTo('Add Game Variations'))
             <div class="col-md-6 text-right modalbuttonadd">
-                <a href="{{ route('admin.gameVariation.create') }}" class="btn btn-info btn-md">Add Variation</a>
+                <button type="button" class="btn btn-info btn-md" data-toggle="modal" data-target="#addAdmin">Add Admin</button>
             </div>
-            @endif
         </div>
     </div>
     <br/><br/>
@@ -22,15 +20,10 @@
         <table class="table table-striped table-hover datatables" style="width: 100%;" id="dataTable">
             <thead>
                 <tr>
-                    <th width="7%">Sr</th>
-                    <th>Game Name</th>
-                    <th>Variation Name</th>
-                    <th>Variation Image</th>
-                    <th>Variation Size</th>
-                    <th>Complexity</th>
-                    @if(auth()->user()->hasPermissionTo('Edit Game Variations') || auth()->user()->hasPermissionTo('Delete Game Variations'))
-                    <th width="5%">Action</th>
-                    @endif
+                    <th>Sr</th>
+                    <th>Email</th>
+                    <th>Created Date</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -39,28 +32,34 @@
 </div>
 <div class="container">  
     <div class="addnewsmodal_box">
-        <div class="modal fade" id="addNews" role="dialog">
-            <div class="modal-dialog">
+        <div class="modal fade bd-example-modal-lg" id="addAdmin" role="dialog">
+            <div class="modal-dialog modal-lg">
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Add Game</h4>       
+                        <h4 class="modal-title">Add Admin</h4>       
                     </div>
-                    <form method="post" id="addGameForm">
+                    <form method="post" id="addAdminForm">
                         @csrf
                         <div class="modal-body">
                             <div class="modalbodysetbox">
                                 <div class="newstitlebox_inputbox">
                                     <div class="form-group">
-                                        <input type="text" name="identifier" placeholder="identifier">
+                                        <input type="text" name="email" placeholder="email">
                                     </div>
                                 </div>
-                                <div class="newstitlebox_inputbox">
-                                    <div class="form-group">
-                                        <input type="text" name="name" placeholder="name">
+                                <?php $module=""; ?>             
+                                @foreach($permissions as $permission)
+                                @if($module != $permission->module)<div class="clearfix"></div> <h5>{{$permission->module}}</h5> <hr><div class="clearfix"></div>@endif
+                                <div class="col-md-4 ml-auto">
+                                    <div class="checkbox">
+                                        <label><input type="checkbox" name="permissions[]" id="{{$permission->id}}" value="{{$permission->name}}">{{$permission->name}}</label>
                                     </div>
                                 </div>
+                                <?php $module = $permission->module; ?>             
+                                @endforeach
+                                <label for="permissions[]" class="error"></label>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -71,30 +70,19 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="editGame" role="dialog">
-            <div class="modal-dialog">
-                <!-- Modal content-->
+        <div class="modal fade bd-example-modal-lg" id="editAdmin" role="dialog">
+            <div class="modal-dialog  modal-lg">
+                <!-- Modal content>-->
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Edit News</h4>       
+                        <h4 class="modal-title">Edit Admin</h4>       
                     </div>
-                    <form method="post" id="editGameForm">
-                        @method('PUT')
+                    <form method="post" id="editAdminForm">
                         @csrf
+                        @method('put')
                         <div class="modal-body">
-                            <input type="hidden" name="game_id">
-                            <div class="modalbodysetbox">
-                                <div class="newstitlebox_inputbox">
-                                    <div class="form-group">
-                                        <input type="text" name="identifier" placeholder="identifier">
-                                    </div>
-                                </div>
-                                <div class="newstitlebox_inputbox">
-                                    <div class="form-group">
-                                        <input type="text" name="name" placeholder="name">
-                                    </div>
-                                </div>
+                            <div class="modalbodysetbox" id="adminEditContent">
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -110,19 +98,20 @@
 @endsection
 
 @section('scripts')
+<!-- <script type="text/javascript" src="{{ asset('js/toastr.min.js') }}"></script> -->
 <script type="text/javascript">
     $(document).ready(function() {
             //GET USER LIST
             var table = $('#dataTable').DataTable({
-                pageLength: 10,
+                pageLength: 50,
                 processing: true,
                 responsive: true,
                 serverSide: true,
                 order: [[1, 'desc']],
                 lengthMenu: [[10, 50, 100, -1], [10, 50, 100, "All"]],
                 ajax: {
-                    type: "GET",
-                    url: "{{ route('admin.getGameVariationList') }}",
+                    type: "get",
+                    url: "{{ route('admin.getAdminsList') }}",
                     data: function ( d ) {
                         d._token = "{{ csrf_token() }}";
                     },
@@ -134,34 +123,29 @@
                 },
                 columns:[
                 { data:'DT_RowIndex',name:'_id' },
-                { data:'game_name',name:'game_name' },
-                { data:'variation_name',name:'variation_name' },
-                { data:'variation_image',name:'variation_image' },
-                { data:'variation_size',name:'variation_size' },
-                { data:'variation_complexity',name:'variation_complexity' },
-                @if(auth()->user()->hasPermissionTo('Edit Game Variations') || auth()->user()->hasPermissionTo('Delete Game Variations'))
-                { data:'action',name:'action' },
-                @endif
+                { data:'email',name:'email' },
+                { data:'created_at',name:'created_at'},
+                { data:'action',name:'action'},
                 ],
 
             });
+            
 
-            //ADD NEWS
-            $('#addGameForm').submit(function(e) {
+            $('#addAdminForm').submit(function(e) {
                 e.preventDefault();
             })
             .validate({
                 focusInvalid: false, 
                 ignore: "",
                 rules: {
-                    identifier: { required: true },
-                    name: { required: true },
+                    email: { required: true },
+                    'permissions[]': { required: true },
                 },
                 submitHandler: function (form) {
                     var formData = new FormData(form);
                     $.ajax({
                         type: "POST",
-                        url: '{{ route("admin.addgame") }}',
+                        url: '{{ route("admin.adminManagement.store") }}',
                         data: formData,
                         processData:false,
                         cache:false,
@@ -170,8 +154,8 @@
                         {
                             if (response.status == true) {
                                 toastr.success(response.message);
-                                $('input[name="subject"] , textarea[name="description"] , input[name="valid_till"]').val('');
-                                $('#addNews').modal('hide');
+                                $('input[name="email"] , input[name="permissions[]"]').val('');
+                                $('#addAdmin').modal('hide');
                                 table.ajax.reload();
                             } else {
                                 toastr.warning(response.message);
@@ -181,22 +165,77 @@
                 }
             });
 
+            $(document).on('click', '.edit_admin', function(){
+                $('#editAdmin').modal('show');
+                var id = $(this).data('id');
+                var url ='{{ route("admin.adminManagement.edit",':id') }}';
+                url = url.replace(':id',id);
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    success: function(response)
+                    {
+                       $('#adminEditContent').html(response);
+                   }
+               });
+            });
+     //EDIT NEWS
+     $('#editAdminForm').submit(function(e) {
+        e.preventDefault();
+    })
+     .validate({
+        focusInvalid: false, 
+        ignore: "",
+        rules: {
+            email: { required: true },
+            'permissions[]': { required: true },
+        },
+        submitHandler: function (form) {
+            var formData = new FormData(form);
+            var id  = $('#admin_id').val();
+            var url ='{{ route("admin.adminManagement.update",':id') }}';
+            url = url.replace(':id',id);
 
-            function afterfunction(){
-
+            $.ajax({
+                type: "POST",
+                url: url,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: formData,
+                processData:false,
+                cache:false,
+                contentType: false,
+                success: function(response)
+                {
+                    if (response.status == true) {
+                        toastr.success(response.message);
+                        $('input[name="email"] , input[name="permissions[]"]').val('');
+                        $('#editAdmin').modal('hide');
+                        table.ajax.reload();
+                    } else {
+                        toastr.warning(response.message);
+                    }
+                }
+            });
+        }
+    });
+     function afterfunction(){
                 //DELETE ACCOUNT
                 $("a[data-action='delete']").confirmation({
                     container:"body",
                     btnOkClass:"btn btn-sm btn-success",
                     btnCancelClass:"btn btn-sm btn-danger",
-                    onConfirm:function(event, element) {
+                    onConfirm:function(event, element) { 
                         var id = element.attr('data-id');
+                        var url ='{{ route("admin.adminManagement.destroy",':id') }}';
+                        url = url.replace(':id',id);
                         $.ajax({
-                            type: "delete",
+                            type: "DELETE",
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             },
-                            url: '{{ route("admin.gameVariation.destroy","/") }}/'+id,
+                            url: url,
                             data: {id : id},
                             success: function(response)
                             {
@@ -210,9 +249,7 @@
                         });
                     }
                 });  
-                
             }
-
         });
     </script>
     @endsection

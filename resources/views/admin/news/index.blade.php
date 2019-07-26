@@ -1,7 +1,7 @@
 @section('title','Ironbridge1779 | NEWS')
 @extends('admin.layouts.admin-app')
 @section('styles')
-    <!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->
+<!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->
 @endsection
 @section('content')
 <div class="right_paddingboxpart">      
@@ -12,9 +12,11 @@
             <div class="col-md-6">
                 <h3>News</h3>
             </div>
+            @if(auth()->user()->hasPermissionTo('Add News'))
             <div class="col-md-6 text-right modalbuttonadd">
                 <button type="button" class="btn btn-info btn-md" data-toggle="modal" data-target="#addNews">Add News</button>
             </div>
+            @endif
         </div>
     </div>
     <br/><br/>
@@ -26,7 +28,9 @@
                     <th>Subject</th>
                     <th>Description</th>
                     <th width="10%">News Date</th>
+                    @if(auth()->user()->hasPermissionTo('Edit News') || auth()->user()->hasPermissionTo('Delete News'))
                     <th width="5%">Action</th>
+                    @endif
                 </tr>
             </thead>
             <tbody></tbody>
@@ -120,8 +124,8 @@
 @endsection
 
 @section('scripts')
-    <script type="text/javascript">
-        $(document).ready(function() {
+<script type="text/javascript">
+    $(document).ready(function() {
             //GET USER LIST
             var table = $('#dataTable').DataTable({
                 pageLength: 10,
@@ -143,19 +147,21 @@
                     }
                 },
                 columns:[
-                    { data:'DT_RowIndex',name:'_id' },
-                    { data:'subject',name:'created_at'},
-                    { data:'description',name:'description' },
-                    { data:'valid_till',name:'valid_till' },
-                    { data:'action',name:'action' },
+                { data:'DT_RowIndex',name:'_id' },
+                { data:'subject',name:'created_at'},
+                { data:'description',name:'description' },
+                { data:'valid_till',name:'valid_till' },
+                @if(auth()->user()->hasPermissionTo('Edit News') || auth()->user()->hasPermissionTo('Delete News'))
+                { data:'action',name:'action' },
+                @endif
                 ],
 
             });
-           
+
             //ADD NEWS
             $('#addNewsForm').submit(function(e) {
-                    e.preventDefault();
-                })
+                e.preventDefault();
+            })
             .validate({
                 focusInvalid: false, 
                 ignore: "",
@@ -232,8 +238,8 @@
 
             //EDIT NEWS
             $('#editNewsForm').submit(function(e) {
-                    e.preventDefault();
-                })
+                e.preventDefault();
+            })
             .validate({
                 focusInvalid: false, 
                 ignore: "",
@@ -271,4 +277,4 @@
             });
         });
     </script>
-@endsection
+    @endsection
