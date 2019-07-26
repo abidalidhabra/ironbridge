@@ -15,11 +15,11 @@
                     <p>Email address</p>
                     <input type="text" name="email" class="form-control" placeholder="Enter email" value="{{ old('email') }}" required autofocus>
                     @if ($errors->has('email'))
-                        <div class="help-block with-errors text-left">
-                            <ul class="list-unstyled">
-                                <li>{{ $errors->first('email') }}</li>
-                            </ul>
-                        </div>
+                    <div class="help-block with-errors text-left">
+                        <ul class="list-unstyled">
+                            <li>{{ $errors->first('email') }}</li>
+                        </ul>
+                    </div>
                     @endif
                 </div>
             </div>
@@ -29,11 +29,11 @@
                     <!-- <a href="javascript:void(0)">Forgot Password ?</a> -->
                     <input type="password" name="password" class="form-control" placeholder="Enter password" value="{{ old('password') }}" required autofocus>
                     @if ($errors->has('password'))
-                        <div class="help-block with-errors text-left">
-                            <ul class="list-unstyled">
-                                <li>{{ $errors->first('password') }}</li>
-                            </ul>
-                        </div>
+                    <div class="help-block with-errors text-left">
+                        <ul class="list-unstyled">
+                            <li>{{ $errors->first('password') }}</li>
+                        </ul>
+                    </div>
                     @endif
                 </div>
             </div>
@@ -49,4 +49,11 @@
         </form>
     </div>
 </div>
+@endsection
+@section('scripts')
+@if(session('message'))
+<script type="text/javascript">
+    toastr.warning('{{ session('message') }}');
+</script>
+@endif
 @endsection

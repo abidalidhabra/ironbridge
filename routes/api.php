@@ -20,7 +20,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('addComplexityWiseTarget', 'Api\v1\PrepareController@addComplexityWiseTarget');
 Route::post('addGames', 'Api\v1\PrepareController@addGames');
 Route::post('addWidgets', 'Api\v1\PrepareController@addWidgets');
-Route::post('addWidgets', 'Api\v1\PrepareController@addWidgets');
+Route::get('addRolesAndPermissions', 'Api\v2\AddRolesAndPermission@addRolesAndPermissions');
 
 Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 
