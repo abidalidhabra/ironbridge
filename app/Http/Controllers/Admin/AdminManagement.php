@@ -115,7 +115,7 @@ class AdminManagement extends Controller
 
     return response()->json([
         'status' => true,
-        'message'=>'Admin has been added successfully.',
+        'message'=>'User has been added successfully.',
     ]);
 }
 
@@ -176,7 +176,7 @@ class AdminManagement extends Controller
 
         return response()->json([
             'status' => true,
-            'message'=>'Admin has been added successfully.',
+            'message'=>'User has been added successfully.',
         ]);
     }
 

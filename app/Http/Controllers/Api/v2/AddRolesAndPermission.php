@@ -23,26 +23,28 @@ class AddRolesAndPermission extends Controller
 		Permission::create(['name' => 'Edit News','guard_name' => 'admin', 'module'=>'News']);
 		Permission::create(['name' => 'Delete News','guard_name' => 'admin', 'module'=>'News']);
 
-		Permission::create(['name' => 'View Games','guard_name' => 'admin', 'module'=>'Games']);
-		Permission::create(['name' => 'Add Games','guard_name' => 'admin', 'module'=>'Games']);
-		Permission::create(['name' => 'Edit Games','guard_name' => 'admin', 'module'=>'Games']);
+		Permission::create(['name' => 'View Games','guard_name' => 'admin', 'module'=>'Manage Games / Games']);
+		Permission::create(['name' => 'Add Games','guard_name' => 'admin', 'module'=>'Manage Games / Games']);
+		Permission::create(['name' => 'Edit Games','guard_name' => 'admin', 'module'=>'Manage Games / Games']);
 
-		Permission::create(['name' => 'View Game Variations','guard_name' => 'admin', 'module'=>'Game Variations']);
-		Permission::create(['name' => 'Add Game Variations','guard_name' => 'admin', 'module'=>'Game Variations']);
-		Permission::create(['name' => 'Edit Game Variations','guard_name' => 'admin', 'module'=>'Game Variations']);
-		Permission::create(['name' => 'Delete Game Variations','guard_name' => 'admin', 'module'=>'Game Variations']);
+		Permission::create(['name' => 'View Game Variations','guard_name' => 'admin', 'module'=>'Manage Games / Game Variations']);
+		Permission::create(['name' => 'Add Game Variations','guard_name' => 'admin', 'module'=>'Manage Games / Game Variations']);
+		Permission::create(['name' => 'Edit Game Variations','guard_name' => 'admin', 'module'=>'Manage Games / Game Variations']);
+		Permission::create(['name' => 'Delete Game Variations','guard_name' => 'admin', 'module'=>'Manage Games / Game Variations']);
 
-		Permission::create(['name' => 'View Treasure Locations','guard_name' => 'admin', 'module'=>'Treasure Locations']);
-		Permission::create(['name' => 'Add Treasure Locations','guard_name' => 'admin', 'module'=>'Treasure Locations']);
-		Permission::create(['name' => 'Edit Treasure Locations','guard_name' => 'admin', 'module'=>'Treasure Locations']);
-		Permission::create(['name' => 'Delete Treasure Locations','guard_name' => 'admin', 'module'=>'Treasure Locations']);
+		Permission::create(['name' => 'View Treasure Locations','guard_name' => 'admin', 'module'=>'Manage Hunts / Treasure Locations']);
+		Permission::create(['name' => 'Add Treasure Locations','guard_name' => 'admin', 'module'=>'Manage Hunts / Treasure Locations']);
+		Permission::create(['name' => 'Edit Treasure Locations','guard_name' => 'admin', 'module'=>'Manage Hunts / Treasure Locations']);
+		Permission::create(['name' => 'Delete Treasure Locations','guard_name' => 'admin', 'module'=>'Manage Hunts / Treasure Locations']);
 		
-		Permission::create(['name' => 'View Complexity Targets','guard_name' => 'admin', 'module'=>'Complexity Targets']);
-		Permission::create(['name' => 'Edit Complexity Targets','guard_name' => 'admin', 'module'=>'Complexity Targets']);
+		Permission::create(['name' => 'View Complexity Targets','guard_name' => 'admin', 'module'=>'Manage Hunts / Games Targets']);
+		Permission::create(['name' => 'Edit Complexity Targets','guard_name' => 'admin', 'module'=>'Manage Hunts / Games Targets']);
 
 		Permission::create(['name' => 'View Avatars','guard_name' => 'admin', 'module'=>'Avatars']);
 		Permission::create(['name' => 'Edit Avatars','guard_name' => 'admin', 'module'=>'Avatars']);
-		Permission::create(['name' => 'Practice Games Targets','guard_name' => 'admin', 'module'=>'practiceGamesTargets']);
+
+		Permission::create(['name' => 'Add Practice Games','guard_name' => 'admin', 'module'=>'Manage Games / Practice Games Targets']);
+		Permission::create(['name' => 'Edit Practice Games','guard_name' => 'admin', 'module'=>'Manage Games / Practice Games Targets']);
 
 		/*$data = [
 					['name' => 'Practice Games Targets','guard_name' => 'admin', 'module'=>'practiceGamesTargets'],

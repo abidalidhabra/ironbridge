@@ -85,10 +85,10 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::put('editGame', [ 'middleware' => ['permission:Edit Games'], 'uses' => 'GameController@editGame' ])->name('editGame');
 	Route::delete('deleteGame', [ 'middleware' => ['permission:View Games'], 'uses' => 'GameController@deleteGame' ])->name('deleteGame');
 
-	Route::get('practiceGamesTargets',[ 'middleware' => ['permission:Practice Games Targets'],  'uses' => 'GameController@practiceGame' ])->name('practiceGame');
-	Route::post('gameTargetUpdate',[ 'middleware' => ['permission:Practice Games Targets'],  'uses' => 'GameController@gameTargetUpdate' ])->name('gameTargetUpdate');
-	Route::post('variationSizeUpdate',[ 'middleware' => ['permission:Practice Games Targets'],  'uses' => 'GameController@variationSizeUpdate'])->name('variationSizeUpdate');
-	Route::post('practiceDeleteImage',[ 'middleware' => ['permission:Practice Games Targets'],  'uses' => 'GameController@practiceDeleteImage'])->name('practiceDeleteImage');
+	Route::get('practiceGamesTargets',[ 'middleware' => ['permission:Add Practice Games'],  'uses' => 'GameController@practiceGame' ])->name('practiceGame');
+	Route::post('gameTargetUpdate',[ 'middleware' => ['permission:Edit Practice Games'],  'uses' => 'GameController@gameTargetUpdate' ])->name('gameTargetUpdate');
+	Route::post('variationSizeUpdate',[ 'middleware' => ['permission:Edit Practice Games'],  'uses' => 'GameController@variationSizeUpdate'])->name('variationSizeUpdate');
+	Route::post('practiceDeleteImage',[ 'middleware' => ['permission:Edit Practice Games'],  'uses' => 'GameController@practiceDeleteImage'])->name('practiceDeleteImage');
 
 
 	//GameVariationController
@@ -111,7 +111,7 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('/avatarDetails/{id}', [ 'middleware' => ['permission:View Avatars'], 'uses' => 'AvatarController@avatarDetails' ])->name('avatarDetails');
 	Route::post('/widgetPriceUpdate', [ 'middleware' => ['permission:Edit Avatars'], 'uses' => 'AvatarController@widgetPriceUpdate' ])->name('widgetPriceUpdate');
 	Route::post('/avatarColorUpdate', [ 'middleware' => ['permission:Edit Avatars'], 'uses' => 'AvatarController@avatarColorUpdate' ])->name('avatarColorUpdate');
-	Route::post('/widgetCategoryUpdate', 'AvatarController@widgetCategoryUpdate')->name('widgetCategoryUpdate');
+	Route::post('/widgetCategoryUpdate', [ 'middleware' => ['permission:Edit Avatars'], 'uses' => 'AvatarController@widgetCategoryUpdate' ])->name('widgetCategoryUpdate');
 
 
 	Route::group(['middleware' => ['role:Super Admin']], function () {

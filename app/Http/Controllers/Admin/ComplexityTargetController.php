@@ -53,6 +53,9 @@ class ComplexityTargetController extends Controller
 
         return DataTables::of($complexityTarget)
         ->addIndexColumn()
+        ->editColumn('complexity', function($complexity){
+            return $complexity->complexity.' star';
+        })
         ->addColumn('action', function($complexity)  use ($admin){
             if($admin->hasPermissionTo('Edit Complexity Targets')){
 

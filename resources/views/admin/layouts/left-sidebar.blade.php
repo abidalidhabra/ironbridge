@@ -23,7 +23,7 @@
 					<a href="{{ route('admin.news.index') }}">News</a>
 				</li>
 				@endif
-				@if($admin->hasPermissionTo('View Games') || $admin->hasPermissionTo('View Game Variations'))
+				@if($admin->hasPermissionTo('View Games') || $admin->hasPermissionTo('View Game Variations') || $admin->hasPermissionTo('Add Practice Games'))
 					<!-- <li  class="@if(Route::currentRouteName() == 'admin.game.index') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.game.index') }}">Games</a>
 					</li> -->
@@ -41,7 +41,11 @@
 								@if($admin->hasPermissionTo('View Game Variations'))
 								<a href="{{ route('admin.gameVariation.index') }}" class="@if(Route::currentRouteName() == 'admin.gameVariation.index' || Route::currentRouteName() == 'admin.gameVariation.create' || Route::currentRouteName() == 'admin.gameVariation.show') {{ 'activelistsub' }} @endif">Game Variations</a>
 								@endif
-								<a href="{{ route('admin.practiceGame') }}" class="@if(Route::currentRouteName() == 'admin.practiceGame') {{ 'activelistsub' }} @endif" >Practice Games Targets</a>
+
+								@if($admin->hasPermissionTo('Add Practice Games'))
+									<a href="{{ route('admin.practiceGame') }}" class="@if(Route::currentRouteName() == 'admin.practiceGame') {{ 'activelistsub' }} @endif" >Practice Games Targets</a>
+								@endif
+
 							</div>
 						</div>
 					</li>
@@ -56,7 +60,7 @@
 								<a href="{{ route('admin.mapsList') }}" class="@if(Route::currentRouteName() == 'admin.mapsList' ||Route::currentRouteName() == 'admin.add_location' || Route::currentRouteName() == 'admin.boundary_map' || Route::currentRouteName() == 'admin.starComplexityMap' || Route::currentRouteName() == 'admin.edit_location') {{ 'activelistsub' }} @endif">Treasure Locations</a>
 								@endif
 								@if($admin->hasPermissionTo('View Complexity Targets'))
-								<a href="{{ route('admin.complexityTarget.index') }}" class="@if(Route::currentRouteName() == 'admin.complexityTarget.index') {{ 'activelistsub' }} @endif">Complexity Targets</a>
+								<a href="{{ route('admin.complexityTarget.index') }}" class="@if(Route::currentRouteName() == 'admin.complexityTarget.index') {{ 'activelistsub' }} @endif">Games Targets</a>
 								@endif
 							</div>
 						</div>
@@ -69,7 +73,7 @@
 					@endif
 					@if($admin->hasRole('Super Admin'))
 					<li  class="@if(Route::currentRouteName() == 'admin.adminManagement.index') {{ 'activelist' }} @endif">
-						<a href="{{ route('admin.adminManagement.index') }}">Admin Management</a>
+						<a href="{{ route('admin.adminManagement.index') }}">User Access</a>
 					</li>
 					@endif
 					
