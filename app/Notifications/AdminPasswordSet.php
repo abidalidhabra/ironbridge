@@ -41,9 +41,16 @@ class AdminPasswordSet extends Notification
      */
     public function toMail($notifiable)
     {
+        $token = $this->token;
         return (new MailMessage)
+        ->subject('You are invited to join ironbridge console!')
+        // ->line('Please create your password using below link')
+        ->markdown('admin.mail.newUserAccess',compact('token'));
+
+
+        /*return (new MailMessage)
         ->line('Please create your password using below link!')
-        ->action('Click here', route('admin.setPassword',$this->token));
+        ->action('Click here', route('admin.setPassword',$this->token));*/
     }
 
 
