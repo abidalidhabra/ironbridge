@@ -162,9 +162,13 @@ class GameController extends Controller
             $rules = [
                         'target' => 'required|in:512,1024,2048,4096',
                     ];
-        }elseif ($gameId == '5b0e304b51b2010ec820fb4e') {
+        } elseif ($gameId == '5b0e304b51b2010ec820fb4e') {
             $rules = [
                         'target' => 'required|in:12,35,70,140',
+                    ];
+        } elseif ($gameId == '5b0e2ff151b2010ec820fb48') {
+            $rules = [
+                        'target' => 'required|in:4,5,6',
                     ];
         } else {
             $rules = [

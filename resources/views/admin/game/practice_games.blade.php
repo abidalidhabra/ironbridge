@@ -14,7 +14,10 @@
                                 <p>{{ $practice_game->game->name }} <small class="form-text text-muted">must of [512,1024,2048,4096]</small></p>
                             @elseif($practice_game->game_id == '5b0e304b51b2010ec820fb4e')
                                 <p>{{ $practice_game->game->name }} <small class="form-text text-muted">must of [12,35,70,140]</small></p>
+                            @elseif($practice_game->game_id == '5b0e2ff151b2010ec820fb48')
+                                <p>{{ $practice_game->game->name }} <small class="form-text text-muted">must of [4,5,6]</small></p>
                             @else
+
                                 <p>{{ $practice_game->game->name }}</p>
                             @endif
                         </div>
