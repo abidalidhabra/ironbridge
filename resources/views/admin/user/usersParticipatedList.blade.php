@@ -21,7 +21,7 @@
             <table class="table table-striped table-hover datatables" style="width: 100%;" id="dataTable">
                 <thead>
                     <tr>
-                        <th>Sr</th>
+                        <th>Sr.</th>
                         <th>Hunt Name</th>
                         <th>User Name</th>
                         <th>Fees</th>

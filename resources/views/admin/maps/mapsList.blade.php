@@ -23,7 +23,7 @@
         <table class="table table-striped table-hover datatables" style="width: 100%;" id="dataTable">
             <thead>
                 <tr>
-                    <th>Sr</th>
+                    <th>Sr.</th>
                     <th>Update Date</th>
                     <th>Name</th>
                     <th>Place Name</th>

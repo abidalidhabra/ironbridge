@@ -22,7 +22,7 @@
         <table class="table table-striped table-hover datatables" style="width: 100%;" id="dataTable">
             <thead>
                 <tr>
-                    <th width="7%">Sr</th>
+                    <th width="7%">Sr.</th>
                     <th>Game Name</th>
                     <th>Variation Name</th>
                     <th>Variation Image</th>

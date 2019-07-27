@@ -24,7 +24,7 @@
         <table class="table table-striped table-hover datatables" style="width: 100%;" id="dataTable">
             <thead>
                 <tr>
-                    <th width="7%">Sr</th>
+                    <th width="7%">Sr.</th>
                     <th>Subject</th>
                     <th>Description</th>
                     <th width="10%">News Date</th>

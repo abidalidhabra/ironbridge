@@ -17,7 +17,7 @@
         <table class="table table-striped table-hover datatables" style="width: 100%;" id="dataTable">
             <thead>
                 <tr>
-                    <th width="7%">Sr. No.</th>
+                    <th width="7%">Sr.</th>
                     <th>Complexity</th>
                     <th>Game Name</th>
                     <th>Target</th>
@@ -139,6 +139,13 @@
                 if (gameid == '5b0e304b51b2010ec820fb4e') {
                     $('.target').text(' must of [12,35,70,140]');
                 }
+                if (gameid == '5b0e306951b2010ec820fb4f') {
+                    $('.target').text(' must of [4,5,6]');
+                }
+                if (gameid == '5b0e2ff151b2010ec820fb48') {
+                    $('.target').text(' must be between [1 to 81]');
+                }
+
             });
 
 

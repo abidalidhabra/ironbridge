@@ -91,15 +91,23 @@ class ComplexityTargetController extends Controller
 
         if ($gameId == '5c188ab5719a1408746c473b') {
             $rules = [
-                        'target' => 'required|integer|in:512,1024,2048,4096',
+                        'target' => 'required|in:512,1024,2048,4096',
                     ];
-        }elseif ($gameId == '5b0e304b51b2010ec820fb4e') {
+        } elseif ($gameId == '5b0e304b51b2010ec820fb4e') {
             $rules = [
-                        'target' => 'required|integer|in:12,35,70,140',
+                        'target' => 'required|in:12,35,70,140',
+                    ];
+        } elseif ($gameId == '5b0e306951b2010ec820fb4f') {
+            $rules = [
+                        'target' => 'required|in:4,5,6',
+                    ];
+        } elseif ($gameId == '5b0e2ff151b2010ec820fb48') {
+            $rules = [
+                        'target' => 'required|integer|between:1,81',
                     ];
         } else {
             $rules = [
-                        'target' => 'required|integer',
+                        'target' => 'required',
                     ];
         }
 

@@ -166,9 +166,13 @@ class GameController extends Controller
             $rules = [
                         'target' => 'required|in:12,35,70,140',
                     ];
-        } elseif ($gameId == '5b0e2ff151b2010ec820fb48') {
+        } elseif ($gameId == '5b0e306951b2010ec820fb4f') {
             $rules = [
                         'target' => 'required|in:4,5,6',
+                    ];
+        } elseif ($gameId == '5b0e2ff151b2010ec820fb48') {
+            $rules = [
+                        'target' => 'required|integer|between:1,81',
                     ];
         } else {
             $rules = [

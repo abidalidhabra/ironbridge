@@ -14,8 +14,10 @@
                                 <p>{{ $practice_game->game->name }} <small class="form-text text-muted">must of [512,1024,2048,4096]</small></p>
                             @elseif($practice_game->game_id == '5b0e304b51b2010ec820fb4e')
                                 <p>{{ $practice_game->game->name }} <small class="form-text text-muted">must of [12,35,70,140]</small></p>
-                            @elseif($practice_game->game_id == '5b0e2ff151b2010ec820fb48')
+                            @elseif($practice_game->game_id == '5b0e306951b2010ec820fb4f')
                                 <p>{{ $practice_game->game->name }} <small class="form-text text-muted">must of [4,5,6]</small></p>
+                            @elseif($practice_game->game_id == '5b0e2ff151b2010ec820fb48')
+                                <p>{{ $practice_game->game->name }} <small class="form-text text-muted">must be between [1 to 81]</small></p>
                             @else
 
                                 <p>{{ $practice_game->game->name }}</p>
@@ -46,7 +48,7 @@
             </div>
         </div>
         <div class="datingactivity_box">
-            <h3>More Games</h3>
+            <h3>Add New Games</h3>
             <div class="innerdatingactivity">
                 <form id="formPracticeGames" method="POST" enctype="multipart/form-data">
                     @csrf

@@ -20,7 +20,7 @@
                 <thead>
                     
                     <tr>
-                        <th width="7%">Sr. No.</th>
+                        <th width="7%">Sr.</th>
                         <th>Time spent</th>
                         <th>Status</th>
                         <th>Game Name</th>

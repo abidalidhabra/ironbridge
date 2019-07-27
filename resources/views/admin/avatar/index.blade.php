@@ -6,13 +6,13 @@
 @section('content')
     <div class="right_paddingboxpart">
         <div class="users_datatablebox userstextset">
-            <h3></h3>
+            <h3>Avatars</h3>
         </div>
         <div class="customdatatable_box">
             <table class="table table-striped table-hover datatables" style="width: 100%;" id="dataTable">
                 <thead>
                     <tr>
-                        <th>Sr</th>
+                        <th width="7%">Sr.</th>
                         <!-- <th>Name</th> -->
                         <th>Gender</th>
                         <th>Tops</th>
