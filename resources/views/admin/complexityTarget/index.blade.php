@@ -48,11 +48,13 @@
                             <div class="modalbodysetbox">
                                 <div class="newstitlebox_inputbox">
                                     <div class="form-group">
+                                        <label>Complexity</label>
                                         <input type="text" name="complexity" placeholder="Enter complexity" disabled="">
                                     </div>
                                 </div>
                                 <div class="newstitlebox_inputbox">
                                     <div class="form-group">
+                                        <label>Game Name</label>
                                         <select name="game" disabled>
                                             @forelse($games as $game)
                                             <option value="{{ $game->id }}">{{ $game->name }}</option>
@@ -64,6 +66,7 @@
                                 </div>
                                 <div class="newstitlebox_inputbox">
                                     <div class="form-group">
+                                        <label>Target<small class="target"></small></label>
                                         <input type="text" name="target" placeholder="target">
                                     </div>
                                 </div>
@@ -128,6 +131,14 @@
                 $("#edit_complexity select[name='game']").find('option[value="'+gameid+'"]').attr('selected','selected');
                 
                 $('#edit_complexity').modal('show');
+                
+                $('.target').text('');
+                if (gameid == '5c188ab5719a1408746c473b') {
+                    $('.target').text(' must of [512,1024,2048,4096]');
+                }
+                if (gameid == '5b0e304b51b2010ec820fb4e') {
+                    $('.target').text(' must of [12,35,70,140]');
+                }
             });
 
 

@@ -81,8 +81,6 @@ class GameController extends Controller
                 return '<a href="javascript:void(0)" class="edit_game" data-action="edit" data-id="'.$game->id.'" data-identifier="'.$game->identifier.'" data-name="'.$game->name.'" data-status="'.$game->status.'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
             }
             return '';
-            /*return '<a href="javascript:void(0)" class="edit_game" data-action="edit" data-id="'.$game->id.'" data-identifier="'.$game->identifier.'" data-name="'.$game->name.'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>
-            <a href="javascript:void(0)" class="delete_game" data-action="delete" data-placement="left" data-id="'.$game->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>';*/
         })
         ->editColumn('status', function($game){
             if ($game->status) {
@@ -148,7 +146,6 @@ class GameController extends Controller
     /* practice games target */
     public function practiceGame(Request $request){
         $practiceGames = PracticeGamesTarget::with('game:_id,name,status')
-                                            ->whereNotIn('game_id',['5b0e306951b2010ec820fb4f','5b0e304b51b2010ec820fb4e'])
                                             ->get();
         $moregame = PracticeGamesTarget::with('game:_id,name,status')
                                         ->whereIn('game_id',['5b0e306951b2010ec820fb4f','5b0e304b51b2010ec820fb4e'])
@@ -186,13 +183,13 @@ class GameController extends Controller
         $id     = $request->get('id');
         $target = $request->get('target');
 
-        if($gameId == '5b0e2ff151b2010ec820fb48'){
+        /*if($gameId == '5b0e2ff151b2010ec820fb48'){
             $data['variation_size']=(int)$target;
         } elseif($gameId == '5b0e303f51b2010ec820fb4d'){
             $data['number_generate']=(int)$target;
-        } else {
+        } else {*/
             $data['target']=(int)$target;
-        }
+        //}
 
         PracticeGamesTarget::where('_id',$id)
                             ->update($data);
@@ -206,14 +203,11 @@ class GameController extends Controller
     public function variationSizeUpdate(Request $request){
         $gameId = $request->get('game_id');
         
+        $rules = [];
         if ($gameId == '5b0e304b51b2010ec820fb4e') {
             $rules = [
-                'variation_size' => 'required|in:12,35,70,140',   
+                //'variation_size' => 'required|in:12,35,70,140',   
                 'variation_image.*' => 'mimes:jpeg,jpg,png|dimensions:width=2000,height=1440',                      
-            ];
-        } else {
-            $rules = [
-                'variation_size' => 'required',                         
             ];
         }
 
@@ -268,7 +262,7 @@ class GameController extends Controller
 
         
         $practiceGame['variation_image'] = $imageUniqueName;
-        $practiceGame['variation_size'] = (int)$request->get('variation_size');
+        //$practiceGame['variation_size'] = (int)$request->get('variation_size');
         $practiceGame->save();
         
         return response()->json([

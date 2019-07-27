@@ -19,21 +19,21 @@
                             @endif
                         </div>
                         <div class="col-md-3 practice_game_target" id="practice_game_target{{ $practice_game->id }}">
-                            @if($practice_game->game_id == '5b0e2ff151b2010ec820fb48')
+                            <!-- @if($practice_game->game_id == '5b0e2ff151b2010ec820fb48')
                                 <p class="target_text">{{ $practice_game->variation_size }}</p>
                                 <?php $target = $practice_game->variation_size ?>
                             
                             @elseif($practice_game->game_id == '5b0e303f51b2010ec820fb4d')
                                 <p class="target_text">{{ $practice_game->number_generate }}</p>
                                 <?php $target = $practice_game->number_generate ?>
-                            @else
+                            @else 
                                 <p class="target_text">{{ $practice_game->target }}</p>
-                                <?php $target = $practice_game->target ?>
-                            @endif
+                            @endif -->
+                                <p class="target_text">{{ $practice_game->target }}</p>
                         </div>
 
                         <div class="col-md-2">
-                            <a href="javascript:void(0)" class="practice_edit" id="practice_edit{{$practice_game->id}}" data-target="{{ $target }}" data-game_id="{{ $practice_game->game_id }}" data-id="{{ $practice_game->id }}">
+                            <a href="javascript:void(0)" class="practice_edit" id="practice_edit{{$practice_game->id}}" data-target="{{ $practice_game->target }}" data-game_id="{{ $practice_game->game_id }}" data-id="{{ $practice_game->id }}">
                                 <i class="fa fa-pencil iconsetaddbox"></i>
                             </a>
                         </div>
@@ -47,7 +47,7 @@
             <div class="innerdatingactivity">
                 <form id="formPracticeGames" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-8">
                         <label class="form-label">Game Name</label>
                         <select name="game_id" class="form-control game_id">
                             @forelse($moregame as $game)
@@ -60,12 +60,12 @@
                         
                     </div>
                     
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-8">
                         <br/>
                         <input type="submit" name="submit" class="btn btn-success" value="Submit">
                     </div>
                 </form>
-                <div class="multi_variation_image imageslibbox1">
+                <div class="col-md-12 multi_variation_image imageslibbox1">
                     
                 </div>
             </div>
@@ -75,11 +75,11 @@
 @forelse($moregame as $game)
     <div id="variation{{$game->id}}" style="display: none;">
         <input type="hidden" name="practice_game" value="{{ $game->id }}">
-        <div class="form-group col-md-6">
+        <!-- <div class="form-group col-md-6">
             <label class="form-label">Variation size <small class="hidden size_hint">must of [12,35,70,140]</small></label>
             <input type="text" name="variation_size" value="{{ $game->variation_size }}" class="form-control">
-        </div>
-        <div class="form-group col-md-6">
+        </div> -->
+        <div class="form-group col-md-8">
             <label class="form-label">Variation Image <small class="hidden image_hit">must be 2000*1440 dimension </small></label>
             <input type="file" name="variation_image[]" class="form-control variation_image">
         </div>

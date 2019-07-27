@@ -82,9 +82,28 @@ class ComplexityTargetController extends Controller
 
     //edit Complexity Target
     public function editComplexityTarget(Request $request){
-    	 $validator = Validator::make($request->all(),[
+    	$id = $request->get('id');
+        $complexityTarget = ComplexityTarget::where('_id',$id)
+                                            ->first();
+
+
+        $gameId = $complexityTarget->game_id;
+
+        if ($gameId == '5c188ab5719a1408746c473b') {
+            $rules = [
+                        'target' => 'required|integer|in:512,1024,2048,4096',
+                    ];
+        }elseif ($gameId == '5b0e304b51b2010ec820fb4e') {
+            $rules = [
+                        'target' => 'required|integer|in:12,35,70,140',
+                    ];
+        } else {
+            $rules = [
                         'target' => 'required|integer',
-                    ]);
+                    ];
+        }
+
+        $validator = Validator::make($request->all(),$rules);
         
         if ($validator->fails())
         {
@@ -92,7 +111,6 @@ class ComplexityTargetController extends Controller
             return response()->json(['status' => false,'message' => $message]);
         }
 
-        $id = $request->get('id');
 
 		ComplexityTarget::where('_id',$id)
 						->update([
