@@ -150,7 +150,7 @@
                 data: {id : id,target:target,game_id:game_id},
                 beforeSend: function() {
                     $('.practice_save').find('i').addClass('fa-spinner');
-                    $('.practice_close').remove();
+                    $('.practice_close').addClass('hidden');
                 },
                 success: function(response)
                 {
@@ -160,6 +160,8 @@
                         $('#practice_game_target'+id).find('p').html(target)
                         toastr.success(response.message);      
                     } else {
+                        $('.practice_save').find('i').removeClass('fa-spinner');
+                        $('.practice_close').removeClass('hidden');
                         toastr.warning(response.message);
                     }
                 }

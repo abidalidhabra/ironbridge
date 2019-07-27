@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | NEWS')
+@section('title','Ironbridge1779 | Game Targets')
 @extends('admin.layouts.admin-app')
 @section('styles')
 <!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->
@@ -38,7 +38,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Edit Complexity Target</h4>       
+                        <h4 class="modal-title">Edit Game Target</h4>       
                     </div>
                     <form method="post" id="editComplexityForm">
                         @method('PUT')
