@@ -50,7 +50,7 @@
                         <p>Android</p>
                     </div>
                 </div>
-                <div class="city_childbox">
+                <div class="city_childbox prohntbox">
                     <div class="row">
                         <div class="col-md-6">
                             <p class="hunt-number">{{ $data['huntProgress'] }}</p>
@@ -61,8 +61,9 @@
                             <p class="hunt-text">Completed Hunts</p>
                         </div>
                     </div>
-
-                    <br/>
+                </div>
+                <div class="city_childbox">
+                    
                     <div class="devicetital_text">
                         <p>Top 5 Hunts</p>
                     </div>

@@ -1724,7 +1724,10 @@ table i.iconsetaddbox{
     font-family: 'Montserrat-Medium'
 }
 
-
+.prohntbox{
+    padding-bottom: 8px;
+    margin-bottom: 18px;
+}
 
 
 
