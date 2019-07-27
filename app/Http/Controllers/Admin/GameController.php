@@ -163,7 +163,7 @@ class GameController extends Controller
         
         if ($gameId == '5c188ab5719a1408746c473b') {
             $rules = [
-                        'target' => 'required|in:1024,2048,4096',
+                        'target' => 'required|in:512,1024,2048,4096',
                     ];
         }elseif ($gameId == '5b0e304b51b2010ec820fb4e') {
             $rules = [
@@ -186,8 +186,10 @@ class GameController extends Controller
         $id     = $request->get('id');
         $target = $request->get('target');
 
-        if($gameId == '5b0e304b51b2010ec820fb4e'){
+        if($gameId == '5b0e2ff151b2010ec820fb48'){
             $data['variation_size']=(int)$target;
+        } elseif($gameId == '5b0e303f51b2010ec820fb4d'){
+            $data['number_generate']=(int)$target;
         } else {
             $data['target']=(int)$target;
         }
@@ -230,6 +232,12 @@ class GameController extends Controller
         if ($practiceGame->variation_image) {
             foreach ($practiceGame->variation_image as $key => $value) {
                 $variation_image[] = substr(strrchr($value,'/'),1);
+                $oldImage = substr(strrchr($value,'/'),1); 
+                if ($gameId != '5b0e304b51b2010ec820fb4e') {
+                    if ($request->hasFile('variation_image') && $request->hasFile('variation_image')!=""){
+                        Storage::disk('public')->delete('practice_games/'.$oldImage);
+                    }
+                }
             }
         }
 
@@ -239,6 +247,7 @@ class GameController extends Controller
         }
 
         $imageUniqueName = new stdClass();
+        
         if ($request->hasFile('variation_image') && $request->hasFile('variation_image')!="") {
             $variationImages     = $request->file('variation_image');
             foreach ($variationImages as $key => $variationImage) {
@@ -248,13 +257,18 @@ class GameController extends Controller
                 $imageUniqueName->$jsonIndex = uniqid('practice_'.uniqid(true).'_').'.'.$extension;
                 $img->save($pathOfImageTobeSave.'/'.$imageUniqueName->$jsonIndex);
             }
+            if ($gameId == '5b0e304b51b2010ec820fb4e') {
+                $imageUniqueName = (object) array_merge($variation_image, (array) $imageUniqueName); 
+            //    $practiceGame['variation_image'] = $imageUniqueName;
+            }
         }  else {
-            $variationImages     = $variation_image;
-            $imageUniqueName = $variationImages;
+            $variationImages = $variation_image;
+            $imageUniqueName = (object)$variationImages;
         }
 
-        $practiceGame['variation_size'] =  (int)$request->get('variation_size');
+        
         $practiceGame['variation_image'] = $imageUniqueName;
+        $practiceGame['variation_size'] = (int)$request->get('variation_size');
         $practiceGame->save();
         
         return response()->json([
@@ -270,21 +284,23 @@ class GameController extends Controller
 
         $practiceGame = PracticeGamesTarget::where('_id',$id)->first();   
         $variation_image = [];
-        $index = '';
         if ($practiceGame->variation_image) {
             foreach ($practiceGame->variation_image as $key => $value) {
                 $convert_image = substr(strrchr($value,'/'),1);  
-                $variation_image[] = $convert_image;  
-                if ($image == $convert_image) {
-                    $index = $key;
+                if ($image != $convert_image) {
+                    $variation_image[] = $convert_image;  
+                } else {
+                    Storage::disk('public')->delete('practice_games/'.$convert_image);
                 }
             }
         }
 
-        $practiceGame  = PracticeGamesTarget::where('_id',$id)->where('variation_image','practice_15d3ac983768d4_5d3ac98376cbc.png')->first();
+        $practiceGame->variation_image = (object)$variation_image;
+        $practiceGame->save();
 
-        // $practiceGame->variation_image[0]->delete();
-        //print_r($practiceGame->variation_image[0]->delete());
-        exit();
+        return response()->json([
+            'status' => true,
+            'message'=>'image has been deleted successfully',
+        ]);
     }
 }

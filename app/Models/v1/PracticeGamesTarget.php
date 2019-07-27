@@ -9,7 +9,7 @@ use Storage;
 class PracticeGamesTarget extends Eloquent
 {
     protected $fillable = [
-        'game_id', 'target','variation_size','variation_image'
+        'game_id', 'target','variation_size','variation_image','number_generate'
     ];
 
     public function game()

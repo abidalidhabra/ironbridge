@@ -11,7 +11,7 @@
                     <div class="swoped_detlisbox" id="practice_game{{ $practice_game->id }}">
                         <div class="col-md-7">
                             @if($practice_game->game_id == '5c188ab5719a1408746c473b')
-                                <p>{{ $practice_game->game->name }} <small class="form-text text-muted">must of [1024,2048,4096]</small></p>
+                                <p>{{ $practice_game->game->name }} <small class="form-text text-muted">must of [512,1024,2048,4096]</small></p>
                             @elseif($practice_game->game_id == '5b0e304b51b2010ec820fb4e')
                                 <p>{{ $practice_game->game->name }} <small class="form-text text-muted">must of [12,35,70,140]</small></p>
                             @else
@@ -19,14 +19,21 @@
                             @endif
                         </div>
                         <div class="col-md-3 practice_game_target" id="practice_game_target{{ $practice_game->id }}">
-                            @if($practice_game->game_id == '5b0e304b51b2010ec820fb4e')
+                            @if($practice_game->game_id == '5b0e2ff151b2010ec820fb48')
                                 <p class="target_text">{{ $practice_game->variation_size }}</p>
+                                <?php $target = $practice_game->variation_size ?>
+                            
+                            @elseif($practice_game->game_id == '5b0e303f51b2010ec820fb4d')
+                                <p class="target_text">{{ $practice_game->number_generate }}</p>
+                                <?php $target = $practice_game->number_generate ?>
                             @else
                                 <p class="target_text">{{ $practice_game->target }}</p>
+                                <?php $target = $practice_game->target ?>
                             @endif
                         </div>
+
                         <div class="col-md-2">
-                            <a href="javascript:void(0)" class="practice_edit" id="practice_edit{{$practice_game->id}}" data-target="{{ $practice_game->target }}" data-game_id="{{ $practice_game->game_id }}" data-id="{{ $practice_game->id }}">
+                            <a href="javascript:void(0)" class="practice_edit" id="practice_edit{{$practice_game->id}}" data-target="{{ $target }}" data-game_id="{{ $practice_game->game_id }}" data-id="{{ $practice_game->id }}">
                                 <i class="fa fa-pencil iconsetaddbox"></i>
                             </a>
                         </div>
@@ -58,6 +65,9 @@
                         <input type="submit" name="submit" class="btn btn-success" value="Submit">
                     </div>
                 </form>
+                <div class="multi_variation_image imageslibbox1">
+                    
+                </div>
             </div>
         </div>
         
@@ -74,7 +84,7 @@
             <input type="file" name="variation_image[]" class="form-control variation_image">
         </div>
     </div>
-    <div id="photo_section" class="imageslibbox1">
+    <div id="photo_section{{$game->id}}" class="imageslibbox1" style="display: none;">
         <h3>{{ $game->game->name }}</h3>
         <ul>
         @forelse($game->variation_image as $variation_image)
@@ -89,6 +99,11 @@
                 </div>
             </li>
         @empty
+            <li>
+                <div class="photosboxset">
+                    <p>No image found</p>
+                </div>
+            </li>
         @endforelse 
         </ul>
     </div>
@@ -102,6 +117,7 @@
         $(window).load(function() {
             var id = $('.game_id').find(':selected').data('id');
             $('.variation_box').html($('#variation'+id).html());
+            $('.multi_variation_image').html($('#photo_section'+id).html());
 
         });
 
@@ -165,10 +181,12 @@
                 $('.variation_box').html($('#variation'+id).html());
                 $('.variation_image').attr('multiple',true);
                 $('.image_hit , .size_hint').removeClass('hidden');
+                $('.multi_variation_image').html($('#photo_section'+id).html());
             } else {
                 $('.variation_box').html($('#variation'+id).html());
                 $('.image_hit , .size_hint').addClass('hidden');
                 $('.variation_image').attr('multiple',false);
+                $('.multi_variation_image').html($('#photo_section'+id).html());
             }
         });
 
@@ -187,6 +205,7 @@
                 success:function(response) {
                     if (response.status == true) {
                         toastr.success(response.message);
+                        location.reload();
                     } else {
                         toastr.warning(response.message);
                     }
@@ -208,10 +227,11 @@
                 url: '{{ route("admin.practiceDeleteImage") }}',
                 data: {id : id , image:image},
                 success: function(response)
-                {
+                {   
+                    console.log(response);
                     if (response.status == true) {
                         toastr.success(response.message);
-                        table.ajax.reload();
+                        location.reload();
                     } else {
                         toastr.warning(response.message);
                     }

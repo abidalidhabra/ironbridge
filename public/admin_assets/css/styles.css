@@ -1322,6 +1322,15 @@ table i.iconsetaddbox{
     font-family: 'Montserrat-SemiBold';
     width: 100%;
 }
+.multi_variation_image h3 {
+    margin: 0px;
+    font-size: 23px;
+    color: #C0B08C;
+    padding-bottom: 14px;
+    font-family: 'Montserrat-SemiBold';
+    width: 100%;
+    float: left;
+}
 .innerdatingactivity {
     display: inline-block;
     width: 65%;
