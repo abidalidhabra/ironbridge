@@ -81,7 +81,7 @@ class AvatarController extends Controller
     	$avatar = Avatar::where('_id',$id)
                         ->with(['widget_item'=>function($query){
                             $query->orderBy('widget_name','desc')
-                            ->select('_id','widget_name','item_name','gold_price','avatar_id');
+                            ->select('_id','widget_name','item_name','gold_price','avatar_id','widget_category');
                             return $query;
                         }])
                         ->first();
