@@ -56,7 +56,8 @@ class ClueController extends Controller
 
             case 'completed':
                 $this->calculateTheTimer($huntUserDetail,'completed');
-                $stillRemain = $huntUserDetail->whereIn('status', ['tobestart','progress','pause'])->count();
+                // $stillRemain = $huntUserDetail->hunt_user->hunt_user_details()->whereIn('status', ['tobestart','progress','pause'])->count();
+                $stillRemain = $huntUserDetail->hunt_user->hunt_user_details()->where('status', '!=', 'completed')->count();
                 break;
         }
         $huntUserDetail->save();
