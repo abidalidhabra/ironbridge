@@ -19,6 +19,11 @@ class Game extends Eloquent
         'status'
     ];
 
+    public function scopeActive($query)
+    {
+        return $query->where('status', true);
+    }
+
     public function game_variation()
     {
         return $this->hasMany('App\Models\v1\GameVariation','game_id');
@@ -27,6 +32,11 @@ class Game extends Eloquent
     public function complexity_target()
     {
         return $this->hasOne('App\Models\v1\ComplexityTarget','game_id')->select('_id', 'game_id', 'complexity', 'target');
+    }
+
+    public function practice_games_targets()
+    {
+        return $this->hasOne('App\Models\v1\PracticeGamesTarget');
     }
     /**
     
