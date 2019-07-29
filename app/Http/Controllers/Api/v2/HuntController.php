@@ -267,7 +267,11 @@ class HuntController extends Controller
             $huntUserId = $request->hunt_user_id;
 
             $huntUserDetails = HuntUserDetail::where(['hunt_user_id' => $huntUserId])
-            ->with('game:_id,name,identifier','game_variation:_id,variation_name,variation_complexity,target,no_of_balls,bubble_level_id,game_id')
+            // ->with('game:_id,name,identifier','game_variation:_id,variation_name,variation_complexity,target,no_of_balls,bubble_level_id,game_id,variation_size,row,column')
+            ->with(['game'=> function($query){
+                $query->with('complexity_target')->select('_id','name');
+            }])
+            ->with('game_variation:_id,variation_name,variation_complexity,target,no_of_balls,bubble_level_id,game_id,variation_size,row,column')
             ->select('_id','finished_in','status','location','game_id','game_variation_id','hunt_user_id', 'radius')
             ->get();
 

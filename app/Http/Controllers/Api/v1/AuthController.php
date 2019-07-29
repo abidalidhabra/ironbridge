@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use stdClass;
 use Validator;
 use App\Rules\CheckThePassword;
+use Exception;
 
 class AuthController extends Controller
 {
@@ -41,33 +42,42 @@ class AuthController extends Controller
         //     return $complexity; 
         // });
         // exit;
-        $request['username'] = strtolower($request->get('username'));
-        $validator = Validator::make($request->all(),[
-                        'username' => "required|exists:users,username",
-                        //'password' => ['required', new IsPasswordValid],
-                        'password' => ['required', new CheckThePassword($request->username)],
-                    ]);
-        
-        if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()], 422);
-        }
+       try {
+           
+            $request['username'] = strtolower($request->get('username'));
+            $validator = Validator::make($request->all(),[
+                            'username' => "required|exists:users,username",
+                            //'password' => ['required', new IsPasswordValid],
+                            'password' => ['required', new CheckThePassword($request->username)],
+                        ]);
+            
+            if ($validator->fails()) {
+                return response()->json(['message'=>$validator->messages()], 422);
+            }
 
-        $credentials = $request->only('username', 'password');
+            $credentials = $request->only('username', 'password');
 
-        if ($token = $this->guard()->attempt($credentials)) {
+            if ($token = $this->guard()->attempt($credentials)) {
+
+                return response()->json([
+                    'message'=>'You logged-in successfully.', 
+                    'token' => $token, 
+                    'data' => $this->guard()->user()->makeHidden(['reffered_by','updated_at','created_at', 'widgets', 'skeleton_keys', 'avatar'])
+                ],200);
+            }
 
             return response()->json([
-                'message'=>'You logged-in successfully.', 
-                'token' => $token, 
-                'data' => $this->guard()->user()->makeHidden(['reffered_by','updated_at','created_at', 'widgets', 'skeleton_keys', 'avatar'])
-            ],200);
-        }
-
-        return response()->json([
-            'message'=>'Sorry! wrong credentials provided.', 
-            'token' => "", 
-            'data' => new stdClass()
-        ],500);
+                'message'=>'Sorry! wrong credentials provided.', 
+                'token' => "", 
+                'data' => new stdClass()
+            ],500);
+       } catch (Exception $e) {
+           return response()->json([
+                'message'=> $e->getMessage(), 
+                'token' => "", 
+                'data' => new stdClass()
+            ],500);
+       }
     }
 
 

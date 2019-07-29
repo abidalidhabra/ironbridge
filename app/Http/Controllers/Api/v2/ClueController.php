@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use MongoDB\BSON\ObjectId as MongoDBId;
 use MongoDB\BSON\UTCDateTime as MongoDBDate;
 use stdClass;
+use Exception;
 
 class ClueController extends Controller
 {
@@ -72,30 +73,44 @@ class ClueController extends Controller
     }
 
     public function useTheSkeletonKey(Request $request){
-
-        $huntUserDetailId = $request->hunt_user_details_id;
-        $user   = auth()->User();
-        $userId = $user->id;
         
-        $huntUserDetail = $this->getHuntUserDetail($userId, $huntUserDetailId);
+        try {
+            
+            $huntUserDetailId = $request->hunt_user_details_id;
+            $user   = auth()->User();
+            $userId = $user->id;
+            
+            // for ($i=0; $i < 1000; $i++) { 
+            //     $user->push('skeleton_keys',['key'=> new MongoDBId(), 'created_at'=> new MongoDBDate()]);
+            // }
+            // exit;
+            $huntUserDetail = $this->getHuntUserDetail($userId, $huntUserDetailId);
 
-        if ($huntUserDetail->status == 'completed') {
-            return response()->json(['message'=>'You cannot use skeleton key in this clue, as it already ended.'], 422);
+            if (!$huntUserDetail) {
+                return response()->json(['message'=>'Invalid hunt user detail id provided.'], 500);
+            }
+
+            if ($huntUserDetail->status == 'completed') {
+                return response()->json(['message'=>'You cannot use skeleton key in this clue, as it already ended.'], 422);
+            }
+
+            // $skeletonExists = User::where(['skeleton_keys.used_at' => null, '_id'=> $userId])->project(['_id'=> true, 'skeleton_keys.$'=>true])->first();
+            $skeletonExists = User::where(['skeleton_keys.used_at' => null, '_id'=> $userId])->update(['skeleton_keys.$.used_at'=> new MongoDBDate()]);
+            if (!$skeletonExists) {
+                return response()->json(['message'=>'You does not have any key to use.'], 422);
+            }
+
+            // $huntFinished = $this->actionOnClue($huntUserDetail, 'completed');
+            $actionOnClueRequest = new ActionOnClueRequest();
+            $actionOnClueRequest->setMethod('POST');
+            $actionOnClueRequest->request->add(['hunt_user_details_id'=> $huntUserDetailId, 'status'=> 'completed']);
+            $huntFinished = (new ClueController)->actionOnClue($actionOnClueRequest);
+
+            return response()->json(['message'=> 'Clue Timer has been ended successfully.', 'hunt_action'=> $huntFinished->original, 'available_skeleton_keys'=> $user->available_skeleton_keys]);
+           
+        } catch (Exception $e) {
+            return response()->json(['message'=> $e->getMessage()]);
         }
-
-        // $skeletonExists = User::where(['skeleton_keys.used_at' => null, '_id'=> $userId])->project(['_id'=> true, 'skeleton_keys.$'=>true])->first();
-        $skeletonExists = User::where(['skeleton_keys.used_at' => null, '_id'=> $userId])->update(['skeleton_keys.$.used_at'=> new MongoDBDate()]);
-        if (!$skeletonExists) {
-            return response()->json(['message'=>'You does not have any key to use.'], 422);
-        }
-
-        // $huntFinished = $this->actionOnClue($huntUserDetail, 'completed');
-        $actionOnClueRequest = new ActionOnClueRequest();
-        $actionOnClueRequest->setMethod('POST');
-        $actionOnClueRequest->request->add(['hunt_user_details_id'=> $huntUserDetailId, 'status'=> 'completed']);
-        $huntFinished = (new ClueController)->actionOnClue($actionOnClueRequest);
-
-        return response()->json(['message'=> 'Clue Timer has been ended successfully.', 'hunt_action'=> $huntFinished->original]);
     }
 
     public function getHuntUserDetail($userId, $huntUserDetailId){
