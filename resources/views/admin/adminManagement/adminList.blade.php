@@ -178,7 +178,6 @@
             });
 
             $(document).on('click', '.edit_admin', function(){
-                $('#editAdmin').modal('show');
                 var id = $(this).data('id');
                 var url ='{{ route("admin.adminManagement.edit",':id') }}';
                 url = url.replace(':id',id);
@@ -187,7 +186,8 @@
                     url: url,
                     success: function(response)
                     {
-                       $('#adminEditContent').html(response);
+                        $('#adminEditContent').html(response);
+                        $('#editAdmin').modal('show');
                    }
                });
             });
