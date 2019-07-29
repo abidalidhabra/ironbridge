@@ -61,7 +61,7 @@ class AdminManagement extends Controller
             return Carbon::parse($admin->created_at)->format('d-M-Y @ h:i A');
         })
         ->addColumn('action', function($admin){
-            return '<a href="javascript:void(0)" class="edit_admin" data-id="'.$admin->_id.'"><i class="fa fa-pencil iconsetaddbox"></i></a> <a href="javascript:void(0)" class="delete_company" data-action="delete" data-placement="left" data-id="'.$admin->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>';
+            return '<a href="javascript:void(0)" class="edit_admin" id="edit_admin'.$admin->_id.'" data-id="'.$admin->_id.'"><i class="fa fa-pencil iconsetaddbox"></i></a> <a href="javascript:void(0)" class="delete_company" data-action="delete" data-placement="left" data-id="'.$admin->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>';
         })
         ->rawColumns(['action'])
         ->order(function ($query) {

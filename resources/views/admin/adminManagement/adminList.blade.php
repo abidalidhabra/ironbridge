@@ -184,10 +184,14 @@
                 $.ajax({
                     type: "GET",
                     url: url,
+                    beforeSend: function() {
+                        $('#edit_admin'+id).find('i').addClass('fa-spinner fa-spin');
+                    },
                     success: function(response)
                     {
                         $('#adminEditContent').html(response);
                         $('#editAdmin').modal('show');
+                        $('#edit_admin'+id).find('i').removeClass('fa-spinner fa-spin');
                    }
                });
             });
