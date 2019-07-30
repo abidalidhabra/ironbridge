@@ -28,9 +28,9 @@
                     <th>Name</th>
                     <th>Place Name</th>
                     <th>Verified</th>
-                    <th width="10%">In-Progress</th>
+                    <th width="11%">In-Progress</th>
                     <th>City</th>
-                    <th>Open in Map</th>
+                    <th>Map</th>
                     @if(auth()->user()->hasPermissionTo('Edit Treasure Locations') || auth()->user()->hasPermissionTo('Delete Treasure Locations'))
                     <th>Action</th>
                     @endif

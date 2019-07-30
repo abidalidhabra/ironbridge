@@ -48,8 +48,9 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('/treasureHunts/{id}', [ 'middleware' => ['permission:View Users'], 'uses' => 'UserController@treasureHunts' ])->name('treasureHunts');
 	Route::get('/getTreasureHunts',[ 'middleware' => ['permission:View Users'], 'uses' =>  'UserController@getTreasureHunts' ])->name('getTreasureHunts');
 	Route::get('/activity/{id}', [ 'middleware' => ['permission:View Users'], 'uses' => 'UserController@activity' ])->name('activity');
-	Route::post('/addGold','UserController@addGold')->name('addGold');
-	Route::post('/addSkeletonKey','UserController@addSkeletonKey')->name('addSkeletonKey');
+
+	Route::post('/addGold',[ 'middleware' => ['permission:Add Users'], 'uses' => 'UserController@addGold'])->name('addGold');
+	Route::post('/addSkeletonKey',[ 'middleware' => ['permission:Add Users'], 'uses' => 'UserController@addSkeletonKey'])->name('addSkeletonKey');
 	
 
 
