@@ -92,15 +92,17 @@
     <div id="photo_section{{$game->id}}" class="imageslibbox1" style="display: none;">
         <h3>{{ $game->game->name }}</h3>
         <ul>
-        @forelse($game->variation_image as $variation_image)
+        @forelse($game->variation_images as $variation_image)
             <li>
                 <div class="closeicon">
-                    <a target="_blank" href="javascript:void(0)" data-action="delete" data-id="{{ $game->id }}"  data-image="{{ $variation_image }}">
+                    <a target="_blank" href="javascript:void(0)" class="deleteImage" data-action="delete" data-id="{{ $game->id }}"  data-image="{{ $variation_image }}">
                         <img src="{{ asset('admin_assets/svg/close.svg') }}">
                     </a>
                 </div>
                 <div class="photosboxset">
-                    <img width="100" src="{{ $variation_image }}">
+                    <a data-fancybox="gallery" href="{{ $variation_image }}">
+                        <img width="100" src="{{ $variation_image }}">
+                    </a>
                 </div>
             </li>
         @empty
@@ -223,7 +225,7 @@
         })
 
         /* delete image */
-        $(document).on("click",'a[data-action="delete"]',function() {
+        /*$(document).on("click",'a[data-action="delete"]',function() {
             var id = $(this).data('id');
             var image = $(this).data('image');
             $.ajax({
@@ -235,7 +237,6 @@
                 data: {id : id , image:image},
                 success: function(response)
                 {   
-                    console.log(response);
                     if (response.status == true) {
                         toastr.success(response.message);
                         location.reload();
@@ -244,6 +245,36 @@
                     }
                 }
             });
-        });
+        });*/
+
+
+        //$("a[data-action='delete']").confirmation({
+        $("body").confirmation({
+            container:"body",
+            btnOkClass:"btn btn-sm btn-success",
+            btnCancelClass:"btn btn-sm btn-danger",
+            selector: 'a[data-action="delete"]',
+            onConfirm:function(event, element) {
+                var id = element.attr('data-id');
+                var image = element.attr('data-image');
+                $.ajax({
+                    type: "POST",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '{{ route("admin.practiceDeleteImage") }}',
+                    data: {id : id , image:image},
+                    success: function(response)
+                    {   
+                        if (response.status == true) {
+                            toastr.success(response.message);
+                            location.reload();
+                        } else {
+                            toastr.warning(response.message);
+                        }
+                    }
+                });
+            }
+        }); 
     </script>
 @endsection
