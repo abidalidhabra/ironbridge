@@ -27,9 +27,9 @@ class PracticeGamesTarget extends Eloquent
                     $images[] = asset('storage/practice_games_assets/').'/'.$image;
                 }
             }
-            $image = collect($images)->shuffle()->first();
-            return $image;
-            // return $images;
+            // $image = collect($images)->shuffle()->first();
+            // return $image;
+            return $images;
         } else {
             // return [];
             return "";

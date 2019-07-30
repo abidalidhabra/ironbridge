@@ -67,7 +67,7 @@
                     
                     <div class="form-group col-md-8">
                         <br/>
-                        <input type="submit" name="submit" class="btn btn-success" value="Submit">
+                        <button type="submit" name="submit" class="btn btn-success">Submit</button>
                     </div>
                 </form>
                 <div class="col-md-12 multi_variation_image imageslibbox1">
@@ -210,7 +210,9 @@
                 cache:false,
                 contentType: false,
                 processData: false,
-                beforeSend:function(){},
+                beforeSend: function() {
+                    $('#formPracticeGames button').html('Submit <i class="fa fa-spinner fa-spin"></i>');
+                },
                 success:function(response) {
                     if (response.status == true) {
                         toastr.success(response.message);
