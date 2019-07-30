@@ -238,7 +238,8 @@ class HuntController extends Controller
 
         // \DB::connection()->enableQueryLog();
         $hunts = Hunt::whereHas('hunt_users',function($query) use ($userId){
-                    $query->where('user_id', $userId);
+                    $query->where('user_id', $userId)
+                        ->where('status', '!=', 'completed');
                 })
                 ->with(['hunt_users' => function($query) use ($userId){
 					$query->where('status', '!=', 'completed')->select('_id','status','hunt_id','hunt_mode','complexity','user_id');
@@ -246,7 +247,6 @@ class HuntController extends Controller
                 ->select('_id', 'name', 'place_name', 'location')
                 ->get();
         // $queries = \DB::getQueryLog();
-        // dd($queries);
         return response()->json(['message'=> 'In progress hunts has been retrieved successfully', 'data'=> $hunts]);
     }
 
