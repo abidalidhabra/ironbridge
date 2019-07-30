@@ -18,7 +18,15 @@ class MGController extends Controller
     	try {
     		
     		$data = Game::active()->select('_id','name','identifier')->with('practice_games_targets:_id,game_id,target,variation_image')->get();
-    		return response()->json(['message'=> 'Target info of each game retrieved successfully.', 'data'=> $data]);
+            $response = [];
+            $data = $data->map(function($game, $index) use (&$response){
+                $response[] = $game->toArray();
+                if ($game->identifier == 'jigsaw' || $game->identifier == 'sliding') {
+                    $response[$index]['practice_games_targets']['variation_image'] = collect($game->practice_games_targets->variation_image)->shuffle()->first();
+                }
+                return $game;
+            });
+    		return response()->json(['message'=> 'Target info of each game retrieved successfully.', 'data'=> $response]);
     	} catch (Exception $e) {
     		return response()->json(['message'=> $e->getMessage()], 500);
     	}

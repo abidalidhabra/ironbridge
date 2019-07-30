@@ -92,24 +92,24 @@
     <div id="photo_section{{$game->id}}" class="imageslibbox1" style="display: none;">
         <h3>{{ $game->game->name }}</h3>
         <ul>
-        @forelse($game->variation_image as $variation_image)
-            <li>
-                <div class="closeicon">
-                    <a target="_blank" href="javascript:void(0)" data-action="delete" data-id="{{ $game->id }}"  data-image="{{ $variation_image }}">
-                        <img src="{{ asset('admin_assets/svg/close.svg') }}">
-                    </a>
-                </div>
-                <div class="photosboxset">
-                    <img width="100" src="{{ $variation_image }}">
-                </div>
-            </li>
-        @empty
-            <li>
-                <div class="photosboxset">
-                    <p>No image found</p>
-                </div>
-            </li>
-        @endforelse 
+            @forelse($game->variation_image as $variation_image)
+                <li>
+                    <div class="closeicon">
+                        <a target="_blank" href="javascript:void(0)" data-action="delete" data-id="{{ $game->id }}"  data-image="{{ $variation_image }}">
+                            <img src="{{ asset('admin_assets/svg/close.svg') }}">
+                        </a>
+                    </div>
+                    <div class="photosboxset">
+                        <img width="100" src="{{ $variation_image }}">
+                    </div>
+                </li>
+            @empty
+                <li>
+                    <div class="photosboxset">
+                        <p>No image found</p>
+                    </div>
+                </li>
+            @endforelse 
         </ul>
     </div>
 @empty
