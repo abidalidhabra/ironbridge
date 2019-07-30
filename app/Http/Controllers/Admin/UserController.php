@@ -12,6 +12,8 @@ use App\Models\v1\User;
 use App\Models\v2\HuntUser;
 use App\Models\v2\HuntUserDetail;
 use App\Models\v1\WidgetItem;
+use Validator;
+use MongoDB\BSON\ObjectId as MongoDBId;
 
 class UserController extends Controller
 {
@@ -331,6 +333,51 @@ class UserController extends Controller
         }
 
         return view('admin.user.activity',compact('id','data'));
+    }
+
+    //ADD GOLD
+    public  function addGold(Request $request){
+        $validator = Validator::make($request->all(), [
+            'gold' => 'required|integer',
+        ]);
+
+        if ($validator->fails()){
+            $message = $validator->messages()->first();
+            return response()->json(['status' => false,'message' => $message]);
+        }        
+
+        $id = $request->get('id');
+        $gold = $request->get('gold');
+        
+        $user = User::where('_id',$id)->first();
+
+        $user->gold_balance = (int)$gold + $user->gold_balance;
+        $user->save();
+
+        return response()->json([
+            'status' => true,
+            'message'=>'Gold has been added successfully.',
+        ]);
+    }
+
+    //ADD Skeleton
+    public function addSkeletonKey(Request $request){
+        
+        $user = User::where('_id',$request->get('id'))->first();
+
+        $skeletonKey[] = [
+            'key'       => new MongoDBId(),
+            'created_at'=> new MongoDBDate(),
+            'used_at'   => null
+        ];
+
+        $user->push('skeleton_keys', $skeletonKey);
+        return response()->json([
+                                'status'=>true,
+                                'message'=> 'Skeleton key has been added successfully',
+                                //'available_skeleton_keys'=> $user->available_skeleton_keys
+                            ]);
+        
     }
 
 }

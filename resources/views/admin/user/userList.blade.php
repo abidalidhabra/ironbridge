@@ -26,6 +26,32 @@
         </div>
     </div>
 
+    <!-- ADD GOLD MODEL -->
+    <!-- Modal -->
+    <div class="modal fade" id="addgoldModel" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add Gold</h4>
+                </div>
+                <form method="post" id="addGoldForm">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Add Gold</label>
+                            <input type="hidden" name="id" id="id">
+                            <input type="number" class="form-control" placeholder="Enter the gold" name='gold' id="gold">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Submit</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
@@ -58,11 +84,90 @@
                     { data:'email',name:'email' },
                     { data:'username',name:'username' },
                     { data:'dob',name:'dob'},
-                    { data:'action',name:'action'},
+                    { className : 'details-control', defaultContent : '', data    : null,orderable : false},
+
                 ],
 
             });
+
+            function format (data) {
+                
+                return '<div class="details-container">'+
+                    '<table cellpadding="2" cellspacing="0" border="0" class="details-table">'+
+                        '<tr>'+'<td class="title">\
+                                <div class="view_td_set"><button type="button" class="btn btn-info" data-id="'+data._id+'" data-action="btnAdd" data-toggle="modal"> Add Gold</button> </div>\
+                                <div class="view_td_set"><a href="javascript:void(0)" class="btn btn-info" data-id="'+data._id+'" data-action="skeleton"> Add Skeleton Key</a> </div>\
+                            </td>'+
+                    '</tr>'+
+                    '</table>'+
+                '</div>';
+            };
+
+
+            $('#dataTable tbody').on('click', 'td.details-control', function () {
+                var tr  = $(this).closest('tr'),
+                row = table.row(tr);
+
+                if (row.child.isShown()) {
+                    tr.next('tr').removeClass('details-row');
+                    row.child.hide();
+                    tr.removeClass('shown');
+                } else {
+                    row.child(format(row.data())).show();
+                    tr.next('tr').addClass('details-row');
+                    tr.addClass('shown');
+                }
+            });
             
+
+            //ADD GOLD MODEL SHOW
+            $("table").delegate("button[data-action='btnAdd']", "click", function() {
+                var id = $(this).attr('data-id');
+                $('#id').val(id);
+                $('#addgoldModel').modal('show');
+            }); 
+
+
+            //ADD GOLD 
+            $('#addGoldForm').submit(function(e) {
+                e.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    url: '{{ route("admin.addGold") }}',
+                    data: $(this).serialize(),
+                    success: function(response)
+                    {
+                        if (response.status == true) {
+                            table.ajax.reload();
+                            toastr.success(response.message);
+                            $('#addgoldModel').modal('hide');
+                            $('#gold , #id').val('');
+                        } else {
+                            toastr.warning(response.message);
+                        }
+                    }
+                });
+            });
+
+            //ADD Skeleton
+            $(document).on('click','a[data-action="skeleton"]',function(e){
+                e.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    url: '{{ route("admin.addSkeletonKey") }}',
+                    data: {_token: "{{ csrf_token() }}",id:$(this).data('id')},
+                    success: function(response)
+                    {
+                        if (response.status == true) {
+                            toastr.success(response.message);
+                            table.ajax.reload();
+                        } else {
+                            toastr.warning(response.message);
+                        }
+                    }
+                });
+            });
+
         });
     </script>
 @endsection

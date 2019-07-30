@@ -1729,8 +1729,34 @@ table i.iconsetaddbox{
     margin-bottom: 18px;
 }
 
+.view_td_set{
+    display: inline-block;
+    float: left;
+    margin-right: 15px;
+}
+.view_td_set button{
+    display: inline-block;
+    float: left;
+    background-color: #000000;
+    border: 0;
+    color: #C0B08C !important;
+}
 
-
+.view_td_set a{
+    display: inline-block;
+    float: left;
+    background-color: #000000;
+    border: 0;
+    color: #C0B08C !important;
+}
+.view_td_set a:hover , .view_td_set a:focus{
+    background-color: #000000 !important;
+    color: #C0B08C !important;
+}
+.view_td_set button:hover , .view_td_set button:focus{
+    background-color: #000000 !important;
+    color: #C0B08C !important;
+}
 
 
 
