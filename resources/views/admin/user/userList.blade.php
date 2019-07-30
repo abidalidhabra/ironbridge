@@ -17,7 +17,9 @@
                         <th>Full Name</th>
                         <th>Email</th>
                         <th>Username</th>
-                        <th>Date of birth</th>
+                        <th>Gold</th>
+                        <th>Key(s)</th>
+                        <!-- <th>Date of birth</th> -->
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -59,15 +61,15 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Add Skeleton Key</h4>
+                    <h4 class="modal-title">Add Skeleton Keys</h4>
                 </div>
                 <form method="post" id="addSekelotonForm">
                     @csrf
                     <div class="modal-body">
                         <div class="form-group">
-                            <label>Add Skeleton Key</label>
+                            <label>Add Skeleton Keys</label>
                             <input type="hidden" name="user_id" id="user_id">
-                            <input type="number" class="form-control" placeholder="Enter the skeleton key" name='skeleton_key' id="skeleton_key">
+                            <input type="number" class="form-control" placeholder="Enter the skeleton keys" name='skeleton_key' id="skeleton_key">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -109,7 +111,9 @@
                     { data:'name',name:'name' },
                     { data:'email',name:'email' },
                     { data:'username',name:'username' },
-                    { data:'dob',name:'dob'},
+                    { data:'gold_balance',name:'gold_balance'},
+                    { data:'skeleton_keys',name:'skeleton_keys'},
+                    // { data:'dob',name:'dob'},
                     { className : 'details-control', defaultContent : '', data    : null,orderable : false},
 
                 ],

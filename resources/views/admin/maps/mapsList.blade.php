@@ -28,7 +28,7 @@
                     <th>Name</th>
                     <th>Place Name</th>
                     <th>Verified</th>
-                    <th>Province</th>
+                    <th width="10%">In-Progress</th>
                     <th>City</th>
                     <th>Open in Map</th>
                     @if(auth()->user()->hasPermissionTo('Edit Treasure Locations') || auth()->user()->hasPermissionTo('Delete Treasure Locations'))
@@ -73,7 +73,8 @@
                 { data:'name',name:'name' },
                 { data:'place_name',name:'place_name' },
                 { data:'verified',name:'verified' },
-                { data:'province',name:'province' },
+                // { data:'province',name:'province' },
+                { data:'progress_hunt',name:'progress_hunt' },
                 { data:'city',name:'city' },
                 { data:'map',name:'map'},
                 @if(auth()->user()->hasPermissionTo('Edit Treasure Locations') || auth()->user()->hasPermissionTo('Delete Treasure Locations'))
