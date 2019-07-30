@@ -363,15 +363,28 @@ class UserController extends Controller
     //ADD Skeleton
     public function addSkeletonKey(Request $request){
         
-        $user = User::where('_id',$request->get('id'))->first();
+        $validator = Validator::make($request->all(), [
+            'skeleton_key' => 'required|integer',
+        ]);
 
-        $skeletonKey[] = [
-            'key'       => new MongoDBId(),
-            'created_at'=> new MongoDBDate(),
-            'used_at'   => null
-        ];
+        if ($validator->fails()){
+            $message = $validator->messages()->first();
+            return response()->json(['status' => false,'message' => $message]);
+        }
+        $addSkeletonNumber = $request->get('skeleton_key');
 
-        $user->push('skeleton_keys', $skeletonKey);
+        $user = User::where('_id',$request->get('user_id'))->first();
+        
+        for ($i=0; $i < $addSkeletonNumber ; $i++) { 
+            $skeletonKey = [
+                'key'       => new MongoDBId(),
+                'created_at'=> new MongoDBDate(),
+                'used_at'   => null
+            ];
+            
+            $user->push('skeleton_keys', $skeletonKey);
+        }
+
         return response()->json([
                                 'status'=>true,
                                 'message'=> 'Skeleton key has been added successfully',

@@ -52,6 +52,32 @@
             </div>
         </div>
     </div>
+
+    <!-- ADD SKELETON KEY -->
+    <div class="modal fade" id="addskeletonModel" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add Skeleton Key</h4>
+                </div>
+                <form method="post" id="addSekelotonForm">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Add Skeleton Key</label>
+                            <input type="hidden" name="user_id" id="user_id">
+                            <input type="number" class="form-control" placeholder="Enter the skeleton key" name='skeleton_key' id="skeleton_key">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Submit</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
@@ -125,6 +151,12 @@
                 var id = $(this).attr('data-id');
                 $('#id').val(id);
                 $('#addgoldModel').modal('show');
+            });
+
+            $("table").delegate('a[data-action="skeleton"]', "click", function() {
+                var id = $(this).attr('data-id');
+                $('#user_id').val(id);
+                $('#addskeletonModel').modal('show');
             }); 
 
 
@@ -150,17 +182,19 @@
             });
 
             //ADD Skeleton
-            $(document).on('click','a[data-action="skeleton"]',function(e){
+            $('#addSekelotonForm').submit(function(e) {
                 e.preventDefault();
                 $.ajax({
                     type: "POST",
                     url: '{{ route("admin.addSkeletonKey") }}',
-                    data: {_token: "{{ csrf_token() }}",id:$(this).data('id')},
+                    data: $(this).serialize(),
                     success: function(response)
                     {
                         if (response.status == true) {
-                            toastr.success(response.message);
                             table.ajax.reload();
+                            toastr.success(response.message);
+                            $('#addskeletonModel').modal('hide');
+                            $('#skeleton_key , #user_id').val('');
                         } else {
                             toastr.warning(response.message);
                         }
