@@ -23,13 +23,16 @@ class PracticeGamesTarget extends Eloquent
         if (!empty($value)) {
             $images = [];
             foreach ($value as $key => $image) {
-                if (Storage::disk('public')->has('practice_games/'.$image) && !is_null($image)) {
-                    $images[] = asset('storage/practice_games/').'/'.$image;
+                if (Storage::disk('public')->has('practice_games_assets/'.$image) && !is_null($image)) {
+                    $images[] = asset('storage/practice_games_assets/').'/'.$image;
                 }
             }
-            return $images;
+            $image = collect($images)->shuffle()->first();
+            return $image;
+            // return $images;
         } else {
-            return [];
+            // return [];
+            return "";
         }
     }
 }

@@ -236,18 +236,17 @@ class HuntController extends Controller
         $user = auth()->user();
         $userId = $user->id;
 
+        // \DB::connection()->enableQueryLog();
         $hunts = Hunt::whereHas('hunt_users',function($query) use ($userId){
-                    $query->where('user_id', $userId)
-                        ->whereHas('hunt_user_details',function($query){
-                            $query->whereIn('status',['tobestart','pause','progress']);
-                        });
+                    $query->where('user_id', $userId);
                 })
                 ->with(['hunt_users' => function($query) use ($userId){
-                    $query->where('user_id', $userId)->select('_id','status','hunt_id','hunt_mode','complexity','user_id');
+					$query->where('status', '!=', 'completed')->select('_id','status','hunt_id','hunt_mode','complexity','user_id');
                 }])
                 ->select('_id', 'name', 'place_name', 'location')
                 ->get();
-
+        // $queries = \DB::getQueryLog();
+        // dd($queries);
         return response()->json(['message'=> 'In progress hunts has been retrieved successfully', 'data'=> $hunts]);
     }
 
@@ -267,7 +266,6 @@ class HuntController extends Controller
             $huntUserId = $request->hunt_user_id;
 
             $huntUserDetails = HuntUserDetail::where(['hunt_user_id' => $huntUserId])
-            // ->with('game:_id,name,identifier','game_variation:_id,variation_name,variation_complexity,target,no_of_balls,bubble_level_id,game_id,variation_size,row,column')
             ->with(['game'=> function($query){
                 $query->with('complexity_target')->select('_id','name');
             }])
@@ -277,7 +275,7 @@ class HuntController extends Controller
 
             $huntUser = $huntUserDetails->first()->hunt_user()->select('_id', 'user_id', 'hunt_id', 'status', 'hunt_complexity_id')->first();
 
-            $huntDetails    = $huntUser->hunt_complexity->select('_id', 'est_completion', 'distance', 'hunt_id', 'complexity')->first();
+            $huntDetails    = $huntUser->hunt_complexity()->select('_id', 'est_completion', 'distance', 'hunt_id', 'complexity')->first();
             $totalClues     = $huntUserDetails->count();
             $completedClues = $huntUserDetails->where('status','completed')->count();
             $timeTaken      = $huntUserDetails->sum('finished_in');
@@ -391,16 +389,14 @@ class HuntController extends Controller
 
             $huntUserDetails = $huntDetails->hunt_clues()->select('_id', 'hunt_user_id', 'location', 'radius')->get();
             $totalClues = $huntDetails->hunt_clues()->count();
-            // $totalClues = $huntUserDetails->count();
-
-            $bestTime = $hunt->hunt_users()->pluck('finished_in')->min();
+            $bestTime 	= $hunt->hunt_users()->pluck('finished_in')->min();
             
             $participated   = false;
             $completedClues = 0;
             $timeTaken      = 0;
             $completedDist  = 0;
             $status         = "";
-            $userParticipation = $hunt->hunt_users()->where(['user_id'=> $userId, 'complexity'=> $complexity])->select()->first();
+            $userParticipation = $hunt->hunt_users()->where(['user_id'=> $userId, 'complexity'=> $complexity])->latest()->first();
             
             if ($userParticipation) {
                 $userClueDetails = $userParticipation->hunt_user_details;

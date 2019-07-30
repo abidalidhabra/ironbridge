@@ -132,6 +132,9 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
 		Route::post('actionOnClue', 'ClueController@actionOnClue');
 		Route::post('useTheSkeletonKey', 'ClueController@useTheSkeletonKey');
 		
-		Route::post('generateReward', 'HuntController@generateReward');
+		// Route::post('generateReward', 'HuntController@generateReward');
+		
+		Route::get('getGamesData', 'MGController@getGamesData');
+		Route::post('addSkeletonKey', 'MGController@addSkeletonKey');
 	});
 });
