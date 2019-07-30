@@ -287,11 +287,11 @@ class GameController extends Controller
             foreach ($practiceGame->variation_image as $key => $value) {
                 $variation_image[] = substr(strrchr($value,'/'),1);
                 $oldImage = substr(strrchr($value,'/'),1); 
-                if ($gameId != '5b0e304b51b2010ec820fb4e') {
+                /*if ($gameId != '5b0e304b51b2010ec820fb4e') {
                     if ($request->hasFile('variation_image') && $request->hasFile('variation_image')!=""){
                         Storage::disk('public')->delete('practice_games/'.$oldImage);
                     }
-                }
+                }*/
             }
         }
 
@@ -311,14 +311,14 @@ class GameController extends Controller
                 $imageUniqueName->$jsonIndex = uniqid('practice_'.uniqid(true).'_').'.'.$extension;
                 $img->save($pathOfImageTobeSave.'/'.$imageUniqueName->$jsonIndex);
             }
-            if ($gameId == '5b0e304b51b2010ec820fb4e') {
+            //if ($gameId == '5b0e304b51b2010ec820fb4e') {
                 $imageUniqueName = (object) array_merge($variation_image, (array) $imageUniqueName); 
             //    $practiceGame['variation_image'] = $imageUniqueName;
-            }
-        }  else {
+            // /}
+        }/*  else {
             $variationImages = $variation_image;
             $imageUniqueName = (object)$variationImages;
-        }
+        }*/
 
         
         $practiceGame['variation_image'] = $imageUniqueName;

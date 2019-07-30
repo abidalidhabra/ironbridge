@@ -92,6 +92,7 @@
     <div id="photo_section{{$game->id}}" class="imageslibbox1" style="display: none;">
         <h3>{{ $game->game->name }}</h3>
         <ul>
+
         @forelse($game->variation_images as $variation_image)
             <li>
                 <div class="closeicon">
