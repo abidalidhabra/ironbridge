@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use stdClass;
-use Validator;
+use App\Repositories\MiniGameRepository;
 use App\Rules\CheckThePassword;
 use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Validator;
+use stdClass;
 
 class AuthController extends Controller
 {
@@ -71,6 +72,11 @@ class AuthController extends Controller
 
                 if ($wantToSave) {
                     $user->save();
+                }
+
+                if ($user->practice_games()->count() == 0) {
+                    $miniGameRepository = new MiniGameRepository($user);
+                    $miniGameRepository->createIfnotExist();
                 }
 
                 return response()->json([
