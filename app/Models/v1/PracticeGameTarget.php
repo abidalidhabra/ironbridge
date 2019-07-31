@@ -6,7 +6,7 @@ namespace App\Models\v1;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 use Storage;
 
-class PracticeGamesTarget extends Eloquent
+class PracticeGameTarget extends Eloquent
 {
     protected $fillable = [
         'game_id', 'target','variation_images'/*,'number_generate','variation_size'*/

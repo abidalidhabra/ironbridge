@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use MongoDB\BSON\UTCDateTime as MongoDBDate;
 use Yajra\Datatables\Datatables;
 use Yajra\DataTables\EloquentDataTable;
-use App\Models\v1\PracticeGamesTarget;
+use App\Models\v1\PracticeGameTarget;
 use File;
 use Image;
 use stdClass;
@@ -145,9 +145,9 @@ class GameController extends Controller
 
     /* practice games target */
     public function practiceGame(Request $request){
-        $practiceGames = PracticeGamesTarget::with('game:_id,name,status')
+        $practiceGames = PracticeGameTarget::with('game:_id,name,status')
                                             ->get();
-        $moregame = PracticeGamesTarget::with('game:_id,name,status')
+        $moregame = PracticeGameTarget::with('game:_id,name,status')
                                         ->whereIn('game_id',['5b0e306951b2010ec820fb4f','5b0e304b51b2010ec820fb4e'])
                                         ->get();
 
@@ -199,7 +199,7 @@ class GameController extends Controller
             $data['target']=(int)$target;
         //}
 
-        PracticeGamesTarget::where('_id',$id)
+        PracticeGameTarget::where('_id',$id)
                             ->update($data);
 
         return response()->json([
@@ -230,7 +230,7 @@ class GameController extends Controller
         $id = $request->get('practice_game');
         $pathOfImageTobeSave = storage_path('app/public/practice_games');
         $variation_image = [];
-        $practiceGame = PracticeGamesTarget::where('_id',$id)->first();
+        $practiceGame = PracticeGameTarget::where('_id',$id)->first();
 
         if(!File::exists($pathOfImageTobeSave)){
             File::makeDirectory($pathOfImageTobeSave,0755,true);
@@ -282,7 +282,7 @@ class GameController extends Controller
         $id = $request->get('practice_game');
         $pathOfImageTobeSave = storage_path('app/public/practice_games');
         $variation_image = [];
-        $practiceGame = PracticeGamesTarget::where('_id',$id)->first();
+        $practiceGame = PracticeGameTarget::where('_id',$id)->first();
         if ($practiceGame->variation_image) {
             foreach ($practiceGame->variation_image as $key => $value) {
                 $variation_image[] = substr(strrchr($value,'/'),1);
@@ -336,7 +336,7 @@ class GameController extends Controller
         $id = $request->get('id');
         $image = substr(strrchr($request->get('image'),'/'),1);
 
-        $practiceGame = PracticeGamesTarget::where('_id',$id)->first();   
+        $practiceGame = PracticeGameTarget::where('_id',$id)->first();   
         /*$variation_image = [];
         if ($practiceGame->variation_images) {
             foreach ($practiceGame->variation_images as $key => $value) {

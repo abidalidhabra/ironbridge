@@ -232,7 +232,6 @@ return [
         
         'UserHelper' => App\Helpers\UserHelper::class,
         'Image' => Intervention\Image\Facades\Image::class,
-
     ],
 
 ];

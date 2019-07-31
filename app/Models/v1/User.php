@@ -149,6 +149,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo('App\Models\v1\Avatar', 'avatar.avatar_id', '_id');
     }
 
+    public function practice_games()
+    {
+        return $this->hasMany('App\Models\v2\PracticeGameUser');
+    }
+    
     public function getAvailableSkeletonKeysAttribute()
     {
         return ($this->skeleton_keys)? collect($this->skeleton_keys)->where('used_at', null)->count():0;

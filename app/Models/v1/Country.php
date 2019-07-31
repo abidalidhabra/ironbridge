@@ -14,11 +14,16 @@ class Country extends Eloquent
      * @var array
      */
     protected $fillable = [
-        'name', 'iso_code', 'un_code', 'dialing_code'
+        'name', 'code', 'dialing_code', 'currency', 'currency_symbol', 'currency_full_name'
     ];
 
     public function cities()
     {
     	return $this->hasMnay('App\Models\v1\City');
+    }
+
+    public function plans()
+    {
+        return $this->hasMany('App\Models\v2\Plan');
     }
 }

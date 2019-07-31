@@ -36,8 +36,13 @@ class Game extends Eloquent
 
     public function practice_games_targets()
     {
-        return $this->hasOne('App\Models\v1\PracticeGamesTarget');
+        return $this->hasOne('App\Models\v1\PracticeGameTarget');
     }
+
+    // public function practice_mini_games()
+    // {
+    //     return $this->hasMany('App\Models\v1\PracticeGamesTarget');
+    // }
     /**
     
     	Block Puzzle:
