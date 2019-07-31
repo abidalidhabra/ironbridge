@@ -29,7 +29,7 @@ class UserController extends Controller
         $take = (int)$request->get('length');
         $search = $request->get('search')['value'];
 
-    	$user = User::select('first_name','last_name','username', 'email', 'mobile_no', 'dob', 'created_at');
+    	$user = User::select('first_name','last_name','username', 'email', 'mobile_no', 'gold_balance','created_at','skeleton_keys');
         if($search != ''){
             $user->where(function($query) use ($search){
                 $query->where('first_name','like','%'.$search.'%')
@@ -62,9 +62,12 @@ class UserController extends Controller
         ->editColumn('created_at', function($user){
             return Carbon::parse($user->created_at)->format('d-M-Y @ h:i A');
         })
-        ->editColumn('dob', function($user){
-            return Carbon::parse($user->dob)->format('d-M-Y');
+        ->editColumn('skeleton_keys', function($user){
+            $skeleton_keys = collect($user->skeleton_keys)->where('used_at',null)->count();
+
+            return $skeleton_keys;
         })
+        
         ->addColumn('action', function($user){
             return '<a href="'.route('admin.accountInfo',$user->id).'"><i class="fa fa-eye iconsetaddbox"></i></a>';
         })
@@ -363,18 +366,31 @@ class UserController extends Controller
     //ADD Skeleton
     public function addSkeletonKey(Request $request){
         
-        $user = User::where('_id',$request->get('id'))->first();
+        $validator = Validator::make($request->all(), [
+            'skeleton_key' => 'required|integer',
+        ]);
 
-        $skeletonKey[] = [
-            'key'       => new MongoDBId(),
-            'created_at'=> new MongoDBDate(),
-            'used_at'   => null
-        ];
+        if ($validator->fails()){
+            $message = $validator->messages()->first();
+            return response()->json(['status' => false,'message' => $message]);
+        }
+        $addSkeletonNumber = $request->get('skeleton_key');
 
-        $user->push('skeleton_keys', $skeletonKey);
+        $user = User::where('_id',$request->get('user_id'))->first();
+        
+        for ($i=0; $i < $addSkeletonNumber ; $i++) { 
+            $skeletonKey = [
+                'key'       => new MongoDBId(),
+                'created_at'=> new MongoDBDate(),
+                'used_at'   => null
+            ];
+            
+            $user->push('skeleton_keys', $skeletonKey);
+        }
+
         return response()->json([
                                 'status'=>true,
-                                'message'=> 'Skeleton key has been added successfully',
+                                'message'=> 'Skeleton keys has been added successfully',
                                 //'available_skeleton_keys'=> $user->available_skeleton_keys
                             ]);
         

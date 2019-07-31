@@ -17,6 +17,8 @@ class AddRolesAndPermission extends Controller
 
 		Permission::create(['name' => 'Dashboard','guard_name' => 'admin', 'module'=>'Dashboard']);
 		Permission::create(['name' => 'View Users','guard_name' => 'admin', 'module'=>'Users']);
+		Permission::create(['name' => 'Add Users','guard_name' => 'admin', 'module'=>'Users']);
+
 
 		Permission::create(['name' => 'View News','guard_name' => 'admin', 'module'=>'News']);
 		Permission::create(['name' => 'Add News','guard_name' => 'admin', 'module'=>'News']);

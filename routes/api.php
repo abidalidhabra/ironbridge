@@ -42,6 +42,11 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 	Route::get('getClue', 'HuntController@getClue');
 	Route::post('updateClues', 'HuntController@updateClues');
 	
+	/* password reset */
+	/** registerd by email **/
+	Route::post('/forgotPassword', 'PasswordResetController@forgotPassword');
+	Route::post('/matchOtp', 'PasswordResetController@matchOtp');
+	Route::post('/resetpasswordByEmail', 'PasswordResetController@resetpasswordByEmail');
 	
 	Route::group(['middleware' => 'jwt-auth'], function ($router) {
 

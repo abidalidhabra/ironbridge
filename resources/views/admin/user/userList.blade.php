@@ -17,8 +17,12 @@
                         <th>Full Name</th>
                         <th>Email</th>
                         <th>Username</th>
-                        <th>Date of birth</th>
+                        <th>Gold</th>
+                        <th>Key(s)</th>
+                        <!-- <th>Date of birth</th> -->
+                        @if(auth()->user()->hasPermissionTo('Add Users'))
                         <th>Action</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -42,6 +46,32 @@
                             <label>Add Gold</label>
                             <input type="hidden" name="id" id="id">
                             <input type="number" class="form-control" placeholder="Enter the gold" name='gold' id="gold">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Submit</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD SKELETON KEY -->
+    <div class="modal fade" id="addskeletonModel" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add Skeleton Keys</h4>
+                </div>
+                <form method="post" id="addSekelotonForm">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Add Skeleton Keys</label>
+                            <input type="hidden" name="user_id" id="user_id">
+                            <input type="number" class="form-control" placeholder="Enter the skeleton keys" name='skeleton_key' id="skeleton_key">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -83,9 +113,12 @@
                     { data:'name',name:'name' },
                     { data:'email',name:'email' },
                     { data:'username',name:'username' },
-                    { data:'dob',name:'dob'},
+                    { data:'gold_balance',name:'gold_balance'},
+                    { data:'skeleton_keys',name:'skeleton_keys'},
+                    // { data:'dob',name:'dob'},
+                    @if(auth()->user()->hasPermissionTo('Add Users'))
                     { className : 'details-control', defaultContent : '', data    : null,orderable : false},
-
+                    @endif
                 ],
 
             });
@@ -125,6 +158,12 @@
                 var id = $(this).attr('data-id');
                 $('#id').val(id);
                 $('#addgoldModel').modal('show');
+            });
+
+            $("table").delegate('a[data-action="skeleton"]', "click", function() {
+                var id = $(this).attr('data-id');
+                $('#user_id').val(id);
+                $('#addskeletonModel').modal('show');
             }); 
 
 
@@ -150,17 +189,19 @@
             });
 
             //ADD Skeleton
-            $(document).on('click','a[data-action="skeleton"]',function(e){
+            $('#addSekelotonForm').submit(function(e) {
                 e.preventDefault();
                 $.ajax({
                     type: "POST",
                     url: '{{ route("admin.addSkeletonKey") }}',
-                    data: {_token: "{{ csrf_token() }}",id:$(this).data('id')},
+                    data: $(this).serialize(),
                     success: function(response)
                     {
                         if (response.status == true) {
-                            toastr.success(response.message);
                             table.ajax.reload();
+                            toastr.success(response.message);
+                            $('#addskeletonModel').modal('hide');
+                            $('#skeleton_key , #user_id').val('');
                         } else {
                             toastr.warning(response.message);
                         }

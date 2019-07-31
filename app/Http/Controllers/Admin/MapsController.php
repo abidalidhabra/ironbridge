@@ -71,6 +71,10 @@ class MapsController extends Controller
         ->addColumn('map', function($city){
             return '<a href="'.route('admin.boundary_map',$city->id).'" ><img src="'.asset('admin_assets/svg/map-marke-icon.svg').'"</a>';
         })
+        ->addColumn('progress_hunt', function($city){
+            $progressHunt = $city->hunt_users()->where('status','!=','completed')->count();
+            return $progressHunt;
+        })
         ->addColumn('verified', function($city){
             if ($city->verified) {
                 return 'Verified';
