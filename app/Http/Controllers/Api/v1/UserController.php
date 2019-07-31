@@ -175,8 +175,6 @@ class UserController extends Controller
     {
 
         if (!$request->has('user_id')) {
-            // echo "without id";
-            // exit;
             $user = Auth::user();
         }else{
             $user = User::find($request->user_id);

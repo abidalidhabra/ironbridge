@@ -58,11 +58,25 @@ class AuthController extends Controller
             $credentials = $request->only('username', 'password');
 
             if ($token = $this->guard()->attempt($credentials)) {
+                
+                $user = $this->guard()->user();
+                $wantToSave = false;
+                if ($request->firbase_android_id || $request->firbase_ios_id) {
+                    $wantToSave = true;
+                    $user->firebase_ids = [
+                        'android_id' => ($request->firbase_android_id)?$request->firbase_android_id:$user->firebase_ids['android_id'],
+                        'ios_id' => ($request->firbase_ios_id)?$request->firbase_ios_id:$user->firebase_ids['ios_id']
+                    ];
+                }
+
+                if ($wantToSave) {
+                    $user->save();
+                }
 
                 return response()->json([
                     'message'=>'You logged-in successfully.', 
                     'token' => $token, 
-                    'data' => $this->guard()->user()->makeHidden(['reffered_by','updated_at','created_at', 'widgets', 'skeleton_keys', 'avatar'])
+                    'data' => $user->makeHidden(['reffered_by','updated_at','created_at', 'widgets', 'skeleton_keys', 'avatar'])
                 ],200);
             }
 

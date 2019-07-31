@@ -137,11 +137,14 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
 		Route::post('actionOnClue', 'ClueController@actionOnClue');
 		Route::post('useTheSkeletonKey', 'ClueController@useTheSkeletonKey');
 		
-		Route::get('getGamesData', 'MGController@getGamesData');
-		// Route::post('addSkeletonKey', 'MGController@addSkeletonKey');
+		/** Store requests **/
 		Route::post('createAPurchase', 'PlanController@createAPurchase');
 		Route::post('buySkeletonFromGold', 'PlanController@buySkeletonFromGold');
+		
+		/** Mini games requests **/
+		Route::get('getGamesData', 'MGController@getGamesData');
 		Route::post('markTheGameAsComplete', 'MGController@markTheGameAsComplete');
 		Route::post('setupMiniGamesForUser', 'MGController@setupMiniGamesForUser');
+		// Route::post('addSkeletonKey', 'MGController@addSkeletonKey');
 	});
 });
