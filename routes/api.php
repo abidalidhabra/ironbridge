@@ -139,7 +139,7 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
 		
 		Route::get('getGamesData', 'MGController@getGamesData');
 		// Route::post('addSkeletonKey', 'MGController@addSkeletonKey');
-		Route::post('addPurchase', 'PlanController@addPurchase');
+		Route::post('createAPurchase', 'PlanController@createAPurchase');
 		Route::post('buySkeletonFromGold', 'PlanController@buySkeletonFromGold');
 		Route::post('markTheGameAsComplete', 'MGController@markTheGameAsComplete');
 		Route::post('setupMiniGamesForUser', 'MGController@setupMiniGamesForUser');

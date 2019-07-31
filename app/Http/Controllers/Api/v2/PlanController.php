@@ -24,14 +24,14 @@ class PlanController extends Controller
     // 	return response()->json(['message'=> 'Plans are retrived successfully.', 'data'=> $plans]);
     // }
 
-    public function addPurchase(PlanRequest $request)
+    public function createAPurchase(PlanRequest $request)
     {
     	try {
 
     		$user = auth()->user();
     		$planPurchaseFactory = new PlanPurchaseFactory();
-    		$plan 	= $planPurchaseFactory->initializePlanPurchase($request);
-    		$result = $plan->create($request, $user);
+    		$plan 	= $planPurchaseFactory->initializePlanPurchase($request, $user);
+    		$result = $plan->create($request);
     		
     		return response()->json(['message'=> 'Plan purchase has been mad successfully.', 'data'=> $result]);
     	} catch (Exception $e) {
@@ -39,11 +39,11 @@ class PlanController extends Controller
     	}
     }
 
-    public function buySkeletonFromGold(SkeletonPurchaseRequest $request, UserRepository $userRepository)
+    public function buySkeletonFromGold(SkeletonPurchaseRequest $request)
     {
     	try {
-
-            $availableSkeletonKeys = $userRepository->buySkeletonFromGold(auth()->user(), $request);
+            $userRepository = new UserRepository(auth()->user());
+            $availableSkeletonKeys = $userRepository->buySkeletonFromGold($request);
             
 	    	return response()->json(['message'=> 'Skeleton key has been added successfully to your account.', 'data'=> $availableSkeletonKeys]);
     	} catch (Exception $e) {

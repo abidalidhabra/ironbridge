@@ -9,19 +9,20 @@ use App\Repositories\UserRepository;
 class GoldPurchase implements PlanPurchaseInterface
 {
 
-	protected $plan;
+	protected $plan, $user;
 
-	public function __construct($plan)
+	public function __construct($plan, $user)
 	{
 		$this->plan = $plan;
+		$this->user = $user;
 	}
 
-    public function create($planData, $user)
+    public function create($planData)
     {
 
     	/** Add purchase in the database **/
     	$planPurchase 				  = new PlanPurchase();
-		$planPurchase->user_id 		  = $user->id;
+		$planPurchase->user_id 		  = $this->user->id;
 		$planPurchase->plan_id 		  = $planData->plan_id;
 		$planPurchase->country_code   = $planData->country_code;
 		$planPurchase->gold_value 	  = (int)$this->plan->gold_value;
@@ -30,8 +31,8 @@ class GoldPurchase implements PlanPurchaseInterface
 		$planPurchase->save();
 
     	/** Add gold value in user's table **/
-    	$userRepository = new UserRepository();
-    	$availableGoldBalance = $userRepository->addTheGoldInAccount($user, $this->plan->gold_value);
+    	$userRepository = new UserRepository($this->user);
+    	$availableGoldBalance = $userRepository->addTheGoldInAccount($this->plan->gold_value);
     	
     	/** return the available gold balance **/
     	return ['available_gold_balance'=> $availableGoldBalance];

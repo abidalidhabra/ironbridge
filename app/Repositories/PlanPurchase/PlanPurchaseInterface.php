@@ -5,5 +5,5 @@ namespace App\Repositories\PlanPurchase;
 interface PlanPurchaseInterface
 {
 	
-	public function create($planData, $user);
+	public function create($planData);
 }

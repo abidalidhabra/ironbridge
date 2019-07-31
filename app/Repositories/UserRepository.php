@@ -41,15 +41,14 @@ class UserRepository
 
         $goldToBeDeduct = $purchaseData->gold_value;
         $keysAmount     = $purchaseData->keys;
-
         if ($this->user->gold_balance < $goldToBeDeduct) {
             throw new Exception("You don't have enough gold balance to get skeleton keys.");
         }
 
         $this->user->gold_balance -= $goldToBeDeduct;
         $this->user->save();
-        
-        $availableSkeletonKeys = $this->addSkeletonKeyInAccount($this->user, $keysAmount);
+
+        $availableSkeletonKeys = $this->addSkeletonKeyInAccount($keysAmount);
         return ['gold_balance'=> $this->user->gold_balance, 'available_skeleton_keys'=> $availableSkeletonKeys];
     }
 }
