@@ -7,7 +7,6 @@ use App\Http\Requests\v2\PracticeGameFinishRequest;
 use App\Models\v1\Game;
 use App\Models\v1\User;
 use App\Repositories\MiniGameRepository;
-use App\Repositories\UserRepository;
 use Exception;
 use Illuminate\Http\Request;
 use MongoDB\BSON\ObjectId as MongoDBId;
@@ -47,18 +46,6 @@ class MGController extends Controller
     		return response()->json(['message'=> $e->getMessage()], 500);
     	}
     }
-
-    // public function addSkeletonKey(Request $request, UserRepository $userRepository)
-    // {
-    // 	try {
-    		
-    //         $availableSkeletonKeys = $userRepository->addSkeletonKeyInAccount(auth()->user(), 1);
-
-	   //  	return response()->json(['message'=> 'Skeleton key has been added successfully to your account.', 'available_skeleton_keys'=> $availableSkeletonKeys]);
-    // 	} catch (Exception $e) {
-    // 		return response()->json(['message'=> $e->getMessage()], 500);
-    // 	}
-    // }
 
     public function setupMiniGamesForUser(Request $request)
     {

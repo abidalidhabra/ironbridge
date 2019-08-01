@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\v2;
 
+use App\Rules\v2\GoldAvailablilityRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -26,8 +27,8 @@ class SkeletonPurchaseRequest extends FormRequest
     public function rules()
     {
         return [
-            'keys' => 'required|numeric|integer|min:1',
-            'gold_value' => 'required|numeric|min:1',
+            'keys' => ['required','numeric','integer','min:1'],
+            'gold_value' => ['required','numeric','integer','min:1', new GoldAvailablilityRule],
         ];
     }
 

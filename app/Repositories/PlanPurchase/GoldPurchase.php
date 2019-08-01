@@ -4,7 +4,7 @@ namespace App\Repositories\PlanPurchase;
 
 use App\Models\v2\PlanPurchase;
 use App\Repositories\PlanPurchase\PlanPurchaseInterface;
-use App\Repositories\UserRepository;
+use App\Repositories\User\UserRepository;
 
 class GoldPurchase implements PlanPurchaseInterface
 {
@@ -32,7 +32,7 @@ class GoldPurchase implements PlanPurchaseInterface
 
     	/** Add gold value in user's table **/
     	$userRepository = new UserRepository($this->user);
-    	$availableGoldBalance = $userRepository->addTheGoldInAccount($this->plan->gold_value);
+    	$availableGoldBalance = $userRepository->addGold($this->plan->gold_value);
     	
     	/** return the available gold balance **/
     	return ['available_gold_balance'=> $availableGoldBalance];

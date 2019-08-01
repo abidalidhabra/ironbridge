@@ -9,21 +9,13 @@ use App\Http\Requests\v2\SkeletonPurchaseRequest;
 use App\Models\v1\Country;
 use App\Models\v2\Plan;
 use App\Repositories\PlanRepository;
-use App\Repositories\UserRepository;
+use App\Repositories\User\UserRepository;
 use Exception;
 use Illuminate\Http\Request;
 
 class PlanController extends Controller
 {
     
-    // public function getPlans(Request $request)
-    // {
-    // 	// $countryCode = auth()->user()->country_code;
-    // 	$countryCode = 'CA';
-    // 	$plans = Country::where('code', $countryCode)->whereHas('plans')->with('plans:_id,name,country_id,price,gold_value')->select('_id','code','currency_symbol')->get();
-    // 	return response()->json(['message'=> 'Plans are retrived successfully.', 'data'=> $plans]);
-    // }
-
     public function createAPurchase(PlanRequest $request)
     {
     	try {
@@ -43,7 +35,7 @@ class PlanController extends Controller
     {
     	try {
             $userRepository = new UserRepository(auth()->user());
-            $availableSkeletonKeys = $userRepository->buySkeletonFromGold($request);
+            $availableSkeletonKeys = $userRepository->buySkeletonKeysFromGold($request);
             
 	    	return response()->json(['message'=> 'Skeleton key has been added successfully to your account.', 'data'=> $availableSkeletonKeys]);
     	} catch (Exception $e) {

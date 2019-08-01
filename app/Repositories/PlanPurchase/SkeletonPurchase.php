@@ -4,7 +4,7 @@ namespace App\Repositories\PlanPurchase;
 
 use App\Models\v2\PlanPurchase;
 use App\Repositories\PlanPurchase\PlanPurchaseInterface;
-use App\Repositories\UserRepository;
+use App\Repositories\User\UserRepository;
 
 class SkeletonPurchase implements PlanPurchaseInterface
 {
@@ -32,7 +32,7 @@ class SkeletonPurchase implements PlanPurchaseInterface
 
     	/** Add skeleton keys in user's table **/
     	$userRepository = new UserRepository($this->user);
-    	$availableSkeletonLeys = $userRepository->addSkeletonKeyInAccount($this->plan->keys_amount);
+    	$availableSkeletonLeys = $userRepository->addSkeletonKeys($this->plan->keys_amount);
     	
     	/** return the available skeleton keys **/
     	return ['available_skeleton_keys'=> $availableSkeletonLeys];
