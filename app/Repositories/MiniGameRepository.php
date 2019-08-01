@@ -21,6 +21,7 @@ class MiniGameRepository
     {
         $mGUserData = PracticeGameUser::where('_id', $request->practice_game_user_id)->first();
         $mGUserData->completed_at = now();
+        $mGUserData->piece_collected = true;
         $mGUserData->save();
 
         $result = $this->allotKeyIfEligible();
@@ -34,18 +35,18 @@ class MiniGameRepository
         }
 
     	$data = [];
-        $keyNumber = 0;
-    	$games = Game::active()->get()->map(function($game, $index) use (&$data, &$keyNumber){
+        // $keyNumber = 0;
+    	$games = Game::active()->get()->map(function($game, $index) use (&$data){
             
             if ($index % 3 == 0) {
-                $keyNumber += 1;
+                // $keyNumber += 1;
                 $piece = 1;
             }else if($index % 3 == 1){
                 $piece = 2;
             }else if($index % 3 == 2){
                 $piece = 3;
             }
-            $data[] = ['game_id'=> $game->id, 'piece'=> $piece, 'key'=> $keyNumber];
+            $data[] = ['game_id'=> $game->id, 'piece'=> $piece];
     	});
     	$practiceGameData = $this->user->practice_games()->createMany($data);
     	return $practiceGameData;
@@ -63,13 +64,14 @@ class MiniGameRepository
                 [
                     '$match' => [
                         'user_id' => ['$eq' => $userId],
-                        'completed_at' => ['$ne' => null]
+                        'piece_collected' => ['$eq' => true]
                     ]       
                 ],  
                 [   
                     '$group' => [
                         '_id' => '$piece',
                         'completed_at' => ['$last' => '$completed_at'],
+                        'piece_collected' => ['$last' => '$piece_collected'],
                         'user_id' => ['$last' => '$user_id'],
                         'key' => ['$last' => '$key'],
                         'id' => ['$last' => '$_id'],
@@ -87,7 +89,7 @@ class MiniGameRepository
         if ($keyToBeCredit && $haveAllPieces->count() >= 3) {
             (new UserRepository($this->user))->addSkeletonKeyInAccount($keyToBeCredit);
             // $piecesInfo->markAsIncomplete();
-            PracticeGameUser::whereIn('_id', $haveAllPieces->pluck('id'))->update(['completed_at'=> null]);
+            PracticeGameUser::whereIn('_id', $haveAllPieces->pluck('id'))->update(['piece_collected'=> false]);
         }
 
         return $this->user->available_skeleton_keys;
