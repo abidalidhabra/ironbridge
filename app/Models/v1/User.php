@@ -158,4 +158,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return ($this->skeleton_keys)? collect($this->skeleton_keys)->where('used_at', null)->count():0;
     }
+
+    public function plan_purchase()
+    {
+        return $this->hasMany('App\Models\v2\PlanPurchase');
+    }
 }

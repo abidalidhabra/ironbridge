@@ -13,6 +13,8 @@ use App\Models\v2\HuntUser;
 use App\Models\v2\HuntUserDetail;
 use App\Models\v1\WidgetItem;
 use Validator;
+use App\Models\v2\PracticeGameUser;
+use App\Models\v2\PlanPurchase;
 use MongoDB\BSON\ObjectId as MongoDBId;
 
 class UserController extends Controller
@@ -280,6 +282,13 @@ class UserController extends Controller
             return Carbon::parse($user->created_at)->format('d-M-Y @ h:i A');
         })
         ->addColumn('status', function($user){
+            if ($user->status == 'participated') {
+                return 'Not Started';
+            } elseif($user->status == 'paused' || $user->status == 'running') {
+                return 'In Progress';
+            } else if($user->status == 'completed'){
+                return 'Completed';
+            }
             return ucfirst($user->status);
         })
         ->addColumn('fees', function($user){
@@ -322,17 +331,24 @@ class UserController extends Controller
     public function activity($id){
         $user = User::select('gold_balance')
                     ->whereHas('hunt_user_v1')
-                    ->with('hunt_user_v1:user_id,hunt_id,hunt_complexity_id,status,hunt_mode,complexity','hunt_user_v1.hunt:_id,fees')
+                    ->with([
+                            'hunt_user_v1:user_id,hunt_id,hunt_complexity_id,status,hunt_mode,complexity',
+                            'hunt_user_v1.hunt:_id,fees',
+                            'plan_purchase.plan:_id,name,price,gold_value',
+                            'plan_purchase.country:name,code,currency'
+                            ])
                     ->where('_id',$id)
                     ->first(); 
         $data['usedGold'] = 0;
         $data['currentGold'] = 0;
         $data['totalGold'] = 0;
-
+        $data['plan_purchase'] = [];
+        $data['goldPurchased'] = $data['usedGold'] + $data['currentGold'];
         if ($user) {
             $data['usedGold'] = $user->hunt_user_v1->where('hunt_mode','challenge')->pluck('hunt.fees')->sum();
             $data['currentGold'] = $user->gold_balance;
             $data['totalGold'] = $data['usedGold'] + $data['currentGold'];
+            $data['plan_purchase'] = $user->plan_purchase;
         }
 
         return view('admin.user.activity',compact('id','data'));
@@ -358,8 +374,9 @@ class UserController extends Controller
         $user->save();
 
         return response()->json([
-            'status' => true,
-            'message'=>'Gold has been added successfully.',
+            'status'  => true,
+            'message' =>'Gold has been added successfully.',
+            'current_gold'=> $user->gold_balance
         ]);
     }
 
@@ -388,12 +405,31 @@ class UserController extends Controller
             $user->push('skeleton_keys', $skeletonKey);
         }
 
+        $userSk = User::where('_id',$request->get('user_id'))->first();
+        if($userSk->skeleton_keys){
+            $userSkKeys = collect($userSk->skeleton_keys);
+            $availSkKeys = $userSkKeys->where('used_at', null)->count();
+        }
         return response()->json([
                                 'status'=>true,
                                 'message'=> 'Skeleton keys has been added successfully',
-                                //'available_skeleton_keys'=> $user->available_skeleton_keys
+                                'available_skeleton_keys'=> $availSkKeys
                             ]);
         
+    }
+
+
+    //PART MANAGE
+    public function practiceGameUser($id){
+        $practiceGames = PracticeGameUser::where('user_id',$id)
+                                        ->with('game:_id,name')
+                                        ->get();
+
+        /*echo "<pre>";
+        print_r($practiceGame->toArray());
+        exit();*/
+        
+        return view('admin.user.partManage',compact('id','practiceGames'));
     }
 
 }

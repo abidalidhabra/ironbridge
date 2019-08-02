@@ -13,4 +13,9 @@ class PlanPurchase extends Eloquent
     {
     	return $this->belongsTo('App\Models\v2\Plan');
     }
+
+    public function country()
+    {
+    	return $this->belongsTo('App\Models\v1\Country','country_code','code');
+    }
 }

@@ -84,14 +84,20 @@
             <h3>Transaction History</h3>
             <div class="innerdatingactivity">
                 <div class="swoped_detlisbox">
-                    <div class="swoped_detlisleft">
-                       <p>Gold Earned</p> 
-                    </div>
-                    <div class="swoped_detlisright">
-                        <span>0 Gold</span>
-                        <p>Rewarded Video Ad</p>
-                        <p>12-Jun-2019 @ 10:15 am</p>
-                    </div>
+                    @forelse($data['plan_purchase'] as $plan_purchase)
+                       <div class="swoped_detlisleft">
+                           <p>{{ $plan_purchase->plan->name }}</p> 
+                        </div>
+                        <div class="swoped_detlisright">
+                            <span>{{ $plan_purchase->gold_value }} Gold</span>
+                            <p>( {{ $plan_purchase->price .' '.$plan_purchase->country->currency }} )</p>
+                            <p>{{ $plan_purchase->created_at->format('d-m-Y @ h:i a') }}</p>
+                        </div>
+                    @empty
+                        <div class="swoped_detlisleft">
+                           <p>No data found</p> 
+                        </div>
+                    @endforelse
                 </div>                
             </div>
         </div>

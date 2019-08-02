@@ -87,6 +87,9 @@
 					<li  class="@if(Route::currentRouteName() == 'admin.activity') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.activity',$id) }}">Activity</a>
 					</li>
+					<li  class="@if(Route::currentRouteName() == 'admin.practiceGameUser') {{ 'activelist' }} @endif">
+						<a href="{{ route('admin.practiceGameUser',$id) }}">Practice Game Users</a>
+					</li>
 					@endif         
 				</ul>
 			</div>

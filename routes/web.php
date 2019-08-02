@@ -51,6 +51,8 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 
 	Route::post('/addGold',[ 'middleware' => ['permission:Add Users'], 'uses' => 'UserController@addGold'])->name('addGold');
 	Route::post('/addSkeletonKey',[ 'middleware' => ['permission:Add Users'], 'uses' => 'UserController@addSkeletonKey'])->name('addSkeletonKey');
+
+	Route::get('/practiceGameUser/{id}','UserController@practiceGameUser')->name('practiceGameUser');
 	
 
 
