@@ -86,7 +86,7 @@
                 <div class="swoped_detlisbox">
                     @forelse($data['plan_purchase'] as $plan_purchase)
                        <div class="swoped_detlisleft">
-                           <p>{{ $plan_purchase->plan->name }}</p> 
+                           <p>{{ ucfirst($plan_purchase->plan->type) }}</p> 
                         </div>
                         <div class="swoped_detlisright">
                             <span>{{ $plan_purchase->gold_value }} Gold</span>

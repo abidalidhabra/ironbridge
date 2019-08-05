@@ -38,9 +38,9 @@
                             <?php
                                 if($user->status == 'tobestart'){
                                     $status = 'Not Started';
-                                } elseif ($status = 'running' || $status = 'paused') {
+                                } elseif ($user->status == 'running' || $user->status == 'paused') {
                                     $status = 'In Progress';
-                                } elseif ($status = 'completed') {
+                                } elseif ($user->status == 'completed') {
                                     $status = 'Completed';
                                 }
 

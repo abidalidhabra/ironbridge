@@ -334,7 +334,7 @@ class UserController extends Controller
                     ->with([
                             'hunt_user_v1:user_id,hunt_id,hunt_complexity_id,status,hunt_mode,complexity',
                             'hunt_user_v1.hunt:_id,fees',
-                            'plan_purchase.plan:_id,name,price,gold_value',
+                            'plan_purchase.plan:_id,name,price,gold_value,type',
                             'plan_purchase.country:name,code,currency'
                             ])
                     ->where('_id',$id)

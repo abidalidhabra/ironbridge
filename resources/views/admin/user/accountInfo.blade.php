@@ -68,10 +68,10 @@
                         <p>Account Cerated on</p>
                         <h4>{{ $user->created_at->format('d-M-Y @ h:i a') }}</h4>
                     </div>
-                    <div class="accountcerated_text">
+                    <!-- <div class="accountcerated_text">
                         <p>Time Zone</p>
                         <h4>-</h4>
-                    </div>
+                    </div> -->
                     <!-- <div class="accountcerated_text">
                         <p>App Installed Status</p>
                         <h4>Uninstalled</h4>
