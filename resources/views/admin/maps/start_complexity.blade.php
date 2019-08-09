@@ -322,7 +322,7 @@
                                                     </div>\
                                                     <div class="form-group">\
                                                         <label>Radius(meter):</label>\
-                                                        <input type="number" name="radius[]" class="form-control" value="5000">\
+                                                        <input type="number" name="radius[]" class="form-control" value="5">\
                                                     </div>\
                                                     <div class="form-group">\
                                                         <label>Location(latitude,longitude): </label>\
@@ -472,7 +472,7 @@
                                         </div>\
                                         <div class="form-group">\
                                             <label>Radius(meter):</label>\
-                                            <input type="number" name="radius[]" class="form-control" value="5000">\
+                                            <input type="number" name="radius[]" class="form-control" value="5">\
                                         </div>\
                                         <div class="form-group">\
                                             <label>Location(latitude,longitude): </label>\
