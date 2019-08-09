@@ -126,6 +126,17 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 		Route::get('getAdminsList', 'AdminManagement@getAdminList')->name('getAdminsList');
 	});
 
+
+	//EVENTS
+	Route::resource('event', 'EventController');
+	Route::get('basicDetails/{id?}', 'EventController@basicDetails')->name('event.basicDetails');
+	Route::post('addBasicStore', 'EventController@addBasicStore')->name('event.addBasicStore');
+	Route::get('miniGame/{id}', 'EventController@miniGame')->name('event.miniGame');
+	Route::post('addMiniGame', 'EventController@addMiniGame')->name('event.addMiniGame');
+	Route::get('huntDetails/{id}', 'EventController@huntDetails')->name('event.huntDetails');
+	Route::get('getEventList', 'EventController@getEventList')->name('getEventList');
+	Route::post('addHuntDetails', 'EventController@addHuntDetails')->name('event.addHuntDetails');
+
 });
 
 Auth::routes();

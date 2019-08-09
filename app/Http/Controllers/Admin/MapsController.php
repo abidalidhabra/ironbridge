@@ -245,7 +245,7 @@ class MapsController extends Controller
         foreach ($coordinates as $key => $value) {
             $location['Type'] = 'Point';
             $location['coordinates'] = [
-                                            //$value[0],
+                                            // $value[0],
                                             // $value[1]
                                             (float)$longitude[$key],(float)$latitude[$key]
                                         ];
@@ -284,8 +284,8 @@ class MapsController extends Controller
                                 'title'              => $title[$key],
                                 'description'        => $description[$key],
                             ]);
+         
         }
-
         return response()->json([
             'status' => true,
             'message'=>'Clues has been added successfully inside the selected hunt.',

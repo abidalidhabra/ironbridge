@@ -61,7 +61,11 @@
                     <div class="cluecverbox" id="game_box">
                         @if(isset($location->hunt_complexities[0]))
                             @forelse ($location->hunt_complexities[0]->hunt_clues as $key => $gamedetails)
-                                <div class="game_section{{ $key }} selected_game" id="game_{{ str_replace('.','_',substr($gamedetails->location['coordinates'][0], 0, 12).substr($gamedetails->location['coordinates'][1],0,12)) }}">
+                            <?php
+                                $lastLong = last(explode('.', $gamedetails->location['coordinates'][0]));
+                                $lastLat = last(explode('.', $gamedetails->location['coordinates'][1]));
+                            ?>
+                                <div class="game_section{{ $key }} selected_game clueBox" id="game_{{ substr($lastLong,0,6).substr($lastLat,0,6) }}">
                                     <h5>Clue {{ $key+1 }}</h5>
                                     <div class="form-group">
                                         <label>Game:</label>
@@ -241,7 +245,7 @@
                     fillColor: '#007F7F',
                     fillOpacity: 0.35,
                     editable: true,
-                    draggable: false
+                    draggable: true
                 });
                 starPolygon.setMap(map);
                 starPolygon.addListener('mouseup', function(event){
@@ -263,8 +267,10 @@
                     
                     $('#totalDistance').html('<span>Total Distance :</span> '+parseFloat((totalDistance/1000).toFixed(2))+ 'KM');
                     var p = 1;
+                    $('.selected_game').addClass('clueBox');
+                    
                     for (var i =0; i < vertices.getLength(); i++) {
-
+                        p++;
 
                         var xy = vertices.getAt(i);
                         /*boundary_arr[i] = xy.lng() +','+ xy.lat();*/
@@ -272,7 +278,10 @@
                         arr.push(xy.lng());
                         arr.push(xy.lat());
                         coordinates.push(arr);
-                        var gameId = xy.lng().toString().slice(0,12)+xy.lat().toString().slice(0,12);
+                        // var gameId = xy.lng().toString().slice(0,12)+xy.lat().toString().slice(0,12);
+                        var gameId = xy.lng().toString().split('.')[1].slice(0,6)+xy.lat().toString().split('.')[1].slice(0,6);
+                        
+
                         if($('#game_'+gameId.replace(/\./g,'_')).length == 0){
                             var random_game = games[Math.floor(Math.random()*games.length)];
                             $.each(games, function(i, k) {
@@ -297,9 +306,9 @@
                             
                             //GAME SELECT REMOVE
                             games.splice($.inArray(random_game, games),1);
-
-                            $('.selected_game:nth-child('+i+')').after('<div class="game_section'+i+' selected_game" id="game_'+gameId.replace(/\./g,'_')+'">\
-                                                    <h5>Clue '+p+'</h5>\
+                            var index = i+1;
+                            $('.selected_game').after('<div class="game_section'+i+' selected_game clueBox" id="game_'+gameId.replace(/\./g,'_')+'">\
+                                                    <h5>Clue '+index+'</h5>\
                                                     <div class="form-group">\
                                                         <label>Game:</label>\
                                                         <select name="game_id[]" data-action="game_id'+i+'" data-id="'+i+'" class="form-control">\
@@ -335,12 +344,27 @@
                                                         <textarea name="description[]" value="" class="form-control"></textarea>\
                                                     </div>\
                                                 <div>');
-
                         } else {
-                            // alert('fail');
                         }
-                        p++;
+
+                        $('#game_'+gameId.replace(/\./g,'_')).wrap( "<div class='clueNumber"+i+"'></div>" );
+
+                        $('#game_'+gameId.replace(/\./g,'_')).find('h5').text('Clue '+(i+1)).find('input[name="latitude[]"]').attr('name','latitude['+i+']');
+                        $('#game_'+gameId.replace(/\./g,'_')).find('select[name="game_id[]"]').attr('name','game_id['+i+']');
+                        $('#game_'+gameId.replace(/\./g,'_')).find('select[name="game_variation_id[]"]').attr('name','game_variation_id['+i+']')
+                        $('#game_'+gameId.replace(/\./g,'_')).find('input[name="radius[]"]').attr('name','radius['+i+']');
+                        $('#game_'+gameId.replace(/\./g,'_')).find('input[name="longitude[]"]').attr('name','longitude['+i+']');
+                        $('#game_'+gameId.replace(/\./g,'_')).find('input[name="title[]"]').attr('name','title['+i+']');
+
+
+                        $('#game_'+gameId.replace(/\./g,'_')).removeClass('clueBox');
                     }
+                        $('.clueBox').remove();
+                    
+                        for (var i = $('.selected_game').length - 1; i >= 0; i--) {
+                            $('#game_box').prepend($('.clueNumber'+i).html());
+                            $('.clueNumber'+i).remove('');
+                        }
                     $('#latitude').val(JSON.stringify(coordinates));
                 });
             <?php 

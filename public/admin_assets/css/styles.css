@@ -667,7 +667,10 @@ header{
 
 /*Dashboard css*/
 
-
+.game_box{
+    width: 100%;
+    float: left;
+}
 
 
 
@@ -1758,16 +1761,87 @@ table i.iconsetaddbox{
     color: #C0B08C !important;
 }
 
+.separate_mini_game_box{
+    display: inline-block;
+    width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 10px;
+    padding-bottom: 15px;    
+}
+.mini_game{
+    display: inline-block;
+    width: 100%;
+    -webkit-box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
+    -moz-box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
+    box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
+    padding-top: 5px;
+    padding-bottom: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
+    margin-bottom: 22px;
 
+}
 
+.separate_game_box{
+    display: inline-block;
+    width: 100%;
+}
+.daingaemtitlebox{
+    display: inline-block;
+    width: 100%;
+    padding-left: 15px;
+    padding-bottom: 12px;
+    margin-top: 15px;
+}
+.daingaemtitlebox h4{
+    width: 100%;
+    margin: 0;
+    font-size: 18px;
+}
 
+.remove_mini_game , .add_mini_game , .add_game , .remove_game{
+    background: #C0B08C;
+    border: 0px;
+    font-size: 14px;
+    color: #FFFFFF;
+    font-family: 'Montserrat-Regular';
+    margin-top: 6px;
+    padding: 6px 10px 6px;
+}
+.remove_mini_game:hover , .add_mini_game:hover , .add_game:hover , .remove_game:hover{
+    color: #FFFFFF;
+}
 
+.allbasicdirmain{
+    display: inline-block;
+    width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 10px;
+    padding-bottom: 15px;
+}
+.allbasicdirbox{
+    display: inline-block;
+    width: 100%;
+    -webkit-box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
+    -moz-box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
+    box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
+    padding-top: 18px;
+    padding-bottom: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
+    margin-bottom: 22px;
+}
 
-
-
-
-
-
+.ui-datepicker .ui-icon {
+    .glyphicon();
+    visibility: hidden;
+    text-indent: 0;
+    &:before {
+       visibility: visible;
+    }
+}
 
 
 
