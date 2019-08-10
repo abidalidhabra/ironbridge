@@ -253,6 +253,7 @@
                     // Iterate over the vertices.
                     var boundary_arr = [];
                     var games = <?php echo json_encode($usedGame) ?>;
+                    var allGames = <?php echo json_encode($games) ?>;
                     var option_game = "'<option value=''>Select game</option>";
                     var option_game_variation1 = "'<option value=''>Select game variation</option>";
 
@@ -283,30 +284,86 @@
                         
 
                         if($('#game_'+gameId.replace(/\./g,'_')).length == 0){
-                            var random_game = games[Math.floor(Math.random()*games.length)];
-                            $.each(games, function(i, k) {
-                                var selected = '';
-                                if (k._id == random_game._id) {
-                                    var selected = 'selected'; 
-                                }
+                            var index = i+1;
+                            var selectGame = $('.selected_game:nth-child('+index+')').find('select[name="game_id[]"]').val();
+                            var selectGameVariation = $('.selected_game:nth-child('+index+')').find('select[name="game_variation_id[]"]').val();
+                            var selectRadius = $('.selected_game:nth-child('+index+')').find('input[name="radius[]"]').val();
+                            var selectTitle = $('.selected_game:nth-child('+index+')').find('input[name="title[]"]').val();
+                            var selectDescription = $('.selected_game:nth-child('+index+')').find('textarea[name="description[]"]').val();
+                            
+                            console.log(index);
 
-                                option_game += '<option value="'+k._id+'" '+selected+'>'+k.name+'</option>';
-                            });
+                            if (selectRadius == undefined) {
+                                selectRadius = '5';
+                            } else{
+                                selectRadius = selectRadius;
+                            }
+
+                            if (selectTitle == undefined) {
+                                selectTitle = 'Clue {{ $complexity }}';
+                            } else{
+                                selectTitle = selectTitle;
+                            }
+
+                            if (selectDescription == undefined) {
+                                selectDescription = '';
+                            } else{
+                                selectDescription = selectDescription;
+                            }
+
+
+
+                            var random_game = games[Math.floor(Math.random()*games.length)];
+                            var random_AllGame;
+                            /* GAME */
+                            if (selectGame == undefined) {
+                                $.each(games, function(i, k) {
+                                    if (k._id == random_game._id) {
+                                        var selected = 'selected'; 
+                                    }
+                                    option_game += '<option value="'+k._id+'" '+selected+'>'+k.name+'</option>';
+                                });
+                            } else{
+                                $.each(allGames, function(i, k) {
+                                    if (k._id == selectGame) {
+                                        var selected = 'selected'; 
+                                        random_AllGame = k;
+                                    }
+                                    option_game += '<option value="'+k._id+'" '+selected+'>'+k.name+'</option>';
+                                });
+                            }
+                            /* END GAME */
+
+                            /* GAME VARIATION */
+                            if (selectGameVariation == undefined) {
+                                var random_game_variation = random_game.game_variation[Math.floor(Math.random()*random_game.game_variation.length)];
+                                $.each(random_game.game_variation, function(i, k) {
+                                    var selected1 = '';
+                                    if (k._id == random_game_variation._id) {
+                                        var selected1 = 'selected'; 
+                                    }
+
+                                    option_game_variation1 += '<option value="'+k._id+'" '+ selected1 +'>'+k.variation_name+'</option>';
+                                });
+                            } else{
+                                $.each(random_AllGame.game_variation, function(i, k) {
+                                    var selected1 = '';
+                                    if (k._id == selectGameVariation) {
+                                        var selected1 = 'selected'; 
+                                    }
+
+                                    option_game_variation1 += '<option value="'+k._id+'" '+ selected1 +'>'+k.variation_name+'</option>';
+                                });
+                            }
+                            /* END GAME VARIATION */
+
+                            
                             
 
-                            var random_game_variation = random_game.game_variation[Math.floor(Math.random()*random_game.game_variation.length)];
-                            $.each(random_game.game_variation, function(i, k) {
-                                var selected1 = '';
-                                if (k._id == random_game_variation._id) {
-                                    var selected1 = 'selected'; 
-                                }
-
-                                option_game_variation1 += '<option value="'+k._id+'" '+ selected1 +'>'+k.variation_name+'</option>';
-                            });
+                            
                             
                             //GAME SELECT REMOVE
                             games.splice($.inArray(random_game, games),1);
-                            var index = i+1;
                             $('.selected_game').after('<div class="game_section'+i+' selected_game clueBox" id="game_'+gameId.replace(/\./g,'_')+'">\
                                                     <h5>Clue '+index+'</h5>\
                                                     <div class="form-group">\
@@ -322,7 +379,7 @@
                                                     </div>\
                                                     <div class="form-group">\
                                                         <label>Radius(meter):</label>\
-                                                        <input type="number" name="radius[]" class="form-control" value="5">\
+                                                        <input type="number" name="radius[]" class="form-control" value="'+selectRadius+'">\
                                                     </div>\
                                                     <div class="form-group">\
                                                         <label>Location(latitude,longitude): </label>\
@@ -337,11 +394,11 @@
                                                     </div>\
                                                     <div class="form-group">\
                                                         <label>Title:</label>\
-                                                        <input type="text" name="title[]" value="Clue {{ $complexity }}" class="form-control">\
+                                                        <input type="text" name="title[]" value="'+selectTitle+'" class="form-control">\
                                                     </div>\
                                                     <div class="form-group">\
                                                         <label>Description:</label>\
-                                                        <textarea name="description[]" value="" class="form-control"></textarea>\
+                                                        <textarea name="description[]" value="" class="form-control">'+selectDescription+'</textarea>\
                                                     </div>\
                                                 <div>');
                         } else {
@@ -355,6 +412,7 @@
                         $('#game_'+gameId.replace(/\./g,'_')).find('input[name="radius[]"]').attr('name','radius['+i+']');
                         $('#game_'+gameId.replace(/\./g,'_')).find('input[name="longitude[]"]').attr('name','longitude['+i+']');
                         $('#game_'+gameId.replace(/\./g,'_')).find('input[name="title[]"]').attr('name','title['+i+']');
+                        $('#game_'+gameId.replace(/\./g,'_')).find('textarea[name="description[]"]').attr('name','description['+i+']');
 
 
                         $('#game_'+gameId.replace(/\./g,'_')).removeClass('clueBox');
@@ -364,6 +422,13 @@
                         for (var i = $('.selected_game').length - 1; i >= 0; i--) {
                             $('#game_box').prepend($('.clueNumber'+i).html());
                             $('.clueNumber'+i).remove('');
+                            $('#game_box').find('select[name="game_id['+i+']"]').attr('name','game_id[]');
+                            $('#game_box').find('select[name="game_variation_id['+i+']"]').attr('name','game_variation_id[]');
+                            $('#game_box').find('input[name="latitude['+i+']"]').attr('name','latitude[]');
+                            $('#game_box').find('input[name="radius['+i+']"]').attr('name','radius[]');
+                            $('#game_box').find('input[name="longitude['+i+']"]').attr('name','longitude[]');
+                            $('#game_box').find('input[name="title['+i+']"]').attr('name','title[]');
+                            $('#game_box').find('textarea[name="description['+i+']"]').attr('name','description[]');
                         }
                     $('#latitude').val(JSON.stringify(coordinates));
                 });

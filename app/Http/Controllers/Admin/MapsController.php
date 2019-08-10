@@ -148,15 +148,7 @@ class MapsController extends Controller
                         ->where('status',true)
                         ->get();
         
-        $usedGame = array_values($games->whereNotIn('_id',$usedGameId)->toArray());
-
-        
-        /*echo "<pre>";
-        print_r($games->toArray());
-        print_r($usedGame->toArray());
-        exit;*/
-        // $usedGame = Game::        
-        
+        $usedGame = array_values($games->whereNotIn('_id',$usedGameId)->toArray());      
         
         $cluesCoordinates = [];
         if (!empty($location->hunt_complexities[0]->hunt_clues)) {
