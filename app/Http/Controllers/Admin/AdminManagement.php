@@ -60,10 +60,13 @@ class AdminManagement extends Controller
         ->editColumn('created_at', function($admin){
             return Carbon::parse($admin->created_at)->format('d-M-Y @ h:i A');
         })
+        ->addColumn('resend_mail', function($admin){
+            return '<a href="javascript:void(0)" class="resend_mail" id="resend_mail'.$admin->_id.'" data-id="'.$admin->_id.'"><i class="fa fa-repeat iconsetaddbox"></i></a>';
+        })
         ->addColumn('action', function($admin){
             return '<a href="javascript:void(0)" class="edit_admin" id="edit_admin'.$admin->_id.'" data-id="'.$admin->_id.'"><i class="fa fa-pencil iconsetaddbox"></i></a> <a href="javascript:void(0)" class="delete_company" data-action="delete" data-placement="left" data-id="'.$admin->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>';
         })
-        ->rawColumns(['action'])
+        ->rawColumns(['action','resend_mail'])
         ->order(function ($query) {
             if (request()->has('created_at')) {
                 $query->orderBy('created_at', 'DESC');
@@ -206,6 +209,24 @@ class AdminManagement extends Controller
         return response()->json([
             'status' => true,
             'message'=>'Admin has been deleted successfully.',
+        ]);
+    }
+
+    /* RESEND MAIL */
+    public function resendMail($id){
+        $admin = Admin::where('_id',$id)->first();
+        
+        $admin->update(['password'=>Hash::make('123456')]);
+        $admin->assignRole('Admin');
+
+        // $admin->givePermissionTo($data['permissions']);
+        $token = str_random(60);
+        $admin->notify(new AdminPasswordSet($token));
+        $admin->passwordSetLink()->create(['token'=> $token]);
+
+        return response()->json([
+            'status' => true,
+            'message'=>'Mail has been sent successfully.',
         ]);
     }
 }

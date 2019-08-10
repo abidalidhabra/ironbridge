@@ -124,6 +124,7 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::group(['middleware' => ['role:Super Admin']], function () {
 		Route::resource('adminManagement', 'AdminManagement');
 		Route::get('getAdminsList', 'AdminManagement@getAdminList')->name('getAdminsList');
+		Route::get('resendMail/{id}', 'AdminManagement@resendMail')->name('resendMail');
 	});
 
 
