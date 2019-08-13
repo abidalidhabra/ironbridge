@@ -137,6 +137,7 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('huntDetails/{id}', 'EventController@huntDetails')->name('event.huntDetails');
 	Route::get('getEventList', 'EventController@getEventList')->name('getEventList');
 	Route::post('addHuntDetails', 'EventController@addHuntDetails')->name('event.addHuntDetails');
+	Route::post('updateEvent', 'EventController@updateEvent')->name('event.updateEvent');
 
 });
 

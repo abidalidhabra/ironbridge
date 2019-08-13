@@ -50,6 +50,9 @@
                         </select>
                         <!-- <input type="text" name="search_place_name" id="search_place_name" class="form-control" placeholder="Enter the Search Place Name" autocomplete="off"> -->
                     </div>
+                    <div class="form-group col-md-2">
+                        <a href="{{ route('admin.add_location') }}" class="btn btn-info btn-md">Add Hunts</a>
+                    </div>
                 </div>
             </div>
             <!-- END HUNT CLUE  -->
@@ -79,6 +82,7 @@
             format: "DD-MM-YYYY hh:mm A",
             minDate: moment(startdate),
             maxDate: moment(enddate),
+            defaultDate: moment(startdate),
         });
 
         /* SUBMIT FORM */

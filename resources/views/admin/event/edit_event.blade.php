@@ -26,198 +26,345 @@
     </div>
     <br/><br/>
     <div class="customdatatable_box">
-        <form method="POST" id="addEventForm" enctype="multipart/form-data">
+        <form method="POST" id="editEventForm" enctype="multipart/form-data">
             @csrf
-             <div class="daingaemtitlebox">
+            <!-- START BASIC DETAILS -->
+            <div class="daingaemtitlebox">
                 <h4>Basic Details</h4>
             </div>
             <div class="allbasicdirmain">                
                 <div class="allbasicdirbox">                
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-4">
                         <label class="form-label">Name</label>
-                        <input type="text" name="name" class="form-control" id="name" value="{{ $event->name }}" placeholder="Enter the name">
+                        <input type="text" name="name" class="form-control" id="name" placeholder="Enter the name" value="@if(isset($event->name)){{$event->name}}@endif">
                     </div>
-                    <div class="form-group col-md-3">
-                        <label class="form-label">Type</label>
+                    <div class="form-group col-md-4">
+                        <label class="form-label">Type <small>(Single / Multi day(s))</small></label>
                         <select name="type" class="form-control">
                             <option>Select type</option>
-                            <option value="single" @if($event->type=='single') {{ 'selected' }} @endif>Single</option>
-                            <option value="multi" @if($event->type=='multi') {{ 'selected' }} @endif>Multi</option>
+                            <option value="single" @if(isset($event->type) && $event->type=='single') {{ 'selected' }} @endif>Single</option>
+                            <option value="multi" @if(isset($event->type) && $event->type=='multi') {{ 'selected' }} @endif>Multi</option>
                         </select>
                     </div>
-                    <div class="form-group col-md-3">
+                    <input type="hidden" name="event_id" value="@if(isset($event->id)){{ $event->id }} @endif">
+                    <div class="form-group col-md-4">
                         <label class="form-label">Coin Type</label>
                         <select name="coin_type" class="form-control">
                             <option>Select coin type</option>
-                            <option value="ar" @if($event->coin_type=='ar') {{ 'selected' }} @endif>Ar</option>
-                            <option value="physical" @if($event->coin_type=='physical') {{ 'selected' }} @endif>Physical</option>
+                            <option value="ar" @if(isset($event->coin_type) && $event->coin_type=='ar') {{ 'selected' }} @endif>AR</option>
+                            <option value="physical" @if(isset($event->coin_type) && $event->coin_type=='physical') {{ 'selected' }} @endif>PHYSICAL</option>
                         </select>
                     </div>
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-4">
                         <label class="form-label">City</label>
-                        <select name="city_id" class="form-control">
+                        <select name="city_id" id="city_id" class="form-control">
                             <option>Select city</option>
                             @forelse($cities as $key=>$city)
-                            <option value="{{ $city->_id }}" @if($event->city_id==$key) {{ 'selected' }} @endif>{{ $city->name }}</option>
+                            <option value="{{ $city->_id }}" @if(isset($event->city_id) && $event->city_id==$city->_id) {{ 'selected' }} @endif>{{ $city->name }}</option>
                             @empty
                             <option>Record Not found</option>
                             @endforelse
                         </select>
                     </div>
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-4">
                         <label class="form-label">Start Date</label>
-                        <input type="text" name="event_start_date" class="form-control datetimepicker" placeholder="Enter the start date" value="{{ $event->starts_at }}"  data-date-format="DD-MM-YYYY hh:mm A">
+                        <input type="text" name="event_start_date" class="form-control" placeholder="Enter the start date" value="@if(isset($event->starts_at)){{ $event->starts_at->format('d-m-Y h:i A') }}@endif"  data-date-format="DD-MM-YYYY hh:mm A" id="startdate" autocomplete="off">
                     </div>
-                    <div class="form-group col-md-3">
+                    <?php
+                        // echo "<pre>";
+                        // print_r($event->starts_at->format('d-m-Y h:i A'));
+                        // exit();
+                    ?>
+                    <div class="form-group col-md-4">
                         <label class="form-label">End Date</label>
-                        <input type="text" name="event_end_date" class="form-control datetimepicker" placeholder="Enter the date" value="{{ $event->ends_at }}" data-date-format="DD-MM-YYYY hh:mm A">
+                        <input type="text" name="event_end_date" class="form-control" placeholder="Enter the date" value="@if(isset($event->ends_at)){{ $event->ends_at->format('d-m-Y h:i A') }}@endif"  data-date-format="DD-MM-YYYY hh:mm A" id="enddate" autocomplete="off">
                     </div>
-                    <div class="form-group col-md-3">
-                        <label class="form-label">Rejection Ratio<small> In percentage</small></label>
-                        <input type="text" name="rejection_ratio" class="form-control" placeholder="Enter the rejection ratio" value="{{ $event->rejection_ratio }}">
+                    <div class="form-group col-md-4">
+                        <label class="form-label">Rejection Ratio<small> In percentage (enter 0 if no rejection ratio)</small></label>
+                        <input type="text" name="rejection_ratio" class="form-control" placeholder="Enter the rejection ratio" value="@if(isset($event->rejection_ratio)){{ $event->rejection_ratio }} @endif">
                     </div>
-                    <div class="form-group col-md-3">
-                        <label class="form-label">Winning Ratio<small> In fix amount</small></label>
-                        <input type="text" name="winning_ratio" class="form-control" id="winning_ratio" placeholder="Enter the winning ratio" value="{{ $event->winning_ratio }}">
+                    <div class="form-group col-md-4">
+                        <label class="form-label">Winning Ratio<small> In fix amount (enter 0 if no winning ratio)</small></label>
+                        <input type="text" name="winning_ratio" class="form-control" id="winning_ratio" placeholder="Enter the winning ratio" value="@if(isset($event->winning_ratio)){{ $event->winning_ratio }}@endif">
                     </div>
-                    <div class="form-group col-md-3">
-                        <label class="form-label">Fees</label>
-                        <input type="text" name="fees" class="form-control" placeholder="Enter the fees" value="{{ $event->fees }}">
+                    <div class="form-group col-md-4">
+                        <label class="form-label">Fees & Gold</label>
+                        <input type="text" name="fees" class="form-control" placeholder="Enter the fees" value="@if(isset($event->fees)){{ $event->fees }}@endif">
                     </div>
                 </div>
             </div>
-            <!-- <div class="col-md-12">
-                <div id="map"></div>
-            </div> -->
+            <!-- END BASIC DETAILS -->
+
             <!-- GAME DETAILS START CODE -->
             <div class="col-md-12">
                 <h4>Mini Game Details</h4>
             </div>
             <div class="separate_mini_game_box">
-                    
-                @forelse($event->mini_games as $key => $day)
-                    <div class="mini_game">
-                        <div class="daingaemtitlebox">
-                            <h5>Day {{ $key+1 }}</h5>
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label class="form-label">Start Date</label>
-                            <input type="text" name="start_date[0]" class="form-control datetimepicker" placeholder="Enter the start date" value="{{ $day['from']->toDateTime()->format('d-m-Y h:i A') }}">
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label class="form-label">End Date</label>
-                            <input type="text" name="end_date[0]" class="form-control datetimepicker" placeholder="Enter the end date" value="{{ $day['to']->toDateTime()->format('d-m-Y h:i A') }}">
-                        </div>
-                        <div class="form-group col-md-4">
-                            <br>
-                            <!-- <a href="javascript:void(0)" class="btn btn-info add_game">Add Mini Game</a> -->
-                            <a href="javascript:void(0)" class="btn add_mini_game">Add Days</a>
-                        </div>
-                        <input type="hidden" name="last_mini_game_index" value="0">
-                        
-                        <div class="separate_game_box">
-                            @forelse($day['games'] as $miniGame)
-                                    <?php
-                                        // echo "<pre>";
-                                        // print_r($miniGame);
-                                        // exit();
-                                    ?>
-                                <div class="game_box">
-                                    <div class="daingaemtitlebox">
-                                        <h6>Mini Game</h6>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <label class="form-label">Game</label>
-                                        <select name="game_id[0][]" class="form-control games">
-                                            <option>Select Game</option>
-                                            @forelse($games as $key=>$game)
-                                            <option value="{{ $game['_id'] }}" @if($miniGame['game_info']['id']==$game['_id']){{ 'selected' }} @endif>{{ $game['name'] }}</option>
-                                            @empty
-                                            <option>Record Not found</option>
-                                            @endforelse
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <label class="form-label">Row</label>
-                                        <input type="text" name="row[0][]" class="form-control" placeholder="Enter the row" value="{{ $miniGame['variation_data']['row'] }}">
-                                    </div>
-                                    <input type="hidden" name="last_elem_index" value="0">
-                                    <div class="form-group col-md-4">
-                                        <label class="form-label">Column</label>
-                                        <input type="text" name="column[0][]" class="form-control" placeholder="Enter the column" value="{{ $miniGame['variation_data']['column'] }}">
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <label class="form-label">Target</label>
-                                        <input type="text" name="target[0][]" class="form-control" placeholder="Enter the target"  value="{{ $miniGame['variation_data']['target'] }}">
-                                    </div>
-                                    @if($miniGame['game_info']['id'] == '5b0e304b51b2010ec820fb4e' || $miniGame['game_info']['id'] == '5b0e306951b2010ec820fb4f')
-
-                                        <div class="form-group col-md-4 variation_image_box">
-                                            <label class="form-label">Variation Image <small class="form-text text-muted">must be @if($miniGame['game_info']['id'] == '5b0e304b51b2010ec820fb4e') {{ '2000*1440' }} @else {{ '1024*1024' }} @endif dimension</small></label>
-                                            <input type="file" name="variation_image[][]" class="form-control">
-                                            <br/>
-                                            <img src="{{ asset('storage/events/'.$miniGame['game_info']['variation_image']) }}" width="100px">
+                <input type="hidden" name="event_id" value="{{ $event->_id }}">
+                @if($event->mini_games)   
+                    @forelse($event->mini_games as $key => $day)
+                        <div class="mini_game">
+                            <div class="daingaemtitlebox">
+                                <h5>Day {{ $key+1 }}</h5>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label class="form-label">Start Date</label>
+                                <input type="text" name="start_date[{{ $key }}]" class="form-control datetimepicker" placeholder="Enter the start date" id="startdate0" value="{{ $day['from']->toDateTime()->format('d-m-Y h:i A') }}" autocomplete="off">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label class="form-label">End Date</label>
+                                <input type="text" name="end_date[{{ $key }}]" class="form-control datetimepicker" placeholder="Enter the end date" id="enddate0" value="{{ $day['to']->toDateTime()->format('d-m-Y h:i A') }}" autocomplete="off">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <br>
+                                <!-- <a href="javascript:void(0)" class="btn btn-info add_game">Add Mini Game</a> -->
+                                <a href="javascript:void(0)" class="btn add_mini_game">Add Days</a>
+                            </div>
+                            <input type="hidden" name="last_mini_game_index" value="{{ $key }}">
+                            
+                            <div class="separate_game_box">
+                                @forelse($day['games'] as $index => $miniGame)
+                                    <div class="game_box">
+                                        <div class="daingaemtitlebox">
+                                            <h6>Mini Game</h6>
                                         </div>
-                                    @endif
-                                    <div class="col-md-4 button_section">
-                                        <br>
-                                        <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>
+
+                                        <div class="form-group col-md-4">
+                                            <label class="form-label">Game</label>
+                                            <select name="game_id[{{ $key }}][{{$index}}]" class="form-control games">
+                                                <option value="">Select Game</option>
+                                                @forelse($games as $game)
+                                                <option value="{{ $game['_id'] }}" @if($miniGame['game_info']['id']==$game['_id']){{ 'selected' }} @endif data-identifier="{{ $game['identifier'] }}">{{ $game['name'] }}</option>
+                                                @empty
+                                                <option>Record Not found</option>
+                                                @endforelse
+                                            </select>
+                                        </div>
+                                        <input type="hidden" name="last_elem_index" value="{{ $index }}">
+
+                                        <div class="variation_box">
+                                            <?php
+                                                $miniGameId = $miniGame['game_info']['id'];
+                                            ?>
+                                            <?php if($miniGameId == '5b0e2ff151b2010ec820fb48'){ ?>
+                                                <!-- Sudoku -->
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Variation size</label>
+                                                    <input type="text"  name="variation_size[{{$key}}][{{$index}}]" value="{{ $miniGame['variation_data']['variation_size'] }}"  class="form-control">
+                                                </div>
+                                               
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Sudoku Id</label>
+                                                    <select name="sudoku_id[{{$key}}][{{$index}}]" class="form-control">
+                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 1) { echo "selected";} ?> value="1">1</option>
+                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 2) { echo "selected";} ?> value="2">2</option>
+                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 3) { echo "selected";} ?> value="3">3</option>
+                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 4) { echo "selected";} ?> value="4">4</option>
+                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 5) { echo "selected";} ?> value="5">5</option>
+                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 6) { echo "selected";} ?> value="6">6</option>
+                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 7) { echo "selected";} ?> value="7">7</option>
+                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 8) { echo "selected";} ?> value="8">8</option>
+                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 9) { echo "selected";} ?> value="9">9</option>
+                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 10) { echo "selected";} ?> value="10">10</option>
+                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 11) { echo "selected";} ?> value="11">11</option>
+                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 12) { echo "selected";} ?> value="12">12</option>
+                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 13) { echo "selected";} ?> value="13">13</option>
+                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 14) { echo "selected";} ?> value="14">14</option>
+                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 15) { echo "selected";} ?> value="15">15</option>
+                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 16) { echo "selected";} ?> value="16">16</option>
+                                                    </select>
+                                                </div>
+                                            <?php } else if($miniGameId == '5b0e303f51b2010ec820fb4d'){ ?>
+                                                <!-- Number search -->
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Row</label>
+                                                    <input type="text" value="{{ $miniGame['variation_data']['row'] }}" name="row[{{$key}}][{{$index}}]" id="row" class="form-control">
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Column</label>
+                                                    <input type="text" value="{{ $miniGame['variation_data']['column'] }}" name="column[{{$key}}][{{$index}}]" id="column" class="form-control">
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Number Generate</label>
+                                                    <input type="text" value="{{ $miniGame['variation_data']['number_generate'] }}" name="number_generate[{{$key}}][{{$index}}]" id="number_generate" class="form-control">
+                                                </div>
+                                            <?php } else if($miniGameId == '5b0e304b51b2010ec820fb4e'){ ?>
+                                                <!-- Jigsaw Puzzle -->
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Variation size <small class="form-text text-muted">must of [12,35,70,140]</small></label>
+                                                    <input type="text"  name="variation_size[{{$key}}][{{$index}}]" value="{{ $miniGame['variation_data']['variation_size'] }}"  class="form-control">
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Variation Image <small class="form-text text-muted">must be 2000*1440 dimension</small></label>
+                                                    <input type="file"  name="variation_image[{{$key}}][{{$index}}]" class="form-control" multiple>
+                                                    @if(isset($miniGame['variation_data']['variation_image']))
+                                                        <input type="hidden" name="hide_image[{{$key}}][{{$index}}]" value="{{ $miniGame['variation_data']['variation_image'] }}">
+                                                        <br/>
+                                                        <img src="{{ asset('storage/events/'.$miniGame['variation_data']['variation_image']) }}" width="100px">
+                                                    @endif
+                                                    <br/>
+                                                </div>
+
+                                            <?php } else if($miniGameId == '5b0e306951b2010ec820fb4f'){ ?>
+                                                <!-- Sliding Puzzle -->
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Variation size</label>
+                                                    <input type="text"  name="variation_size[{{$key}}][{{$index}}]" value="{{ $miniGame['variation_data']['variation_size'] }}"  class="form-control">
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Variation Image <small class="form-text text-muted">must be 1024*1024 dimension</small></label>
+                                                    <input type="file"  name="variation_image[{{$key}}][{{$index}}]" class="form-control">
+                                                    <?php
+                                                        // echo "<pre>";
+                                                        // print_r($miniGame['variation_data']['variation_image']);
+                                                        // exit();
+                                                    ?>
+                                                    @if(isset($miniGame['variation_data']['variation_image']))
+                                                        <input type="hidden" name="hide_image[{{$key}}][{{$index}}]" value="{{ $miniGame['variation_data']['variation_image'] }}">
+                                                        <br/>
+                                                        <img src="{{ asset('storage/events/'.$miniGame['variation_data']['variation_image']) }}" width="100px">
+                                                    @endif
+                                                </div>
+
+                                            <?php } else if($miniGameId == '5bfba3afc3169d169062a3b3'){ ?>
+                                                <!-- Word Search -->
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Row</label>
+                                                    <input type="text" value="{{ $miniGame['variation_data']['row'] }}" name="row[{{$key}}][{{$index}}]" id="row" class="form-control">
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Column</label>
+                                                    <input type="text" value="{{ $miniGame['variation_data']['column'] }}" name="column[{{$key}}][{{$index}}]" id="column" class="form-control">
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Target</label>
+                                                    <input type="text" value="{{ $miniGame['variation_data']['target'] }}" name="target[{{$key}}][{{$index}}]" id="target" class="form-control">
+                                                </div>
+                                            <?php } else if($miniGameId == '5c188ab5719a1408746c473b'){ ?>
+                                                <!-- 2048 -->
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Row <small class="form-text text-muted">must of [4,6,8]</small></label>
+                                                    <input type="text" value="{{ $miniGame['variation_data']['row'] }}" name="row[{{$key}}][{{$index}}]" id="row" class="form-control">
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Column <small class="form-text text-muted">must of [4,6,8]</small></label>
+                                                    <input type="text" value="{{ $miniGame['variation_data']['column'] }}" name="column[{{$key}}][{{$index}}]" id="column" class="form-control">
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Target <small class="form-text text-muted">must of [1024,2048,4096]</small></label>
+                                                    <input type="text" value="{{ $miniGame['variation_data']['target'] }}" name="target[{{$key}}][{{$index}}]" id="target" class="form-control">
+                                                </div>
+                                            <?php } else if($miniGameId == '5c188b06719a1408746c473c'){ ?>
+                                                <!-- Block Game -->
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Row <small class="form-text text-muted">must of [9,10]</small></label>
+                                                    <input type="text" value="{{ $miniGame['variation_data']['row'] }}" name="row[{{$key}}][{{$index}}]" id="row" class="form-control">
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Column <small class="form-text text-muted">must of [9,10]</small></label>
+                                                    <input type="text" value="{{ $miniGame['variation_data']['column'] }}" name="column[{{$key}}][{{$index}}]" id="column" class="form-control">
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Target</label>
+                                                    <input type="text" value="{{ $miniGame['variation_data']['target'] }}" name="target[{{$key}}][{{$index}}]" id="target" class="form-control">
+                                                </div>
+                                            
+                                            <?php } else if($miniGameId == '5c39a1f3697b251760c0d5fc'){ ?>
+                                                <!-- Bubble Shooter -->
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Target</label>
+                                                    <input type="text" value="{{ $miniGame['variation_data']['target'] }}" name="target[{{$key}}][{{$index}}]" id="target" class="form-control">
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">No Of balls</label>
+                                                    <input type="text"  value="{{ $miniGame['variation_data']['no_of_balls'] }}" name="no_of_balls[{{$key}}][{{$index}}]" id="no_of_balls" class="form-control">
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Bubble level id</label>
+                                                    <input type="text"  value="{{ $miniGame['variation_data']['bubble_level_id'] }}" name="bubble_level_id[{{$key}}][{{$index}}]" id="bubble_level_id" class="form-control">
+                                                </div>
+                                            
+                                            <?php } else if($miniGameId == '5c80fd106650bf31a808abed' || $miniGameId == '5c80fd226650bf31a808abee' || $miniGameId == '5c5d282b697b25205433531d' || $miniGameId == '5c5d279c697b25205433531c' || $miniGameId == '5c399831697b251760c0d5e2'){ ?>
+                                                <!-- Slices -->
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Target</label>
+                                                    <input type="text" value="{{ $miniGame['variation_data']['target'] }}" name="target[{{$key}}][{{$index}}]" id="target" class="form-control">
+                                                </div>
+                                            <?php } ?>
+                                         
+                                        
+                                        </div>
+                                        
+                                        <div class="col-md-4 button_section">
+                                            <br>
+                                            <?php
+                                                $miniGameCount = count($day['games'])-1;
+                                            ?>
+                                            @if($miniGameCount == $index)
+                                                <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>
+                                            @else
+                                                <a href="javascript:void(0)" class="btn remove_game">Remove Mini Game</a>
+                                            @endif
+                                        </div>
                                     </div>
-                                </div>
-                            @empty
-                                <div class="game_box">
-                                    <div class="daingaemtitlebox">
-                                        <h6>Mini Game</h6>
+                                @empty
+                                    <div class="game_box">
+                                        <div class="daingaemtitlebox">
+                                            <h6>Mini Game</h6>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label class="form-label">Game</label>
+                                            <select name="game_id[0][]" class="form-control games">
+                                                <option value="">Select Game</option>
+                                                @forelse($games as $key=>$game)
+                                                <option value="{{ $game['_id'] }}">{{ $game['name'] }}</option>
+                                                @empty
+                                                <option>Record Not found</option>
+                                                @endforelse
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label class="form-label">Row</label>
+                                            <input type="text" name="row[0][]" class="form-control" placeholder="Enter the row">
+                                        </div>
+                                        <input type="hidden" name="last_elem_index" value="0">
+                                        <div class="form-group col-md-4">
+                                            <label class="form-label">Column</label>
+                                            <input type="text" name="column[0][]" class="form-control" placeholder="Enter the column">
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label class="form-label">Target</label>
+                                            <input type="text" name="target[0][]" class="form-control" placeholder="Enter the target">
+                                        </div>
+                                        <div class="col-md-4 button_section">
+                                            <br>
+                                            <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>
+                                        </div>
                                     </div>
-                                    <div class="form-group col-md-4">
-                                        <label class="form-label">Game</label>
-                                        <select name="game_id[0][]" class="form-control games">
-                                            <option>Select Game</option>
-                                            @forelse($games as $key=>$game)
-                                            <option value="{{ $game['_id'] }}">{{ $game['name'] }}</option>
-                                            @empty
-                                            <option>Record Not found</option>
-                                            @endforelse
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <label class="form-label">Row</label>
-                                        <input type="text" name="row[0][]" class="form-control" placeholder="Enter the row">
-                                    </div>
-                                    <input type="hidden" name="last_elem_index" value="0">
-                                    <div class="form-group col-md-4">
-                                        <label class="form-label">Column</label>
-                                        <input type="text" name="column[0][]" class="form-control" placeholder="Enter the column">
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <label class="form-label">Target</label>
-                                        <input type="text" name="target[0][]" class="form-control" placeholder="Enter the target">
-                                    </div>
-                                    <div class="col-md-4 button_section">
-                                        <br>
-                                        <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>
-                                    </div>
-                                </div>
-                            @endforelse
+                                @endforelse
+                            </div>
                         </div>
-                    </div>
-                @empty
+                    @empty
+                    @endforelse
+                @else
                     <div class="mini_game">
                         <div class="daingaemtitlebox">
                             <h5>Day 1</h5>
                         </div>
                         <div class="form-group col-md-4">
                             <label class="form-label">Start Date</label>
-                            <input type="text" name="start_date[0]" class="form-control datetimepicker" placeholder="Enter the start date">
+                            <input type="text" name="start_date[0]" class="form-control datetimepicker" placeholder="Enter the start date" id="startdate0" autocomplete="off">
                         </div>
                         <div class="form-group col-md-4">
                             <label class="form-label">End Date</label>
-                            <input type="text" name="end_date[0]" class="form-control datetimepicker" placeholder="Enter the end date">
+                            <input type="text" name="end_date[0]" class="form-control datetimepicker" placeholder="Enter the end date" id="enddate0" autocomplete="off">
                         </div>
                         <div class="form-group col-md-4">
                             <br>
                             <!-- <a href="javascript:void(0)" class="btn btn-info add_game">Add Mini Game</a> -->
-                            <a href="javascript:void(0)" class="btn add_mini_game">Add Days</a>
+                            @if($event->type =='multi')
+                                <a href="javascript:void(0)" class="btn add_mini_game">Add Days</a>
+                            @endif
                         </div>
                         <input type="hidden" name="last_mini_game_index" value="0">
                         
@@ -229,7 +376,7 @@
                                 <div class="form-group col-md-4">
                                     <label class="form-label">Game</label>
                                     <select name="game_id[0][]" class="form-control games">
-                                        <option>Select Game</option>
+                                        <option value="">Select Game</option>
                                         @forelse($games as $key=>$game)
                                         <option value="{{ $game['_id'] }}" data-identifier="{{ $game['identifier'] }}">{{ $game['name'] }}</option>
                                         @empty
@@ -237,19 +384,21 @@
                                         @endforelse
                                     </select>
                                 </div>
-                                <div class="form-group col-md-4">
-                                    <label class="form-label">Row</label>
-                                    <input type="text" name="row[0][]" class="form-control" placeholder="Enter the row">
-                                </div>
+                                <!-- <div class="form-group col-md-4">
+                                    <label class="form-label">Variation Name</label>
+                                    <input type="text" name="variation_name[0][]" id="variation_name" class="form-control">
+                                </div> -->
+                                <!-- <div class="form-group col-md-4">
+                                    <label class="form-label">Variation Complexity</label>
+                                    <select name="variation_complexity[0][]" class="form-control">
+                                        <option value="">Select One</option>
+                                        <option value="complex">Complex</option>
+                                        <option value="normal">Normal</option>
+                                        <option value="easy">Easy</option>
+                                    </select>
+                                </div> -->
                                 <input type="hidden" name="last_elem_index" value="0">
-                                <div class="form-group col-md-4">
-                                    <label class="form-label">Column</label>
-                                    <input type="text" name="column[0][]" class="form-control" placeholder="Enter the column">
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label class="form-label">Target</label>
-                                    <input type="text" name="target[0][]" class="form-control" placeholder="Enter the target">
-                                </div>
+                                <div class="variation_box"></div>
                                 <div class="col-md-4 button_section">
                                     <br>
                                     <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>
@@ -257,27 +406,39 @@
                             </div>
                         </div>
                     </div>
-                @endforelse
+                @endif
             </div>
             <!-- END GAME DETAILS -->
-
+            
             <!-- HUNT CLUE START CODE -->
             <div class="daingaemtitlebox">
                 <h4>Hunt Details</h4>
             </div>
             <div class="allbasicdirmain">                
-                <div class="allbasicdirbox"> 
+                <div class="allbasicdirbox">
+                    <input type="hidden" name="event_id" value="{{ $id }}"> 
                     <div class="form-group col-md-4">
                         <label class="form-label">Map Reveal Date</label>
-                        <input type="text" name="map_reveal_date" class="form-control datetimepicker" placeholder="Enter the map reveal date">
+                        <input type="text" name="map_reveal_date" class="form-control" id="map_reveal_date" placeholder="Enter the map reveal date" autocomplete="off" value="@if(isset($event->map_reveal_date)){{$event->map_reveal_date->format('d-m-Y h:i A') }}@endif">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label class="form-label">Search Place Name</label>
+                       
+                        <select class="form-control hunts" name="search_place_name" id="hunts">
+                            <option value="">Select Place</option>
+                            @forelse($hunts as $hunt)
+                                <option value="{{ $hunt->id }}" @if($event->hunt_id == $hunt->id){{ 'selected' }} @endif>{{ $hunt->name }}</option>
+                            @empty
+                            @endforelse
+                        </select>
+                        <!-- <input type="text" name="search_place_name" id="search_place_name" class="form-control" placeholder="Enter the Search Place Name" autocomplete="off"> -->
+                    </div>
+                    <div class="form-group col-md-2">
+                        <a href="{{ route('admin.add_location') }}" class="btn btn-info btn-md">Add Hunts</a>
                     </div>
                 </div>
             </div>
-            <!-- END HUNT CLUE  -->
-
-
-
-           
+            <!-- END HUNT CLUE  -->          
 
             <div class="form-group col-md-12">
                 <button type="submit" class="btn btn-success btnSubmit">Submit</button>
@@ -290,12 +451,110 @@
 @endsection
 
 @section('scripts')
+    
     <script type="text/javascript">
-        /* DATE TIME PICKER */
-        $('.datetimepicker').datetimepicker({
-            format: 'DD-MM-YYYY hh:mm A'
-        });
+        /* SUBMIT FORM */
+        $(document).on('submit','#editEventForm',function(e){
+            e.preventDefault();
+            formData = new FormData($(this)[0]);
+
+            $.ajax({
+                type:'POST',
+                url:'{{ route("admin.event.updateEvent","") }}',
+                data: formData,
+                cache:false,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                contentType: false,
+                processData: false,
+                beforeSend:function(){},
+                success:function(response) {
+                    if (response.status == true) {
+                        toastr.success(response.message);
+                    } else {
+                        toastr.warning(response.message);
+                    }
+                },
+                complete:function(){},
+                error:function(){}
+            });
+        })        
         
+
+         $(function () {
+            $('#city_id').select2();
+
+            
+            $('#startdate , #enddate').datetimepicker({
+                useCurrent: false,
+                format: "DD-MM-YYYY hh:mm A",
+                minDate: moment()
+            });
+
+            $('#startdate').datetimepicker().on('dp.change', function (e) {
+                var incrementDay = moment(new Date(e.date));
+                incrementDay.add(1, 'days');
+                // $('#enddate').data('DateTimePicker').setMinDate(incrementDay);
+                $(this).data("DateTimePicker").hide();
+                if ($('select[name="type"]').val() == 'single') {
+                    $('#enddate').val(incrementDay.add(0, 'days').format('DD-MM-YYYY hh:mm A'));
+                }
+            });
+
+            $('#enddate').datetimepicker().on('dp.change', function (e) {
+                var decrementDay = moment(new Date(e.date));
+                decrementDay.subtract(1, 'days');
+                $('#startdate').data('DateTimePicker').setMaxDate(decrementDay);
+                $(this).data("DateTimePicker").hide();
+            });
+
+            $(document).on('change','select[name="type"]', function (e) {
+                if($(this).val() == 'single'){
+                    $('#enddate').attr('readonly',true);
+                } else {
+                    $('#enddate').attr('readonly',false);
+                }
+            });
+
+        });
+    </script>
+     <script type="text/javascript">
+        /* DATE TIME PICKER */
+        //$('.datetimepicker').datetimepicker();
+        var startdate = '{{ $event->starts_at }}';
+        var enddate = '{{ $event->ends_at }}';
+        
+        
+        $('#startdate0').datetimepicker({
+            useCurrent: false,
+            format: "DD-MM-YYYY hh:mm A",
+            defaultDate: moment(startdate),
+            minDate: moment(startdate),
+            maxDate: moment(enddate),
+        });
+        $('#enddate0').datetimepicker({
+            useCurrent: false,
+            format: "DD-MM-YYYY hh:mm A",
+            defaultDate: moment(startdate),
+            minDate: moment(startdate),
+            maxDate: moment(enddate),
+        });
+
+        $('#startdate0').datetimepicker().on('dp.change', function (e) {
+            var incrementDay = moment(new Date(e.date));
+            incrementDay.add(1, 'days');
+            $('#enddate0').data('DateTimePicker').setMinDate(incrementDay);
+            $(this).data("DateTimePicker").hide();
+        });
+
+        $('#enddate0').datetimepicker().on('dp.change', function (e) {
+            var decrementDay = moment(new Date(e.date));
+            decrementDay.subtract(1, 'days');
+            $('#startdate0').data('DateTimePicker').setMaxDate(decrementDay);
+             $(this).data("DateTimePicker").hide();
+        });
+
         $(document).ready(function() {
             /* APPEND GAME */
             $(document).on('click','.add_game',function(){
@@ -316,7 +575,7 @@
                             <div class="form-group col-md-4">
                                 <label class="form-label">Game</label>
                                 <select name="game_id[`+currentIndex+`][`+gameIndex+`]" class="form-control games">
-                                    <option>Select Game</option>
+                                    <option value="">Select Game</option>
                                     @forelse($games as $key=>$game)
                                     <option value="{{ $game['_id'] }}" data-identifier="{{ $game['identifier'] }}">{{ $game['name'] }}</option>
                                     @empty
@@ -324,19 +583,9 @@
                                     @endforelse
                                 </select>
                             </div>
-                            <div class="form-group col-md-4">
-                                <label class="form-label">Row</label>
-                                <input type="text" name="row[`+currentIndex+`][`+gameIndex+`]" class="form-control" placeholder="Enter the row">
-                            </div>
                             <input type="hidden" name="last_elem_index" value="`+gameIndex+`">
-                            <div class="form-group col-md-4">
-                                <label class="form-label">Column</label>
-                                <input type="text" name="column[`+currentIndex+`][`+gameIndex+`]" class="form-control" placeholder="Enter the column">
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label class="form-label">Target</label>
-                                <input type="text" name="target[`+currentIndex+`][`+gameIndex+`]" class="form-control" placeholder="Enter the target">
-                            </div>
+                            <div class="variation_box"></div>
+                            
                             <div class="col-md-4 button_section">
                                 <br>
                                 <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>
@@ -359,11 +608,11 @@
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label class="form-label">Start Date</label>
-                                            <input type="text" name="start_date[`+currentIndex+`]" class="form-control datetimepicker" placeholder="Enter the start date">
+                                            <input type="text" name="start_date[`+currentIndex+`]" class="form-control datetimepicker" placeholder="Enter the start date" id="startdate`+currentIndex+`" autocomplete="off">
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label class="form-label">End Date</label>
-                                            <input type="text" name="end_date[`+currentIndex+`]" class="form-control datetimepicker" placeholder="Enter the end date">
+                                            <input type="text" name="end_date[`+currentIndex+`]" class="form-control datetimepicker" placeholder="Enter the end date" id="enddate`+currentIndex+`" autocomplete="off">
                                         </div>
                                         <div class="form-group col-md-4">
                                             <br>
@@ -379,7 +628,7 @@
                                                 <div class="form-group col-md-4">
                                                     <label class="form-label">Game</label>
                                                     <select name="game_id[`+currentIndex+`][]" class="form-control games">
-                                                        <option>Select Game</option>
+                                                        <option value="">Select Game</option>
                                                         @forelse($games as $key=>$game)
                                                         <option value="{{ $game['_id'] }}" data-identifier="{{ $game['identifier'] }}">{{ $game['name'] }}</option>
                                                         @empty
@@ -387,19 +636,10 @@
                                                         @endforelse
                                                     </select>
                                                 </div>
-                                                <div class="form-group col-md-4">
-                                                    <label class="form-label">Row</label>
-                                                    <input type="text" name="row[`+currentIndex+`][]" class="form-control" placeholder="Enter the row">
-                                                </div>
+                                                
                                                 <input type="hidden" name="last_elem_index" value="0">
-                                                <div class="form-group col-md-4">
-                                                    <label class="form-label">Column</label>
-                                                    <input type="text" name="column[`+currentIndex+`][]" class="form-control" placeholder="Enter the column">
-                                                </div>
-                                                <div class="form-group col-md-4">
-                                                    <label class="form-label">Target</label>
-                                                    <input type="text" name="target[`+currentIndex+`][]" class="form-control" placeholder="Enter the target">
-                                                </div>
+                                                <div class="variation_box"></div>
+                                                
                                                 <div class="col-md-4 button_section">
                                                     <br>
                                                     <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>
@@ -413,7 +653,37 @@
                 $(this).parents('.col-md-4').append('<a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>');
                 $(this).parents('.col-md-4').find('.add_mini_game').remove();
                 
-                $('.datetimepicker').datetimepicker();
+                //$('.datetimepicker').datetimepicker();
+
+
+                $('#startdate'+currentIndex).datetimepicker({
+                    useCurrent: false,
+                    format: "DD-MM-YYYY hh:mm A",
+                    minDate: moment(startdate),
+                    maxDate: moment(enddate),
+                    defaultDate: moment(startdate),
+                });
+                $('#enddate'+currentIndex).datetimepicker({
+                    useCurrent: false,
+                    format: "DD-MM-YYYY hh:mm A",
+                    minDate: moment(startdate),
+                    maxDate: moment(enddate),
+                    defaultDate: moment(startdate),
+                });
+                $('#startdate'+currentIndex).datetimepicker().on('dp.change', function (e) {
+                    var incrementDay = moment(new Date(e.date));
+                    incrementDay.add(1, 'days');
+                    $('#enddate'+currentIndex).data('DateTimePicker').setMinDate(incrementDay);
+                    $(this).data("DateTimePicker").hide();
+                });
+
+                $('#enddate'+currentIndex).datetimepicker().on('dp.change', function (e) {
+                    var decrementDay = moment(new Date(e.date));
+                    decrementDay.subtract(1, 'days');
+                    $('#startdate'+currentIndex).data('DateTimePicker').setMaxDate(decrementDay);
+                     $(this).data("DateTimePicker").hide();
+                });
+
 
             });
 
@@ -432,256 +702,57 @@
                 let game = $(this).val();
                 let currentIndex = $(this).parents('.mini_game').find('input[name=last_mini_game_index]').val();
                 let gameIndex = $(this).parents('.game_box').find('input[name=last_elem_index]').val();
-                
+                var identifier = $(this).find(':selected').data('identifier');
 
                 $(this).parents('.game_box').find('.variation_image_box').remove();
-                if (game == '5b0e306951b2010ec820fb4f') {
-                    //sliding
-                    $(this).parents('.game_box').find('.form-group:last').after(`
-                            <div class="form-group col-md-4 variation_image_box">
-                                <label class="form-label">Variation Image <small class="form-text text-muted">must be 1024*1024 dimension</small></label>
-                                <input type="file" name="variation_image[`+currentIndex+`][`+gameIndex+`]" class="form-control">
-                            </div>`);   
-                } else if(game == '5b0e304b51b2010ec820fb4e'){
-                    //jigsaw
-                    $(this).parents('.game_box').find('.form-group:last').after(`
-                            <div class="form-group col-md-4 variation_image_box">
-                                <label class="form-label">Variation Image <small class="form-text text-muted">must be 2000*1440 dimension</small></label>
-                                <input type="file" name="variation_image[`+currentIndex+`][`+gameIndex+`]" class="form-control">
-                            </div>`);
-                    
+                
+                if (identifier == 'sudoku'){
+                    var data = `@include("admin.event.add_event.add_model_variations.add_sudoku",['index' => 
+                    ['game_index'=>'`+gameIndex+`','current_index'=>'`+currentIndex+`']])`;
+                }else if(identifier == 'number_search'){
+                    var data = `@include("admin.event.add_event.add_model_variations.add_numberSearch",['index' => 
+                    ['game_index'=>'`+gameIndex+`','current_index'=>'`+currentIndex+`']])`;
+                }else if(identifier == 'jigsaw'){
+                    var data = `@include("admin.event.add_event.add_model_variations.add_jigsaw",['index' => 
+                    ['game_index'=>'`+gameIndex+`','current_index'=>'`+currentIndex+`']])`;
+                }else if(identifier == 'sliding'){
+                    var data = `@include("admin.event.add_event.add_model_variations.add_sliding",['index' => 
+                    ['game_index'=>'`+gameIndex+`','current_index'=>'`+currentIndex+`']])`;
+                }else if(identifier == '2048'){
+                    var data = `@include("admin.event.add_event.add_model_variations.add_2048",['index' => 
+                    ['game_index'=>'`+gameIndex+`','current_index'=>'`+currentIndex+`']])`;
+                }else if(identifier == 'block'){
+                    var data = `@include("admin.event.add_event.add_model_variations.add_blockGame",['index' => 
+                    ['game_index'=>'`+gameIndex+`','current_index'=>'`+currentIndex+`']])`;
+                }else if(identifier == 'word_search'){
+                    var data = `@include("admin.event.add_event.add_model_variations.add_wordSearch",['index' => 
+                    ['game_index'=>'`+gameIndex+`','current_index'=>'`+currentIndex+`']])`;
+                }else if(identifier == 'hexa'){
+                    var data = `@include("admin.event.add_event.add_model_variations.add_hexa",['index' => 
+                    ['game_index'=>'`+gameIndex+`','current_index'=>'`+currentIndex+`']])`;
+                }else if(identifier == 'bubble_shooter'){
+                    var data = `@include("admin.event.add_event.add_model_variations.add_bubble_shooter",['index' => 
+                    ['game_index'=>'`+gameIndex+`','current_index'=>'`+currentIndex+`']])`;
+                }else if(identifier == 'slices'){
+                    var data = `@include("admin.event.add_event.add_model_variations.add_slices",['index' => 
+                    ['game_index'=>'`+gameIndex+`','current_index'=>'`+currentIndex+`']])`;
+                }else if(identifier == 'yatzy'){
+                    var data = `@include("admin.event.add_event.add_model_variations.add_yatzy",['index' => 
+                    ['game_index'=>'`+gameIndex+`','current_index'=>'`+currentIndex+`']])`;
+                }else if(identifier == 'snake'){
+                    var data = `@include("admin.event.add_event.add_model_variations.add_snake",['index' => 
+                    ['game_index'=>'`+gameIndex+`','current_index'=>'`+currentIndex+`']])`;
+                }else if(identifier == 'domino'){
+                    var data = `@include("admin.event.add_event.add_model_variations.add_domino",['index' => 
+                    ['game_index'=>'`+gameIndex+`','current_index'=>'`+currentIndex+`']])`;
+                } else {
+                    data = '<input type="hidden" name="sudoku_id" value="0" /><input type="hidden" name="row" value="0" /><input type="hidden" name="column" value="0" /><input type="hidden" name="number_generate" value="0">';
                 }
+
+                $(this).parents('.game_box').find('.variation_box').html(data);
+
             });
 
         });
-    </script>
-    <script type="text/javascript">
-        /*$(document).on('change','select[name="type"]',function(){
-            if($(this).val() == 'single'){
-            
-            } else {
-            
-            }
-        })*/
-
-
-        /* SUBMIT FORM */
-        $(document).on('submit','#addEventForm',function(e){
-            e.preventDefault();
-            formData = new FormData($(this)[0]);
-            $.ajax({
-                type:'POST',
-                url:'{{ route("admin.event.store") }}',
-                data: formData,
-                cache:false,
-                contentType: false,
-                processData: false,
-                beforeSend:function(){},
-                success:function(response) {
-                    if (response.status == true) {
-                        toastr.success(response.message);
-                        window.location.href = '{{ route("admin.gameVariation.index")}}';
-                    } else {
-                        toastr.warning(response.message);
-                    }
-                },
-                complete:function(){},
-                error:function(){}
-            });
-        })
-
-
-        // initialize();
-        // function initialize() {
-        //     //static coordinates
-        //     var map = new google.maps.Map(document.getElementById('map'), {
-        //         center: {lat: 51.048615, lng: -114.070847 },
-        //         zoom: 18,
-        //         scaleControl: true
-        //     });
-
-                           
-        //     //set the autocomplete
-        //     var input = document.getElementById('place_name');
-        //     var autocomplete = new google.maps.places.Autocomplete(input);
-        //      autocomplete.bindTo('bounds', map);
-
-        //     // Set the data fields to return when the user selects a place.
-        //     autocomplete.setFields(
-        //         ['address_components', 'geometry', 'icon', 'name']);
-
-        //     var marker = new google.maps.Marker({
-        //         map: map,
-        //         anchorPoint: new google.maps.Point(0, -29)
-        //     });
-
-        //     //change listener on each autocomplete action
-        //     autocomplete.addListener('place_changed', function(){
-        //         //infowindow.close();
-        //         marker.setVisible(false);
-        //         var place = autocomplete.getPlace();
-        //         console.log(place);
-        //         if (!place.geometry) {
-        //             // User entered the name of a Place that was not suggested and
-        //             // pressed the Enter key, or the Place Details request failed.
-        //             window.alert("No details available for input: '" + place.name + "'");
-        //             return;
-        //         }
-
-        //         // If the place has a geometry, then present it on a map.
-        //         if (place.geometry.viewport) {
-        //             map.fitBounds(place.geometry.viewport);
-        //         } else {
-        //             map.setCenter(place.geometry.location);
-        //             map.setZoom(17);  // Why 17? Because it looks good.
-        //         }
-
-        //         marker.setPosition(place.geometry.location);
-        //         marker.setVisible(true);
-
-        //         var address = '';
-        //         if (place.address_components) {
-        //             address = [
-        //                 (place.address_components[0] && place.address_components[0].short_name || ''),
-        //                 (place.address_components[1] && place.address_components[1].short_name || ''),
-        //                 (place.address_components[2] && place.address_components[2].short_name || '')
-        //             ].join(' ');
-        //         }
-
-        //         /*infowindowContent.children['place-icon'].src = place.icon;
-        //         infowindowContent.children['place-name'].textContent = place.name;
-        //         infowindowContent.children['place-address'].textContent = address;
-        //         infowindow.open(map, marker);*/
-        //         placeInfo = getPlaceInformation(place);
-        //         $('#latitude').val(placeInfo['latitude']);
-        //         $('#longitude').val(placeInfo['longitude']);
-        //         // $('#country').val(placeInfo['country']);
-        //         // $('#province').val(placeInfo['state']);
-        //         console.log(placeInfo['city']);
-        //         $('#city').val(placeInfo['city']);
-        //     });
-
-           
-
-        //     //update the street view on dragging of marker
-        //     google.maps.event.addListener(marker, 'dragend', function (event) {
-        //         var newPosition = marker.getPosition();
-        //         geocodePosition(newPosition);
-        //     });
-
-            
-
-        //     //DRAWING MANAGE
-        //     var selectedShape;
-
-        //     var drawingManager = new google.maps.drawing.DrawingManager({
-        //         drawingMode: google.maps.drawing.OverlayType.POLYGON,
-        //             drawingControl: false,
-        //             drawingControlOptions: {
-        //                 position: google.maps.ControlPosition.TOP_CENTER,
-        //             drawingModes: [google.maps.drawing.OverlayType.POLYGON]
-        //         },
-        //         polygonOptions: {
-        //             editable: true
-        //         }
-        //     });
-
-            
-
-        //     drawingManager.setMap(map);
-
-        //     var coordinates = [];
-        //     var all_overlays = [];
-
-        //     google.maps.event.addListener(drawingManager, "overlaycomplete", function(event){
-                
-        //         // overlayClickListener(event.overlay);
-        //         // $('#boundary_arr').val(event.overlay.getPath().getArray());
-        //         all_overlays.push(event);
-        //         if (event.type != google.maps.drawing.OverlayType.MARKER) {
-        //             // Switch back to non-drawing mode after drawing a shape.
-        //             drawingManager.setDrawingMode(null);
-        //             var newShape = event.overlay;
-        //             newShape.type = event.type;
-        //             google.maps.event.addListener(newShape, 'click', function() {
-        //               setSelection(newShape);
-        //             });
-        //             setSelection(newShape);
-        //         }
-
-
-
-        //         var boundary_arr = [];
-        //         var i=1;
-        //         event.overlay.getPath().getArray().forEach((value, key) => {
-        //             // boundary_arr[i] = value.lng() +','+ value.lat();
-        //             // i++;
-        //             var arr = [];
-        //             arr.push(value.lng());
-        //             arr.push(value.lat());
-        //             coordinates.push(arr);
-        //         });
-        //         console.log(coordinates);
-        //         $('#boundary_arr').val(JSON.stringify(coordinates));
-
-        //         // console.log(jQuery.parseJSON(boundary_arr));
-
-        //         console.log(event.overlay.getPath().getArray())
-        //         //Options
-        //         var options = {
-        //             path: event.overlay.getPath().getArray(),
-        //             strokeColor: "#222",
-        //             strokeOpacity: 1,
-        //             strokeWeight: 2,
-        //             fillColor: "#000",
-        //             fillOpacity: 0,
-        //             zIndex: 0
-        //         }
-        //         //Create polygon
-        //         var polygon = new google.maps.Polygon(options);
-
-        //         polygon.setMap(map);
-        //         //rectangle
-        //         if(!google.maps.Polygon.prototype.getBounds)
-        //             google.maps.Polygon.prototype.getBounds = function() {
-        //             var bounds = new google.maps.LatLngBounds();
-        //             var paths = this.getPaths();    
-        //             for (var i = 0; i < paths.getLength(); i++) {
-        //                 var path = paths.getAt(i);
-        //                 for (var j = 0; j < path.getLength(); j++) {
-        //                     bounds.extend(path.getAt(j));
-        //                 }
-        //             }
-        //             return bounds;
-        //         }
-
-        //         var rectangle = new google.maps.Rectangle({
-        //             strokeColor: '#FF0000',
-        //             strokeOpacity: 0.8,
-        //             strokeWeight: 2,
-        //             fillColor: '#FFF',
-        //             fillOpacity: 0.35,
-        //             map: map,
-        //             bounds: polygon.getBounds()
-        //         });
-        //         var boundary_box = [];
-        //         var j=1;
-        //         $('#boundary_box').val(JSON.stringify(polygon.getBounds()));
-        //     });
-        // }
-        // function getPlaceInformation(place){
-        //     placeInfo = [];
-        //     placeInfo['latitude'] = "";
-        //     placeInfo['longitude'] = "";
-        //     placeInfo['latitude'] = place.geometry.location.lat();
-        //     placeInfo['longitude'] = place.geometry.location.lng();
-        //     $.each(place.address_components,function(index,value){
-        //         if(value.types[0] == 'locality' || value.types[0] == 'administrative_area_level_3'){
-        //             placeInfo['city'] = value['long_name'];
-        //         }
-        //     });
-        //     return placeInfo;
-        // } 
-        
     </script>
 @endsection

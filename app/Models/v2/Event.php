@@ -27,6 +27,7 @@ class Event extends Eloquent
         'hunt_id',
         'map_reveal_date',
         'hunt_clues',
+        'coin_number'
     ];    
 
     protected $dates = [
