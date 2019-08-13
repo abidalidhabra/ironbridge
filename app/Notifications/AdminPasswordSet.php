@@ -10,7 +10,7 @@ use App\Notifications\AdminNotificationChannel;
 
 class AdminPasswordSet extends Notification
 {
-    use Queueable;
+    // use Queueable;
     public $token;
     /**
      * Create a new notification instance.
@@ -41,11 +41,12 @@ class AdminPasswordSet extends Notification
      */
     public function toMail($notifiable)
     {
-        $token = $this->token;
+        // $token =$this->token;
+
         return (new MailMessage)
         ->subject('You are invited to join ironbridge console!')
         // ->line('Please create your password using below link')
-        ->markdown('admin.mail.newUserAccess',compact('token'));
+        ->markdown('admin.mail.newUserAccess',['token'=>$this->token]);
 
 
         /*return (new MailMessage)

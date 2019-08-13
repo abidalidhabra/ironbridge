@@ -43,7 +43,7 @@ class PasswordResetRequest extends Notification
     {
         $otp = $this->otp;
         return (new MailMessage)
-        ->subject('Ironbridge1779 Password Reset OTP : '. substr($otp, 0, 3).'-'.substr($otp, 3, 6))
+        ->subject('Ironbridge1779 Password Reset')
         ->markdown('admin.mail.passwordReset',compact('otp','notifiable'));
 
     }

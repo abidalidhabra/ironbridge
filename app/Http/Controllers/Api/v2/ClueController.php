@@ -252,6 +252,7 @@ class ClueController extends Controller
         }
 
         unset($selectedReward->min_range, $selectedReward->max_range);
+        \Log::info([ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData]);
         return [ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData];
     }
 }
