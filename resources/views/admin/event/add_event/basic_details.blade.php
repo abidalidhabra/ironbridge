@@ -60,7 +60,7 @@
                         <select name="city_id" id="city_id" class="form-control">
                             <option>Select city</option>
                             @forelse($cities as $key=>$city)
-                            <option value="{{ $city->_id }}" @if(isset($event->city_id) && $event->city_id==$key) {{ 'selected' }} @endif>{{ $city->name }}</option>
+                            <option value="{{ $city->_id }}" @if(isset($event->city_id) && $event->city_id==$city->_id) {{ 'selected' }} @endif>{{ $city->name }}</option>
                             @empty
                             <option>Record Not found</option>
                             @endforelse

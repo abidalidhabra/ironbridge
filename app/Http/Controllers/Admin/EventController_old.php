@@ -17,7 +17,7 @@ use Auth;
 use Yajra\Datatables\Datatables;
 use Yajra\DataTables\EloquentDataTable;
 
-class EventController extends Controller
+class EventController_old extends Controller
 {
     /**
      * Display a listing of the resource.

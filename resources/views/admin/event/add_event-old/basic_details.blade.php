@@ -15,7 +15,7 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Add Event</h3>
+                <h3>Event</h3>
             </div>
             <div class="col-md-6 text-right modalbuttonadd">
                 <a href="{{ route('admin.event.index') }}" class="btn btn-info btn-md">Back</a>
