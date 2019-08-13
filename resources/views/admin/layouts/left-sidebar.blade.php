@@ -73,9 +73,9 @@
 					</li>
 					@endif
 					
-					<!-- <li  class="@if(Route::currentRouteName() == 'admin.event.index') {{ 'activelist' }} @endif">
+					<li  class="@if(Route::currentRouteName() == 'admin.event.index') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.event.index') }}">Events</a>
-					</li> -->
+					</li>
 					
 					@if($admin->hasRole('Super Admin'))
 					<li  class="@if(Route::currentRouteName() == 'admin.adminManagement.index') {{ 'activelist' }} @endif">
