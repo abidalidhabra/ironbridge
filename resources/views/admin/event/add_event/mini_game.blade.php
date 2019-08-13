@@ -71,50 +71,159 @@
                                                 @endforelse
                                             </select>
                                         </div>
+                                        <input type="hidden" name="last_elem_index" value="{{ $index }}">
+
                                         <?php
                                             $miniGameId = $miniGame['game_info']['id'];
                                         ?>
                                         <?php if($miniGameId == '5b0e2ff151b2010ec820fb48'){ ?>
-                                            @include("admin.event.add_event.edit_model_variations.edit_sudoku",['variation_data' => '123'])
+                                            <!-- Sudoku -->
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label">Variation size</label>
+                                                <input type="text"  name="variation_size[{{$key}}][{{$index}}]" value="{{ $miniGame['variation_data']['variation_size'] }}"  class="form-control">
+                                            </div>
+                                           
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label">Sudoku Id</label>
+                                                <select name="sudoku_id[{{$key}}][{{$index}}]" class="form-control">
+                                                    <option <?php if ($miniGame['variation_data']['sudoku_id'] == 1) { echo "selected";} ?> value="1">1</option>
+                                                    <option <?php if ($miniGame['variation_data']['sudoku_id'] == 2) { echo "selected";} ?> value="2">2</option>
+                                                    <option <?php if ($miniGame['variation_data']['sudoku_id'] == 3) { echo "selected";} ?> value="3">3</option>
+                                                    <option <?php if ($miniGame['variation_data']['sudoku_id'] == 4) { echo "selected";} ?> value="4">4</option>
+                                                    <option <?php if ($miniGame['variation_data']['sudoku_id'] == 5) { echo "selected";} ?> value="5">5</option>
+                                                    <option <?php if ($miniGame['variation_data']['sudoku_id'] == 6) { echo "selected";} ?> value="6">6</option>
+                                                    <option <?php if ($miniGame['variation_data']['sudoku_id'] == 7) { echo "selected";} ?> value="7">7</option>
+                                                    <option <?php if ($miniGame['variation_data']['sudoku_id'] == 8) { echo "selected";} ?> value="8">8</option>
+                                                    <option <?php if ($miniGame['variation_data']['sudoku_id'] == 9) { echo "selected";} ?> value="9">9</option>
+                                                    <option <?php if ($miniGame['variation_data']['sudoku_id'] == 10) { echo "selected";} ?> value="10">10</option>
+                                                    <option <?php if ($miniGame['variation_data']['sudoku_id'] == 11) { echo "selected";} ?> value="11">11</option>
+                                                    <option <?php if ($miniGame['variation_data']['sudoku_id'] == 12) { echo "selected";} ?> value="12">12</option>
+                                                    <option <?php if ($miniGame['variation_data']['sudoku_id'] == 13) { echo "selected";} ?> value="13">13</option>
+                                                    <option <?php if ($miniGame['variation_data']['sudoku_id'] == 14) { echo "selected";} ?> value="14">14</option>
+                                                    <option <?php if ($miniGame['variation_data']['sudoku_id'] == 15) { echo "selected";} ?> value="15">15</option>
+                                                    <option <?php if ($miniGame['variation_data']['sudoku_id'] == 16) { echo "selected";} ?> value="16">16</option>
+                                                </select>
+                                            </div>
                                         <?php } else if($miniGameId == '5b0e303f51b2010ec820fb4d'){ ?>
-                                            @include("admin.event.add_event.edit_model_variations.edit_numberSearch")
+                                            <!-- Number search -->
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label">Row</label>
+                                                <input type="text" value="{{ $miniGame['variation_data']['row'] }}" name="row[{{$key}}][{{$index}}]" id="row" class="form-control">
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label">Column</label>
+                                                <input type="text" value="{{ $miniGame['variation_data']['column'] }}" name="column[{{$key}}][{{$index}}]" id="column" class="form-control">
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label">Number Generate</label>
+                                                <input type="text" value="{{ $miniGame['variation_data']['number_generate'] }}" name="number_generate[{{$key}}][{{$index}}]" id="number_generate" class="form-control">
+                                            </div>
                                         <?php } else if($miniGameId == '5b0e304b51b2010ec820fb4e'){ ?>
-                                            @include("admin.event.add_event.edit_model_variations.edit_jigsaw")
-                                        <?php } else if($miniGameId == '5b0e306951b2010ec820fb4f'){ ?>
-                                            @include("admin.event.add_event.edit_model_variations.edit_sliding")
-                                        <?php } else if($miniGameId == '5bfba3afc3169d169062a3b3'){ ?>
-                                            @include("admin.event.add_event.edit_model_variations.edit_wordSearch")
-                                        <?php } else if($miniGameId == '5c188ab5719a1408746c473b'){ ?>
-                                            @include("admin.event.add_event.edit_model_variations.edit_2048")
-                                        <?php } else if($miniGameId == '5c188b06719a1408746c473c'){ ?>
-                                            @include("admin.event.add_event.edit_model_variations.edit_blockGame")
-                                        <?php } else if($miniGameId == '5c399831697b251760c0d5e2'){ ?>
-                                            @include("admin.event.add_event.edit_model_variations.edit_hexa")
-                                        <?php } else if($miniGameId == '5c39a1f3697b251760c0d5fc'){ ?>
-                                            @include("admin.event.add_event.edit_model_variations.edit_bubble_shooter")
-                                        <?php } else if($miniGameId == '5c5d279c697b25205433531c'){ ?>
-                                            @include("admin.event.add_event.edit_model_variations.edit_snake")
-                                        <?php } else if($miniGameId == '5c5d282b697b25205433531d'){ ?>
-                                            @include("admin.event.add_event.edit_model_variations.edit_domino")
-                                        <?php } else if($miniGameId == '5c80fd106650bf31a808abed'){ ?>
-                                            @include("admin.event.add_event.edit_model_variations.edit_slices")
-                                        <?php } else if($miniGameId == '5c80fd106650bf31a808abed'){ ?>
-                                            @include("admin.event.add_event.edit_model_variations.edit_yatzy")
-                                        <?php } ?>
-                                        
-                                        
-                                        @if($miniGame['game_info']['id'] == '5b0e304b51b2010ec820fb4e' || $miniGame['game_info']['id'] == '5b0e306951b2010ec820fb4f')
-
-                                            <div class="form-group col-md-4 variation_image_box">
-                                                <label class="form-label">Variation Image <small class="form-text text-muted">must be @if($miniGame['game_info']['id'] == '5b0e304b51b2010ec820fb4e') {{ '2000*1440' }} @else {{ '1024*1024' }} @endif dimension</small></label>
-                                                <input type="file" name="variation_image[{{$key}}][{{$index}}]" class="form-control">
-                                                @if(isset($miniGame['game_info']['variation_image']))
-                                                    <input type="hidden" name="hide_image[{{$key}}][{{$index}}]" value="{{ $miniGame['game_info']['variation_image'] }}">
+                                            <!-- Jigsaw Puzzle -->
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label">Variation size <small class="form-text text-muted">must of [12,35,70,140]</small></label>
+                                                <input type="text"  name="variation_size[{{$key}}][{{$index}}]" value="{{ $miniGame['variation_data']['variation_size'] }}"  class="form-control">
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label">Variation Image <small class="form-text text-muted">must be 2000*1440 dimension</small></label>
+                                                <input type="file"  name="variation_image[{{$key}}][{{$index}}]" class="form-control" multiple>
+                                                @if(isset($miniGame['variation_data']['variation_image']))
+                                                    <input type="hidden" name="hide_image[{{$key}}][{{$index}}]" value="{{ $miniGame['variation_data']['variation_image'] }}">
                                                     <br/>
-                                                    <img src="{{ asset('storage/events/'.$miniGame['game_info']['variation_image']) }}" width="100px">
+                                                    <img src="{{ asset('storage/events/'.$miniGame['variation_data']['variation_image']) }}" width="100px">
+                                                @endif
+                                                <br/>
+                                            </div>
+
+                                        <?php } else if($miniGameId == '5b0e306951b2010ec820fb4f'){ ?>
+                                            <!-- Sliding Puzzle -->
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label">Variation size</label>
+                                                <input type="text"  name="variation_size[{{$key}}][{{$index}}]" value="{{ $miniGame['variation_data']['variation_size'] }}"  class="form-control">
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label">Variation Image <small class="form-text text-muted">must be 1024*1024 dimension</small></label>
+                                                <input type="file"  name="variation_image[{{$key}}][{{$index}}]" class="form-control">
+                                                <?php
+                                                    // echo "<pre>";
+                                                    // print_r($miniGame['variation_data']['variation_image']);
+                                                    // exit();
+                                                ?>
+                                                @if(isset($miniGame['variation_data']['variation_image']))
+                                                    <input type="hidden" name="hide_image[{{$key}}][{{$index}}]" value="{{ $miniGame['variation_data']['variation_image'] }}">
+                                                    <br/>
+                                                    <img src="{{ asset('storage/events/'.$miniGame['variation_data']['variation_image']) }}" width="100px">
                                                 @endif
                                             </div>
-                                        @endif
+
+                                        <?php } else if($miniGameId == '5bfba3afc3169d169062a3b3'){ ?>
+                                            <!-- Word Search -->
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label">Row</label>
+                                                <input type="text" value="{{ $miniGame['variation_data']['row'] }}" name="row[{{$key}}][{{$index}}]" id="row" class="form-control">
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label">Column</label>
+                                                <input type="text" value="{{ $miniGame['variation_data']['column'] }}" name="column[{{$key}}][{{$index}}]" id="column" class="form-control">
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label">Target</label>
+                                                <input type="text" value="{{ $miniGame['variation_data']['target'] }}" name="target[{{$key}}][{{$index}}]" id="target" class="form-control">
+                                            </div>
+                                        <?php } else if($miniGameId == '5c188ab5719a1408746c473b'){ ?>
+                                            <!-- 2048 -->
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label">Row <small class="form-text text-muted">must of [4,6,8]</small></label>
+                                                <input type="text" value="{{ $miniGame['variation_data']['row'] }}" name="row[{{$key}}][{{$index}}]" id="row" class="form-control">
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label">Column <small class="form-text text-muted">must of [4,6,8]</small></label>
+                                                <input type="text" value="{{ $miniGame['variation_data']['column'] }}" name="column[{{$key}}][{{$index}}]" id="column" class="form-control">
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label">Target <small class="form-text text-muted">must of [1024,2048,4096]</small></label>
+                                                <input type="text" value="{{ $miniGame['variation_data']['target'] }}" name="target[{{$key}}][{{$index}}]" id="target" class="form-control">
+                                            </div>
+                                        <?php } else if($miniGameId == '5c188b06719a1408746c473c'){ ?>
+                                            <!-- Block Game -->
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label">Row <small class="form-text text-muted">must of [9,10]</small></label>
+                                                <input type="text" value="{{ $miniGame['variation_data']['row'] }}" name="row[{{$key}}][{{$index}}]" id="row" class="form-control">
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label">Column <small class="form-text text-muted">must of [9,10]</small></label>
+                                                <input type="text" value="{{ $miniGame['variation_data']['column'] }}" name="column[{{$key}}][{{$index}}]" id="column" class="form-control">
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label">Target</label>
+                                                <input type="text" value="{{ $miniGame['variation_data']['target'] }}" name="target[{{$key}}][{{$index}}]" id="target" class="form-control">
+                                            </div>
+                                        
+                                        <?php } else if($miniGameId == '5c39a1f3697b251760c0d5fc'){ ?>
+                                            <!-- Bubble Shooter -->
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label">Target</label>
+                                                <input type="text" value="{{ $miniGame['variation_data']['target'] }}" name="target[{{$key}}][{{$index}}]" id="target" class="form-control">
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label">No Of balls</label>
+                                                <input type="text"  value="{{ $miniGame['variation_data']['no_of_balls'] }}" name="no_of_balls[{{$key}}][{{$index}}]" id="no_of_balls" class="form-control">
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label">Bubble level id</label>
+                                                <input type="text"  value="{{ $miniGame['variation_data']['bubble_level_id'] }}" name="bubble_level_id[{{$key}}][{{$index}}]" id="bubble_level_id" class="form-control">
+                                            </div>
+                                        
+                                        <?php } else if($miniGameId == '5c80fd106650bf31a808abed' || $miniGameId == '5c80fd226650bf31a808abee' || $miniGameId == '5c5d282b697b25205433531d' || $miniGameId == '5c5d279c697b25205433531c' || $miniGameId == '5c399831697b251760c0d5e2'){ ?>
+                                            <!-- Slices -->
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label">Target</label>
+                                                <input type="text" value="{{ $miniGame['variation_data']['target'] }}" name="target[{{$key}}][{{$index}}]" id="target" class="form-control">
+                                            </div>
+                                        <?php } ?>
+                                         
+                                        
+                                        
                                         <div class="col-md-4 button_section">
                                             <br>
                                             <?php
@@ -302,7 +411,7 @@
                                     @endforelse
                                 </select>
                             </div>
-                            <input type="hidden" name="last_elem_index" value="0">
+                            <input type="hidden" name="last_elem_index" value="`+gameIndex+`">
                             <div class="variation_box"></div>
                             
                             <div class="col-md-4 button_section">

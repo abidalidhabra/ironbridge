@@ -36,14 +36,15 @@
                     <input type="hidden" name="event_id" value="{{ $id }}"> 
                     <div class="form-group col-md-4">
                         <label class="form-label">Map Reveal Date</label>
-                        <input type="text" name="map_reveal_date" class="form-control" id="map_reveal_date" placeholder="Enter the map reveal date" autocomplete="off">
+                        <input type="text" name="map_reveal_date" class="form-control" id="map_reveal_date" placeholder="Enter the map reveal date" autocomplete="off" value="@if(isset($event->map_reveal_date)){{$event->map_reveal_date->format('d-m-Y h:i A') }}@endif">
                     </div>
                     <div class="form-group col-md-6">
                         <label class="form-label">Search Place Name</label>
+                       
                         <select class="form-control hunts" name="search_place_name" id="hunts">
                             <option value="">Select Place</option>
                             @forelse($hunts as $hunt)
-                                <option value="{{ $hunt->id }}">{{ $hunt->name }}</option>
+                                <option value="{{ $hunt->id }}" @if($event->hunt_id == $hunt->id){{ 'selected' }} @endif>{{ $hunt->name }}</option>
                             @empty
                             @endforelse
                         </select>
@@ -79,7 +80,6 @@
             minDate: moment(startdate),
             maxDate: moment(enddate),
         });
-        $('.map_reveal_date').datetimepicker();
 
         /* SUBMIT FORM */
         $(document).ready(function() {

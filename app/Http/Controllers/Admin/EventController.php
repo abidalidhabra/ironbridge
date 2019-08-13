@@ -234,7 +234,6 @@ class EventController extends Controller
             $message = $validator->messages()->first();
             return response()->json(['status' => false,'message' => $message]);
         }
-
         $data = $request->all();
 
         $main_game = [];
@@ -272,47 +271,46 @@ class EventController extends Controller
                     $img = Image::make($image);
                     $imageUniqueName = uniqid(uniqid(true).'_').'.'.$extension;
                     $img->save(storage_path('app/public/events/'.$imageUniqueName));
-                    $gameInfo['variation_image'] = $imageUniqueName;
+                    $variation_data['variation_image'] = $imageUniqueName;
                 } else {
-                    if(isset($data['hide_image'][$i]) && isset(array_values($data['hide_image'][$i])[$k])){
-                        $gameInfo['variation_image'] = array_values($data['hide_image'][$i])[$k];
+                    if(isset($data['hide_image']) && !empty(array_values($data['hide_image'][$i])[$k])){
+                        $variation_data['variation_image'] = array_values($data['hide_image'][$i])[$k];
                     }
-                    
                 }
 
                 if (isset($data['row']) && !empty(array_values($data['row'][$i])[$k])) {
                     $variation_data['row'] = (int)array_values($data['row'][$i])[$k];
                 }
 
-                if (isset($data['column']) && !empty(array_values($data['row'][$i])[$k])) {
+                if (isset($data['column']) && !empty(array_values($data['column'][$i])[$k])) {
                     $variation_data['column'] = (int)array_values($data['column'][$i])[$k];
                 }
 
-                if (isset($data['target']) && !empty(array_values($data['row'][$i])[$k])) {
-                    $variation_data['target'] = (int)array_values($data['column'][$i])[$k];
+                if (isset($data['target']) && !empty(array_values($data['target'][$i])[$k])) {
+                    $variation_data['target'] = (int)array_values($data['target'][$i])[$k];
                 }
 
-                if (isset($data['target']) && !empty(array_values($data['row'][$i])[$k])) {
-                    $variation_data['target'] = (int)array_values($data['column'][$i])[$k];
-                }
+                // if (isset($data['target']) && !empty(array_values($data['row'][$i])[$k])) {
+                //     $variation_data['target'] = (int)array_values($data['column'][$i])[$k];
+                // }
 
-                if (isset($data['no_of_balls']) && !empty(array_values($data['row'][$i])[$k])) {
+                if (isset($data['no_of_balls']) && !empty(array_values($data['no_of_balls'][$i])[$k])) {
                     $variation_data['no_of_balls'] = (int)array_values($data['no_of_balls'][$i])[$k];
                 }
 
-                if (isset($data['bubble_level_id']) && !empty(array_values($data['row'][$i])[$k])) {
+                if (isset($data['bubble_level_id']) && !empty(array_values($data['bubble_level_id'][$i])[$k])) {
                     $variation_data['bubble_level_id'] = (int)array_values($data['bubble_level_id'][$i])[$k];
                 }
 
-                if (isset($data['variation_size']) && !empty(array_values($data['row'][$i])[$k])) {
+                if (isset($data['variation_size']) && !empty(array_values($data['variation_size'][$i])[$k])) {
                     $variation_data['variation_size'] = (int)array_values($data['variation_size'][$i])[$k];
                 }
 
-                if (isset($data['number_generate']) && !empty(array_values($data['row'][$i])[$k])) {
+                if (isset($data['number_generate']) && !empty(array_values($data['number_generate'][$i])[$k])) {
                     $variation_data['number_generate'] = (int)array_values($data['number_generate'][$i])[$k];
                 }
 
-                if (isset($data['sudoku_id']) && !empty(array_values($data['row'][$i])[$k])) {
+                if (isset($data['sudoku_id']) && !empty(array_values($data['sudoku_id'][$i])[$k])) {
                     $variation_data['sudoku_id'] = (int)array_values($data['sudoku_id'][$i])[$k];
                 }
 
@@ -340,7 +338,9 @@ class EventController extends Controller
 
         }
         $data['mini_games'] = $main_game;
-        
+            
+        // print($data);
+        // exit();
 
         $eventId = $request->get('event_id');
 
@@ -361,7 +361,7 @@ class EventController extends Controller
         $hunts = Hunt::select('name','place_name','city')
                         ->where('city',$event->city->name)
                         ->get();
-        
+
         return view('admin.event.add_event.hunt_details',compact('id','hunts','event'));        
     }
 
