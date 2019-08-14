@@ -37,16 +37,33 @@
                     @forelse($event->mini_games as $key => $day)
                         <div class="mini_game">
                             <div class="daingaemtitlebox">
-                                <h5>Day {{ $key+1 }}</h5>
+                                @if($event->type == 'single')
+                                    <h5>Single Day</h5>
+                                @else
+                                    <h5>Day {{ $key+1 }}</h5>
+                                @endif
                             </div>
-                            <div class="form-group col-md-4">
-                                <label class="form-label">Start Date</label>
-                                <input type="text" name="start_date[{{ $key }}]" class="form-control datetimepicker" placeholder="Enter the start date" id="startdate0" value="{{ $day['from']->toDateTime()->format('d-m-Y h:i A') }}" autocomplete="off">
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label class="form-label">End Date</label>
-                                <input type="text" name="end_date[{{ $key }}]" class="form-control datetimepicker" placeholder="Enter the end date" id="enddate0" value="{{ $day['to']->toDateTime()->format('d-m-Y h:i A') }}" autocomplete="off">
-                            </div>
+                            @if($event->type == 'single')
+                                <div class="form-group col-md-4">
+                                    <label class="form-label">Start Date</label>
+                                    <input type="text" class="form-control" placeholder="Enter the start date" value="{{ $event->starts_at->format('d-m-Y h:i A') }}" autocomplete="off" disabled="true">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label class="form-label">End Date</label>
+                                    <input type="text" class="form-control" placeholder="Enter the end date" value="{{ $event->ends_at->format('d-m-Y h:i A') }}" autocomplete="off" disabled="true">
+                                </div>
+                                <input type="hidden" name="end_date[{{ $key }}]" value="{{ $event->ends_at->format('d-m-Y h:i A') }}">
+                                <input type="hidden" name="start_date[{{ $key }}]" value="{{ $event->ends_at->format('d-m-Y h:i A') }}">
+                            @else
+                                <div class="form-group col-md-4">
+                                    <label class="form-label">Start Date</label>
+                                    <input type="text" name="start_date[{{ $key }}]" class="form-control datetimepicker" placeholder="Enter the start date" id="startdate0" value="{{ $day['from']->toDateTime()->format('d-m-Y h:i A') }}" autocomplete="off">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label class="form-label">End Date</label>
+                                    <input type="text" name="end_date[{{ $key }}]" class="form-control datetimepicker" placeholder="Enter the end date" id="enddate0" value="{{ $day['to']->toDateTime()->format('d-m-Y h:i A') }}" autocomplete="off">
+                                </div>
+                            @endif
                             <div class="form-group col-md-4 day_section">
                                 <br>
                                 <!-- <a href="javascript:void(0)" class="btn btn-info add_game">Add Mini Game</a> -->
@@ -162,11 +179,7 @@
                                                 <div class="form-group col-md-4">
                                                     <label class="form-label">Variation Image <small class="form-text text-muted">must be 1024*1024 dimension</small></label>
                                                     <input type="file"  name="variation_image[{{$key}}][{{$index}}]" class="form-control">
-                                                    <?php
-                                                        // echo "<pre>";
-                                                        // print_r($miniGame['variation_data']['variation_image']);
-                                                        // exit();
-                                                    ?>
+                                                    
                                                     @if(isset($miniGame['variation_data']['variation_image']))
                                                         <input type="hidden" name="hide_image[{{$key}}][{{$index}}]" value="{{ $miniGame['variation_data']['variation_image'] }}">
                                                         <br/>
@@ -298,16 +311,33 @@
                 @else
                     <div class="mini_game">
                         <div class="daingaemtitlebox">
-                            <h5>Day 1</h5>
+                            @if($event->type == 'single')
+                                <h5>Single Day</h5>
+                            @else
+                                <h5>Day 1</h5>
+                            @endif
                         </div>
-                        <div class="form-group col-md-4">
-                            <label class="form-label">Start Date</label>
-                            <input type="text" name="start_date[0]" class="form-control datetimepicker" placeholder="Enter the start date" id="startdate0" autocomplete="off">
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label class="form-label">End Date</label>
-                            <input type="text" name="end_date[0]" class="form-control datetimepicker" placeholder="Enter the end date" id="enddate0" autocomplete="off">
-                        </div>
+                        @if($event->type == 'single')
+                            <div class="form-group col-md-4">
+                                <label class="form-label">Start Date</label>
+                                <input type="text" class="form-control" placeholder="Enter the start date" value="{{ $event->starts_at->format('d-m-Y h:i A') }}" autocomplete="off" disabled="true">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label class="form-label">End Date</label>
+                                <input type="text" class="form-control" placeholder="Enter the end date" value="{{ $event->ends_at->format('d-m-Y h:i A') }}" autocomplete="off" disabled="true">
+                            </div>
+                            <input type="hidden" name="end_date[0]" value="{{ $event->ends_at->format('d-m-Y h:i A') }}">
+                            <input type="hidden" name="start_date[0]" value="{{ $event->ends_at->format('d-m-Y h:i A') }}">
+                        @else
+                            <div class="form-group col-md-4">
+                                <label class="form-label">Start Date</label>
+                                <input type="text" name="start_date[0]" class="form-control datetimepicker" placeholder="Enter the start date" id="startdate0" value="" autocomplete="off">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label class="form-label">End Date</label>
+                                <input type="text" name="end_date[0]" class="form-control datetimepicker" placeholder="Enter the end date" id="enddate0" value="" autocomplete="off">
+                            </div>
+                        @endif
                         <div class="form-group col-md-4">
                             <br>
                             <!-- <a href="javascript:void(0)" class="btn btn-info add_game">Add Mini Game</a> -->
@@ -333,22 +363,10 @@
                                         @endforelse
                                     </select>
                                 </div>
-                                <!-- <div class="form-group col-md-4">
-                                    <label class="form-label">Variation Name</label>
-                                    <input type="text" name="variation_name[0][]" id="variation_name" class="form-control">
-                                </div> -->
-                                <!-- <div class="form-group col-md-4">
-                                    <label class="form-label">Variation Complexity</label>
-                                    <select name="variation_complexity[0][]" class="form-control">
-                                        <option value="">Select One</option>
-                                        <option value="complex">Complex</option>
-                                        <option value="normal">Normal</option>
-                                        <option value="easy">Easy</option>
-                                    </select>
-                                </div> -->
+                                
                                 <input type="hidden" name="last_elem_index" value="0">
                                 <div class="variation_box"></div>
-                                <div class="col-md-4 button_section">
+                                <div class="col-md-8 button_section">
                                     <br>
                                     <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>
                                 </div>
@@ -356,12 +374,13 @@
                         </div>
                     </div>
                 @endif
+                <div class="form-group Submitnextbtn">
+                    <a href="{{ route('admin.event.basicDetails',$id) }}" class="btn btn-success btnSubmit">PREVIOUS</a>
+                    <button type="submit" class="btn btn-success btnSubmit">SUBMIT & GO NEXT</button>
+                </div>
             </div>
             <!-- END GAME DETAILS -->
-            <div class="form-group col-md-12">
-                <a href="{{ route('admin.event.basicDetails',$id) }}" class="btn btn-success btnSubmit">PREVIOUS</a>
-                <button type="submit" class="btn btn-success btnSubmit">SUBMIT & GO NEXT</button>
-            </div>
+            
     </form>
     </div>
 </div>
@@ -386,14 +405,14 @@
         $('#startdate0').datetimepicker({
             useCurrent: false,
             format: "DD-MM-YYYY hh:mm A",
-            // defaultDate: moment(startdate),
+            defaultDate: moment(startdate),
             minDate: moment(startdate),
             maxDate: moment(enddate),
         });
         $('#enddate0').datetimepicker({
             useCurrent: false,
             format: "DD-MM-YYYY hh:mm A",
-            // defaultDate: moment(startdate),
+            defaultDate: moment(enddate),
             minDate: moment(startdate),
             maxDate: moment(enddate),
         });

@@ -27,13 +27,18 @@ class Event extends Eloquent
         'hunt_id',
         'map_reveal_date',
         'hunt_clues',
-        'coin_number'
+        'coin_number',
+        'discount_till',
+        'discount',
+        'description',
+        'attempts'
     ];    
 
     protected $dates = [
         'starts_at',
         'ends_at',
-        'map_reveal_date'
+        'map_reveal_date',
+        'discount_till'
     ];
 
 

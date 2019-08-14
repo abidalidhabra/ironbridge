@@ -73,7 +73,7 @@
 					</li>
 					@endif
 					
-					<li  class="@if(Route::currentRouteName() == 'admin.event.index') {{ 'activelist' }} @endif">
+					<li  class="@if(Route::currentRouteName() == 'admin.event.index' || Route::currentRouteName() == 'admin.event.miniGame' || Route::currentRouteName() == 'admin.event.basicDetails' || Route::currentRouteName() == 'admin.event.show' || Route::currentRouteName() == 'admin.event.huntDetails') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.event.index') }}">Events</a>
 					</li>
 					

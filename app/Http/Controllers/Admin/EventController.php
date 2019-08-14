@@ -16,6 +16,7 @@ use MongoDB\BSON\ObjectID;
 use Auth;
 use Yajra\Datatables\Datatables;
 use Yajra\DataTables\EloquentDataTable;
+use App\Models\v2\Prize;
 
 class EventController extends Controller
 {
@@ -181,7 +182,11 @@ class EventController extends Controller
             'rejection_ratio'  => 'required|integer',
             'winning_ratio'    => 'required|integer',
             'fees'             => 'required|numeric',
-            'coin_number.*.*'  => 'integer',
+            'coin_number'      => 'required_if:coin_type,physical',
+            'discount_date'    => 'required',
+            'discount_fees'    => 'required|numeric|min:0|max:100',
+            'description'      => 'required',
+            'attempts'         => 'required|integer',
 
         ]);
 
@@ -192,15 +197,18 @@ class EventController extends Controller
             return response()->json(['status' => false,'message' => $message]);
         }
         
-        $data = $request->all();
-        $eventId = $data['event_id']; 
-        $data['fees'] = (int)$data['fees']; 
+        $data                    = $request->all();
+        $eventId                 = $data['event_id']; 
+        $data['fees']            = (int)$data['fees']; 
         $data['rejection_ratio'] = (int)$data['rejection_ratio']; 
-        $data['winning_ratio'] = (int)$data['winning_ratio']; 
-        $data['starts_at'] =  Carbon::parse($data['event_start_date'])->format('Y-m-d H:i:s');
-        $data['ends_at'] =  Carbon::parse($data['event_end_date'])->format('Y-m-d H:i:s');
-        $data['coin_number'] =  (int)$data['coin_number'];
-        
+        $data['winning_ratio']   = (int)$data['winning_ratio']; 
+        $data['starts_at']       = Carbon::parse($data['event_start_date'])->format('Y-m-d H:i:s');
+        $data['ends_at']         = Carbon::parse($data['event_end_date'])->format('Y-m-d H:i:s');
+        $data['coin_number']     = (int)$data['coin_number'];
+        $data['discount']        = (float)$data['discount_fees'];
+        $data['discount_till']   = Carbon::parse($data['discount_date'])->format('Y-m-d H:i:s');
+        $data['attempts']        = (int)$data['attempts'];
+            
         $event = Event::updateOrCreate(
                                         ['_id'=>$eventId],
                                         $data
@@ -270,18 +278,17 @@ class EventController extends Controller
                         $gameId = $gameData[$k];
                         if (($gameId == '5b0e306951b2010ec820fb4f' || $gameId == '5b0e304b51b2010ec820fb4e') && isset($variationImage)) {
 
-                            $variationImageIndex = last(array_keys($variationImage));
-
-                            $image = $variationImage[$i][$variationImageIndex];
-
-                            $imageSize = getimagesize($image);
-
-                            if(isset($variationImage) && isset($variationImage[$i][$variationImageIndex])){
-                                if ($gameId == '5b0e306951b2010ec820fb4f' && $imageSize[0] != '1024' && $imageSize[1] != '1024') {
-                                    return response()->json(['status' => false,'message' => 'The variation image size is invalid.']);
+                            $variationImageIndex = last(array_keys($variationImage[$i]));
+                            
+                            if(isset($variationImage[$i][$k])){
+                                $image = $variationImage[$i][$k];
+                                $imageSize = getimagesize($image);
+                                
+                                if ($gameId == '5b0e306951b2010ec820fb4f' && $imageSize[0] != 1024 && $imageSize[1] != 1024) {
+                                    return response()->json(['status' => false,'message' => 'The variation image size is invalid1.']);
                                 }
 
-                                if ($gameId == '5b0e304b51b2010ec820fb4e' && $imageSize[0] != '2000' && $imageSize[1] != '1440') {
+                                if ($gameId == '5b0e304b51b2010ec820fb4e' && $imageSize[0] != 2000 && $imageSize[1] != 1440) {
                                     return response()->json(['status' => false,'message' => 'The variation image size is invalid.']);
                                 }
 
@@ -290,11 +297,16 @@ class EventController extends Controller
                                 $imageUniqueName = uniqid(uniqid(true).'_').'.'.$extension;
                                 $img->save(storage_path('app/public/events/'.$imageUniqueName));
                                 $variation_data['variation_image'] = $imageUniqueName;
+                            } else {
+                                if(isset($data['hide_image']) && isset($data['hide_image'][$i][$k])){
+                                    $variation_data['variation_image'] = $data['hide_image'][$i][$k];
+                                }    
                             }
+                             
                         } else {
-                            if(isset($data['hide_image']) && isset($data['hide_image'][$i][$k])){
+                            /*if(isset($data['hide_image']) && isset($data['hide_image'][$i][$k])){
                                 $variation_data['variation_image'] = $data['hide_image'][$i][$k];
-                            }
+                            }*/
                         }
 
                         if (isset($data['row']) && isset($data['row'][$i][$k])) {
@@ -358,6 +370,7 @@ class EventController extends Controller
             }
 
         }
+        
         $data['mini_games'] = $main_game;
         $eventId = $request->get('event_id');
 
@@ -388,7 +401,6 @@ class EventController extends Controller
             'search_place_name' => 'required|exists:hunts,_id',
         ]);
 
-
         if ($validator->fails())
         {
             $message = $validator->messages()->first();
@@ -400,6 +412,8 @@ class EventController extends Controller
         $event->map_reveal_date = Carbon::parse($request->get('map_reveal_date'))->format('Y-m-d H:i:s'); 
         $event->hunt_id = $request->get('search_place_name');
         $event->save();
+
+        
 
         return response()->json([
             'status'  => true,
@@ -687,6 +701,24 @@ class EventController extends Controller
         ->setFilteredRecords($count)
         ->skipPaging()
         ->make(true);
+    }
+
+
+
+    //GET HUNT DETAILS
+    public function getHuntList(Request $request){
+        $eventId = $request->get('id');
+        $event = Event::where('_id',$eventId)->with('city:_id,name')->first();
+        
+        $hunts = Hunt::select('name','place_name','city')
+                        ->where('city',$event->city->name)
+                        ->get();
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Get data successfully',
+            'data' => $hunts,
+        ]);
     }
 
 }

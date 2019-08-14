@@ -22,7 +22,7 @@
             </div>
         </div>
     </div>
-    <br/><br/>
+   
     <div class="customdatatable_box">
         <form method="POST" id="addEventForm" enctype="multipart/form-data">
             @csrf
@@ -34,76 +34,107 @@
             <div class="allbasicdirmain">                
                 <div class="allbasicdirbox">                
                    
-                    <div class="form-group col-md-4">
-                        <label class="form-label">Name</label>
-                        <input type="text" name="name" class="form-control" id="name" placeholder="Enter the name" value="@if(isset($event->name)){{$event->name}}@endif">
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label class="form-label">Type <small>(Single / Multi day(s))</small></label>
-                        <select name="type" class="form-control">
-                            <option>Select type</option>
-                            <option value="single" @if(isset($event->type) && $event->type=='single') {{ 'selected' }} @endif>Single</option>
-                            <option value="multi" @if(isset($event->type) && $event->type=='multi') {{ 'selected' }} @endif>Multi</option>
-                        </select>
-                    </div>
-                    <input type="hidden" name="event_id" value="@if(isset($event->id)){{ $event->id }} @endif">
-                    <div class="form-group col-md-4">
-                        <label class="form-label">Coin Type</label>
-                        <select name="coin_type" class="form-control">
-                            <option>Select coin type</option>
-                            <option value="ar" @if(isset($event->coin_type) && $event->coin_type=='ar') {{ 'selected' }} @endif>AR</option>
-                            <option value="physical" @if(isset($event->coin_type) && $event->coin_type=='physical') {{ 'selected' }} @endif>PHYSICAL</option>
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label class="form-label">City</label>
-                        <select name="city_id" id="city_id" class="form-control">
-                            <option>Select city</option>
-                            @forelse($cities as $key=>$city)
-                            <option value="{{ $city->_id }}" @if(isset($event->city_id) && $event->city_id==$city->_id) {{ 'selected' }} @endif>{{ $city->name }}</option>
-                            @empty
-                            <option>Record Not found</option>
-                            @endforelse
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label class="form-label">Start Date</label>
-                        <input type="text" name="event_start_date" class="form-control" placeholder="Enter the start date" value="@if(isset($event->starts_at)){{ $event->starts_at->format('d-m-Y h:i A') }} @endif"  data-date-format="DD-MM-YYYY hh:mm A" id="startdate" autocomplete="off">
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label class="form-label">End Date</label>
-                        <input type="text" name="event_end_date" class="form-control" placeholder="Enter the date" value="@if(isset($event->ends_at)){{ $event->ends_at->format('d-m-Y h:i A') }}@endif"  data-date-format="DD-MM-YYYY hh:mm A" id="enddate" autocomplete="off">
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label class="form-label">Rejection Ratio<small> In percentage (enter 0 if no rejection ratio)</small></label>
-                        <input type="text" name="rejection_ratio" class="form-control" placeholder="Enter the rejection ratio" value="@if(isset($event->rejection_ratio)){{ $event->rejection_ratio }} @endif">
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label class="form-label">Winning Ratio<small> In fix amount (enter 0 if no winning ratio)</small></label>
-                        <input type="text" name="winning_ratio" class="form-control" id="winning_ratio" placeholder="Enter the winning ratio" value="@if(isset($event->winning_ratio)){{ $event->winning_ratio }}@endif">
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label class="form-label">Fees & Gold</label>
-                        <input type="text" name="fees" class="form-control" placeholder="Enter the fees" value="@if(isset($event->fees)){{ $event->fees }}@endif">
-                    </div>
-                    @if(isset($event->coin_type))
-                        <div class="form-group col-md-4 coin_number_box @if(isset($event->coin_type) && $event->coin_type == 'ar'){{ 'hidden' }}@endif">
-                            <label class="form-label">Coin Number</label>
-                            <input type="text" name="coin_number" class="form-control" placeholder="Enter the coin number" value="@if(isset($event->coin_number)){{ $event->coin_number }}@endif">
+                    <div class="fdaboxallset">
+                        <div class="form-group col-md-4">
+                            <label class="form-label">Name</label>
+                            <input type="text" name="name" class="form-control" id="name" placeholder="Enter the name" value="@if(isset($event->name)){{$event->name}}@endif">
                         </div>
-                    @else
-                        <div class="form-group col-md-4 coin_number_box hidden">
-                            <label class="form-label">Coin Number</label>
-                            <input type="text" name="coin_number" class="form-control" placeholder="Enter the coin number" value="@if(isset($event->coin_number)){{ $event->coin_number }}@endif">
+                        <div class="form-group col-md-4">
+                            <label class="form-label">Type <small>(Single / Multi day(s))</small></label>
+                            <select name="type" class="form-control">
+                                <option>Select type</option>
+                                <option value="single" @if(isset($event->type) && $event->type=='single') {{ 'selected' }} @endif>Single</option>
+                                <option value="multi" @if(isset($event->type) && $event->type=='multi') {{ 'selected' }} @endif>Multi</option>
+                            </select>
                         </div>
-                    @endif
+                        <input type="hidden" name="event_id" value="@if(isset($event->id)){{ $event->id }} @endif">
+                        <div class="form-group col-md-4">
+                            <label class="form-label">Coin Type</label>
+                            <select name="coin_type" class="form-control">
+                                <option>Select coin type</option>
+                                <option value="ar" @if(isset($event->coin_type) && $event->coin_type=='ar') {{ 'selected' }} @endif>AR</option>
+                                <option value="physical" @if(isset($event->coin_type) && $event->coin_type=='physical') {{ 'selected' }} @endif>PHYSICAL</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="fdaboxallset">
+                        <div class="form-group col-md-4">
+                            <label class="form-label">City</label>
+                            <select name="city_id" id="city_id" class="form-control">
+                                <option>Select city</option>
+                                @forelse($cities as $key=>$city)
+                                <option value="{{ $city->_id }}" @if(isset($event->city_id) && $event->city_id==$city->_id) {{ 'selected' }} @endif>{{ $city->name }}</option>
+                                @empty
+                                <option>Record Not found</option>
+                                @endforelse
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label class="form-label">Start Date</label>
+                            <input type="text" name="event_start_date" class="form-control" placeholder="Enter the start date" value="@if(isset($event->starts_at)){{ $event->starts_at->format('d-m-Y h:i A') }} @endif"  data-date-format="DD-MM-YYYY hh:mm A" id="startdate" autocomplete="off">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label class="form-label">End Date</label>
+                            <input type="text" name="event_end_date" class="form-control" placeholder="Enter the date" value="@if(isset($event->ends_at)){{ $event->ends_at->format('d-m-Y h:i A') }}@endif"  data-date-format="DD-MM-YYYY hh:mm A" id="enddate" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="fdaboxallset">
+                        <div class="form-group col-md-4">
+                            <label class="form-label">Rejection Ratio<small> In percentage (enter 0 if no rejection ratio)</small></label>
+                            <input type="text" name="rejection_ratio" class="form-control" placeholder="Enter the rejection ratio" value="@if(isset($event->rejection_ratio)){{ $event->rejection_ratio }} @endif">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label class="form-label">Winning Ratio<small> In fix amount (enter 0 if no winning ratio)</small></label>
+                            <input type="text" name="winning_ratio" class="form-control" id="winning_ratio" placeholder="Enter the winning ratio" value="@if(isset($event->winning_ratio)){{ $event->winning_ratio }}@endif">
+                        </div>
+                    </div>
+
+                    <div class="fdaboxallset">
+                        <div class="form-group col-md-4">
+                            <label class="form-label">Fees & Gold</label>
+                            <input type="text" name="fees" class="form-control" placeholder="Enter the fees" value="@if(isset($event->fees)){{ $event->fees }}@endif">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label class="form-label">Discount date</label>
+                            <input type="text" name="discount_date" class="form-control" id="discount_date" placeholder="Enter the discount date" value="@if(isset($event->discount_till)){{ $event->discount_till->format('d-m-Y') }}@endif" autocomplete="off">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label class="form-label">Discount Fees (%)</label>
+                            <input type="text" name="discount_fees" class="form-control" placeholder="Enter the discount fees" value="@if(isset($event->discount)){{ $event->discount }}@endif">
+                        </div>
+                    </div>
+
+
+                    <div class="fdaboxallset">
+                        <div class="form-group col-md-4">
+                            <label class="form-label">Attempts</label>
+                            <input type="text" name="attempts" class="form-control" placeholder="Enter the attempts" value="@if(isset($event->attempts)){{ $event->attempts }}@endif">
+                        </div>
+                        @if(isset($event->coin_type))
+                            <div class="form-group col-md-4 coin_number_box @if(isset($event->coin_type) && $event->coin_type == 'ar'){{ 'hidden' }}@endif">
+                                <label class="form-label">Coin Number</label>
+                                <input type="text" name="coin_number" class="form-control" placeholder="Enter the coin number" value="@if(isset($event->coin_number)){{ $event->coin_number }}@endif">
+                            </div>
+                        @else
+                            <div class="form-group col-md-4 coin_number_box hidden">
+                                <label class="form-label">Coin Number</label>
+                                <input type="text" name="coin_number" class="form-control" placeholder="Enter the coin number" value="@if(isset($event->coin_number)){{ $event->coin_number }}@endif">
+                            </div>
+                        @endif
+                        <div class="form-group col-md-4">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" placeholder="Enter the description">@if(isset($event->description)){{ $event->description }}@endif</textarea>
+                        </div>
+                    </div>
+                </div>
+                 <div class="form-group Submitnextbtn">
+                    <button type="submit" class="btn btn-success btnSubmit">SUBMIT & GO NEXT</button>
                 </div>
             </div>
             <!-- END BASIC DETAILS -->
 
-            <div class="form-group col-md-12">
-                <button type="submit" class="btn btn-success btnSubmit">SUBMIT & GO NEXT</button>
-            </div>
+           
     </form>
     </div>
 </div>
@@ -119,6 +150,9 @@
         $(function () {
             $('#city_id').select2();
 
+            $('#discount_date').datepicker({
+                startDate: new Date()
+            });
             
             $('#startdate').datetimepicker({
                 useCurrent: false,
@@ -135,15 +169,14 @@
 
             $('#startdate').datetimepicker().on('dp.change', function (e) {
                 var incrementDay = moment(new Date(e.date));
+                if ($('select[name="type"]').val() == 'single') {
+                    incrementDay.add(0, 'days');
+                     $('#enddate').data('DateTimePicker').setMinDate(incrementDay);
+                } else {
+                    incrementDay.add(1, 'days');
+                    $('#enddate').data('DateTimePicker').setMinDate(incrementDay);
+                }
                 $(this).data("DateTimePicker").hide();
-                // if ($('select[name="type"]').val() == 'single') {
-                //     var incrementDay1 = moment(new Date(e.date));
-                //     //$('#enddate').val(incrementDay.add(0, 'days').format('DD-MM-YYYY hh:mm A'));
-                //     incrementDay1.add(1, 'days');
-                //     $('#enddate').data('DateTimePicker').setMinDate(incrementDay1);
-                // }
-                incrementDay.add(0, 'days');
-                $('#enddate').data('DateTimePicker').setMinDate(incrementDay);
             });
 
             $('#enddate').datetimepicker().on('dp.change', function (e) {
@@ -153,13 +186,7 @@
                 $(this).data("DateTimePicker").hide();
             });
 
-            $(document).on('change','select[name="type"]', function (e) {
-                if($(this).val() == 'single'){
-                    $('#enddate').attr('readonly',true);
-                } else {
-                    $('#enddate').attr('readonly',false);
-                }
-            });
+            
             $(document).on('change','select[name="coin_type"]', function () {
                     $('.coin_number_box').addClass('hidden');
                 if($(this).val() == 'physical'){
