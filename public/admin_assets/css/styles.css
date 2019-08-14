@@ -1800,7 +1800,7 @@ table i.iconsetaddbox{
     font-size: 18px;
 }
 
-.remove_mini_game , .add_mini_game , .add_game , .remove_game{
+.remove_mini_game , .remove_mini_game1 , .add_mini_game , .add_game , .remove_game ,.remove_game1{
     background: #C0B08C;
     border: 0px;
     font-size: 14px;
@@ -1809,7 +1809,7 @@ table i.iconsetaddbox{
     margin-top: 6px;
     padding: 6px 10px 6px;
 }
-.remove_mini_game:hover , .add_mini_game:hover , .add_game:hover , .remove_game:hover{
+.remove_mini_game:hover , .remove_mini_game1:hover , .add_mini_game:hover , .add_game:hover , .remove_game:hover, .remove_game1:hover{
     color: #FFFFFF;
 }
 

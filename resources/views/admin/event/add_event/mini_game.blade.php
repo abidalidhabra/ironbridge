@@ -47,10 +47,26 @@
                                 <label class="form-label">End Date</label>
                                 <input type="text" name="end_date[{{ $key }}]" class="form-control datetimepicker" placeholder="Enter the end date" id="enddate0" value="{{ $day['to']->toDateTime()->format('d-m-Y h:i A') }}" autocomplete="off">
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-4 day_section">
                                 <br>
                                 <!-- <a href="javascript:void(0)" class="btn btn-info add_game">Add Mini Game</a> -->
-                                <a href="javascript:void(0)" class="btn add_mini_game">Add Days</a>
+                                @if($event->type == 'multi')
+                                    <!-- <a href="javascript:void(0)" class="btn add_mini_game">Add Days</a> -->
+                                    <?php
+                                        $eventCount = count($event->mini_games)-1;
+                                    ?>
+                                    @if($eventCount == $key)
+                                        @if($eventCount == 1)
+                                            <a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>
+                                        @endif
+                                        <a href="javascript:void(0)" class="btn add_mini_game">Add Days</a>
+                                    @else
+                                        <a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>
+                                    @endif
+                                @endif
+
+
+
                             </div>
                             <input type="hidden" name="last_mini_game_index" value="{{ $key }}">
                             
@@ -183,7 +199,7 @@
                                                     <input type="text" value="{{ $miniGame['variation_data']['column'] }}" name="column[{{$key}}][{{$index}}]" id="column" class="form-control">
                                                 </div>
                                                 <div class="form-group col-md-4">
-                                                    <label class="form-label">Target <small class="form-text text-muted">must of [1024,2048,4096]</small></label>
+                                                    <label class="form-label">Target <small class="form-text text-muted">must of [512,1024,2048,4096]</small></label>
                                                     <input type="text" value="{{ $miniGame['variation_data']['target'] }}" name="target[{{$key}}][{{$index}}]" id="target" class="form-control">
                                                 </div>
                                             <?php } else if($miniGameId == '5c188b06719a1408746c473c'){ ?>
@@ -227,12 +243,13 @@
                                         
                                         </div>
                                         
-                                        <div class="col-md-4 button_section">
+                                        <div class="col-md-8 button_section">
                                             <br>
                                             <?php
                                                 $miniGameCount = count($day['games'])-1;
                                             ?>
                                             @if($miniGameCount == $index)
+                                                <a href="javascript:void(0)" class="btn remove_game remove_game1">Remove Mini Game</a>
                                                 <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>
                                             @else
                                                 <a href="javascript:void(0)" class="btn remove_game">Remove Mini Game</a>
@@ -358,27 +375,39 @@
         //$('.datetimepicker').datetimepicker();
         var startdate = '{{ $event->starts_at }}';
         var enddate = '{{ $event->ends_at }}';
-        
+        // var enddate = '{{ $event->ends_at }}';
+        @if($event->type == 'single')
+
+            var startdate = moment('{{ $event->starts_at }}').subtract(1, "days");;
+            var enddate = moment('{{ $event->ends_at }}').subtract(-1, "days");;
+        @endif
+         
         
         $('#startdate0').datetimepicker({
             useCurrent: false,
             format: "DD-MM-YYYY hh:mm A",
-            defaultDate: moment(startdate),
+            // defaultDate: moment(startdate),
             minDate: moment(startdate),
             maxDate: moment(enddate),
         });
         $('#enddate0').datetimepicker({
             useCurrent: false,
             format: "DD-MM-YYYY hh:mm A",
-            defaultDate: moment(startdate),
+            // defaultDate: moment(startdate),
             minDate: moment(startdate),
             maxDate: moment(enddate),
         });
 
         $('#startdate0').datetimepicker().on('dp.change', function (e) {
             var incrementDay = moment(new Date(e.date));
-            incrementDay.add(1, 'days');
-            $('#enddate0').data('DateTimePicker').setMinDate(incrementDay);
+            @if($event->type == 'single')
+                incrementDay.add(0, 'days');
+                $('#enddate0').data('DateTimePicker').setMinDate(incrementDay);
+            @else
+                console.log('hello1');
+                incrementDay.add(1, 'days');
+                $('#enddate0').data('DateTimePicker').setMinDate(incrementDay);
+            @endif
             $(this).data("DateTimePicker").hide();
         });
 
@@ -386,7 +415,7 @@
             var decrementDay = moment(new Date(e.date));
             decrementDay.subtract(1, 'days');
             $('#startdate0').data('DateTimePicker').setMaxDate(decrementDay);
-             $(this).data("DateTimePicker").hide();
+            $(this).data("DateTimePicker").hide();
         });
 
         $(document).ready(function() {
@@ -397,7 +426,7 @@
 
                 let lastIndex = gameIndexMaintainer.val();
                 let gameIndex = parseInt(lastIndex)+1;
-                console.log(lastIndex);
+                $('.remove_game1').remove();
                 //gameIndexMaintainer.val(gameIndex);
 
                 let currentIndex = miniGameIndexMaintainer.val();
@@ -420,8 +449,9 @@
                             <input type="hidden" name="last_elem_index" value="`+gameIndex+`">
                             <div class="variation_box"></div>
                             
-                            <div class="col-md-4 button_section">
+                            <div class="col-md-8 button_section">
                                 <br>
+                                <a href="javascript:void(0)" class="btn remove_game1">Remove Mini Game</a>
                                 <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>
                               </div>
                         </div>`;
@@ -448,9 +478,10 @@
                                             <label class="form-label">End Date</label>
                                             <input type="text" name="end_date[`+currentIndex+`]" class="form-control datetimepicker" placeholder="Enter the end date" id="enddate`+currentIndex+`" autocomplete="off">
                                         </div>
-                                        <div class="form-group col-md-4">
+                                        <div class="form-group col-md-4 day_section">
                                             <br>
                                             <!-- <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a> -->
+                                            <a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>
                                             <a href="javascript:void(0)" class="btn add_mini_game">Add Days</a>
                                         </div>
                                         <input type="hidden" name="last_mini_game_index" value="`+currentIndex+`">
@@ -474,8 +505,9 @@
                                                 <input type="hidden" name="last_elem_index" value="0">
                                                 <div class="variation_box"></div>
                                                 
-                                                <div class="col-md-4 button_section">
+                                                <div class="col-md-8 button_section">
                                                     <br>
+                                                    <a href="javascript:void(0)" class="btn remove_game1">Remove Mini Game</a>
                                                     <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>
                                                     <!-- <a href="javascript:void(0)" class="btn add_mini_game">Add Days</a> -->
                                                 </div>
@@ -484,8 +516,9 @@
                                     </div>`;
 
                 $(this).parents('.mini_game').after(defaultMGHtml);
-                $(this).parents('.col-md-4').append('<a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>');
+                $(this).parents('.col-md-4').html('<br/><a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>');
                 $(this).parents('.col-md-4').find('.add_mini_game').remove();
+
                 
                 //$('.datetimepicker').datetimepicker();
 
@@ -522,13 +555,24 @@
             });
 
             /* REMOVE Mini GAME */
-            $(document).on('click','.remove_game',function(){
+            $(document).on('click','.remove_game , .remove_game1',function(){
                 $(this).parents('.game_box').remove();
+                $('.game_box:last').find('.add_game').remove();
+                $('.game_box:last').find('.button_section').append(' <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>');
             });
 
             /* REMOVE Day */
             $(document).on('click','.remove_mini_game',function(){
                 $(this).parents('.mini_game').remove();
+                if($('.mini_game').length == 1){
+                    $('.remove_mini_game:last , .add_mini_game:last').remove();
+                }
+                $('.mini_game:last').find('.day_section').append(' <a href="javascript:void(0)" class="btn add_mini_game">Add Days</a>');
+
+                for (var i = 0; i < $('.mini_game').length; i++) {
+                    $('.mini_game::nth-child('+(i+1)+')').find('h5').text('Day '+(i+1));
+                }
+
             });
 
             /* IMAGE APPEND IN JIGSAW AND SLIDING PUZZLE */

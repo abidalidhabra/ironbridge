@@ -18,7 +18,7 @@
                 <h3>Add Event</h3>
             </div>
             <div class="col-md-6 text-right modalbuttonadd">
-                <a href="{{ route('admin.event.index') }}" class="btn btn-info btn-md">Back</a>
+                <a href="{{ route('admin.event.basicDetails',$id) }}" class="btn btn-info btn-md">Back</a>                
             </div>
         </div>
     </div>
@@ -51,7 +51,7 @@
                         <!-- <input type="text" name="search_place_name" id="search_place_name" class="form-control" placeholder="Enter the Search Place Name" autocomplete="off"> -->
                     </div>
                     <div class="form-group col-md-2">
-                        <a href="{{ route('admin.add_location') }}" class="btn btn-info btn-md">Add Hunts</a>
+                        <a href="{{ route('admin.add_location') }}" target=”_blank” class="btn btn-info btn-md" >Add Hunts</a>
                     </div>
                 </div>
             </div>
