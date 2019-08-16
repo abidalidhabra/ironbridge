@@ -84,37 +84,76 @@
                         </div>
                     </div>
                     <div id="prize_box">
-                        <div class="row">
-                            <div class="form-group col-md-3">
-                                <select class="form-control" name="group_type[]">
-                                    <option value="individual">Individual</option>
-                                    <option value="group">Group</option>
-                                </select>
+                        @forelse($event->prizes as $key => $value)
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <select class="form-control group_type" name="group_type[{{ $key }}]">
+                                        <option value="individual" @if(isset($value->group_type) && $value->group_type == "individual") {{ 'selected' }} @endif>Individual</option>
+                                        <option value="group" @if(isset($value->group_type) && $value->group_type == "group") {{ 'selected' }} @endif>Group</option>
+                                    </select>
+                                </div>
+                                <input type="hidden" name="prize_index" value="{{ $key }}">
+                                <div class="form-group col-md-3 rank_box">
+                                    @if(isset($value->group_type) && $value->group_type == "individual")
+                                        <input type="text" name="rank[{{ $key }}]" class="form-control" placeholder="Rank" value="{{ $value->rank }}">
+                                    @else
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <input type="text" name="start_rank[{{ $key }}]" class="form-control col-md-12" placeholder="Start" value="{{ $value->start_rank }}">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="text" name="end_rank[{{ $key }}]" class="form-control col-md-12" placeholder="End" value="{{ $value->end_rank }}">
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="text" name="prize[{{ $key }}]" class="form-control" placeholder="Prize" value="{{ $value->prize_value }}">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <select class="form-control" name="prize_type[{{ $key }}]">
+                                        <option value="cash" @if(isset($value->prize_type) && $value->prize_type == "cash") {{ 'selected' }} @endif>Cash</option>
+                                        <option value="gold" @if(isset($value->prize_type) && $value->prize_type == "gold") {{ 'selected' }} @endif>Gold</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-2 button_box">
+                                    <?php
+                                        $totalPrize = count($event->prizes)-1;
+                                    ?>
+                                    @if($totalPrize == $key)
+                                        <a href="javascript:void(0)" class="btn add_prize"><i class="fa fa-plus "></i></a>
+                                        <a href="javascript:void(0)" class="btn remove_prize"><i class="fa fa-minus "></i></a>
+                                    @else
+                                        <a href="javascript:void(0)" class="btn remove_prize"><i class="fa fa-minus "></i></a>
+                                    @endif
+                                </div>
                             </div>
-                            <div class="form-group col-md-3 individual">
-                                <input type="text" name="rank[]" class="form-control" placeholder="Rank">
-                                <!-- <div class="row">
-                                    <div class="col-md-6">
-                                        <input type="text" name="start_rank" class="form-control col-md-12" placeholder="Start">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <input type="text" name="end_rank" class="form-control col-md-12" placeholder="End">
-                                    </div>
-                                </div> -->
+                        @empty
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <select class="form-control group_type" name="group_type[]">
+                                        <option value="individual">Individual</option>
+                                        <option value="group">Group</option>
+                                    </select>
+                                </div>
+                                <input type="hidden" name="prize_index" value="0">
+                                <div class="form-group col-md-3 rank_box">
+                                    <input type="text" name="rank[]" class="form-control" placeholder="Rank">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="text" name="prize[]" class="form-control" placeholder="Prize">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <select class="form-control" name="prize_type[]">
+                                        <option value="cash">Cash</option>
+                                        <option value="gold">Gold</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-2 button_box">
+                                    <a href="javascript:void(0)" class="btn add_prize"><i class="fa fa-plus "></i></a>
+                                </div>
                             </div>
-                            <div class="form-group col-md-2">
-                                <input type="text" name="prize[]" class="form-control" placeholder="Prize">
-                            </div>
-                            <div class="form-group col-md-2">
-                                <select class="form-control" name="prize_type[]">
-                                    <option value="cash">Cash</option>
-                                    <option value="gold">Gold</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-md-2 button_box">
-                                <a href="javascript:void(0)" class="btn add_prize"><i class="fa fa-plus "></i></a>
-                            </div>
-                        </div>
+                        @endforelse
                     </div>
                 </div>
                 <div class="form-group Submitnextbtn">
@@ -221,21 +260,25 @@
                 $(this).parents('.button_box').find('.remove_prize').remove();
                 $(this).parents('.button_box').append('<a href="javascript:void(0)" class="btn remove_prize"><i class="fa fa-minus "></i></a>');
                 $(this).remove();
+                let prizeIndex = $('input[name="prize_index"]:last').val();
+                let currentIndex = parseInt(prizeIndex)+1;
+
                 $('#prize_box').append(`<div class="row">
                             <div class="form-group col-md-3">
-                                <select class="form-control" name="group_type[]">
+                                <select class="form-control group_type" name="group_type[`+currentIndex+`]">
                                     <option value="individual">Individual</option>
                                     <option value="group">Group</option>
                                 </select>
                             </div>
+                            <input type="hidden" name="prize_index" value="`+currentIndex+`">
                             <div class="form-group col-md-3 rank_box">
-                                <input type="text" name="rank[]" class="form-control" placeholder="Rank">
+                                <input type="text" name="rank[`+currentIndex+`]" class="form-control" placeholder="Rank">
                             </div>
                             <div class="form-group col-md-2">
-                                <input type="text" name="prize[]" class="form-control" placeholder="Prize">
+                                <input type="text" name="prize[`+currentIndex+`]" class="form-control" placeholder="Prize">
                             </div>
                             <div class="form-group col-md-2">
-                                <select class="form-control" name="prize_type[]">
+                                <select class="form-control" name="prize_type[`+currentIndex+`]">
                                     <option value="cash">Cash</option>
                                     <option value="gold">Gold</option>
                                 </select>
@@ -250,26 +293,28 @@
 
             $(document).on('click','.remove_prize',function(){
                 $(this).parents('.row').remove();
-                $('#prize_box .row:last').find('.button_box').prepend(`<a href="javascript:void(0)" class="btn add_prize"><i class="fa fa-plus "></i></a>`);
+                    $('.add_prize').remove();
+                    $('#prize_box .row:last').find('.button_box').prepend(`<a href="javascript:void(0)" class="btn add_prize"><i class="fa fa-plus "></i></a>`);
                     if($('#prize_box .row').length == 1){
                         $('.remove_prize').remove();
                     }
             });
 
-            $(document).on('change','select[name="group_type[]"]',function(){
+            $(document).on('change','.group_type',function(){
                 var group_type = $(this).val();
+                let prizeIndex = $(this).parents('.row').find('input[name="prize_index"]').val();
                 if (group_type == 'group') {
                     $(this).parents('.row').find('.rank_box').html(`<div class="row">
                                                                     <div class="col-md-6">
-                                                                        <input type="text" name="start_rank[]" class="form-control col-md-12" placeholder="Start">
+                                                                        <input type="text" name="start_rank[`+prizeIndex+`]" class="form-control col-md-12" placeholder="Start">
                                                                     </div>
                                                                     <div class="col-md-6">
-                                                                        <input type="text" name="end_rank[]" class="form-control col-md-12" placeholder="End">
+                                                                        <input type="text" name="end_rank[`+prizeIndex+`]" class="form-control col-md-12" placeholder="End">
                                                                     </div>
                                                                 </div>`);
                 } else if(group_type == 'individual'){
 
-                    $(this).parents('.row').find('.rank_box').html(`<input type="text" name="rank[]" class="form-control" placeholder="Rank">`);
+                    $(this).parents('.row').find('.rank_box').html(`<input type="text" name="rank[`+prizeIndex+`]" class="form-control" placeholder="Rank">`);
                 }
             });
 
