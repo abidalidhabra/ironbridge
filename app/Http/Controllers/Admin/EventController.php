@@ -698,17 +698,22 @@ class EventController extends Controller
         $data['mini_games'] = $main_game;
         
 
-        $evert = Event::where('_id',$eventId)
+        $event = Event::where('_id',$eventId)
                         ->with('prizes')
                         ->first();
-        $evert->mini_games = $data['mini_games'];
+
+        $event->mini_games = $data['mini_games'];
+
         /* END MINI GAMES */
 
         /* HUNT AND PRIZE*/
         
         $event->map_reveal_date = Carbon::parse($request->get('map_reveal_date'))->format('Y-m-d H:i:s'); 
         $event->hunt_id = $request->get('search_place_name');
+
         $event->save();
+        
+        // print_r($event->toArray());
 
         /* PRIZE */
         $groupType = $request->get('group_type');

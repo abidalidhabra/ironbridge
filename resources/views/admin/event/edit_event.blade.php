@@ -72,11 +72,11 @@
                         </div>
                         <div class="form-group col-md-4">
                             <label class="form-label">Start Date</label>
-                            <input type="text" name="event_start_date" class="form-control" placeholder="Enter the start date" value="@if(isset($event->starts_at)){{ $event->starts_at->format('d-m-Y h:i A') }} @endif"  data-date-format="DD-MM-YYYY hh:mm A" id="startdate" autocomplete="off">
+                            <input type="text" name="event_start_date" class="form-control" placeholder="Enter the start date" value="@if(isset($event->starts_at)){{ $event->starts_at->format('d-m-Y h:i A') }} @endif"  data-date-format="DD-MM-YYYY hh:mm A" id="startdate_basic" autocomplete="off">
                         </div>
                         <div class="form-group col-md-4">
                             <label class="form-label">End Date</label>
-                            <input type="text" name="event_end_date" class="form-control" placeholder="Enter the date" value="@if(isset($event->ends_at)){{ $event->ends_at->format('d-m-Y h:i A') }}@endif"  data-date-format="DD-MM-YYYY hh:mm A" id="enddate" autocomplete="off">
+                            <input type="text" name="event_end_date" class="form-control" placeholder="Enter the date" value="@if(isset($event->ends_at)){{ $event->ends_at->format('d-m-Y h:i A') }}@endif"  data-date-format="DD-MM-YYYY hh:mm A" id="enddate_basic" autocomplete="off">
                         </div>
                     </div>
 
@@ -659,42 +659,7 @@
         })        
         
 
-         $(function () {
-            $('#city_id').select2();
-
-            
-            $('#startdate , #enddate').datetimepicker({
-                useCurrent: false,
-                format: "DD-MM-YYYY hh:mm A",
-                minDate: moment()
-            });
-
-            $('#startdate').datetimepicker().on('dp.change', function (e) {
-                var incrementDay = moment(new Date(e.date));
-                incrementDay.add(1, 'days');
-                // $('#enddate').data('DateTimePicker').setMinDate(incrementDay);
-                $(this).data("DateTimePicker").hide();
-                if ($('select[name="type"]').val() == 'single') {
-                    $('#enddate').val(incrementDay.add(0, 'days').format('DD-MM-YYYY hh:mm A'));
-                }
-            });
-
-            $('#enddate').datetimepicker().on('dp.change', function (e) {
-                var decrementDay = moment(new Date(e.date));
-                decrementDay.subtract(1, 'days');
-                $('#startdate').data('DateTimePicker').setMaxDate(decrementDay);
-                $(this).data("DateTimePicker").hide();
-            });
-
-            $(document).on('change','select[name="type"]', function (e) {
-                if($(this).val() == 'single'){
-                    $('#enddate').attr('readonly',true);
-                } else {
-                    $('#enddate').attr('readonly',false);
-                }
-            });
-
-        });
+        
     </script>
      <script type="text/javascript">
         $(function () {
@@ -755,38 +720,26 @@
         var startdate = '{{ $event->starts_at }}';
         var enddate = '{{ $event->ends_at }}';
         // var enddate = '{{ $event->ends_at }}';
-        @if($event->type == 'single')
-
-            var startdate = moment('{{ $event->starts_at }}').subtract(1, "days");;
-            var enddate = moment('{{ $event->ends_at }}').subtract(-1, "days");;
-        @endif
+        
          
         
         $('#startdate0').datetimepicker({
             useCurrent: false,
             format: "DD-MM-YYYY hh:mm A",
-            defaultDate: moment(startdate),
             minDate: moment(startdate),
             maxDate: moment(enddate),
         });
         $('#enddate0').datetimepicker({
             useCurrent: false,
             format: "DD-MM-YYYY hh:mm A",
-            defaultDate: moment(enddate),
             minDate: moment(startdate),
             maxDate: moment(enddate),
         });
 
         $('#startdate0').datetimepicker().on('dp.change', function (e) {
             var incrementDay = moment(new Date(e.date));
-            @if($event->type == 'single')
-                incrementDay.add(0, 'days');
-                $('#enddate0').data('DateTimePicker').setMinDate(incrementDay);
-            @else
-                console.log('hello1');
-                incrementDay.add(1, 'days');
-                $('#enddate0').data('DateTimePicker').setMinDate(incrementDay);
-            @endif
+            incrementDay.add(1, 'days');
+            $('#enddate0').data('DateTimePicker').setMinDate(incrementDay);
             $(this).data("DateTimePicker").hide();
         });
 
