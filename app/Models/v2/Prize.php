@@ -6,7 +6,7 @@ namespace App\Models\v2;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 
-class Prize extends Model
+class Prize extends Eloquent
 {
     protected $fillable = [
         'event_id',

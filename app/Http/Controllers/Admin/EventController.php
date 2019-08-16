@@ -386,7 +386,10 @@ class EventController extends Controller
     }
 
     public function huntDetails($id){
-        $event = Event::where('_id',$id)->with('city:_id,name')->first();
+        $event = Event::where('_id',$id)
+                        ->with('prizes')
+                        ->with('city:_id,name')
+                        ->first();
         
         $hunts = Hunt::select('name','place_name','city')
                         ->where('city',$event->city->name)
@@ -399,6 +402,12 @@ class EventController extends Controller
         $validator = Validator::make($request->all(),[
             'map_reveal_date'   => 'required',
             'search_place_name' => 'required|exists:hunts,_id',
+            'group_type.*'      => 'required',
+            'rank.*'            => 'required|integer',
+            'prize.*'           => 'required|integer',
+            'start_rank.*'      => 'required|integer',
+            'end_rank.*'        => 'required|integer',
+            'prize_type.*'      => 'required',
         ]);
 
         if ($validator->fails())
@@ -408,16 +417,52 @@ class EventController extends Controller
         }
 
         $eventId = $request->get('event_id');
-        $event = Event::where('_id',$eventId)->first();
+        $event = Event::where('_id',$eventId)
+                        ->with('prizes')
+                        ->first();
         $event->map_reveal_date = Carbon::parse($request->get('map_reveal_date'))->format('Y-m-d H:i:s'); 
         $event->hunt_id = $request->get('search_place_name');
         $event->save();
 
+        /* PRIZE */
+        $groupType = $request->get('group_type');
+        $prize = $request->get('prize');
+        $rank = $request->get('rank');
+        $startRank = $request->get('start_rank');
+        $endRank = $request->get('end_rank');
+        $prizeType = $request->get('prize_type');
+        // $data = [];
+        $totalPrizeIndex = last(array_keys($groupType))+1;
         
+        /* PRIZES ALL DELETE */
+        $event->prizes()->delete();
+        
+        for ($i=0; $i < $totalPrizeIndex ; $i++) { 
+            
+            if (isset($groupType[$i])) {
+                $data = [];
+                $data['event_id']    = $eventId;
+                $data['group_type']  = $groupType[$i];
+                $data['prize_type']  = $prizeType[$i];
+                $data['prize_value'] = (int)$prize[$i];
 
+                if (isset($rank[$i])) {
+                    $data['rank'] = (int)$rank[$i];
+                } 
+
+                if(isset($startRank[$i])){
+                    $data['start_rank'] = (int)$startRank[$i];
+                    $data['end_rank'] = (int)$endRank[$i];
+                }
+                $event->prizes()->create($data);
+            }
+        }
+        /* END PRIZE */
+        
+        // print_r($request->all());
         return response()->json([
             'status'  => true,
-            'message' => 'successfully hunt added successfully.',
+            'message' => 'successfully hunt and prize added successfully.',
         ]);
     }
     /**
@@ -428,7 +473,10 @@ class EventController extends Controller
      */
     public function show($id)
     {
-        $event = Event::where('_id',$id)->with('city:_id,name')->first();
+        $event = Event::where('_id',$id)
+                        ->with('city:_id,name')
+                        ->with('prizes')
+                        ->first();
         // $event = Event::where('_id',$id)->first();
         $games = Game::where('status',true)->get();
         $cities = City::select('name')->get();
@@ -475,6 +523,11 @@ class EventController extends Controller
             'rejection_ratio'  => 'required|integer',
             'winning_ratio'    => 'required|integer',
             'fees'             => 'required|numeric',
+            'coin_number'      => 'required_if:coin_type,physical',
+            'discount_date'    => 'required',
+            'discount_fees'    => 'required|numeric|min:0|max:100',
+            'description'      => 'required',
+            'attempts'         => 'required|integer',
             'game_id.*.*'      => 'required',
             'row.*.*'          => 'required|integer',
             'column.*.*'       => 'required|integer',
@@ -487,6 +540,12 @@ class EventController extends Controller
             'number_generate.*.*'  => 'required|integer',
             'map_reveal_date'   => 'required',
             'search_place_name' => 'required|exists:hunts,_id',
+            'group_type.*'      => 'required',
+            'rank.*'            => 'required|integer',
+            'prize.*'           => 'required|integer',
+            'start_rank.*'      => 'required|integer',
+            'end_rank.*'        => 'required|integer',
+            'prize_type.*'      => 'required',
         ]);
 
 
@@ -497,129 +556,195 @@ class EventController extends Controller
         }
         
         $data = $request->all();
-        
+        $eventId = $request->get('event_id');
+        $event = Event::where('_id',$eventId)
+                        ->with('prizes')
+                        ->first();
 
+        /* BASIC  DETAILS */
+        $event->fees            = (int)$data['fees']; 
+        $event->rejection_ratio = (int)$data['rejection_ratio']; 
+        $event->winning_ratio   = (int)$data['winning_ratio']; 
+        $event->starts_at       = Carbon::parse($data['event_start_date'])->format('Y-m-d H:i:s');
+        $event->ends_at         = Carbon::parse($data['event_end_date'])->format('Y-m-d H:i:s');
+        $event->coin_number     = (int)$data['coin_number'];
+        $event->discount        = (float)$data['discount_fees'];
+        $event->discount_till   = Carbon::parse($data['discount_date'])->format('Y-m-d H:i:s');
+        $event->attempts        = (int)$data['attempts'];
+        /* END BASIC DETAILS */
+        
+        /* MINI GAME */
         $main_game = [];
-
         
-        for ($i=0; $i<count($data['game_id']) ; $i++) { 
-            $game = []; 
+       
+        $gameCount = last(array_keys($data['game_id']))+1;
+        
+        for ($i=0; $i<$gameCount ; $i++) { 
+            if (isset($data['game_id'][$i])) {
 
-            $variationImage = $request->file('variation_image');
+                $gameData = $data['game_id'][$i];
+            
+                $variationImage = $request->file('variation_image');
 
-            $gameData = array_values($data['game_id'][$i]);
-            for ($k=0; $k < count($gameData)  ; $k++) { 
-                
-                $gameDetail = Game::find($gameData[$k]);
-                
-                $gameInfo = ['id'=> $gameData[$k], 'name'=> $gameDetail->name];
-                
-                /* IMAGES */
-
-                $gameId = $gameData[$k];
-                if ($gameId == '5b0e306951b2010ec820fb4f' || $gameId == '5b0e304b51b2010ec820fb4e') {
-                    
-                    if(isset($variationImage[$i]) && is_array(array_values($variationImage[$i])) && count(array_values($variationImage[$i])[$k])>0){
-                        $image = array_values($variationImage[$i])[$k];
-
-
-                        $imageSize = getimagesize($image);                      
+                $game = []; 
+                $miniGameCount = last(array_keys($gameData))+1;
+                for ($k=0; $k < $miniGameCount  ; $k++) {
+                    if (isset($gameData[$k])) {                         
+                        $variation_data = [];
                         
-                            if ($gameId == '5b0e306951b2010ec820fb4f' && $imageSize[0] != '1024' && $imageSize[1] != '1024') {
-                                return response()->json(['status' => false,'message' => 'The variation image size is invalid.']);
-                            }
-
-                            if ($gameId == '5b0e304b51b2010ec820fb4e' && $imageSize[0] != '2000' && $imageSize[1] != '1440') {
-                                return response()->json(['status' => false,'message' => 'The variation image size is invalid.']);
-                            }
-
-                            $extension = $image->getClientOriginalExtension();
-                            $img = Image::make($image);
-                            $imageUniqueName = uniqid(uniqid(true).'_').'.'.$extension;
-                            $img->save(storage_path('app/public/events/'.$imageUniqueName));
-                            $variation_data['variation_image'] = $imageUniqueName;
+                        $gameDetail = Game::find($gameData[$k]);
                         
+                        $gameInfo = ['id'=> $gameData[$k], 'name'=> $gameDetail->name];
+                        
+                        /* IMAGES */
 
-                    } else {
-                        if(isset($data['hide_image']) && !empty(array_values($data['hide_image'][$i])[$k])){
-                            $variation_data['variation_image'] = array_values($data['hide_image'][$i])[$k];
+                        
+                        $gameId = $gameData[$k];
+                        if (($gameId == '5b0e306951b2010ec820fb4f' || $gameId == '5b0e304b51b2010ec820fb4e') && isset($variationImage)) {
+
+                            $variationImageIndex = last(array_keys($variationImage[$i]));
+                            
+                            if(isset($variationImage[$i][$k])){
+                                $image = $variationImage[$i][$k];
+                                $imageSize = getimagesize($image);
+                                
+                                if ($gameId == '5b0e306951b2010ec820fb4f' && $imageSize[0] != 1024 && $imageSize[1] != 1024) {
+                                    return response()->json(['status' => false,'message' => 'The variation image size is invalid1.']);
+                                }
+
+                                if ($gameId == '5b0e304b51b2010ec820fb4e' && $imageSize[0] != 2000 && $imageSize[1] != 1440) {
+                                    return response()->json(['status' => false,'message' => 'The variation image size is invalid.']);
+                                }
+
+                                $extension = $image->getClientOriginalExtension();
+                                $img = Image::make($image);
+                                $imageUniqueName = uniqid(uniqid(true).'_').'.'.$extension;
+                                $img->save(storage_path('app/public/events/'.$imageUniqueName));
+                                $variation_data['variation_image'] = $imageUniqueName;
+                            } else {
+                                if(isset($data['hide_image']) && isset($data['hide_image'][$i][$k])){
+                                    $variation_data['variation_image'] = $data['hide_image'][$i][$k];
+                                }    
+                            }
+                             
+                        } else {
+                            /*if(isset($data['hide_image']) && isset($data['hide_image'][$i][$k])){
+                                $variation_data['variation_image'] = $data['hide_image'][$i][$k];
+                            }*/
                         }
+
+                        if (isset($data['row']) && isset($data['row'][$i][$k])) {
+                            $variation_data['row'] = (int)$data['row'][$i][$k];
+                        }
+
+                        if (isset($data['column']) && isset($data['column'][$i][$k])) {
+                            $variation_data['column'] = (int)$data['column'][$i][$k];
+                        }
+
+                        if (isset($data['target']) && isset($data['target'][$i][$k])) {
+                            $variation_data['target'] = (int)$data['target'][$i][$k];
+                        }
+
+                        // if (isset($data['target']) && isset($data['row'][$i][$k])) {
+                        //     $variation_data['target'] = (int)$data['column'][$i][$k];
+                        // }
+
+                        if (isset($data['no_of_balls']) && isset($data['no_of_balls'][$i][$k])) {
+                            $variation_data['no_of_balls'] = (int)$data['no_of_balls'][$i][$k];
+                        }
+
+                        if (isset($data['bubble_level_id']) && isset($data['bubble_level_id'][$i][$k])) {
+                            $variation_data['bubble_level_id'] = (int)$data['bubble_level_id'][$i][$k];
+                        }
+
+                        if (isset($data['variation_size']) && isset($data['variation_size'][$i][$k])) {
+                            $variation_data['variation_size'] = (int)$data['variation_size'][$i][$k];
+                        }
+
+                        if (isset($data['number_generate']) && isset($data['number_generate'][$i][$k])) {
+                            $variation_data['number_generate'] = (int)$data['number_generate'][$i][$k];
+                        }
+
+                        if (isset($data['sudoku_id']) && isset($data['sudoku_id'][$i][$k])) {
+                            $variation_data['sudoku_id'] = (int)$data['sudoku_id'][$i][$k];
+                        }
+
+                        /*$variation_data = [
+                            'row'    => array_values($data['row'][$i])[$k], 
+                            'column' => array_values($data['column'][$i])[$k],
+                            'target' => array_values($data['target'][$i])[$k]
+                        ];*/
+                       
+                        $game[] = [
+                            '_id'            => new ObjectID(),
+                            'game_info'      => $gameInfo,
+                            'variation_data' => $variation_data
+                        ];
                     }
                 }
-
-                if (isset($data['row']) && !empty(array_values($data['row'][$i])[$k])) {
-                    $variation_data['row'] = (int)array_values($data['row'][$i])[$k];
-                }
-
-                if (isset($data['column']) && !empty(array_values($data['column'][$i])[$k])) {
-                    $variation_data['column'] = (int)array_values($data['column'][$i])[$k];
-                }
-
-                if (isset($data['target']) && !empty(array_values($data['target'][$i])[$k])) {
-                    $variation_data['target'] = (int)array_values($data['target'][$i])[$k];
-                }
-
-                // if (isset($data['target']) && !empty(array_values($data['row'][$i])[$k])) {
-                //     $variation_data['target'] = (int)array_values($data['column'][$i])[$k];
-                // }
-
-                if (isset($data['no_of_balls']) && !empty(array_values($data['no_of_balls'][$i])[$k])) {
-                    $variation_data['no_of_balls'] = (int)array_values($data['no_of_balls'][$i])[$k];
-                }
-
-                if (isset($data['bubble_level_id']) && !empty(array_values($data['bubble_level_id'][$i])[$k])) {
-                    $variation_data['bubble_level_id'] = (int)array_values($data['bubble_level_id'][$i])[$k];
-                }
-
-                if (isset($data['variation_size']) && !empty(array_values($data['variation_size'][$i])[$k])) {
-                    $variation_data['variation_size'] = (int)array_values($data['variation_size'][$i])[$k];
-                }
-
-                if (isset($data['number_generate']) && !empty(array_values($data['number_generate'][$i])[$k])) {
-                    $variation_data['number_generate'] = (int)array_values($data['number_generate'][$i])[$k];
-                }
-
-                if (isset($data['sudoku_id']) && !empty(array_values($data['sudoku_id'][$i])[$k])) {
-                    $variation_data['sudoku_id'] = (int)array_values($data['sudoku_id'][$i])[$k];
-                }
-
-                /*$variation_data = [
-                    'row'    => array_values($data['row'][$i])[$k], 
-                    'column' => array_values($data['column'][$i])[$k],
-                    'target' => array_values($data['target'][$i])[$k]
-                ];*/
-               
-                $game[] = [
-                    '_id'            => new ObjectID(),
-                    'game_info'      => $gameInfo,
-                    'variation_data' => $variation_data
-                ];
-              
+                    
+                $startDate = Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['start_date'][$i])));
+                $endDate = Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['end_date'][$i])));
+                $main_game[] = [
+                            //'from'  => Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['start_date'][$i]))), 
+                            'from'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($startDate)), 
+                            'to'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($endDate)),  
+                            'games' => $game, 
+                        ];
             }
-            $startDate = Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['start_date'][$i])));
-            $endDate = Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['end_date'][$i])));
-            $main_game[] = [
-                        //'from'  => Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['start_date'][$i]))), 
-                        'from'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($startDate)), 
-                        'to'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($endDate)),  
-                        'games' => $game, 
-                    ];
 
         }
+        
         $data['mini_games'] = $main_game;
         
-        $eventId = $data['event_id']; 
-        $event = Event::where('_id',$eventId)->first();
-        $event->mini_games = $data['mini_games'];
-        $event->fees = (int)$data['fees']; 
-        $event->rejection_ratio = (int)$data['rejection_ratio']; 
-        $event->winning_ratio = (int)$data['winning_ratio']; 
-        $event->starts_at =  Carbon::parse($data['event_start_date'])->format('Y-m-d H:i:s');
-        $event->ends_at =  Carbon::parse($data['event_end_date'])->format('Y-m-d H:i:s');
+
+        $evert = Event::where('_id',$eventId)
+                        ->with('prizes')
+                        ->first();
+        $evert->mini_games = $data['mini_games'];
+        /* END MINI GAMES */
+
+        /* HUNT AND PRIZE*/
+        
         $event->map_reveal_date = Carbon::parse($request->get('map_reveal_date'))->format('Y-m-d H:i:s'); 
         $event->hunt_id = $request->get('search_place_name');
         $event->save();
 
+        /* PRIZE */
+        $groupType = $request->get('group_type');
+        $prize = $request->get('prize');
+        $rank = $request->get('rank');
+        $startRank = $request->get('start_rank');
+        $endRank = $request->get('end_rank');
+        $prizeType = $request->get('prize_type');
+        // $data = [];
+        $totalPrizeIndex = last(array_keys($groupType))+1;
+        
+        /* PRIZES ALL DELETE */
+        $event->prizes()->delete();
+        
+        for ($i=0; $i < $totalPrizeIndex ; $i++) { 
+            
+            if (isset($groupType[$i])) {
+                $data = [];
+                $data['event_id']    = $eventId;
+                $data['group_type']  = $groupType[$i];
+                $data['prize_type']  = $prizeType[$i];
+                $data['prize_value'] = (int)$prize[$i];
+
+                if (isset($rank[$i])) {
+                    $data['rank'] = (int)$rank[$i];
+                } 
+
+                if(isset($startRank[$i])){
+                    $data['start_rank'] = (int)$startRank[$i];
+                    $data['end_rank'] = (int)$endRank[$i];
+                }
+                $event->prizes()->create($data);
+            }
+        }
+        /* END PRIZE */
+        /* END HUNT AND PRIZE */
         return response()->json([
             'status'  => true,
             'message' => 'Event has been update successfully.',

@@ -46,6 +46,11 @@ class Event extends Eloquent
     {
         return $this->belongsTo('App\Models\v1\City','city_id');
     }
+
+    public function prizes()
+    {
+        return $this->hasMany('App\Models\v2\Prize','event_id');
+    }
 }
 
     
