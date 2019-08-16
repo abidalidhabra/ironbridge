@@ -56,9 +56,9 @@
                     </div>
                     <div class="form-group col-md-3">
                         <div class="addhunteyrefbtn">
-                            <a href="{{ route('admin.add_location') }}" target='_blank' class="btn" >Add Hunt</a>
                             <a href="javascript:void(0)" class="btn hunt_details"><i class="fa fa-eye "></i></a>
                             <a href="javascript:void(0)" class="btn" id="refresh"><i class="fa fa-refresh"></i></a>
+                            <a href="{{ route('admin.add_location') }}" target='_blank' class="btn" >Add New</a>
                         </div>
                     </div>
                 </div>

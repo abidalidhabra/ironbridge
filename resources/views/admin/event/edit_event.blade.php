@@ -219,11 +219,6 @@
                                             <?php if($miniGameId == '5b0e2ff151b2010ec820fb48'){ ?>
                                                 <!-- Sudoku -->
                                                 <div class="form-group col-md-4">
-                                                    <label class="form-label">Variation size</label>
-                                                    <input type="text"  name="variation_size[{{$key}}][{{$index}}]" value="{{ $miniGame['variation_data']['variation_size'] }}"  class="form-control">
-                                                </div>
-                                               
-                                                <div class="form-group col-md-4">
                                                     <label class="form-label">Sudoku Id</label>
                                                     <select name="sudoku_id[{{$key}}][{{$index}}]" class="form-control">
                                                         <option <?php if ($miniGame['variation_data']['sudoku_id'] == 1) { echo "selected";} ?> value="1">1</option>
