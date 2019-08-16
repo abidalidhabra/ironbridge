@@ -29,8 +29,9 @@
     <link rel="stylesheet" href="{{ asset('admin_assets/css/toastr.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin_assets/css/jquery.fancybox.min.css') }}" />
     <!-- <link rel="stylesheet" type="text/css" href="{{ asset('admin_assets/css/bootstrap-datetimepicker.min.css') }}"> -->
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.3/css/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" type="text/css" href="{{ asset('admin_assets/css/select2.min.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.3/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="{{ asset('admin_assets/css/select2.min.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/css/bootstrap-timepicker.min.css">
     
     
     <script src="{{ asset('admin_assets/js/jquery.js') }}"></script>
@@ -47,6 +48,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.3/js/bootstrap-datetimepicker.min.js"></script>
     <script src="{{ asset('admin_assets/js/select2.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/js/bootstrap-timepicker.min.js"></script>
 
 
     @yield('styles')

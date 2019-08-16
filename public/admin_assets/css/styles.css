@@ -1803,7 +1803,9 @@ table i.iconsetaddbox{
 .daingaemtitlebox h5{
     width: 100%;
     margin: 0;
-    font-size: 15px;
+    font-size: 19px;
+    font-weight: 900;
+    text-transform: uppercase;
 }
 
 .remove_mini_game , .remove_mini_game1 , .add_mini_game , .add_game , .remove_game , .remove_game1{
@@ -1904,12 +1906,9 @@ table i.iconsetaddbox{
     color: #C0B08C;
 }*/
 
-
-
-
-
-
-
+.tooltip.right{
+    width: 100% !important;
+}
 
 
 

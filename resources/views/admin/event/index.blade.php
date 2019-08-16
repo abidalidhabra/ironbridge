@@ -23,11 +23,11 @@
             <thead>
                 <tr>
                     <th width="7%">Sr.</th>
-                    <th>Name</th>
+                    <th>Event Name</th>
                     <th>Type</th>
                     <th>Coin Type</th>
-                    <th>Rejection Ratio</th>
-                    <th>Winning Ratio</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
                     <th>City</th>
                     <th width="5%">Action</th>
                 </tr>
@@ -136,8 +136,8 @@
                 { data:'name',name:'name' },
                 { data:'type',name:'type' },
                 { data:'coin_type',name:'coin_type' },
-                { data:'rejection_ratio',name:'rejection_ratio' },
-                { data:'winning_ratio',name:'winning_ratio' },
+                { data:'starts_at',name:'starts_at' },
+                { data:'ends_at',name:'ends_at' },
                 { data:'city',name:'city' },
                 { data:'action',name:'action' },
                 ],

@@ -35,11 +35,15 @@
                 <div class="allbasicdirbox">
                     <input type="hidden" name="event_id" value="{{ $id }}"> 
                     <div class="form-group col-md-4">
-                        <label class="form-label">Map Reveal Date</label>
+                        <label class="form-label">Map Reveal Date
+                            <a data-toggle="tooltip" title="Hunt completion date and time for that event" data-placement="right">?</a>
+                        </label>
                         <input type="text" name="map_reveal_date" class="form-control" id="map_reveal_date" placeholder="Enter the map reveal date" autocomplete="off" value="@if(isset($event->map_reveal_date)){{$event->map_reveal_date->format('d-m-Y h:i A') }}@endif">
                     </div>
                     <div class="form-group col-md-5">
-                        <label class="form-label">Search Place Name</label>
+                        <label class="form-label">Search Place Name
+                            <a data-toggle="tooltip" title="Hunt location for that event" data-placement="right">?</a>
+                        </label>
                        
                         <select class="form-control hunts" name="search_place_name" id="hunts">
                             <option value="">Select Place</option>
@@ -70,7 +74,9 @@
                 <div class="allbasicdirbox">
                     <div class="row">
                         <div class="form-group col-md-3">
-                            <label class="form-label">Group Type</label>
+                            <label class="form-label">Group Type
+                                <a data-toggle="tooltip" title="Individual Prize or Bulk prize" data-placement="right">?</a>
+                            </label>
                         </div>
                         
                         <div class="form-group col-md-3">
@@ -174,6 +180,7 @@
 @section('scripts')
     <script type="text/javascript">
         /* DATE TIME PICKER */
+        $('[data-toggle="tooltip"]').tooltip();   
 
         var startdate = '{{ $event->starts_at }}';
         var enddate = '{{ $event->ends_at }}';

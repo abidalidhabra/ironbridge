@@ -98,7 +98,7 @@ class EventController extends Controller
         $data['starts_at'] =  Carbon::parse($data['event_start_date'])->format('Y-m-d H:i:s');
         $data['ends_at'] =  Carbon::parse($data['event_end_date'])->format('Y-m-d H:i:s');
         $data['map_reveal_at'] =  Carbon::parse($data['event_end_date'])->format('Y-m-d H:i:s');
-       
+        
 
         $main_game = [];
 
@@ -141,7 +141,7 @@ class EventController extends Controller
                     'column' => $data['column'][$i][$k],
                     'target' => $data['target'][$i][$k]
                 ];
-               
+                
                 $game[] = [
                     '_id'            => new ObjectID(),
                     'game_info'      => $gameInfo,
@@ -154,10 +154,10 @@ class EventController extends Controller
             $endDate = Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['end_date'][$i])));
             $main_game[] = [
                         //'from'  => Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['start_date'][$i]))), 
-                        'from'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($startDate)), 
-                        'to'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($endDate)),  
-                        'games' => $game, 
-                    ];
+                'from'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($startDate)), 
+                'to'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($endDate)),  
+                'games' => $game, 
+            ];
 
         }
         $data['mini_games'] = $main_game;
@@ -208,11 +208,11 @@ class EventController extends Controller
         $data['discount']        = (float)$data['discount_fees'];
         $data['discount_till']   = Carbon::parse($data['discount_date'])->format('Y-m-d H:i:s');
         $data['attempts']        = (int)$data['attempts'];
-            
+        
         $event = Event::updateOrCreate(
-                                        ['_id'=>$eventId],
-                                        $data
-                                    );
+            ['_id'=>$eventId],
+            $data
+        );
 
         return response()->json([
             'status'  => true,
@@ -240,6 +240,9 @@ class EventController extends Controller
             // 'variation_name.*.*'  => 'required',
             // 'variation_complexity.*.*'  => 'required',
             'number_generate.*.*'  => 'required|integer',
+            'start_time.*'  => 'required',
+            'end_time.*'  => 'required',
+            'date.*'  => 'required',
         ]);
 
 
@@ -251,15 +254,15 @@ class EventController extends Controller
         $data = $request->all();
 
         $main_game = [];
-
-       
+        
+        
         $gameCount = last(array_keys($data['game_id']))+1;
         
         for ($i=0; $i<$gameCount ; $i++) { 
             if (isset($data['game_id'][$i])) {
 
                 $gameData = $data['game_id'][$i];
-            
+                
                 $variationImage = $request->file('variation_image');
 
                 $game = []; 
@@ -302,7 +305,7 @@ class EventController extends Controller
                                     $variation_data['variation_image'] = $data['hide_image'][$i][$k];
                                 }    
                             }
-                             
+                            
                         } else {
                             /*if(isset($data['hide_image']) && isset($data['hide_image'][$i][$k])){
                                 $variation_data['variation_image'] = $data['hide_image'][$i][$k];
@@ -350,7 +353,7 @@ class EventController extends Controller
                             'column' => array_values($data['column'][$i])[$k],
                             'target' => array_values($data['target'][$i])[$k]
                         ];*/
-                       
+                        
                         $game[] = [
                             '_id'            => new ObjectID(),
                             'game_info'      => $gameInfo,
@@ -358,15 +361,16 @@ class EventController extends Controller
                         ];
                     }
                 }
-                    
-                $startDate = Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['start_date'][$i])));
-                $endDate = Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['end_date'][$i])));
+                
+                $startDate = Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['date'][$i].' '.$data['start_time'][$i])));
+                $endDate = Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['date'][$i].' '.$data['end_time'][$i])));
+                
                 $main_game[] = [
                             //'from'  => Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['start_date'][$i]))), 
-                            'from'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($startDate)), 
-                            'to'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($endDate)),  
-                            'games' => $game, 
-                        ];
+                    'from'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($startDate)), 
+                    'to'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($endDate)),  
+                    'games' => $game, 
+                ];
             }
 
         }
@@ -387,13 +391,13 @@ class EventController extends Controller
 
     public function huntDetails($id){
         $event = Event::where('_id',$id)
-                        ->with('prizes')
-                        ->with('city:_id,name')
-                        ->first();
+        ->with('prizes')
+        ->with('city:_id,name')
+        ->first();
         
         $hunts = Hunt::select('name','place_name','city')
-                        ->where('city',$event->city->name)
-                        ->get();
+        ->where('city',$event->city->name)
+        ->get();
 
         return view('admin.event.add_event.hunt_details',compact('id','hunts','event'));        
     }
@@ -418,8 +422,8 @@ class EventController extends Controller
 
         $eventId = $request->get('event_id');
         $event = Event::where('_id',$eventId)
-                        ->with('prizes')
-                        ->first();
+        ->with('prizes')
+        ->first();
         $event->map_reveal_date = Carbon::parse($request->get('map_reveal_date'))->format('Y-m-d H:i:s'); 
         $event->hunt_id = $request->get('search_place_name');
         $event->save();
@@ -474,15 +478,15 @@ class EventController extends Controller
     public function show($id)
     {
         $event = Event::where('_id',$id)
-                        ->with('city:_id,name')
-                        ->with('prizes')
-                        ->first();
+        ->with('city:_id,name')
+        ->with('prizes')
+        ->first();
         // $event = Event::where('_id',$id)->first();
         $games = Game::where('status',true)->get();
         $cities = City::select('name')->get();
         $hunts = Hunt::select('name','place_name','city')
-                        ->where('city',$event->city->name)
-                        ->get();
+        ->where('city',$event->city->name)
+        ->get();
 
 
         return view('admin.event.edit_event',compact('id','games','cities','event','hunts'));
@@ -558,8 +562,8 @@ class EventController extends Controller
         $data = $request->all();
         $eventId = $request->get('event_id');
         $event = Event::where('_id',$eventId)
-                        ->with('prizes')
-                        ->first();
+        ->with('prizes')
+        ->first();
 
         /* BASIC  DETAILS */
         $event->fees            = (int)$data['fees']; 
@@ -576,14 +580,14 @@ class EventController extends Controller
         /* MINI GAME */
         $main_game = [];
         
-       
+        
         $gameCount = last(array_keys($data['game_id']))+1;
         
         for ($i=0; $i<$gameCount ; $i++) { 
             if (isset($data['game_id'][$i])) {
 
                 $gameData = $data['game_id'][$i];
-            
+                
                 $variationImage = $request->file('variation_image');
 
                 $game = []; 
@@ -626,7 +630,7 @@ class EventController extends Controller
                                     $variation_data['variation_image'] = $data['hide_image'][$i][$k];
                                 }    
                             }
-                             
+                            
                         } else {
                             /*if(isset($data['hide_image']) && isset($data['hide_image'][$i][$k])){
                                 $variation_data['variation_image'] = $data['hide_image'][$i][$k];
@@ -674,7 +678,7 @@ class EventController extends Controller
                             'column' => array_values($data['column'][$i])[$k],
                             'target' => array_values($data['target'][$i])[$k]
                         ];*/
-                       
+                        
                         $game[] = [
                             '_id'            => new ObjectID(),
                             'game_info'      => $gameInfo,
@@ -682,15 +686,15 @@ class EventController extends Controller
                         ];
                     }
                 }
-                    
+                
                 $startDate = Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['start_date'][$i])));
                 $endDate = Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['end_date'][$i])));
                 $main_game[] = [
                             //'from'  => Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['start_date'][$i]))), 
-                            'from'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($startDate)), 
-                            'to'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($endDate)),  
-                            'games' => $game, 
-                        ];
+                    'from'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($startDate)), 
+                    'to'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($endDate)),  
+                    'games' => $game, 
+                ];
             }
 
         }
@@ -699,8 +703,8 @@ class EventController extends Controller
         
 
         $event = Event::where('_id',$eventId)
-                        ->with('prizes')
-                        ->first();
+        ->with('prizes')
+        ->first();
 
         $event->mini_games = $data['mini_games'];
 
@@ -777,7 +781,7 @@ class EventController extends Controller
         $skip = (int)$request->get('start');
         $take = (int)$request->get('length');
         $search = $request->get('search')['value'];
-        $events = Event::select('name','type','coin_type','rejection_ratio','winning_ratio','city_id','fees','starts_at','ends_at','mini_games');
+        $events = Event::select('name','type','coin_type','starts_at','ends_at','rejection_ratio','winning_ratio','city_id','fees','starts_at','ends_at','mini_games');
         $admin = Auth::user();
 
         if($search != ''){
@@ -809,13 +813,19 @@ class EventController extends Controller
         ->addColumn('city',function($event){
             return $event->city->name;
         })
+        ->addColumn('starts_at',function($event){
+            return $event->starts_at->format('d-m-Y');
+        })
+        ->addColumn('ends_at',function($event){
+            return $event->ends_at->format('d-m-Y');
+        })
         ->addColumn('action', function($query) use ($admin){
             $data = '';
                 //$data .=  '<a href="'.route('admin.event.basicDetails',$query->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
-                $data .=  '<a href="'.route('admin.event.show',$query->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+            $data .=  '<a href="'.route('admin.event.show',$query->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
             
-                $data .=  '<a href="javascript:void(0)" class="delete_company" data-action="delete" data-placement="left" data-id="'.$query->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>
-                </a>';
+            $data .=  '<a href="javascript:void(0)" class="delete_company" data-action="delete" data-placement="left" data-id="'.$query->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>
+            </a>';
             
 
             return $data;
@@ -841,8 +851,8 @@ class EventController extends Controller
         $event = Event::where('_id',$eventId)->with('city:_id,name')->first();
         
         $hunts = Hunt::select('name','place_name','city')
-                        ->where('city',$event->city->name)
-                        ->get();
+        ->where('city',$event->city->name)
+        ->get();
 
         return response()->json([
             'status'  => true,

@@ -36,11 +36,14 @@
                    
                     <div class="fdaboxallset">
                         <div class="form-group col-md-4">
-                            <label class="form-label">Name</label>
+                            <label class="form-label">Event Name</label>
                             <input type="text" name="name" class="form-control" id="name" placeholder="Enter the name" value="@if(isset($event->name)){{$event->name}}@endif">
                         </div>
                         <div class="form-group col-md-4">
-                            <label class="form-label">Type <small>(Single / Multi day(s))</small></label>
+                            <label class="form-label">Event Type 
+                                <small>(Single / Multi day(s))</small>
+                                <a data-toggle="tooltip" title="Single: Single-day small event. Multi-Day(s): Multiple days base big event." data-placement="right">?</a>
+                            </label>
                             <select name="type" class="form-control">
                                 <option>Select type</option>
                                 <option value="single" @if(isset($event->type) && $event->type=='single') {{ 'selected' }} @endif>Single</option>
@@ -58,6 +61,29 @@
                         </div>
                     </div>
                     <div class="fdaboxallset">
+                        @if(isset($event->coin_type))
+                            <div class="form-group col-md-4 coin_number_box @if(isset($event->coin_type) && $event->coin_type == 'ar'){{ 'hidden' }}@endif">
+                                <label class="form-label">Coin Number
+                                    <a data-toggle="tooltip" title="Physical coin number which needs to enter into a game for claim prize." data-placement="right">?</a>
+                                </label>
+                                <input type="text" name="coin_number" class="form-control" placeholder="Enter the coin number" value="@if(isset($event->coin_number)){{ $event->coin_number }}@endif">
+                            </div>
+                        @else
+                            <div class="form-group col-md-4 coin_number_box hidden">
+                                <label class="form-label">Coin Number
+                                    <a data-toggle="tooltip" title="Physical coin number which needs to enter into a game for claim prize." data-placement="right">?</a>
+                                </label>
+                                <input type="text" name="coin_number" class="form-control" placeholder="Enter the coin number" value="@if(isset($event->coin_number)){{ $event->coin_number }}@endif">
+                            </div>
+                        @endif
+                        <div class="form-group col-md-4">
+                            <label class="form-label">Start Date</label>
+                            <input type="text" name="event_start_date" class="form-control" placeholder="Enter the start date" value="@if(isset($event->starts_at)){{ $event->starts_at->format('d-m-Y') }} @endif" id="startdate" autocomplete="off">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label class="form-label">End Date</label>
+                            <input type="text" name="event_end_date" class="form-control" placeholder="Enter the date" value="@if(isset($event->ends_at)){{ $event->ends_at->format('d-m-Y') }}@endif" id="enddate" autocomplete="off">
+                        </div>
                         <div class="form-group col-md-4">
                             <label class="form-label">City</label>
                             <select name="city_id" id="city_id" class="form-control">
@@ -69,38 +95,36 @@
                                 @endforelse
                             </select>
                         </div>
-                        <div class="form-group col-md-4">
-                            <label class="form-label">Start Date</label>
-                            <input type="text" name="event_start_date" class="form-control" placeholder="Enter the start date" value="@if(isset($event->starts_at)){{ $event->starts_at->format('d-m-Y h:i A') }} @endif"  data-date-format="DD-MM-YYYY hh:mm A" id="startdate" autocomplete="off">
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label class="form-label">End Date</label>
-                            <input type="text" name="event_end_date" class="form-control" placeholder="Enter the date" value="@if(isset($event->ends_at)){{ $event->ends_at->format('d-m-Y h:i A') }}@endif"  data-date-format="DD-MM-YYYY hh:mm A" id="enddate" autocomplete="off">
-                        </div>
                     </div>
 
                     <div class="fdaboxallset">
                         <div class="form-group col-md-4">
-                            <label class="form-label">Rejection Ratio<small> In percentage (enter 0 if no rejection ratio)</small></label>
+                            <label class="form-label">Rejection Ratio
+                                <small> In percentage (enter 0 if no rejection ratio)</small>
+                                <a data-toggle="tooltip" title="% of people who will be going to eliminate daily basis" data-placement="right">?</a>
+                            </label>
                             <input type="text" name="rejection_ratio" class="form-control" placeholder="Enter the rejection ratio" value="@if(isset($event->rejection_ratio)){{ $event->rejection_ratio }} @endif">
                         </div>
                         <div class="form-group col-md-4">
-                            <label class="form-label">Winning Ratio<small> In fix amount (enter 0 if no winning ratio)</small></label>
+                            <label class="form-label">Winning Ratio
+                                <small> In fix amount (enter 0 if no winning ratio)</small>
+                                <a data-toggle="tooltip" title="# of people who will be going to win this game" data-placement="right">?</a>
+                            </label>
                             <input type="text" name="winning_ratio" class="form-control" id="winning_ratio" placeholder="Enter the winning ratio" value="@if(isset($event->winning_ratio)){{ $event->winning_ratio }}@endif">
                         </div>
                     </div>
 
                     <div class="fdaboxallset">
                         <div class="form-group col-md-4">
-                            <label class="form-label">Fees & Gold</label>
+                            <label class="form-label">Entry Fees(In gold)</label>
                             <input type="text" name="fees" class="form-control" placeholder="Enter the fees" value="@if(isset($event->fees)){{ $event->fees }}@endif">
                         </div>
                         <div class="form-group col-md-4">
-                            <label class="form-label">Discount date</label>
+                            <label class="form-label">Discount expire date</label>
                             <input type="text" name="discount_date" class="form-control" id="discount_date" placeholder="Enter the discount date" value="@if(isset($event->discount_till)){{ $event->discount_till->format('d-m-Y') }}@endif" autocomplete="off">
                         </div>
                         <div class="form-group col-md-4">
-                            <label class="form-label">Discount Fees (%)</label>
+                            <label class="form-label">Discount %</label>
                             <input type="text" name="discount_fees" class="form-control" placeholder="Enter the discount fees" value="@if(isset($event->discount)){{ $event->discount }}@endif">
                         </div>
                     </div>
@@ -108,20 +132,12 @@
 
                     <div class="fdaboxallset">
                         <div class="form-group col-md-4">
-                            <label class="form-label">Attempts</label>
+                            <label class="form-label">Attempts
+                                <a data-toggle="tooltip" title="# of attempts for doing best per game" data-placement="right">?</a>
+                            </label>
                             <input type="text" name="attempts" class="form-control" placeholder="Enter the attempts" value="@if(isset($event->attempts)){{ $event->attempts }}@endif">
                         </div>
-                        @if(isset($event->coin_type))
-                            <div class="form-group col-md-4 coin_number_box @if(isset($event->coin_type) && $event->coin_type == 'ar'){{ 'hidden' }}@endif">
-                                <label class="form-label">Coin Number</label>
-                                <input type="text" name="coin_number" class="form-control" placeholder="Enter the coin number" value="@if(isset($event->coin_number)){{ $event->coin_number }}@endif">
-                            </div>
-                        @else
-                            <div class="form-group col-md-4 coin_number_box hidden">
-                                <label class="form-label">Coin Number</label>
-                                <input type="text" name="coin_number" class="form-control" placeholder="Enter the coin number" value="@if(isset($event->coin_number)){{ $event->coin_number }}@endif">
-                            </div>
-                        @endif
+                        
                         <div class="form-group col-md-4">
                             <label class="form-label">Description</label>
                             <textarea name="description" class="form-control" placeholder="Enter the description">@if(isset($event->description)){{ $event->description }}@endif</textarea>
@@ -149,12 +165,45 @@
         //$('.datetimepicker').datetimepicker();
         $(function () {
             $('#city_id').select2();
+            $('[data-toggle="tooltip"]').tooltip();   
 
             $('#discount_date').datepicker({
                 startDate: new Date()
             });
+
+           /* $('#startdate').datepicker({
+                startDate: new Date()
+            });
+
+            $('#enddate').datepicker({
+                startDate: new Date()
+            });*/
             
-            $('#startdate').datetimepicker({
+
+            var startDate = new Date();
+            $('#startdate').datepicker({
+                weekStart: 1,
+                startDate: startDate,
+                autoclose: true,
+            }).on('changeDate', function(selected){
+                startDate = new Date(selected.date.valueOf());
+                startDate.setDate(startDate.getDate(new Date(selected.date.valueOf())));
+                $('#enddate').datepicker('setStartDate', startDate);
+            }); 
+
+            $('#enddate').datepicker({
+                weekStart: 1,
+                startDate: startDate,
+                autoclose: true
+            }).on('changeDate', function(selected){
+                FromEndDate = new Date(selected.date.valueOf());
+                FromEndDate.setDate(FromEndDate.getDate(new Date(selected.date.valueOf())));
+                $('#startdate').datepicker('setEndDate', FromEndDate);
+            });
+
+            // });
+
+            /*$('#startdate').datetimepicker({
                 useCurrent: false,
                 format: "DD-MM-YYYY hh:mm A",
                 minDate: moment()
@@ -184,7 +233,7 @@
                 decrementDay.subtract(1, 'days');
                 $('#startdate').data('DateTimePicker').setMaxDate(decrementDay);
                 $(this).data("DateTimePicker").hide();
-            });
+            });*/
 
             
             $(document).on('change','select[name="coin_type"]', function () {
