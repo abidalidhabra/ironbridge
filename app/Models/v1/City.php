@@ -24,6 +24,6 @@ class City extends Eloquent
 
     public function events()
     {
-        return $this->hasMany('App\Models\v1\Event');
+        return $this->hasMany('App\Models\v2\Event');
     }
 }

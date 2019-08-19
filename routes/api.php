@@ -146,5 +146,9 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
 		Route::post('markTheGameAsComplete', 'MGController@markTheGameAsComplete');
 		Route::post('setupMiniGamesForUser', 'MGController@setupMiniGamesForUser');
 		// Route::post('addSkeletonKey', 'MGController@addSkeletonKey');
+		
+		/** Event **/
+		Route::get('getEventCityList', 'EventController@getEventCityList');
+		Route::get('getCityEventDetails', 'EventController@getCityEventDetails');
 	});
 });
