@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | GAME VARIATION')
+@section('title','Ironbridge1779 | Events')
 @extends('admin.layouts.admin-app')
 @section('styles')
     <!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->
@@ -166,12 +166,14 @@
                                     <h5>Day {{ $key+1 }}</h5>
                                 @endif
                             </div>
-                            @if($event->type == 'single')
-                            @else
-                            @endif
                             <div class="form-group col-md-3">
                                 <label class="form-label">Date</label>
+                            @if($event->type == 'single')
+                                <input type="text" class="form-control datetimepicker" placeholder="Enter the Time"  value="{{ $day['from']->toDateTime()->format('d-m-Y') }}" autocomplete="off" disabled="true">
+                                <input type="hidden" name="date[{{ $key }}]" class="form-control" value="{{ $event->ends_at->format('d-m-Y') }}">
+                            @else
                                 <input type="text" name="date[{{ $key }}]" class="form-control datetimepicker" placeholder="Enter the Time" id="date0" value="{{ $day['from']->toDateTime()->format('d-m-Y') }}" autocomplete="off">
+                            @endif
                             </div>
                             <div class="form-group col-md-3">
                                 <label class="form-label">Start Time
@@ -187,19 +189,19 @@
                             </div>
                             <div class="form-group col-md-3 day_section">
                                 
-                                <!-- <a href="javascript:void(0)" class="btn btn-info add_game"><i class="fa fa-plus" aria-hidden="true"></i> Mini Game</a> -->
+                                <!-- <a href="javascript:void(0)" class="btn btn-info add_game">Add Mini Game</a> -->
                                 @if($event->type == 'multi')
-                                    <!-- <a href="javascript:void(0)" class="btn add_mini_game"><i class="fa fa-plus" aria-hidden="true"></i> Day</a> -->
+                                    <!-- <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a> -->
                                     <?php
                                         $eventCount = count($event->mini_games)-1;
                                     ?>
                                     @if($eventCount == $key)
                                         @if($eventCount == 1)
-                                            <a href="javascript:void(0)" class="btn remove_mini_game"><i class="fa fa-minus" aria-hidden="true"></i> Day</a>
+                                            <a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>
                                         @endif
-                                        <a href="javascript:void(0)" class="btn add_mini_game"><i class="fa fa-plus" aria-hidden="true"></i> Day</a>
+                                        <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a>
                                     @else
-                                        <a href="javascript:void(0)" class="btn remove_mini_game"><i class="fa fa-minus" aria-hidden="true"></i> Day</a>
+                                        <a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>
                                     @endif
                                 @endif
 
@@ -232,7 +234,7 @@
                                                 <!-- Sudoku -->
                                                 <div class="form-group col-md-4">
                                                     <label class="form-label">Reveal Numbers <small class="form-text text-muted">must be between [1 to 81]</small></label>
-                                                    <input type="text" name="variation_size[{{$index['current_index']}}][{{$index['game_index']}}]" class="form-control" value="@if(isset($miniGame['variation_data']['variation_size'])){{ $miniGame['variation_data']['variation_size'] }}@endif">
+                                                    <input type="text" name="variation_size[{{$index['current_index']}}][{{$index['game_index']}}]" class="form-control" value="{{ $miniGame['variation_data']['variation_size'] }}">
                                                 </div>
                                                 <input type="hidden" name="sudoku_id[{{$index['current_index']}}][{{$index['game_index']}}]" value="{{ $miniGame['variation_data']['sudoku_id'] }}">
                                                 <!-- <div class="form-group col-md-4">
@@ -360,8 +362,10 @@
                                                 <!-- <div class="form-group col-md-4">
                                                     <label class="form-label">Bubble level id</label>
                                                     <input type="text"  value="{{ $miniGame['variation_data']['bubble_level_id'] }}" name="bubble_level_id[{{$key}}][{{$index}}]" id="bubble_level_id" class="form-control">
-                                                </div> -->
-                                                <input type="hidden"  name="bubble_level_id[{{$index['current_index']}}][{{$index['game_index']}}]" value="{{ $miniGame['variation_data']['bubble_level_id'] }}">
+                                                </div>
+                                                 -->
+                                                 <input type="hidden"  name="bubble_level_id[{{$index['current_index']}}][{{$index['game_index']}}]" value="{{ $miniGame['variation_data']['bubble_level_id'] }}">
+
                                             
                                             <?php } else if($miniGameId == '5c80fd106650bf31a808abed' || $miniGameId == '5c80fd226650bf31a808abee' || $miniGameId == '5c5d282b697b25205433531d' || $miniGameId == '5c5d279c697b25205433531c' || $miniGameId == '5c399831697b251760c0d5e2'){ ?>
                                                 <!-- Slices -->
@@ -375,21 +379,21 @@
                                         </div>
                                         
                                         <div class="col-md-4 button_section">
-                                           
+                                            
                                             <?php
                                                 $miniGameCount = count($day['games'])-1;
                                             ?>
                                             @if($miniGameCount == $index)
-                                                <a href="javascript:void(0)" class="btn remove_game remove_game"><i class="fa fa-minus" aria-hidden="true"></i> Mini Game</a>
-                                                <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Mini Game</a>
+                                                <a href="javascript:void(0)" class="btn remove_game remove_game"><i class="fa fa-minus" aria-hidden="true"></i> Remove</a>
+                                                <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Add</a>
                                             @else
-                                                <a href="javascript:void(0)" class="btn remove_game"><i class="fa fa-minus" aria-hidden="true"></i> Mini Game</a>
+                                                <a href="javascript:void(0)" class="btn remove_game"><i class="fa fa-minus" aria-hidden="true"></i> Remove</a>
                                             @endif
                                         </div>
                                     </div>
                                 @empty
                                     <div class="game_box">
-                                       <div class="form-group col-md-4">
+                                        <div class="form-group col-md-4">
                                             <label class="form-label">Game name</label>
                                             <select name="game_id[0][]" class="form-control games">
                                                 <option value="">Select Game</option>
@@ -414,8 +418,8 @@
                                             <input type="text" name="target[0][]" class="form-control" placeholder="Enter the target">
                                         </div>
                                         <div class="col-md-4 button_section">
-                                           
-                                            <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Mini Game</a>
+                                            
+                                            <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Add</a>
                                         </div>
                                     </div>
                                 @endforelse
@@ -436,7 +440,8 @@
                         @if($event->type == 'single')
                             <div class="form-group col-md-3">
                                 <label class="form-label">Date</label>
-                                <input type="text" name="date[0]" class="form-control datetimepicker" placeholder="Enter the time" id="date0" value="{{ $event->ends_at->format('d-m-Y') }}" autocomplete="off">
+                                <input type="text" class="form-control datetimepicker" placeholder="Enter the time" id="date0" value="{{ $event->ends_at->format('d-m-Y') }}" autocomplete="off" disabled="true">
+                                <input type="hidden" name="date[0]" class="form-control datetimepicker" value="{{ $event->ends_at->format('d-m-Y') }}">
                             </div>
                         @else
                             <div class="form-group col-md-3">
@@ -451,26 +456,26 @@
                             <label class="form-label">Start Time
                                 <a data-toggle="tooltip" title="Portal open time for that day" data-placement="right">?</a>
                             </label>
-                            <input type="text" name="start_time[0]" class="form-control" placeholder="Enter the start Time" id="starttime0" value="" autocomplete="off">
+                            <input type="text" name="start_time[0]" class="form-control" placeholder="Enter the start Time" id="starttime0" value="10:00 AM" autocomplete="off">
                         </div>
                         <div class="form-group col-md-3">
                             <label class="form-label">End Time
                                 <a data-toggle="tooltip" title="Portal close time for that day" data-placement="right">?</a>
                             </label>
-                            <input type="text" name="end_time[0]" class="form-control" placeholder="Enter the end Time" id="endtime0" value="" autocomplete="off">
+                            <input type="text" name="end_time[0]" class="form-control" placeholder="Enter the end Time" id="endtime0" value="10:00 PM" autocomplete="off">
                         </div>
                         <div class="form-group col-md-3 day_section">
                            
-                            <!-- <a href="javascript:void(0)" class="btn btn-info add_game"><i class="fa fa-plus" aria-hidden="true"></i> Mini Game</a> -->
+                            <!-- <a href="javascript:void(0)" class="btn btn-info add_game">Add Mini Game</a> -->
                             @if($event->type =='multi')
-                                <a href="javascript:void(0)" class="btn add_mini_game"><i class="fa fa-plus" aria-hidden="true"></i> Day</a>
+                                <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a>
                             @endif
                         </div>
                         <input type="hidden" name="last_mini_game_index" value="0">
                         
                         <div class="separate_game_box">
                             <div class="game_box">
-                                 <div class="form-group col-md-4">
+                                <div class="form-group col-md-4">
                                     <label class="form-label">Game name</label>
                                     <select name="game_id[0][]" class="form-control games">
                                         <option value="">Select Game</option>
@@ -485,8 +490,8 @@
                                 <input type="hidden" name="last_elem_index" value="0">
                                 <div class="variation_box"></div>
                                 <div class="col-md-4 button_section">
-                                   
-                                    <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Mini Game</a>
+                                    
+                                    <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Add</a>
                                 </div>
                             </div>
                         </div>
@@ -525,8 +530,8 @@
                     </div>
                     <div class="form-group col-md-3">
                         <div class="addhunteyrefbtn">
-                            <a href="javascript:void(0)" class="btn hunt_details"><i class="fa fa-eye "></i></a>
-                            <a href="javascript:void(0)" class="btn" id="refresh"><i class="fa fa-refresh"></i></a>
+                            <a href="javascript:void(0)" class="btn hunt_details" data-toggle="tooltip" title="View Hunt"><i class="fa fa-eye "></i></a>
+                            <a href="javascript:void(0)" class="btn" id="refresh" data-toggle="tooltip" title="Refresh Hunts List"><i class="fa fa-refresh"></i></a>
                             <a href="{{ route('admin.add_location') }}" target='_blank' class="btn" >Add New</a>
                         </div>
                     </div>
@@ -738,6 +743,8 @@
 
     <!-- MINI GAMES -->
     <script type="text/javascript">
+        /* DATE TIME PICKER */
+        //$('.datetimepicker').datetimepicker();
         var startdate = '{{ $event->starts_at }}';
         var enddate = '{{ $event->ends_at }}';
         
@@ -746,7 +753,7 @@
             weekStart: 1,
             startDate: startdate,
             autoclose: true,
-        })
+        }).datepicker("setDate", new Date(startdate))
 
         $('#starttime0').timepicker({
             //defaultTime: 'current',
@@ -778,7 +785,7 @@
                 let currentIndex = miniGameIndexMaintainer.val();
 
                 let defaultMGHtml = `<div class="game_box">
-                                <div class="form-group col-md-4">
+                            <div class="form-group col-md-4">
                                 <label class="form-label">Game name</label>
                                 <select name="game_id[`+currentIndex+`][`+gameIndex+`]" class="form-control games">
                                     <option value="">Select Game</option>
@@ -793,13 +800,13 @@
                             <div class="variation_box"></div>
                             
                             <div class="col-md-4 button_section">
-                               
-                                <a href="javascript:void(0)" class="btn remove_game"><i class="fa fa-minus" aria-hidden="true"></i> Mini Game</a>
-                                <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Mini Game</a>
+                                
+                                <a href="javascript:void(0)" class="btn remove_game"><i class="fa fa-minus" aria-hidden="true"></i> Remove</a>
+                                <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Add</a>
                               </div>
                         </div>`;
                 $(this).parents('.game_box').after(defaultMGHtml);
-                $(this).parents('.button_section').html(' <a href="javascript:void(0)" class="btn remove_game"><i class="fa fa-minus" aria-hidden="true"></i> Mini Game</a>');
+                $(this).parents('.button_section').html(' <a href="javascript:void(0)" class="btn remove_game"><i class="fa fa-minus" aria-hidden="true"></i> Remove</a>');
                 $(this).parents('.button_section').find('.add_game').remove();
             });
 
@@ -808,7 +815,6 @@
                 let miniGameIndexMaintainer = $(this).parents('.mini_game').find('input[name=last_mini_game_index]');
                 let lastIndex = miniGameIndexMaintainer.val();
                 let currentIndex = parseInt(lastIndex)+1;
-                
                 let defaultMGHtml = `<div class="mini_game">
                                         <div class="daingaemtitlebox boxmapedset">
                                             <h5>Day `+(currentIndex+1)+`</h5>
@@ -821,19 +827,19 @@
                                             <label class="form-label">Start Time
                                                 <a data-toggle="tooltip" title="Portal open time for that day" data-placement="right">?</a>
                                             </label>
-                                            <input type="text" name="start_time[`+currentIndex+`]" class="form-control" placeholder="Enter the start Time" id="starttime`+currentIndex+`" value="" autocomplete="off">
+                                            <input type="text" name="start_time[`+currentIndex+`]" class="form-control" placeholder="Enter the start Time" id="starttime`+currentIndex+`" value="10:00 AM" autocomplete="off">
                                         </div>
                                         <div class="form-group col-md-3">
                                             <label class="form-label">End Time
                                                 <a data-toggle="tooltip" title="Portal close time for that day" data-placement="right">?</a>
                                             </label>
-                                            <input type="text" name="end_time[`+currentIndex+`]" class="form-control" placeholder="Enter the end Time" id="endtime`+currentIndex+`" value="" autocomplete="off">
+                                            <input type="text" name="end_time[`+currentIndex+`]" class="form-control" placeholder="Enter the end Time" id="endtime`+currentIndex+`" value="10:00 PM" autocomplete="off">
                                         </div>
                                         <div class="form-group col-md-3 day_section">
-                                            
-                                            <!-- <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Mini Game</a> -->
-                                            <a href="javascript:void(0)" class="btn remove_mini_game"><i class="fa fa-minus" aria-hidden="true"></i> Day</a>
-                                            <a href="javascript:void(0)" class="btn add_mini_game"><i class="fa fa-plus" aria-hidden="true"></i> Day</a>
+                                           
+                                            <!-- <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Add</a> -->
+                                            <a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>
+                                            <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a>
                                         </div>
                                         <input type="hidden" name="last_mini_game_index" value="`+currentIndex+`">
                                         <div class="separate_game_box">
@@ -854,28 +860,28 @@
                                                 <div class="variation_box"></div>
                                                 
                                                 <div class="col-md-4 button_section">
-                                                   
-                                                    <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Mini Game</a>
-                                                    <!-- <a href="javascript:void(0)" class="btn add_mini_game"><i class="fa fa-plus" aria-hidden="true"></i> Day</a> -->
+                                                    
+                                                    <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Add</a>
+                                                    <!-- <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a> -->
                                                 </div>
                                             </div>
                                         </div>
                                     </div>`;
 
                 $(this).parents('.mini_game').after(defaultMGHtml);
-                $(this).parents('.col-md-3').html('<a href="javascript:void(0)" class="btn remove_mini_game"><i class="fa fa-minus" aria-hidden="true"></i> Day</a>');
+                $(this).parents('.col-md-3').html('<a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>');
                 $(this).parents('.col-md-3').find('.add_mini_game').remove();
 
                 
                 //$('.datetimepicker').datetimepicker();
-
-
+                var myDate = new Date(startdate);
+                myDate.setDate(myDate.getDate() + currentIndex);
+                
                 $('#date'+currentIndex).datepicker({
                     weekStart: 1,
                     startDate: startdate,
-                    endDate : enddate,
                     autoclose: true,
-                })
+                }).datepicker("update", myDate); 
 
                 $('#starttime'+currentIndex).timepicker({
                     //defaultTime: 'current',
@@ -896,14 +902,14 @@
 
             /* REMOVE Mini GAME */
             $(document).on('click','.remove_game',function(){
-                //$(this).parents('.mini_game').find('.game_box:last').find('.button_section').html(' <a href="javascript:void(0)" class="btn remove_game"><i class="fa fa-minus" aria-hidden="true"></i> Mini Game</a> <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Mini Game</a>');
+                //$(this).parents('.mini_game').find('.game_box:last').find('.button_section').html(' <a href="javascript:void(0)" class="btn remove_game">Remove Mini Game</a> <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>');
                 var gameIndex = $(this).parents('.game_box').find('[name="last_elem_index"]').val(); 
                 var currentIndex = $(this).parents('.mini_game').find('[name="last_mini_game_index"]').val(); 
                 $(this).parents('.mini_game').attr('id','mini_game'+currentIndex);
                 
                 $(this).parents('.game_box').remove();
                 $('#mini_game'+currentIndex).find('.game_box').find('.add_game').remove();
-                $('#mini_game'+currentIndex).find('.game_box:last').find('.button_section').append(' <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Mini Game</a>');
+                $('#mini_game'+currentIndex).find('.game_box:last').find('.button_section').append(' <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Add</a>');
                 if($('#mini_game'+currentIndex).find('.game_box').length == 1){
                     $('#mini_game'+currentIndex).find('.game_box').find('.remove_game').remove();
                 }
@@ -913,7 +919,7 @@
             $(document).on('click','.remove_mini_game',function(){
                 $(this).parents('.mini_game').remove();
                 $('.add_mini_game').remove();
-                $('.mini_game:last').find('.day_section').append(' <a href="javascript:void(0)" class="btn add_mini_game"><i class="fa fa-plus" aria-hidden="true"></i> Day</a>');
+                $('.mini_game:last').find('.day_section').append(' <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a>');
 
                 if($('.mini_game').length == 1){
                     $('.remove_mini_game').remove();
@@ -981,7 +987,12 @@
                 }
 
                 $(this).parents('.game_box').find('.variation_box').html(data);
+
+                
+
+
             });
+
         });
     </script>
     <!-- END MINI GAME -->

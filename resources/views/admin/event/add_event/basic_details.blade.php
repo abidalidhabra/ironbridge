@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | GAME VARIATION')
+@section('title','Ironbridge1779 | Events')
 @extends('admin.layouts.admin-app')
 @section('styles')
 

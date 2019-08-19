@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | GAME VARIATION')
+@section('title','Ironbridge1779 | Events')
 @extends('admin.layouts.admin-app')
 @section('styles')
     
@@ -38,7 +38,7 @@
                         <label class="form-label">Map Reveal Date
                             <a data-toggle="tooltip" title="Hunt completion date and time for that event" data-placement="right">?</a>
                         </label>
-                        <input type="text" name="map_reveal_date" class="form-control" id="map_reveal_date" placeholder="Enter the map reveal date" autocomplete="off" value="@if(isset($event->map_reveal_date)){{$event->map_reveal_date->format('d-m-Y h:i A') }}@endif">
+                        <input type="text" name="map_reveal_date" class="form-control" id="map_reveal_date" placeholder="Enter the map reveal date" autocomplete="off" value="@if(isset($event->map_reveal_date)){{ $event->map_reveal_date->format('d-m-Y h:i A') }}@else {{ $event->ends_at->format('d-m-Y h:i A') }}@endif">
                     </div>
                     <div class="form-group col-md-5">
                         <label class="form-label">Search Place Name
@@ -56,8 +56,8 @@
                     </div>
                     <div class="form-group col-md-3">
                         <div class="addhunteyrefbtn">
-                            <a href="javascript:void(0)" class="btn hunt_details"><i class="fa fa-eye "></i></a>
-                            <a href="javascript:void(0)" class="btn" id="refresh"><i class="fa fa-refresh"></i></a>
+                            <a href="javascript:void(0)" class="btn hunt_details" data-toggle="tooltip" title="View Hunt"><i class="fa fa-eye "></i></a>
+                            <a href="javascript:void(0)" class="btn" id="refresh" data-toggle="tooltip" title="Refresh Hunts List"><i class="fa fa-refresh"></i></a>
                             <a href="{{ route('admin.add_location') }}" target='_blank' class="btn" >Add New</a>
                         </div>
                     </div>

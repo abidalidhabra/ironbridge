@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | GAME VARIATION')
+@section('title','Ironbridge1779 | Events')
 @extends('admin.layouts.admin-app')
 @section('styles')
     <!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->
@@ -76,11 +76,11 @@
                                     ?>
                                     @if($eventCount == $key)
                                         @if($eventCount == 1)
-                                            <a href="javascript:void(0)" class="btn remove_mini_game"><i class="fa fa-minus" aria-hidden="true"></i> Day</a>
+                                            <a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>
                                         @endif
-                                        <a href="javascript:void(0)" class="btn add_mini_game"><i class="fa fa-plus" aria-hidden="true"></i> Day</a>
+                                        <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a>
                                     @else
-                                        <a href="javascript:void(0)" class="btn remove_mini_game"><i class="fa fa-minus" aria-hidden="true"></i> Day</a>
+                                        <a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>
                                     @endif
                                 @endif
 
@@ -335,19 +335,19 @@
                             <label class="form-label">Start Time
                                 <a data-toggle="tooltip" title="Portal open time for that day" data-placement="right">?</a>
                             </label>
-                            <input type="text" name="start_time[0]" class="form-control" placeholder="Enter the start Time" id="starttime0" value="" autocomplete="off">
+                            <input type="text" name="start_time[0]" class="form-control" placeholder="Enter the start Time" id="starttime0" value="10:00 AM" autocomplete="off">
                         </div>
                         <div class="form-group col-md-3">
                             <label class="form-label">End Time
                                 <a data-toggle="tooltip" title="Portal close time for that day" data-placement="right">?</a>
                             </label>
-                            <input type="text" name="end_time[0]" class="form-control" placeholder="Enter the end Time" id="endtime0" value="" autocomplete="off">
+                            <input type="text" name="end_time[0]" class="form-control" placeholder="Enter the end Time" id="endtime0" value="10:00 PM" autocomplete="off">
                         </div>
                         <div class="form-group col-md-3 day_section">
                            
                             <!-- <a href="javascript:void(0)" class="btn btn-info add_game">Add Mini Game</a> -->
                             @if($event->type =='multi')
-                                <a href="javascript:void(0)" class="btn add_mini_game"><i class="fa fa-plus" aria-hidden="true"></i> Day</a>
+                                <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a>
                             @endif
                         </div>
                         <input type="hidden" name="last_mini_game_index" value="0">
@@ -443,7 +443,7 @@
             weekStart: 1,
             startDate: startdate,
             autoclose: true,
-        })
+        }).datepicker("setDate", new Date(startdate))
 
         $('#starttime0').timepicker({
             //defaultTime: 'current',
@@ -505,7 +505,6 @@
                 let miniGameIndexMaintainer = $(this).parents('.mini_game').find('input[name=last_mini_game_index]');
                 let lastIndex = miniGameIndexMaintainer.val();
                 let currentIndex = parseInt(lastIndex)+1;
-                
                 let defaultMGHtml = `<div class="mini_game">
                                         <div class="daingaemtitlebox boxmapedset">
                                             <h5>Day `+(currentIndex+1)+`</h5>
@@ -518,19 +517,19 @@
                                             <label class="form-label">Start Time
                                                 <a data-toggle="tooltip" title="Portal open time for that day" data-placement="right">?</a>
                                             </label>
-                                            <input type="text" name="start_time[`+currentIndex+`]" class="form-control" placeholder="Enter the start Time" id="starttime`+currentIndex+`" value="" autocomplete="off">
+                                            <input type="text" name="start_time[`+currentIndex+`]" class="form-control" placeholder="Enter the start Time" id="starttime`+currentIndex+`" value="10:00 AM" autocomplete="off">
                                         </div>
                                         <div class="form-group col-md-3">
                                             <label class="form-label">End Time
                                                 <a data-toggle="tooltip" title="Portal close time for that day" data-placement="right">?</a>
                                             </label>
-                                            <input type="text" name="end_time[`+currentIndex+`]" class="form-control" placeholder="Enter the end Time" id="endtime`+currentIndex+`" value="" autocomplete="off">
+                                            <input type="text" name="end_time[`+currentIndex+`]" class="form-control" placeholder="Enter the end Time" id="endtime`+currentIndex+`" value="10:00 PM" autocomplete="off">
                                         </div>
                                         <div class="form-group col-md-3 day_section">
                                            
                                             <!-- <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Add</a> -->
-                                            <a href="javascript:void(0)" class="btn remove_mini_game"><i class="fa fa-minus" aria-hidden="true"></i> Day</a>
-                                            <a href="javascript:void(0)" class="btn add_mini_game"><i class="fa fa-plus" aria-hidden="true"></i> Day</a>
+                                            <a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>
+                                            <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a>
                                         </div>
                                         <input type="hidden" name="last_mini_game_index" value="`+currentIndex+`">
                                         <div class="separate_game_box">
@@ -553,25 +552,26 @@
                                                 <div class="col-md-4 button_section">
                                                     
                                                     <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Add</a>
-                                                    <!-- <a href="javascript:void(0)" class="btn add_mini_game"><i class="fa fa-plus" aria-hidden="true"></i> Day</a> -->
+                                                    <!-- <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a> -->
                                                 </div>
                                             </div>
                                         </div>
                                     </div>`;
 
                 $(this).parents('.mini_game').after(defaultMGHtml);
-                $(this).parents('.col-md-3').html('<a href="javascript:void(0)" class="btn remove_mini_game"><i class="fa fa-minus" aria-hidden="true"></i> Day</a>');
+                $(this).parents('.col-md-3').html('<a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>');
                 $(this).parents('.col-md-3').find('.add_mini_game').remove();
 
                 
                 //$('.datetimepicker').datetimepicker();
-
-
+                var myDate = new Date(startdate);
+                myDate.setDate(myDate.getDate() + currentIndex);
+                
                 $('#date'+currentIndex).datepicker({
                     weekStart: 1,
                     startDate: startdate,
                     autoclose: true,
-                })
+                }).datepicker("update", myDate); 
 
                 $('#starttime'+currentIndex).timepicker({
                     //defaultTime: 'current',
@@ -609,7 +609,7 @@
             $(document).on('click','.remove_mini_game',function(){
                 $(this).parents('.mini_game').remove();
                 $('.add_mini_game').remove();
-                $('.mini_game:last').find('.day_section').append(' <a href="javascript:void(0)" class="btn add_mini_game"><i class="fa fa-plus" aria-hidden="true"></i> Day</a>');
+                $('.mini_game:last').find('.day_section').append(' <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a>');
 
                 if($('.mini_game').length == 1){
                     $('.remove_mini_game').remove();

@@ -470,7 +470,7 @@ class EventController extends Controller
         // print_r($request->all());
         return response()->json([
             'status'  => true,
-            'message' => 'successfully hunt and prize added successfully.',
+            'message' => 'Data added successfully.',
         ]);
     }
     /**
@@ -815,6 +815,9 @@ class EventController extends Controller
         }
         return DataTables::of($events)
         ->addIndexColumn()
+        ->editColumn('coin_type',function($event){
+            return strtoupper($event->coin_type);
+        })
         ->addColumn('city',function($event){
             return $event->city->name;
         })
