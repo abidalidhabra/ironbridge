@@ -72,7 +72,7 @@
             </div>
             <div class="allbasicdirmain">                
                 <div class="allbasicdirbox">
-                    <div class="row">
+                    <div class="">
                         <div class="form-group col-md-3">
                             <label class="form-label">Group Type
                                 <a data-toggle="tooltip" title="Individual Prize or Bulk prize" data-placement="right">?</a>
@@ -91,7 +91,7 @@
                     </div>
                     <div id="prize_box">
                         @forelse($event->prizes as $key => $value)
-                            <div class="row">
+                            <div class="prize_box">
                                 <div class="form-group col-md-3">
                                     <select class="form-control group_type" name="group_type[{{ $key }}]">
                                         <option value="individual" @if(isset($value->group_type) && $value->group_type == "individual") {{ 'selected' }} @endif>Individual</option>
@@ -135,7 +135,7 @@
                                 </div>
                             </div>
                         @empty
-                            <div class="row">
+                            <div class="prize_box">
                                 <div class="form-group col-md-3">
                                     <select class="form-control group_type" name="group_type[]">
                                         <option value="individual">Individual</option>
@@ -245,9 +245,12 @@
                     },
                     url: '{{ route("admin.event.getHuntList") }}',
                     data: {id : '{{ $id }}'},
+                    beforeSend: function(){
+                        $('#refresh i').addClass('fa-spin');
+                    },
                     success: function(response)
                     {
-
+                        $('#refresh i').removeClass('fa-spin');
                         if (response.status == true) {
                             $('select[name="search_place_name"]').html('');
                             jQuery.each( response.data, function( index, val ) {
@@ -270,7 +273,7 @@
                 let prizeIndex = $('input[name="prize_index"]:last').val();
                 let currentIndex = parseInt(prizeIndex)+1;
 
-                $('#prize_box').append(`<div class="row">
+                $('#prize_box').append(`<div class="prize_box">
                             <div class="form-group col-md-3">
                                 <select class="form-control group_type" name="group_type[`+currentIndex+`]">
                                     <option value="individual">Individual</option>
@@ -300,18 +303,18 @@
 
             $(document).on('click','.remove_prize',function(){
                 $(this).parents('.row').remove();
-                    $('.add_prize').remove();
-                    $('#prize_box .row:last').find('.button_box').prepend(`<a href="javascript:void(0)" class="btn add_prize"><i class="fa fa-plus "></i></a>`);
-                    if($('#prize_box .row').length == 1){
-                        $('.remove_prize').remove();
-                    }
+                $('.add_prize').remove();
+                $('#prize_box .prize_box:last').find('.button_box').prepend(`<a href="javascript:void(0)" class="btn add_prize"><i class="fa fa-plus "></i></a>`);
+                if($('#prize_box .prize_box').length == 1){
+                    $('.remove_prize').remove();
+                }
             });
 
             $(document).on('change','.group_type',function(){
                 var group_type = $(this).val();
-                let prizeIndex = $(this).parents('.row').find('input[name="prize_index"]').val();
+                let prizeIndex = $(this).parents('.prize_box').find('input[name="prize_index"]').val();
                 if (group_type == 'group') {
-                    $(this).parents('.row').find('.rank_box').html(`<div class="row">
+                    $(this).parents('.prize_box').find('.rank_box').html(`<div class="row">
                                                                     <div class="col-md-6">
                                                                         <input type="text" name="start_rank[`+prizeIndex+`]" class="form-control col-md-12" placeholder="Start">
                                                                     </div>
@@ -321,7 +324,7 @@
                                                                 </div>`);
                 } else if(group_type == 'individual'){
 
-                    $(this).parents('.row').find('.rank_box').html(`<input type="text" name="rank[`+prizeIndex+`]" class="form-control" placeholder="Rank">`);
+                    $(this).parents('.prize_box').find('.rank_box').html(`<input type="text" name="rank[`+prizeIndex+`]" class="form-control" placeholder="Rank">`);
                 }
             });
 

@@ -1,4 +1,4 @@
-<div class="form-group col-md-4">
+<!-- <div class="form-group col-md-4">
 	<label class="form-label">Sudoku Id</label>
 	<select name="sudoku_id[{{$index['current_index']}}][{{$index['game_index']}}]" class="form-control">
 		<option value="1">1</option>
@@ -18,4 +18,9 @@
 		<option value="15">15</option>
 		<option value="16">16</option>
 	</select>
+</div> -->
+<div class="form-group col-md-4">
+	<label class="form-label">Reveal Numbers <small class="form-text text-muted">must be between [1 to 81]</small></label>
+	<input type="text" name="variation_size[{{$index['current_index']}}][{{$index['game_index']}}]" class="form-control" value="{{ rand(1,81) }}">
 </div>
+<input type="hidden" name="sudoku_id[{{$index['current_index']}}][{{$index['game_index']}}]" value="5">

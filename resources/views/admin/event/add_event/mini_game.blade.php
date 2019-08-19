@@ -29,14 +29,16 @@
             @csrf
             <!-- GAME DETAILS START CODE -->
             <div class="col-md-12">
-                <h4>Mini Game Details</h4>
+                <div class="eventpagetitle">
+                    <h4>Mini Game Details</h4>
+                </div>
             </div>
             <div class="separate_mini_game_box">
                 <input type="hidden" name="event_id" value="{{ $event->_id }}">
                 @if($event->mini_games)   
                     @forelse($event->mini_games as $key => $day)
                         <div class="mini_game">
-                            <div class="daingaemtitlebox">
+                            <div class="daingaemtitlebox boxmapedset">
                                 @if($event->type == 'single')
                                     <h5>Single Day</h5>
                                 @else
@@ -65,7 +67,7 @@
                                 <input type="text" name="end_time[{{ $key }}]" class="form-control datetimepicker" placeholder="Enter the end Time" id="enddate0" value="{{ $day['to']->toDateTime()->format('h:i A') }}" autocomplete="off">
                             </div>
                             <div class="form-group col-md-3 day_section">
-                                <br>
+                                
                                 <!-- <a href="javascript:void(0)" class="btn btn-info add_game">Add Mini Game</a> -->
                                 @if($event->type == 'multi')
                                     <!-- <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a> -->
@@ -74,11 +76,11 @@
                                     ?>
                                     @if($eventCount == $key)
                                         @if($eventCount == 1)
-                                            <a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>
+                                            <a href="javascript:void(0)" class="btn remove_mini_game"><i class="fa fa-minus" aria-hidden="true"></i> Day</a>
                                         @endif
-                                        <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a>
+                                        <a href="javascript:void(0)" class="btn add_mini_game"><i class="fa fa-plus" aria-hidden="true"></i> Day</a>
                                     @else
-                                        <a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>
+                                        <a href="javascript:void(0)" class="btn remove_mini_game"><i class="fa fa-minus" aria-hidden="true"></i> Day</a>
                                     @endif
                                 @endif
 
@@ -90,10 +92,6 @@
                             <div class="separate_game_box">
                                 @forelse($day['games'] as $index => $miniGame)
                                     <div class="game_box">
-                                        <div class="daingaemtitlebox">
-                                            <h6>Mini Games</h6>
-                                        </div>
-
                                         <div class="form-group col-md-4">
                                             <label class="form-label">Game name</label>
                                             <select name="game_id[{{ $key }}][{{$index}}]" class="form-control games">
@@ -113,28 +111,32 @@
                                             ?>
                                             <?php if($miniGameId == '5b0e2ff151b2010ec820fb48'){ ?>
                                                 <!-- Sudoku -->
-                                               
                                                 <div class="form-group col-md-4">
+                                                    <label class="form-label">Reveal Numbers <small class="form-text text-muted">must be between [1 to 81]</small></label>
+                                                    <input type="text" name="variation_size[{{$index['current_index']}}][{{$index['game_index']}}]" class="form-control" value="{{ $miniGame['variation_data']['variation_size'] }}">
+                                                </div>
+                                                <input type="hidden" name="sudoku_id[{{$index['current_index']}}][{{$index['game_index']}}]" value="{{ $miniGame['variation_data']['sudoku_id'] }}">
+                                                <!-- <div class="form-group col-md-4">
                                                     <label class="form-label">Sudoku Id</label>
                                                     <select name="sudoku_id[{{$key}}][{{$index}}]" class="form-control">
-                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 1) { echo "selected";} ?> value="1">1</option>
-                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 2) { echo "selected";} ?> value="2">2</option>
-                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 3) { echo "selected";} ?> value="3">3</option>
-                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 4) { echo "selected";} ?> value="4">4</option>
-                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 5) { echo "selected";} ?> value="5">5</option>
-                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 6) { echo "selected";} ?> value="6">6</option>
-                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 7) { echo "selected";} ?> value="7">7</option>
-                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 8) { echo "selected";} ?> value="8">8</option>
-                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 9) { echo "selected";} ?> value="9">9</option>
-                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 10) { echo "selected";} ?> value="10">10</option>
-                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 11) { echo "selected";} ?> value="11">11</option>
-                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 12) { echo "selected";} ?> value="12">12</option>
-                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 13) { echo "selected";} ?> value="13">13</option>
-                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 14) { echo "selected";} ?> value="14">14</option>
-                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 15) { echo "selected";} ?> value="15">15</option>
-                                                        <option <?php if ($miniGame['variation_data']['sudoku_id'] == 16) { echo "selected";} ?> value="16">16</option>
+                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 1) { echo "selected";} ?> value="1">1</option>
+                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 2) { echo "selected";} ?> value="2">2</option>
+                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 3) { echo "selected";} ?> value="3">3</option>
+                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 4) { echo "selected";} ?> value="4">4</option>
+                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 5) { echo "selected";} ?> value="5">5</option>
+                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 6) { echo "selected";} ?> value="6">6</option>
+                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 7) { echo "selected";} ?> value="7">7</option>
+                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 8) { echo "selected";} ?> value="8">8</option>
+                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 9) { echo "selected";} ?> value="9">9</option>
+                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 10) { echo "selected";} ?> value="10">10</option>
+                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 11) { echo "selected";} ?> value="11">11</option>
+                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 12) { echo "selected";} ?> value="12">12</option>
+                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 13) { echo "selected";} ?> value="13">13</option>
+                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 14) { echo "selected";} ?> value="14">14</option>
+                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 15) { echo "selected";} ?> value="15">15</option>
+                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 16) { echo "selected";} ?> value="16">16</option>
                                                     </select>
-                                                </div>
+                                                </div> -->
                                             <?php } else if($miniGameId == '5b0e303f51b2010ec820fb4d'){ ?>
                                                 <!-- Number search -->
                                                 <div class="form-group col-md-4">
@@ -169,7 +171,7 @@
                                             <?php } else if($miniGameId == '5b0e306951b2010ec820fb4f'){ ?>
                                                 <!-- Sliding Puzzle -->
                                                 <div class="form-group col-md-4">
-                                                    <label class="form-label">Variation size</label>
+                                                    <label class="form-label">Variation size <small class="form-text text-muted">must of [4,5,6]</small></label>
                                                     <input type="text"  name="variation_size[{{$key}}][{{$index}}]" value="{{ $miniGame['variation_data']['variation_size'] }}"  class="form-control">
                                                 </div>
                                                 <div class="form-group col-md-4">
@@ -236,10 +238,13 @@
                                                     <label class="form-label">No Of balls</label>
                                                     <input type="text"  value="{{ $miniGame['variation_data']['no_of_balls'] }}" name="no_of_balls[{{$key}}][{{$index}}]" id="no_of_balls" class="form-control">
                                                 </div>
-                                                <div class="form-group col-md-4">
+                                                <!-- <div class="form-group col-md-4">
                                                     <label class="form-label">Bubble level id</label>
                                                     <input type="text"  value="{{ $miniGame['variation_data']['bubble_level_id'] }}" name="bubble_level_id[{{$key}}][{{$index}}]" id="bubble_level_id" class="form-control">
                                                 </div>
+                                                 -->
+                                                 <input type="hidden"  name="bubble_level_id[{{$index['current_index']}}][{{$index['game_index']}}]" value="{{ $miniGame['variation_data']['bubble_level_id'] }}">
+
                                             
                                             <?php } else if($miniGameId == '5c80fd106650bf31a808abed' || $miniGameId == '5c80fd226650bf31a808abee' || $miniGameId == '5c5d282b697b25205433531d' || $miniGameId == '5c5d279c697b25205433531c' || $miniGameId == '5c399831697b251760c0d5e2'){ ?>
                                                 <!-- Slices -->
@@ -252,24 +257,21 @@
                                         
                                         </div>
                                         
-                                        <div class="col-md-8 button_section">
-                                            <br>
+                                        <div class="col-md-4 button_section">
+                                            
                                             <?php
                                                 $miniGameCount = count($day['games'])-1;
                                             ?>
                                             @if($miniGameCount == $index)
-                                                <a href="javascript:void(0)" class="btn remove_game remove_game">Remove Mini Game</a>
-                                                <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>
+                                                <a href="javascript:void(0)" class="btn remove_game remove_game"><i class="fa fa-minus" aria-hidden="true"></i> Remove</a>
+                                                <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Add</a>
                                             @else
-                                                <a href="javascript:void(0)" class="btn remove_game">Remove Mini Game</a>
+                                                <a href="javascript:void(0)" class="btn remove_game"><i class="fa fa-minus" aria-hidden="true"></i> Remove</a>
                                             @endif
                                         </div>
                                     </div>
                                 @empty
                                     <div class="game_box">
-                                        <div class="daingaemtitlebox">
-                                            <h6>Mini Games</h6>
-                                        </div>
                                         <div class="form-group col-md-4">
                                             <label class="form-label">Game name</label>
                                             <select name="game_id[0][]" class="form-control games">
@@ -295,8 +297,8 @@
                                             <input type="text" name="target[0][]" class="form-control" placeholder="Enter the target">
                                         </div>
                                         <div class="col-md-4 button_section">
-                                            <br>
-                                            <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>
+                                            
+                                            <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Add</a>
                                         </div>
                                     </div>
                                 @endforelse
@@ -306,7 +308,7 @@
                     @endforelse
                 @else
                     <div class="mini_game">
-                        <div class="daingaemtitlebox">
+                        <div class="daingaemtitlebox boxmapedset">
                             @if($event->type == 'single')
                                 <h5>Single Day</h5>
                             @else
@@ -342,19 +344,16 @@
                             <input type="text" name="end_time[0]" class="form-control" placeholder="Enter the end Time" id="endtime0" value="" autocomplete="off">
                         </div>
                         <div class="form-group col-md-3 day_section">
-                            <br>
+                           
                             <!-- <a href="javascript:void(0)" class="btn btn-info add_game">Add Mini Game</a> -->
                             @if($event->type =='multi')
-                                <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a>
+                                <a href="javascript:void(0)" class="btn add_mini_game"><i class="fa fa-plus" aria-hidden="true"></i> Day</a>
                             @endif
                         </div>
                         <input type="hidden" name="last_mini_game_index" value="0">
                         
                         <div class="separate_game_box">
                             <div class="game_box">
-                                 <div class="daingaemtitlebox">
-                                    <h6>Mini Games</h6>
-                                </div>
                                 <div class="form-group col-md-4">
                                     <label class="form-label">Game name</label>
                                     <select name="game_id[0][]" class="form-control games">
@@ -369,9 +368,9 @@
                                 
                                 <input type="hidden" name="last_elem_index" value="0">
                                 <div class="variation_box"></div>
-                                <div class="col-md-8 button_section">
-                                    <br>
-                                    <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>
+                                <div class="col-md-4 button_section">
+                                    
+                                    <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Add</a>
                                 </div>
                             </div>
                         </div>
@@ -476,9 +475,6 @@
                 let currentIndex = miniGameIndexMaintainer.val();
 
                 let defaultMGHtml = `<div class="game_box">
-                                <div class="daingaemtitlebox">
-                                   <h6>Mini Games</h6>
-                                </div>
                             <div class="form-group col-md-4">
                                 <label class="form-label">Game name</label>
                                 <select name="game_id[`+currentIndex+`][`+gameIndex+`]" class="form-control games">
@@ -493,14 +489,14 @@
                             <input type="hidden" name="last_elem_index" value="`+gameIndex+`">
                             <div class="variation_box"></div>
                             
-                            <div class="col-md-8 button_section">
-                                <br>
-                                <a href="javascript:void(0)" class="btn remove_game">Remove Mini Game</a>
-                                <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>
+                            <div class="col-md-4 button_section">
+                                
+                                <a href="javascript:void(0)" class="btn remove_game"><i class="fa fa-minus" aria-hidden="true"></i> Remove</a>
+                                <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Add</a>
                               </div>
                         </div>`;
                 $(this).parents('.game_box').after(defaultMGHtml);
-                $(this).parents('.button_section').html('<br> <a href="javascript:void(0)" class="btn remove_game">Remove Mini Game</a>');
+                $(this).parents('.button_section').html(' <a href="javascript:void(0)" class="btn remove_game"><i class="fa fa-minus" aria-hidden="true"></i> Remove</a>');
                 $(this).parents('.button_section').find('.add_game').remove();
             });
 
@@ -511,7 +507,7 @@
                 let currentIndex = parseInt(lastIndex)+1;
                 
                 let defaultMGHtml = `<div class="mini_game">
-                                        <div class="daingaemtitlebox">
+                                        <div class="daingaemtitlebox boxmapedset">
                                             <h5>Day `+(currentIndex+1)+`</h5>
                                         </div>
                                         <div class="form-group col-md-3">
@@ -531,17 +527,14 @@
                                             <input type="text" name="end_time[`+currentIndex+`]" class="form-control" placeholder="Enter the end Time" id="endtime`+currentIndex+`" value="" autocomplete="off">
                                         </div>
                                         <div class="form-group col-md-3 day_section">
-                                            <br>
-                                            <!-- <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a> -->
-                                            <a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>
-                                            <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a>
+                                           
+                                            <!-- <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Add</a> -->
+                                            <a href="javascript:void(0)" class="btn remove_mini_game"><i class="fa fa-minus" aria-hidden="true"></i> Day</a>
+                                            <a href="javascript:void(0)" class="btn add_mini_game"><i class="fa fa-plus" aria-hidden="true"></i> Day</a>
                                         </div>
                                         <input type="hidden" name="last_mini_game_index" value="`+currentIndex+`">
                                         <div class="separate_game_box">
                                             <div class="game_box">
-                                                <div class="daingaemtitlebox">
-                                                   <h6>Mini Games</h6>
-                                                </div>
                                                 <div class="form-group col-md-4">
                                                     <label class="form-label">Game name</label>
                                                     <select name="game_id[`+currentIndex+`][]" class="form-control games">
@@ -557,17 +550,17 @@
                                                 <input type="hidden" name="last_elem_index" value="0">
                                                 <div class="variation_box"></div>
                                                 
-                                                <div class="col-md-8 button_section">
-                                                    <br>
-                                                    <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>
-                                                    <!-- <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a> -->
+                                                <div class="col-md-4 button_section">
+                                                    
+                                                    <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Add</a>
+                                                    <!-- <a href="javascript:void(0)" class="btn add_mini_game"><i class="fa fa-plus" aria-hidden="true"></i> Day</a> -->
                                                 </div>
                                             </div>
                                         </div>
                                     </div>`;
 
                 $(this).parents('.mini_game').after(defaultMGHtml);
-                $(this).parents('.col-md-3').html('<br/><a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>');
+                $(this).parents('.col-md-3').html('<a href="javascript:void(0)" class="btn remove_mini_game"><i class="fa fa-minus" aria-hidden="true"></i> Day</a>');
                 $(this).parents('.col-md-3').find('.add_mini_game').remove();
 
                 
@@ -606,7 +599,7 @@
                 
                 $(this).parents('.game_box').remove();
                 $('#mini_game'+currentIndex).find('.game_box').find('.add_game').remove();
-                $('#mini_game'+currentIndex).find('.game_box:last').find('.button_section').append(' <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>');
+                $('#mini_game'+currentIndex).find('.game_box:last').find('.button_section').append(' <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Add</a>');
                 if($('#mini_game'+currentIndex).find('.game_box').length == 1){
                     $('#mini_game'+currentIndex).find('.game_box').find('.remove_game').remove();
                 }
@@ -616,7 +609,7 @@
             $(document).on('click','.remove_mini_game',function(){
                 $(this).parents('.mini_game').remove();
                 $('.add_mini_game').remove();
-                $('.mini_game:last').find('.day_section').append(' <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a>');
+                $('.mini_game:last').find('.day_section').append(' <a href="javascript:void(0)" class="btn add_mini_game"><i class="fa fa-plus" aria-hidden="true"></i> Day</a>');
 
                 if($('.mini_game').length == 1){
                     $('.remove_mini_game').remove();

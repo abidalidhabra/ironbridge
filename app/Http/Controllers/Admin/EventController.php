@@ -230,19 +230,19 @@ class EventController extends Controller
 
     public function addMiniGame(Request $request){
         $validator = Validator::make($request->all(),[
-            'game_id.*.*'      => 'required',
-            'row.*.*'          => 'required|integer',
-            'column.*.*'       => 'required|integer',
-            'target.*.*'       => 'required|integer',
+            'game_id.*.*'         => 'required',
+            'row.*.*'             => 'required|integer',
+            'column.*.*'          => 'required|integer|same:row.*.*',
+            'target.*.*'          => 'required|integer',
             'variation_image.*.*' => 'required|mimes:jpeg,jpg,png',
             'map_reveal_date.*.*' => 'required',
             'variation_size.*.*'  => 'required|integer',
             // 'variation_name.*.*'  => 'required',
             // 'variation_complexity.*.*'  => 'required',
             'number_generate.*.*'  => 'required|integer',
-            'start_time.*'  => 'required',
-            'end_time.*'  => 'required',
-            'date.*'  => 'required',
+            'start_time.*'         => 'required',
+            'end_time.*'           => 'required',
+            'date.*'               => 'required',
         ]);
 
 
@@ -339,6 +339,10 @@ class EventController extends Controller
                         if (isset($data['variation_size']) && isset($data['variation_size'][$i][$k])) {
                             $variation_data['variation_size'] = (int)$data['variation_size'][$i][$k];
                         }
+
+                        // if (isset($data['default_reveal_number']) && isset($data['default_reveal_number'][$i][$k])) {
+                        //     $variation_data['default_reveal_number'] = (int)$data['default_reveal_number'][$i][$k];
+                        // }
 
                         if (isset($data['number_generate']) && isset($data['number_generate'][$i][$k])) {
                             $variation_data['number_generate'] = (int)$data['number_generate'][$i][$k];
@@ -487,8 +491,6 @@ class EventController extends Controller
         $hunts = Hunt::select('name','place_name','city')
         ->where('city',$event->city->name)
         ->get();
-
-
         return view('admin.event.edit_event',compact('id','games','cities','event','hunts'));
     }
 
@@ -534,7 +536,7 @@ class EventController extends Controller
             'attempts'         => 'required|integer',
             'game_id.*.*'      => 'required',
             'row.*.*'          => 'required|integer',
-            'column.*.*'       => 'required|integer',
+            'column.*.*'       => 'required|integer|same:row.*.*',
             'target.*.*'       => 'required|integer',
             'variation_image.*.*' => 'required|mimes:jpeg,jpg,png',
             'map_reveal_date.*.*' => 'required',
@@ -562,8 +564,8 @@ class EventController extends Controller
         $data = $request->all();
         $eventId = $request->get('event_id');
         $event = Event::where('_id',$eventId)
-        ->with('prizes')
-        ->first();
+                ->with('prizes')
+                ->first();
 
         /* BASIC  DETAILS */
         $event->fees            = (int)$data['fees']; 
@@ -571,10 +573,16 @@ class EventController extends Controller
         $event->winning_ratio   = (int)$data['winning_ratio']; 
         $event->starts_at       = Carbon::parse($data['event_start_date'])->format('Y-m-d H:i:s');
         $event->ends_at         = Carbon::parse($data['event_end_date'])->format('Y-m-d H:i:s');
-        $event->coin_number     = (int)$data['coin_number'];
         $event->discount        = (float)$data['discount_fees'];
         $event->discount_till   = Carbon::parse($data['discount_date'])->format('Y-m-d H:i:s');
         $event->attempts        = (int)$data['attempts'];
+        $event->coin_type       = $data['coin_type'];
+        $event->name            = $data['name'];
+        if ($data['coin_type'] == 'physical') {
+            $event->coin_number     = (int)$data['coin_number'];
+        } else {
+            $event->coin_number = null;
+        }
         /* END BASIC DETAILS */
         
         /* MINI GAME */
@@ -703,10 +711,6 @@ class EventController extends Controller
         $data['mini_games'] = $main_game;
         
 
-        $event = Event::where('_id',$eventId)
-                        ->with('prizes')
-                        ->first();
-
         $event->mini_games = $data['mini_games'];
 
         /* END MINI GAMES */
@@ -757,7 +761,7 @@ class EventController extends Controller
         /* END HUNT AND PRIZE */
         return response()->json([
             'status'  => true,
-            'message' => 'Event has been update successfully.',
+            'message' => 'Event has been updated successfully.',
             'id'      => $event->id
         ]);
     }
