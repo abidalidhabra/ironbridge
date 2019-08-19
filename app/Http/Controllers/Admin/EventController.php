@@ -523,7 +523,7 @@ class EventController extends Controller
             'name'             => 'required',
             'type'             => 'required|in:single,multi',
             'coin_type'        => 'required|in:ar,physical',
-            'city_id.*'        => 'required',
+            'city_id'          => 'required',
             'event_start_date' => 'required',
             'event_end_date'   => 'required',
             'rejection_ratio'  => 'required|integer',
@@ -578,6 +578,7 @@ class EventController extends Controller
         $event->attempts        = (int)$data['attempts'];
         $event->coin_type       = $data['coin_type'];
         $event->name            = $data['name'];
+        $event->city_id         = $data['city_id'];
         if ($data['coin_type'] == 'physical') {
             $event->coin_number     = (int)$data['coin_number'];
         } else {
