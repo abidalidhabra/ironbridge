@@ -10,10 +10,10 @@
             <div class="col-md-6">
                 <h3>Events</h3>
             </div>
-            @if(auth()->user()->hasPermissionTo('Add Game Variations'))
-            <div class="col-md-6 text-right modalbuttonadd">
-                <a href="{{ route('admin.event.basicDetails') }}" class="btn btn-info btn-md">Add Event</a>
-            </div>
+            @if(auth()->user()->hasPermissionTo('Add Event'))
+                <div class="col-md-6 text-right modalbuttonadd">
+                    <a href="{{ route('admin.event.basicDetails') }}" class="btn btn-info btn-md">Add Event</a>
+                </div>
             @endif
         </div>
     </div>
@@ -29,7 +29,9 @@
                     <th>Start Date</th>
                     <th>End Date</th>
                     <th>City</th>
+                    @if(auth()->user()->hasPermissionTo('Edit Event') || auth()->user()->hasPermissionTo('Delete Event'))
                     <th width="5%">Action</th>
+                    @endif
                 </tr>
             </thead>
             <tbody></tbody>
@@ -139,7 +141,9 @@
                 { data:'starts_at',name:'starts_at' },
                 { data:'ends_at',name:'ends_at' },
                 { data:'city',name:'city' },
+                @if(auth()->user()->hasPermissionTo('Add Event') || auth()->user()->hasPermissionTo('Delete Event'))
                 { data:'action',name:'action' },
+                @endif
                 ],
 
             });

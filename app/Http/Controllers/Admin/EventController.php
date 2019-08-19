@@ -827,10 +827,13 @@ class EventController extends Controller
         ->addColumn('action', function($query) use ($admin){
             $data = '';
                 //$data .=  '<a href="'.route('admin.event.basicDetails',$query->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
-            $data .=  '<a href="'.route('admin.event.show',$query->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
-            
-            $data .=  '<a href="javascript:void(0)" class="delete_company" data-action="delete" data-placement="left" data-id="'.$query->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>
-            </a>';
+            if($admin->hasPermissionTo('Edit Event')){
+                $data .=  '<a href="'.route('admin.event.show',$query->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+            }
+            if($admin->hasPermissionTo('Delete Event')){
+                $data .=  '<a href="javascript:void(0)" class="delete_company" data-action="delete" data-placement="left" data-id="'.$query->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>
+                </a>';
+            }
             
 
             return $data;

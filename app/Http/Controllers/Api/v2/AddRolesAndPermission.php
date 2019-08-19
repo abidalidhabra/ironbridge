@@ -48,6 +48,13 @@ class AddRolesAndPermission extends Controller
 		Permission::create(['name' => 'Add Practice Games','guard_name' => 'admin', 'module'=>'Manage Games / Practice Games Targets']);
 		Permission::create(['name' => 'Edit Practice Games','guard_name' => 'admin', 'module'=>'Manage Games / Practice Games Targets']);
 
+
+		Permission::create(['name' => 'View Event','guard_name' => 'admin', 'module'=>'Events']);
+		Permission::create(['name' => 'Add Event','guard_name' => 'admin', 'module'=>'Events']);
+		Permission::create(['name' => 'Edit Event','guard_name' => 'admin', 'module'=>'Events']);
+		Permission::create(['name' => 'Delete Event','guard_name' => 'admin', 'module'=>'Events']);
+
+
 		/*$data = [
 					['name' => 'Practice Games Targets','guard_name' => 'admin', 'module'=>'practiceGamesTargets'],
 					
