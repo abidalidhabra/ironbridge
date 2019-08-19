@@ -28,7 +28,7 @@
     <div class="customdatatable_box">
         <form method="POST" id="editEventForm" enctype="multipart/form-data">
             @csrf
-            <!-- START BASIC DETAILS -->
+             <!-- START BASIC DETAILS -->
             <div class="daingaemtitlebox">
                 <h4>Basic Details</h4>
             </div>
@@ -37,11 +37,14 @@
                    
                     <div class="fdaboxallset">
                         <div class="form-group col-md-4">
-                            <label class="form-label">Name</label>
+                            <label class="form-label">Event Name</label>
                             <input type="text" name="name" class="form-control" id="name" placeholder="Enter the name" value="@if(isset($event->name)){{$event->name}}@endif">
                         </div>
                         <div class="form-group col-md-4">
-                            <label class="form-label">Type <small>(Single / Multi day(s))</small></label>
+                            <label class="form-label">Event Type 
+                                <small>(Single / Multi day(s))</small>
+                                <a data-toggle="tooltip" title="Single: Single-day small event. Multi-Day(s): Multiple days base big event." data-placement="right">?</a>
+                            </label>
                             <select name="type" class="form-control">
                                 <option>Select type</option>
                                 <option value="single" @if(isset($event->type) && $event->type=='single') {{ 'selected' }} @endif>Single</option>
@@ -59,10 +62,33 @@
                         </div>
                     </div>
                     <div class="fdaboxallset">
+                        @if(isset($event->coin_type))
+                            <div class="form-group col-md-4 coin_number_box @if(isset($event->coin_type) && $event->coin_type == 'ar'){{ 'hidden' }}@endif">
+                                <label class="form-label">Coin Number
+                                    <a data-toggle="tooltip" title="Physical coin number which needs to enter into a game for claim prize." data-placement="right">?</a>
+                                </label>
+                                <input type="text" name="coin_number" class="form-control" placeholder="Enter the coin number" value="@if(isset($event->coin_number)){{ $event->coin_number }}@endif">
+                            </div>
+                        @else
+                            <div class="form-group col-md-4 coin_number_box hidden">
+                                <label class="form-label">Coin Number
+                                    <a data-toggle="tooltip" title="Physical coin number which needs to enter into a game for claim prize." data-placement="right">?</a>
+                                </label>
+                                <input type="text" name="coin_number" class="form-control" placeholder="Enter the coin number" value="@if(isset($event->coin_number)){{ $event->coin_number }}@endif">
+                            </div>
+                        @endif
+                        <div class="form-group col-md-4">
+                            <label class="form-label">Start Date</label>
+                            <input type="text" name="event_start_date" class="form-control" placeholder="Enter the start date" value="@if(isset($event->starts_at)){{ $event->starts_at->format('d-m-Y') }} @endif" id="startdate" autocomplete="off">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label class="form-label">End Date</label>
+                            <input type="text" name="event_end_date" class="form-control" placeholder="Enter the date" value="@if(isset($event->ends_at)){{ $event->ends_at->format('d-m-Y') }}@endif" id="enddate" autocomplete="off">
+                        </div>
                         <div class="form-group col-md-4">
                             <label class="form-label">City</label>
                             <select name="city_id" id="city_id" class="form-control">
-                                <option>Select city</option>
+                                <option value="">Select city</option>
                                 @forelse($cities as $key=>$city)
                                 <option value="{{ $city->_id }}" @if(isset($event->city_id) && $event->city_id==$city->_id) {{ 'selected' }} @endif>{{ $city->name }}</option>
                                 @empty
@@ -70,38 +96,36 @@
                                 @endforelse
                             </select>
                         </div>
-                        <div class="form-group col-md-4">
-                            <label class="form-label">Start Date</label>
-                            <input type="text" name="event_start_date" class="form-control" placeholder="Enter the start date" value="@if(isset($event->starts_at)){{ $event->starts_at->format('d-m-Y h:i A') }} @endif"  data-date-format="DD-MM-YYYY hh:mm A" id="startdate_basic" autocomplete="off">
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label class="form-label">End Date</label>
-                            <input type="text" name="event_end_date" class="form-control" placeholder="Enter the date" value="@if(isset($event->ends_at)){{ $event->ends_at->format('d-m-Y h:i A') }}@endif"  data-date-format="DD-MM-YYYY hh:mm A" id="enddate_basic" autocomplete="off">
-                        </div>
                     </div>
 
                     <div class="fdaboxallset">
                         <div class="form-group col-md-4">
-                            <label class="form-label">Rejection Ratio<small> In percentage (enter 0 if no rejection ratio)</small></label>
+                            <label class="form-label">Rejection Ratio
+                                <small> In percentage (enter 0 if no rejection ratio)</small>
+                                <a data-toggle="tooltip" title="% of people who will be going to eliminate daily basis" data-placement="right">?</a>
+                            </label>
                             <input type="text" name="rejection_ratio" class="form-control" placeholder="Enter the rejection ratio" value="@if(isset($event->rejection_ratio)){{ $event->rejection_ratio }} @endif">
                         </div>
                         <div class="form-group col-md-4">
-                            <label class="form-label">Winning Ratio<small> In fix amount (enter 0 if no winning ratio)</small></label>
+                            <label class="form-label">Winning Ratio
+                                <small> In fix amount (enter 0 if no winning ratio)</small>
+                                <a data-toggle="tooltip" title="# of people who will be going to win this game" data-placement="right">?</a>
+                            </label>
                             <input type="text" name="winning_ratio" class="form-control" id="winning_ratio" placeholder="Enter the winning ratio" value="@if(isset($event->winning_ratio)){{ $event->winning_ratio }}@endif">
                         </div>
                     </div>
 
                     <div class="fdaboxallset">
                         <div class="form-group col-md-4">
-                            <label class="form-label">Fees & Gold</label>
+                            <label class="form-label">Entry Fees(In gold)</label>
                             <input type="text" name="fees" class="form-control" placeholder="Enter the fees" value="@if(isset($event->fees)){{ $event->fees }}@endif">
                         </div>
                         <div class="form-group col-md-4">
-                            <label class="form-label">Discount date</label>
+                            <label class="form-label">Discount expire date</label>
                             <input type="text" name="discount_date" class="form-control" id="discount_date" placeholder="Enter the discount date" value="@if(isset($event->discount_till)){{ $event->discount_till->format('d-m-Y') }}@endif" autocomplete="off">
                         </div>
                         <div class="form-group col-md-4">
-                            <label class="form-label">Discount Fees (%)</label>
+                            <label class="form-label">Discount %</label>
                             <input type="text" name="discount_fees" class="form-control" placeholder="Enter the discount fees" value="@if(isset($event->discount)){{ $event->discount }}@endif">
                         </div>
                     </div>
@@ -109,20 +133,12 @@
 
                     <div class="fdaboxallset">
                         <div class="form-group col-md-4">
-                            <label class="form-label">Attempts</label>
+                            <label class="form-label">Attempts
+                                <a data-toggle="tooltip" title="# of attempts for doing best per game" data-placement="right">?</a>
+                            </label>
                             <input type="text" name="attempts" class="form-control" placeholder="Enter the attempts" value="@if(isset($event->attempts)){{ $event->attempts }}@endif">
                         </div>
-                        @if(isset($event->coin_type))
-                            <div class="form-group col-md-4 coin_number_box @if(isset($event->coin_type) && $event->coin_type == 'ar'){{ 'hidden' }}@endif">
-                                <label class="form-label">Coin Number</label>
-                                <input type="text" name="coin_number" class="form-control" placeholder="Enter the coin number" value="@if(isset($event->coin_number)){{ $event->coin_number }}@endif">
-                            </div>
-                        @else
-                            <div class="form-group col-md-4 coin_number_box hidden">
-                                <label class="form-label">Coin Number</label>
-                                <input type="text" name="coin_number" class="form-control" placeholder="Enter the coin number" value="@if(isset($event->coin_number)){{ $event->coin_number }}@endif">
-                            </div>
-                        @endif
+                        
                         <div class="form-group col-md-4">
                             <label class="form-label">Description</label>
                             <textarea name="description" class="form-control" placeholder="Enter the description">@if(isset($event->description)){{ $event->description }}@endif</textarea>
@@ -149,31 +165,29 @@
                                 @endif
                             </div>
                             @if($event->type == 'single')
-                                <div class="form-group col-md-4">
-                                    <label class="form-label">Start Date</label>
-                                    <input type="text" class="form-control" placeholder="Enter the start date" value="{{ $event->starts_at->format('d-m-Y h:i A') }}" autocomplete="off" disabled="true">
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label class="form-label">End Date</label>
-                                    <input type="text" class="form-control" placeholder="Enter the end date" value="{{ $event->ends_at->format('d-m-Y h:i A') }}" autocomplete="off" disabled="true">
-                                </div>
-                                <input type="hidden" name="end_date[{{ $key }}]" value="{{ $event->ends_at->format('d-m-Y h:i A') }}">
-                                <input type="hidden" name="start_date[{{ $key }}]" value="{{ $event->ends_at->format('d-m-Y h:i A') }}">
                             @else
-                                <div class="form-group col-md-4">
-                                    <label class="form-label">Start Date</label>
-                                    <input type="text" name="start_date[{{ $key }}]" class="form-control datetimepicker" placeholder="Enter the start date" id="startdate0" value="{{ $day['from']->toDateTime()->format('d-m-Y h:i A') }}" autocomplete="off">
-                                </div>
-                                <div class="form-group col-md-4">
-                                    <label class="form-label">End Date</label>
-                                    <input type="text" name="end_date[{{ $key }}]" class="form-control datetimepicker" placeholder="Enter the end date" id="enddate0" value="{{ $day['to']->toDateTime()->format('d-m-Y h:i A') }}" autocomplete="off">
-                                </div>
                             @endif
-                            <div class="form-group col-md-4 day_section">
+                            <div class="form-group col-md-3">
+                                <label class="form-label">Date</label>
+                                <input type="text" name="date[{{ $key }}]" class="form-control datetimepicker" placeholder="Enter the Time" id="date0" value="{{ $day['from']->toDateTime()->format('d-m-Y') }}" autocomplete="off">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label class="form-label">Start Time
+                                    <a data-toggle="tooltip" title="Portal open time for that day" data-placement="right">?</a>
+                                </label>
+                                <input type="text" name="start_time[{{ $key }}]" class="form-control datetimepicker" placeholder="Enter the start Time" id="starttime0" value="{{ $day['from']->toDateTime()->format('h:i A') }}" autocomplete="off">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label class="form-label">End Time
+                                    <a data-toggle="tooltip" title="Portal close time for that day" data-placement="right">?</a>
+                                </label>
+                                <input type="text" name="end_time[{{ $key }}]" class="form-control datetimepicker" placeholder="Enter the end Time" id="enddate0" value="{{ $day['to']->toDateTime()->format('h:i A') }}" autocomplete="off">
+                            </div>
+                            <div class="form-group col-md-3 day_section">
                                 <br>
                                 <!-- <a href="javascript:void(0)" class="btn btn-info add_game">Add Mini Game</a> -->
                                 @if($event->type == 'multi')
-                                    <!-- <a href="javascript:void(0)" class="btn add_mini_game">Add Days</a> -->
+                                    <!-- <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a> -->
                                     <?php
                                         $eventCount = count($event->mini_games)-1;
                                     ?>
@@ -181,7 +195,7 @@
                                         @if($eventCount == 1)
                                             <a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>
                                         @endif
-                                        <a href="javascript:void(0)" class="btn add_mini_game">Add Days</a>
+                                        <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a>
                                     @else
                                         <a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>
                                     @endif
@@ -196,11 +210,11 @@
                                 @forelse($day['games'] as $index => $miniGame)
                                     <div class="game_box">
                                         <div class="daingaemtitlebox">
-                                            <h6>Mini Game</h6>
+                                            <h6>Mini Games</h6>
                                         </div>
 
                                         <div class="form-group col-md-4">
-                                            <label class="form-label">Game</label>
+                                            <label class="form-label">Game name</label>
                                             <select name="game_id[{{ $key }}][{{$index}}]" class="form-control games">
                                                 <option value="">Select Game</option>
                                                 @forelse($games as $game)
@@ -218,6 +232,7 @@
                                             ?>
                                             <?php if($miniGameId == '5b0e2ff151b2010ec820fb48'){ ?>
                                                 <!-- Sudoku -->
+                                               
                                                 <div class="form-group col-md-4">
                                                     <label class="form-label">Sudoku Id</label>
                                                     <select name="sudoku_id[{{$key}}][{{$index}}]" class="form-control">
@@ -362,7 +377,7 @@
                                                 $miniGameCount = count($day['games'])-1;
                                             ?>
                                             @if($miniGameCount == $index)
-                                                <a href="javascript:void(0)" class="btn remove_game remove_game1">Remove Mini Game</a>
+                                                <a href="javascript:void(0)" class="btn remove_game remove_game">Remove Mini Game</a>
                                                 <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>
                                             @else
                                                 <a href="javascript:void(0)" class="btn remove_game">Remove Mini Game</a>
@@ -372,10 +387,10 @@
                                 @empty
                                     <div class="game_box">
                                         <div class="daingaemtitlebox">
-                                            <h6>Mini Game</h6>
+                                            <h6>Mini Games</h6>
                                         </div>
                                         <div class="form-group col-md-4">
-                                            <label class="form-label">Game</label>
+                                            <label class="form-label">Game name</label>
                                             <select name="game_id[0][]" class="form-control games">
                                                 <option value="">Select Game</option>
                                                 @forelse($games as $key=>$game)
@@ -416,33 +431,39 @@
                             @else
                                 <h5>Day 1</h5>
                             @endif
+
                         </div>
                         @if($event->type == 'single')
-                            <div class="form-group col-md-4">
-                                <label class="form-label">Start Date</label>
-                                <input type="text" class="form-control" placeholder="Enter the start date" value="{{ $event->starts_at->format('d-m-Y h:i A') }}" autocomplete="off" disabled="true">
+                            <div class="form-group col-md-3">
+                                <label class="form-label">Date</label>
+                                <input type="text" name="date[0]" class="form-control datetimepicker" placeholder="Enter the time" id="date0" value="{{ $event->ends_at->format('d-m-Y') }}" autocomplete="off">
                             </div>
-                            <div class="form-group col-md-4">
-                                <label class="form-label">End Date</label>
-                                <input type="text" class="form-control" placeholder="Enter the end date" value="{{ $event->ends_at->format('d-m-Y h:i A') }}" autocomplete="off" disabled="true">
-                            </div>
-                            <input type="hidden" name="end_date[0]" value="{{ $event->ends_at->format('d-m-Y h:i A') }}">
-                            <input type="hidden" name="start_date[0]" value="{{ $event->ends_at->format('d-m-Y h:i A') }}">
                         @else
-                            <div class="form-group col-md-4">
-                                <label class="form-label">Start Date</label>
-                                <input type="text" name="start_date[0]" class="form-control datetimepicker" placeholder="Enter the start date" id="startdate0" value="" autocomplete="off">
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label class="form-label">End Date</label>
-                                <input type="text" name="end_date[0]" class="form-control datetimepicker" placeholder="Enter the end date" id="enddate0" value="" autocomplete="off">
+                            <div class="form-group col-md-3">
+                                <label class="form-label">Date</label>
+                                <input type="text" name="date[0]" class="form-control datetimepicker" placeholder="Enter the time" id="date0" value="" autocomplete="off">
                             </div>
                         @endif
-                        <div class="form-group col-md-4">
+                        
+                        <input type="hidden" name="end_date[0]" value="{{ $event->ends_at->format('d-m-Y h:i A') }}">
+                        <input type="hidden" name="start_date[0]" value="{{ $event->ends_at->format('d-m-Y h:i A') }}">
+                        <div class="form-group col-md-3">
+                            <label class="form-label">Start Time
+                                <a data-toggle="tooltip" title="Portal open time for that day" data-placement="right">?</a>
+                            </label>
+                            <input type="text" name="start_time[0]" class="form-control" placeholder="Enter the start Time" id="starttime0" value="" autocomplete="off">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label class="form-label">End Time
+                                <a data-toggle="tooltip" title="Portal close time for that day" data-placement="right">?</a>
+                            </label>
+                            <input type="text" name="end_time[0]" class="form-control" placeholder="Enter the end Time" id="endtime0" value="" autocomplete="off">
+                        </div>
+                        <div class="form-group col-md-3 day_section">
                             <br>
                             <!-- <a href="javascript:void(0)" class="btn btn-info add_game">Add Mini Game</a> -->
                             @if($event->type =='multi')
-                                <a href="javascript:void(0)" class="btn add_mini_game">Add Days</a>
+                                <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a>
                             @endif
                         </div>
                         <input type="hidden" name="last_mini_game_index" value="0">
@@ -450,10 +471,10 @@
                         <div class="separate_game_box">
                             <div class="game_box">
                                  <div class="daingaemtitlebox">
-                                    <h6>Mini Game</h6>
+                                    <h6>Mini Games</h6>
                                 </div>
                                 <div class="form-group col-md-4">
-                                    <label class="form-label">Game</label>
+                                    <label class="form-label">Game name</label>
                                     <select name="game_id[0][]" class="form-control games">
                                         <option value="">Select Game</option>
                                         @forelse($games as $key=>$game)
@@ -474,7 +495,6 @@
                         </div>
                     </div>
                 @endif
-                
             </div>
             <!-- END GAME DETAILS -->
 
@@ -487,11 +507,15 @@
                 <div class="allbasicdirbox">
                     <input type="hidden" name="event_id" value="{{ $id }}"> 
                     <div class="form-group col-md-4">
-                        <label class="form-label">Map Reveal Date</label>
+                        <label class="form-label">Map Reveal Date
+                            <a data-toggle="tooltip" title="Hunt completion date and time for that event" data-placement="right">?</a>
+                        </label>
                         <input type="text" name="map_reveal_date" class="form-control" id="map_reveal_date" placeholder="Enter the map reveal date" autocomplete="off" value="@if(isset($event->map_reveal_date)){{$event->map_reveal_date->format('d-m-Y h:i A') }}@endif">
                     </div>
                     <div class="form-group col-md-5">
-                        <label class="form-label">Search Place Name</label>
+                        <label class="form-label">Search Place Name
+                            <a data-toggle="tooltip" title="Hunt location for that event" data-placement="right">?</a>
+                        </label>
                        
                         <select class="form-control hunts" name="search_place_name" id="hunts">
                             <option value="">Select Place</option>
@@ -504,9 +528,9 @@
                     </div>
                     <div class="form-group col-md-3">
                         <div class="addhunteyrefbtn">
-                            <a href="{{ route('admin.add_location') }}" target='_blank' class="btn" >Add Hunt</a>
-                            <a href="{{ route('admin.boundary_map',$event->hunt_id) }}" target='_blank' class="btn hunt_details"><i class="fa fa-eye "></i></a>
+                            <a href="javascript:void(0)" class="btn hunt_details"><i class="fa fa-eye "></i></a>
                             <a href="javascript:void(0)" class="btn" id="refresh"><i class="fa fa-refresh"></i></a>
+                            <a href="{{ route('admin.add_location') }}" target='_blank' class="btn" >Add New</a>
                         </div>
                     </div>
                 </div>
@@ -522,7 +546,9 @@
                 <div class="allbasicdirbox">
                     <div class="row">
                         <div class="form-group col-md-3">
-                            <label class="form-label">Group Type</label>
+                            <label class="form-label">Group Type
+                                <a data-toggle="tooltip" title="Individual Prize or Bulk prize" data-placement="right">?</a>
+                            </label>
                         </div>
                         
                         <div class="form-group col-md-3">
@@ -609,10 +635,11 @@
                     </div>
                 </div>
                 <div class="form-group Submitnextbtn">
+                    <!-- <a href="{{ url('admin/miniGame',$id) }}" class="btn btn-success btnSubmit">PREVIOUS</a> -->
                     <button type="submit" class="btn btn-success btnSubmit">SUBMIT</button>
                 </div>
             </div>
-            <!-- PRIZE START CODE -->      
+            <!-- PRIZE START CODE -->     
 
             
     </form>
@@ -651,52 +678,55 @@
                 complete:function(){},
                 error:function(){}
             });
-        })        
-        
-
-        
+        })
     </script>
-     <script type="text/javascript">
+    <!-- BASIC DETAILS -->
+    <script type="text/javascript">
         $(function () {
+            /* EVENT TYPE SINGLE AND MULTI OPTION */
+            $(document).on('change','select[name="type"]', function () {
+                if($(this).val() == 'multi'){
+                    $('.day_section').html(`<br><a href="javascript:void(0)" class="btn add_mini_game">Add Day</a>`);
+                }
+            });
+
             $('#city_id').select2();
+            $('[data-toggle="tooltip"]').tooltip();   
 
             $('#discount_date').datepicker({
                 startDate: new Date()
             });
-            
-            $('#startdate').datetimepicker({
-                useCurrent: false,
-                format: "DD-MM-YYYY hh:mm A",
-                minDate: moment()
+
+           /* $('#startdate').datepicker({
+                startDate: new Date()
             });
 
-            $('#enddate').datetimepicker({
-                useCurrent: false,
-                format: "DD-MM-YYYY hh:mm A",
-                minDate: moment()
-            });
+            $('#enddate').datepicker({
+                startDate: new Date()
+            });*/
             
 
-            $('#startdate').datetimepicker().on('dp.change', function (e) {
-                var incrementDay = moment(new Date(e.date));
-                if ($('select[name="type"]').val() == 'single') {
-                    incrementDay.add(0, 'days');
-                     $('#enddate').data('DateTimePicker').setMinDate(incrementDay);
-                } else {
-                    incrementDay.add(1, 'days');
-                    $('#enddate').data('DateTimePicker').setMinDate(incrementDay);
-                }
-                $(this).data("DateTimePicker").hide();
+            var startDate = new Date();
+            $('#startdate').datepicker({
+                weekStart: 1,
+                startDate: startDate,
+                autoclose: true,
+            }).on('changeDate', function(selected){
+                startDate = new Date(selected.date.valueOf());
+                startDate.setDate(startDate.getDate(new Date(selected.date.valueOf())));
+                $('#enddate').datepicker('setStartDate', startDate);
+            }); 
+
+            $('#enddate').datepicker({
+                weekStart: 1,
+                startDate: startDate,
+                autoclose: true
+            }).on('changeDate', function(selected){
+                FromEndDate = new Date(selected.date.valueOf());
+                FromEndDate.setDate(FromEndDate.getDate(new Date(selected.date.valueOf())));
+                $('#startdate').datepicker('setEndDate', FromEndDate);
             });
 
-            $('#enddate').datetimepicker().on('dp.change', function (e) {
-                var decrementDay = moment(new Date(e.date));
-                decrementDay.subtract(1, 'days');
-                $('#startdate').data('DateTimePicker').setMaxDate(decrementDay);
-                $(this).data("DateTimePicker").hide();
-            });
-
-            
             $(document).on('change','select[name="coin_type"]', function () {
                     $('.coin_number_box').addClass('hidden');
                 if($(this).val() == 'physical'){
@@ -706,64 +736,56 @@
 
         });
     </script>
+    <!-- END BASIC DETAILS -->
 
 
     <!-- MINI GAMES -->
     <script type="text/javascript">
-        /* DATE TIME PICKER */
-        //$('.datetimepicker').datetimepicker();
         var startdate = '{{ $event->starts_at }}';
         var enddate = '{{ $event->ends_at }}';
-        // var enddate = '{{ $event->ends_at }}';
         
-         
+
+        $('#date0').datepicker({
+            weekStart: 1,
+            startDate: startdate,
+            autoclose: true,
+        })
+
+        $('#starttime0').timepicker({
+            //defaultTime: 'current',
+            minuteStep: 15,
+            disableFocus: true,
+            template: 'dropdown'
+        });
+        $('#endtime0').timepicker({
+            //defaultTime: 'current',
+            minuteStep: 15,
+            disableFocus: true,
+            template: 'dropdown'
+        });
+
         
-        $('#startdate0').datetimepicker({
-            useCurrent: false,
-            format: "DD-MM-YYYY hh:mm A",
-            minDate: moment(startdate),
-            maxDate: moment(enddate),
-        });
-        $('#enddate0').datetimepicker({
-            useCurrent: false,
-            format: "DD-MM-YYYY hh:mm A",
-            minDate: moment(startdate),
-            maxDate: moment(enddate),
-        });
-
-        $('#startdate0').datetimepicker().on('dp.change', function (e) {
-            var incrementDay = moment(new Date(e.date));
-            incrementDay.add(1, 'days');
-            $('#enddate0').data('DateTimePicker').setMinDate(incrementDay);
-            $(this).data("DateTimePicker").hide();
-        });
-
-        $('#enddate0').datetimepicker().on('dp.change', function (e) {
-            var decrementDay = moment(new Date(e.date));
-            decrementDay.subtract(1, 'days');
-            $('#startdate0').data('DateTimePicker').setMaxDate(decrementDay);
-            $(this).data("DateTimePicker").hide();
-        });
-
         $(document).ready(function() {
             /* APPEND GAME */
+            $('[data-toggle="tooltip"]').tooltip();   
+
             $(document).on('click','.add_game',function(){
                 let gameIndexMaintainer = $(this).parents('.game_box').find('input[name=last_elem_index]');
                 let miniGameIndexMaintainer = $(this).parents('.mini_game').find('input[name=last_mini_game_index]');
 
                 let lastIndex = gameIndexMaintainer.val();
                 let gameIndex = parseInt(lastIndex)+1;
-                $('.remove_game1').remove();
+                // $('.remove_game').remove();
                 //gameIndexMaintainer.val(gameIndex);
 
                 let currentIndex = miniGameIndexMaintainer.val();
 
                 let defaultMGHtml = `<div class="game_box">
                                 <div class="daingaemtitlebox">
-                                   <h6>Mini Game</h6>
+                                   <h6>Mini Games</h6>
                                 </div>
                             <div class="form-group col-md-4">
-                                <label class="form-label">Game</label>
+                                <label class="form-label">Game name</label>
                                 <select name="game_id[`+currentIndex+`][`+gameIndex+`]" class="form-control games">
                                     <option value="">Select Game</option>
                                     @forelse($games as $key=>$game)
@@ -778,12 +800,12 @@
                             
                             <div class="col-md-8 button_section">
                                 <br>
-                                <a href="javascript:void(0)" class="btn remove_game1">Remove Mini Game</a>
+                                <a href="javascript:void(0)" class="btn remove_game">Remove Mini Game</a>
                                 <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>
                               </div>
                         </div>`;
                 $(this).parents('.game_box').after(defaultMGHtml);
-                $(this).parents('.button_section').append('<a href="javascript:void(0)" class="btn remove_game">Remove Mini Game</a>');
+                $(this).parents('.button_section').html('<br> <a href="javascript:void(0)" class="btn remove_game">Remove Mini Game</a>');
                 $(this).parents('.button_section').find('.add_game').remove();
             });
 
@@ -797,28 +819,36 @@
                                         <div class="daingaemtitlebox">
                                             <h5>Day `+(currentIndex+1)+`</h5>
                                         </div>
-                                        <div class="form-group col-md-4">
-                                            <label class="form-label">Start Date</label>
-                                            <input type="text" name="start_date[`+currentIndex+`]" class="form-control datetimepicker" placeholder="Enter the start date" id="startdate`+currentIndex+`" autocomplete="off">
+                                        <div class="form-group col-md-3">
+                                            <label class="form-label">Date</label>
+                                            <input type="text" name="date[`+currentIndex+`]" class="form-control datetimepicker" placeholder="Enter the time" id="date`+currentIndex+`" value="" autocomplete="off">
                                         </div>
-                                        <div class="form-group col-md-4">
-                                            <label class="form-label">End Date</label>
-                                            <input type="text" name="end_date[`+currentIndex+`]" class="form-control datetimepicker" placeholder="Enter the end date" id="enddate`+currentIndex+`" autocomplete="off">
+                                        <div class="form-group col-md-3">
+                                            <label class="form-label">Start Time
+                                                <a data-toggle="tooltip" title="Portal open time for that day" data-placement="right">?</a>
+                                            </label>
+                                            <input type="text" name="start_time[`+currentIndex+`]" class="form-control" placeholder="Enter the start Time" id="starttime`+currentIndex+`" value="" autocomplete="off">
                                         </div>
-                                        <div class="form-group col-md-4 day_section">
+                                        <div class="form-group col-md-3">
+                                            <label class="form-label">End Time
+                                                <a data-toggle="tooltip" title="Portal close time for that day" data-placement="right">?</a>
+                                            </label>
+                                            <input type="text" name="end_time[`+currentIndex+`]" class="form-control" placeholder="Enter the end Time" id="endtime`+currentIndex+`" value="" autocomplete="off">
+                                        </div>
+                                        <div class="form-group col-md-3 day_section">
                                             <br>
                                             <!-- <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a> -->
                                             <a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>
-                                            <a href="javascript:void(0)" class="btn add_mini_game">Add Days</a>
+                                            <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a>
                                         </div>
                                         <input type="hidden" name="last_mini_game_index" value="`+currentIndex+`">
                                         <div class="separate_game_box">
                                             <div class="game_box">
                                                 <div class="daingaemtitlebox">
-                                                   <h6>Mini Game</h6>
+                                                   <h6>Mini Games</h6>
                                                 </div>
                                                 <div class="form-group col-md-4">
-                                                    <label class="form-label">Game</label>
+                                                    <label class="form-label">Game name</label>
                                                     <select name="game_id[`+currentIndex+`][]" class="form-control games">
                                                         <option value="">Select Game</option>
                                                         @forelse($games as $key=>$game)
@@ -834,71 +864,76 @@
                                                 
                                                 <div class="col-md-8 button_section">
                                                     <br>
-                                                    <a href="javascript:void(0)" class="btn remove_game1">Remove Mini Game</a>
                                                     <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>
-                                                    <!-- <a href="javascript:void(0)" class="btn add_mini_game">Add Days</a> -->
+                                                    <!-- <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a> -->
                                                 </div>
                                             </div>
                                         </div>
                                     </div>`;
 
                 $(this).parents('.mini_game').after(defaultMGHtml);
-                $(this).parents('.col-md-4').html('<br/><a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>');
-                $(this).parents('.col-md-4').find('.add_mini_game').remove();
+                $(this).parents('.col-md-3').html('<br/><a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>');
+                $(this).parents('.col-md-3').find('.add_mini_game').remove();
 
                 
                 //$('.datetimepicker').datetimepicker();
 
 
-                $('#startdate'+currentIndex).datetimepicker({
-                    useCurrent: false,
-                    format: "DD-MM-YYYY hh:mm A",
-                    minDate: moment(startdate),
-                    maxDate: moment(enddate),
-                    defaultDate: moment(startdate),
+                $('#date'+currentIndex).datepicker({
+                    weekStart: 1,
+                    startDate: startdate,
+                    endDate : enddate,
+                    autoclose: true,
+                })
+
+                $('#starttime'+currentIndex).timepicker({
+                    //defaultTime: 'current',
+                    minuteStep: 15,
+                    disableFocus: true,
+                    template: 'dropdown'
                 });
-                $('#enddate'+currentIndex).datetimepicker({
-                    useCurrent: false,
-                    format: "DD-MM-YYYY hh:mm A",
-                    minDate: moment(startdate),
-                    maxDate: moment(enddate),
-                    defaultDate: moment(startdate),
-                });
-                $('#startdate'+currentIndex).datetimepicker().on('dp.change', function (e) {
-                    var incrementDay = moment(new Date(e.date));
-                    incrementDay.add(1, 'days');
-                    $('#enddate'+currentIndex).data('DateTimePicker').setMinDate(incrementDay);
-                    $(this).data("DateTimePicker").hide();
+                $('#endtime'+currentIndex).timepicker({
+                    //defaultTime: 'current',
+                    minuteStep: 15,
+                    disableFocus: true,
+                    template: 'dropdown'
                 });
 
-                $('#enddate'+currentIndex).datetimepicker().on('dp.change', function (e) {
-                    var decrementDay = moment(new Date(e.date));
-                    decrementDay.subtract(1, 'days');
-                    $('#startdate'+currentIndex).data('DateTimePicker').setMaxDate(decrementDay);
-                     $(this).data("DateTimePicker").hide();
-                });
-
+                $('[data-toggle="tooltip"]').tooltip();   
 
             });
 
             /* REMOVE Mini GAME */
-            $(document).on('click','.remove_game , .remove_game1',function(){
+            $(document).on('click','.remove_game',function(){
+                //$(this).parents('.mini_game').find('.game_box:last').find('.button_section').html(' <a href="javascript:void(0)" class="btn remove_game">Remove Mini Game</a> <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>');
+                var gameIndex = $(this).parents('.game_box').find('[name="last_elem_index"]').val(); 
+                var currentIndex = $(this).parents('.mini_game').find('[name="last_mini_game_index"]').val(); 
+                $(this).parents('.mini_game').attr('id','mini_game'+currentIndex);
+                
                 $(this).parents('.game_box').remove();
-                $('.game_box:last').find('.add_game').remove();
-                $('.game_box:last').find('.button_section').append(' <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>');
+                $('#mini_game'+currentIndex).find('.game_box').find('.add_game').remove();
+                $('#mini_game'+currentIndex).find('.game_box:last').find('.button_section').append(' <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>');
+                if($('#mini_game'+currentIndex).find('.game_box').length == 1){
+                    $('#mini_game'+currentIndex).find('.game_box').find('.remove_game').remove();
+                }
             });
 
             /* REMOVE Day */
             $(document).on('click','.remove_mini_game',function(){
                 $(this).parents('.mini_game').remove();
-                if($('.mini_game').length == 1){
-                    $('.remove_mini_game:last , .add_mini_game:last').remove();
-                }
-                $('.mini_game:last').find('.day_section').append(' <a href="javascript:void(0)" class="btn add_mini_game">Add Days</a>');
+                $('.add_mini_game').remove();
+                $('.mini_game:last').find('.day_section').append(' <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a>');
 
-                for (var i = 0; i < $('.mini_game').length; i++) {
-                    $('.mini_game::nth-child('+(i+1)+')').find('h5').text('Day '+(i+1));
+                if($('.mini_game').length == 1){
+                    $('.remove_mini_game').remove();
                 }
+
+                if ($('.mini_game').length > 0) {
+                    for (var i = 0; i < $('.mini_game').length; i++) {
+                        $(".mini_game:nth-child("+(i+1)+")").find('h5').text('Day '+(i+1));
+                    }
+                }
+
 
             });
 
@@ -955,12 +990,7 @@
                 }
 
                 $(this).parents('.game_box').find('.variation_box').html(data);
-
-                
-
-
             });
-
         });
     </script>
     <!-- END MINI GAME -->
@@ -969,6 +999,12 @@
     <!-- HUNT AND EVENT MODULE -->
     <script type="text/javascript">
         /* DATE TIME PICKER */
+        $('[data-toggle="tooltip"]').tooltip();   
+
+        var startdate = '{{ $event->starts_at }}';
+        var enddate = '{{ $event->ends_at }}';
+        
+        
         $('#map_reveal_date').datetimepicker({
             useCurrent: false,
             format: "DD-MM-YYYY hh:mm A",
@@ -979,31 +1015,6 @@
 
         /* SUBMIT FORM */
         $(document).ready(function() {
-     
-            $(document).on('submit','#addEventForm',function(e){
-                e.preventDefault();
-                formData = new FormData($(this)[0]);
-                $.ajax({
-                    type:'POST',
-                    url:'{{ route("admin.event.addHuntDetails") }}',
-                    data: formData,
-                    cache:false,
-                    contentType: false,
-                    processData: false,
-                    beforeSend:function(){},
-                    success:function(response) {
-                        if (response.status == true) {
-                            toastr.success(response.message);
-                            window.location.href = '{{ route("admin.event.index")}}';
-                        } else {
-                            toastr.warning(response.message);
-                        }
-                    },
-                    complete:function(){},
-                    error:function(){}
-                });
-            })
-
             $('.hunts').select2();
 
             $(document).on('change','select[name="search_place_name"]',function(){
