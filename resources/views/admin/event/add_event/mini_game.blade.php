@@ -43,12 +43,14 @@
                                     <h5>Day {{ $key+1 }}</h5>
                                 @endif
                             </div>
-                            @if($event->type == 'single')
-                            @else
-                            @endif
                             <div class="form-group col-md-3">
                                 <label class="form-label">Date</label>
+                            @if($event->type == 'single')
+                                <input type="text" class="form-control datetimepicker" placeholder="Enter the Time"  value="{{ $day['from']->toDateTime()->format('d-m-Y') }}" autocomplete="off" disabled="true">
+                                <input type="hidden" name="date[{{ $key }}]" class="form-control" value="{{ $event->ends_at->format('d-m-Y') }}">
+                            @else
                                 <input type="text" name="date[{{ $key }}]" class="form-control datetimepicker" placeholder="Enter the Time" id="date0" value="{{ $day['from']->toDateTime()->format('d-m-Y') }}" autocomplete="off">
+                            @endif
                             </div>
                             <div class="form-group col-md-3">
                                 <label class="form-label">Start Time
@@ -89,11 +91,11 @@
                                 @forelse($day['games'] as $index => $miniGame)
                                     <div class="game_box">
                                         <div class="daingaemtitlebox">
-                                            <h6>Mini Game</h6>
+                                            <h6>Mini Games</h6>
                                         </div>
 
                                         <div class="form-group col-md-4">
-                                            <label class="form-label">Game</label>
+                                            <label class="form-label">Game name</label>
                                             <select name="game_id[{{ $key }}][{{$index}}]" class="form-control games">
                                                 <option value="">Select Game</option>
                                                 @forelse($games as $game)
@@ -256,7 +258,7 @@
                                                 $miniGameCount = count($day['games'])-1;
                                             ?>
                                             @if($miniGameCount == $index)
-                                                <a href="javascript:void(0)" class="btn remove_game remove_game1">Remove Mini Game</a>
+                                                <a href="javascript:void(0)" class="btn remove_game remove_game">Remove Mini Game</a>
                                                 <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>
                                             @else
                                                 <a href="javascript:void(0)" class="btn remove_game">Remove Mini Game</a>
@@ -266,10 +268,10 @@
                                 @empty
                                     <div class="game_box">
                                         <div class="daingaemtitlebox">
-                                            <h6>Mini Game</h6>
+                                            <h6>Mini Games</h6>
                                         </div>
                                         <div class="form-group col-md-4">
-                                            <label class="form-label">Game</label>
+                                            <label class="form-label">Game name</label>
                                             <select name="game_id[0][]" class="form-control games">
                                                 <option value="">Select Game</option>
                                                 @forelse($games as $key=>$game)
@@ -315,7 +317,8 @@
                         @if($event->type == 'single')
                             <div class="form-group col-md-3">
                                 <label class="form-label">Date</label>
-                                <input type="text" name="date[0]" class="form-control datetimepicker" placeholder="Enter the time" id="date0" value="" autocomplete="off">
+                                <input type="text" class="form-control datetimepicker" placeholder="Enter the time" id="date0" value="{{ $event->ends_at->format('d-m-Y') }}" autocomplete="off" disabled="true">
+                                <input type="hidden" name="date[0]" class="form-control datetimepicker" value="{{ $event->ends_at->format('d-m-Y') }}">
                             </div>
                         @else
                             <div class="form-group col-md-3">
@@ -338,7 +341,7 @@
                             </label>
                             <input type="text" name="end_time[0]" class="form-control" placeholder="Enter the end Time" id="endtime0" value="" autocomplete="off">
                         </div>
-                        <div class="form-group col-md-3">
+                        <div class="form-group col-md-3 day_section">
                             <br>
                             <!-- <a href="javascript:void(0)" class="btn btn-info add_game">Add Mini Game</a> -->
                             @if($event->type =='multi')
@@ -350,10 +353,10 @@
                         <div class="separate_game_box">
                             <div class="game_box">
                                  <div class="daingaemtitlebox">
-                                    <h6>Mini Game</h6>
+                                    <h6>Mini Games</h6>
                                 </div>
                                 <div class="form-group col-md-4">
-                                    <label class="form-label">Game</label>
+                                    <label class="form-label">Game name</label>
                                     <select name="game_id[0][]" class="form-control games">
                                         <option value="">Select Game</option>
                                         @forelse($games as $key=>$game)
@@ -437,7 +440,6 @@
         //     $(this).data("DateTimePicker").hide();
         // });
 
-        console.log(enddate);
         $('#date0').datepicker({
             weekStart: 1,
             startDate: startdate,
@@ -468,17 +470,17 @@
 
                 let lastIndex = gameIndexMaintainer.val();
                 let gameIndex = parseInt(lastIndex)+1;
-                $('.remove_game1').remove();
+                // $('.remove_game').remove();
                 //gameIndexMaintainer.val(gameIndex);
 
                 let currentIndex = miniGameIndexMaintainer.val();
 
                 let defaultMGHtml = `<div class="game_box">
                                 <div class="daingaemtitlebox">
-                                   <h6>Mini Game</h6>
+                                   <h6>Mini Games</h6>
                                 </div>
                             <div class="form-group col-md-4">
-                                <label class="form-label">Game</label>
+                                <label class="form-label">Game name</label>
                                 <select name="game_id[`+currentIndex+`][`+gameIndex+`]" class="form-control games">
                                     <option value="">Select Game</option>
                                     @forelse($games as $key=>$game)
@@ -493,12 +495,12 @@
                             
                             <div class="col-md-8 button_section">
                                 <br>
-                                <a href="javascript:void(0)" class="btn remove_game1">Remove Mini Game</a>
+                                <a href="javascript:void(0)" class="btn remove_game">Remove Mini Game</a>
                                 <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>
                               </div>
                         </div>`;
                 $(this).parents('.game_box').after(defaultMGHtml);
-                $(this).parents('.button_section').append('<a href="javascript:void(0)" class="btn remove_game">Remove Mini Game</a>');
+                $(this).parents('.button_section').html('<br> <a href="javascript:void(0)" class="btn remove_game">Remove Mini Game</a>');
                 $(this).parents('.button_section').find('.add_game').remove();
             });
 
@@ -538,10 +540,10 @@
                                         <div class="separate_game_box">
                                             <div class="game_box">
                                                 <div class="daingaemtitlebox">
-                                                   <h6>Mini Game</h6>
+                                                   <h6>Mini Games</h6>
                                                 </div>
                                                 <div class="form-group col-md-4">
-                                                    <label class="form-label">Game</label>
+                                                    <label class="form-label">Game name</label>
                                                     <select name="game_id[`+currentIndex+`][]" class="form-control games">
                                                         <option value="">Select Game</option>
                                                         @forelse($games as $key=>$game)
@@ -596,23 +598,36 @@
             });
 
             /* REMOVE Mini GAME */
-            $(document).on('click','.remove_game , .remove_game1',function(){
-                $(this).parents('.mini_game').find('.game_box:last').find('.button_section').html(' <a href="javascript:void(0)" class="btn remove_game">Remove Mini Game</a> <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>');
+            $(document).on('click','.remove_game',function(){
+                //$(this).parents('.mini_game').find('.game_box:last').find('.button_section').html(' <a href="javascript:void(0)" class="btn remove_game">Remove Mini Game</a> <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>');
+                var gameIndex = $(this).parents('.game_box').find('[name="last_elem_index"]').val(); 
+                var currentIndex = $(this).parents('.mini_game').find('[name="last_mini_game_index"]').val(); 
+                $(this).parents('.mini_game').attr('id','mini_game'+currentIndex);
+                
                 $(this).parents('.game_box').remove();
+                $('#mini_game'+currentIndex).find('.game_box').find('.add_game').remove();
+                $('#mini_game'+currentIndex).find('.game_box:last').find('.button_section').append(' <a href="javascript:void(0)" class="btn add_game">Add Mini Game</a>');
+                if($('#mini_game'+currentIndex).find('.game_box').length == 1){
+                    $('#mini_game'+currentIndex).find('.game_box').find('.remove_game').remove();
+                }
             });
 
             /* REMOVE Day */
             $(document).on('click','.remove_mini_game',function(){
                 $(this).parents('.mini_game').remove();
-                $('.add_mini_game:last').remove();
-                if($('.mini_game').length == 1){
-                    $('.remove_mini_game:last , .add_mini_game:last').remove();
-                }
+                $('.add_mini_game').remove();
                 $('.mini_game:last').find('.day_section').append(' <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a>');
 
-                for (var i = 0; i < $('.mini_game').length; i++) {
-                    $('.mini_game::nth-child('+(i+1)+')').find('h5').text('Day '+(i+1));
+                if($('.mini_game').length == 1){
+                    $('.remove_mini_game').remove();
                 }
+
+                if ($('.mini_game').length > 0) {
+                    for (var i = 0; i < $('.mini_game').length; i++) {
+                        $(".mini_game:nth-child("+(i+1)+")").find('h5').text('Day '+(i+1));
+                    }
+                }
+
 
             });
 

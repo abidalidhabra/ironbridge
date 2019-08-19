@@ -87,7 +87,7 @@
                         <div class="form-group col-md-4">
                             <label class="form-label">City</label>
                             <select name="city_id" id="city_id" class="form-control">
-                                <option>Select city</option>
+                                <option value="">Select city</option>
                                 @forelse($cities as $key=>$city)
                                 <option value="{{ $city->_id }}" @if(isset($event->city_id) && $event->city_id==$city->_id) {{ 'selected' }} @endif>{{ $city->name }}</option>
                                 @empty

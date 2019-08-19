@@ -176,7 +176,7 @@ class EventController extends Controller
             'name'             => 'required',
             'type'             => 'required|in:single,multi',
             'coin_type'        => 'required|in:ar,physical',
-            'city_id.*'        => 'required',
+            'city_id'          => 'required',
             'event_start_date' => 'required',
             'event_end_date'   => 'required',
             'rejection_ratio'  => 'required|integer',
@@ -378,9 +378,9 @@ class EventController extends Controller
         $data['mini_games'] = $main_game;
         $eventId = $request->get('event_id');
 
-        $evert = Event::where('_id',$eventId)->first();
-        $evert->mini_games = $data['mini_games'];
-        $evert->save();
+        $event = Event::where('_id',$eventId)->first();
+        $event->mini_games = $data['mini_games'];
+        $event->save();
 
         return response()->json([
             'status'  => true,
@@ -687,8 +687,9 @@ class EventController extends Controller
                     }
                 }
                 
-                $startDate = Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['start_date'][$i])));
-                $endDate = Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['end_date'][$i])));
+                $startDate = Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['date'][$i].' '.$data['start_time'][$i])));
+                $endDate = Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['date'][$i].' '.$data['end_time'][$i])));
+                
                 $main_game[] = [
                             //'from'  => Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['start_date'][$i]))), 
                     'from'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($startDate)), 
@@ -703,8 +704,8 @@ class EventController extends Controller
         
 
         $event = Event::where('_id',$eventId)
-        ->with('prizes')
-        ->first();
+                        ->with('prizes')
+                        ->first();
 
         $event->mini_games = $data['mini_games'];
 
@@ -783,7 +784,7 @@ class EventController extends Controller
         $search = $request->get('search')['value'];
         $events = Event::select('name','type','coin_type','starts_at','ends_at','rejection_ratio','winning_ratio','city_id','fees','starts_at','ends_at','mini_games');
         $admin = Auth::user();
-
+        
         if($search != ''){
             $events->where(function($query) use ($search){
                 $query->where('name','like','%'.$search.'%')
