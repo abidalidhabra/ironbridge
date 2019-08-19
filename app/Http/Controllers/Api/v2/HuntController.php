@@ -396,6 +396,7 @@ class HuntController extends Controller
             $timeTaken      = 0;
             $completedDist  = 0;
             $status         = "";
+            $coolDown       = null;
             $userParticipation = $hunt->hunt_users()->where(['user_id'=> $userId, 'complexity'=> $complexity])->latest()->first();
             
             if ($userParticipation) {
@@ -405,6 +406,10 @@ class HuntController extends Controller
                 $completedClues = $userClueDetails->where('status','completed')->count();
                 $timeTaken = $userClueDetails->sum('finished_in');
                 $completedDist = (($huntDetails->distance / $totalClues) * $completedClues);
+                if ($userParticipation->ended_at) {
+	                $nextPlayDate = $userParticipation->ended_at->addHours(21);
+	                $coolDown = (now() < $nextPlayDate)?now()->diffInSeconds($userParticipation->ended_at): null;
+                }
             }
 
             $hunt->complexity       = $huntDetails->complexity;           
@@ -420,6 +425,7 @@ class HuntController extends Controller
             $hunt->user_hunt_status = $status;           
             $hunt->max_complexity   = $maxComplexity;       
             $hunt->hunt_user_details = $huntUserDetails;
+            $hunt->cooldown         = $coolDown;
             unset($hunt->hunt_complexities);
             return response()->json(['message'=>'Hunt details has been retrieved successfully.','data'=>$hunt]);
         } catch (Exception $e) {

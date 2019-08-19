@@ -575,7 +575,6 @@
                 $('#date'+currentIndex).datepicker({
                     weekStart: 1,
                     startDate: startdate,
-                    endDate : enddate,
                     autoclose: true,
                 })
 
