@@ -37,7 +37,8 @@ class User extends Authenticatable implements JWTSubject
         'device_type',
         'widgets',
         'avatar',
-        'skeleton_keys'
+        'skeleton_keys',
+        // 'expnadable_skeleton_keys',
     ];
 
     /**
@@ -56,7 +57,6 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'gold_balance'   => 0,
     ];
 
     protected $dates = [
@@ -75,7 +75,9 @@ class User extends Authenticatable implements JWTSubject
             'sound_fx' => true,
             'music_fx' => true,
         ],
-        'skeleton_keys' => []
+        'skeleton_keys' => [],
+        'gold_balance'   => 0,
+        // 'expnadable_skeleton_keys'   => 0,
         // 'user_widgets' => [],
         // 'used_widgets' => [],
     ];
@@ -157,5 +159,10 @@ class User extends Authenticatable implements JWTSubject
     public function getAvailableSkeletonKeysAttribute()
     {
         return ($this->skeleton_keys)? collect($this->skeleton_keys)->where('used_at', null)->count():0;
+    }
+
+    public function plans_purchases()
+    {
+        return $this->hasMany('App\Models\v2\PlanPurchase');
     }
 }

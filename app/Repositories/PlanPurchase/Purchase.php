@@ -2,8 +2,7 @@
 
 namespace App\Repositories\PlanPurchase;
 
-interface PlanPurchaseInterface
+interface Purchase
 {
-	
 	public function create($planData);
 }

@@ -79,6 +79,7 @@ class HuntController extends Controller
                                                 '$and'=> [
                                                    [ '$eq'=> [ '$hunt_id',  '$$hunt_string_id' ] ],
                                                    [ '$eq'=> [ '$user_id', $userId ] ],
+                                                   [ '$eq'=> [ '$complexity', $complexity ] ],
                                                    [ '$ne'=> [ '$status', 'completed' ] ]
                                                 ]
                                             ]
@@ -313,7 +314,7 @@ class HuntController extends Controller
             return response()->json(['message'=> 'Hunt is not exist with the requested difficulty.'], 422);
         }
 
-        $huntParticipation = $user->hunt_user_v1()->where(['hunt_id' => $huntId])->latest()->first();
+        $huntParticipation = $user->hunt_user_v1()->where(['hunt_id' => $huntId, 'complexity'=> $complexity])->latest()->first();
 
         if ($huntParticipation && $huntParticipation->status == 'participated') {
             return response()->json(['message'=> 'You already participated in this hunt.'], 422);
@@ -321,7 +322,7 @@ class HuntController extends Controller
 
         if ($huntParticipation && $huntParticipation->status == 'completed') {
             
-            $endedDate = $huntParticipation->ended_at->addDays(1);
+            $endedDate = $huntParticipation->ended_at->addHours(21);
             if ($endedDate > now()) {
                 return response()->json(['message'=> 'You have to wait 24 hours after completion of the hunt'], 422);
             }

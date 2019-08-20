@@ -49,13 +49,12 @@ class MiniGameRepository
         	$practiceGameData = $this->user->practice_games()->createMany($data);
         	return $practiceGameData;
         }
-
     }
 
     public function allotKeyIfEligible()
     {
         /** Gateway 1 **/
-        $keyToBeCredit = (collect($this->user->skeleton_keys)->where('used_at', null)->count() > 5)?0:1;
+        $keyToBeCredit = (collect($this->user->skeleton_keys)->where('used_at', null)->count() >= 5)?0:1;
         
         /** Gateway 2 **/
         $userId = $this->user->id;
@@ -85,10 +84,19 @@ class MiniGameRepository
 
         $piecesInfo = PracticeGameUser::whereIn('_id', $haveAllPieces->pluck('id'))->get();
 
-        /** Status of 1 & 2 Gateways **/
-        if ($keyToBeCredit && $haveAllPieces->count() >= 3) {
-            (new UserRepository($this->user))->addSkeletonKeys($keyToBeCredit);
-            // $piecesInfo->markAsIncomplete();
+        /** Status of 1 & 2 & 3 Gateways **/
+        if ($haveAllPieces->count() >= 3) {
+            if ($keyToBeCredit) {
+                (new UserRepository($this->user))->addSkeletonKeys($keyToBeCredit);
+                // $piecesInfo->markAsIncomplete();
+            }else{
+                $planPurchaseData = $this->user->plans_purchases()->where('expandable_skeleton_keys', '>', 0)->first();
+                if ($planPurchaseData && $planPurchaseData->expandable_skeleton_keys) {
+                    $planPurchaseData->expandable_skeleton_keys -= 1;
+                    $planPurchaseData->save();
+                    (new UserRepository($this->user))->addSkeletonKeys(1, ['plan_purchase_id' => $planPurchaseData->id]);
+                }
+            }
             PracticeGameUser::whereIn('_id', $haveAllPieces->pluck('id'))->update(['piece_collected'=> false]);
         }
 

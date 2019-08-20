@@ -6,7 +6,7 @@ use App\Models\v2\PlanPurchase;
 use App\Repositories\PlanPurchase\Purchase;
 use App\Repositories\User\UserRepository;
 
-class GoldPurchase implements Purchase
+class FivePlusSkeletonPurchase implements Purchase
 {
 
 	protected $plan, $user;
@@ -25,16 +25,13 @@ class GoldPurchase implements Purchase
 		$planPurchase->user_id 		  = $this->user->id;
 		$planPurchase->plan_id 		  = $planData->plan_id;
 		$planPurchase->country_code   = $planData->country_code;
-		$planPurchase->gold_value 	  = (int)$this->plan->gold_value;
-		$planPurchase->price 		  = (float)$planData->price;
+		$planPurchase->skeleton_keys_amount     = (int)$this->plan->skeleton_keys_amount;
+		$planPurchase->expandable_skeleton_keys = (int)$this->plan->skeleton_keys_amount;
+		$planPurchase->price 		  = (float)$this->plan->price;
 		$planPurchase->transaction_id = $planData->transaction_id;
 		$planPurchase->save();
-
-    	/** Add gold value in user's table **/
-    	$userRepository = new UserRepository($this->user);
-    	$availableGoldBalance = $userRepository->addGold($this->plan->gold_value);
     	
-    	/** return the available gold balance **/
-    	return ['available_gold_balance'=> $availableGoldBalance];
+    	/** return the available skeleton keys **/
+    	return ['expandable_skeleton_keys'=> $this->plan->skeleton_keys_amount];
     }
 }
