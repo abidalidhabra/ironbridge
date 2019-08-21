@@ -23,6 +23,7 @@
                     <th>Sr.</th>
                     <th>Email</th>
                     <th>Created Date</th>
+                    <th>Resend Mail</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -137,6 +138,7 @@
                 { data:'DT_RowIndex',name:'_id' },
                 { data:'email',name:'email' },
                 { data:'created_at',name:'created_at'},
+                { data:'resend_mail',name:'resend_mail'},
                 { data:'action',name:'action'},
                 ],
 
@@ -195,6 +197,32 @@
                    }
                });
             });
+
+
+            /* RESEND MAIL */
+            $(document).on('click', '.resend_mail', function(){
+                var id = $(this).data('id');
+                var url ='{{ route("admin.resendMail",':id') }}';
+                url = url.replace(':id',id);
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    beforeSend: function() {
+                        $('#resend_mail'+id).find('i').addClass('fa-spinner fa-spin');
+                    },
+                    success: function(response)
+                    {
+                        if (response.status == true) {
+                            toastr.success(response.message);
+                            $('#resend_mail'+id).find('i').removeClass('fa-spinner fa-spin');
+                            table.ajax.reload();
+                        } else {
+                            toastr.warning(response.message);
+                        }
+                   }
+               });
+            });
+
      //EDIT NEWS
      $('#editAdminForm').submit(function(e) {
         e.preventDefault();

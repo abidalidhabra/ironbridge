@@ -8,5 +8,5 @@ interface UserRepositoryInterface{
 	
 	public function addGold(int $goldAmount);
 	
-	public function buySkeletonKeysFromGold(object $purchaseData);
+	public function buySkeletonKeysFromGold($purchaseData);
 }

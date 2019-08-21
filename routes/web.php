@@ -51,6 +51,8 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 
 	Route::post('/addGold',[ 'middleware' => ['permission:Add Users'], 'uses' => 'UserController@addGold'])->name('addGold');
 	Route::post('/addSkeletonKey',[ 'middleware' => ['permission:Add Users'], 'uses' => 'UserController@addSkeletonKey'])->name('addSkeletonKey');
+
+	Route::get('/practiceGameUser/{id}','UserController@practiceGameUser')->name('practiceGameUser');
 	
 
 
@@ -122,7 +124,21 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::group(['middleware' => ['role:Super Admin']], function () {
 		Route::resource('adminManagement', 'AdminManagement');
 		Route::get('getAdminsList', 'AdminManagement@getAdminList')->name('getAdminsList');
+		Route::get('resendMail/{id}', 'AdminManagement@resendMail')->name('resendMail');
 	});
+
+
+	//EVENTS
+	Route::resource('event', 'EventController');
+	Route::get('basicDetails/{id?}', [ 'middleware' => ['permission:Add Event'], 'uses' => 'EventController@basicDetails' ])->name('event.basicDetails');
+	Route::post('addBasicStore', [ 'middleware' => ['permission:Add Event'], 'uses' => 'EventController@addBasicStore' ])->name('event.addBasicStore');
+	Route::get('miniGame/{id}', [ 'middleware' => ['permission:Add Event'], 'uses' => 'EventController@miniGame' ])->name('event.miniGame');
+	Route::post('addMiniGame', [ 'middleware' => ['permission:Add Event'], 'uses' => 'EventController@addMiniGame' ])->name('event.addMiniGame');
+	Route::get('huntDetails/{id}', [ 'middleware' => ['permission:Add Event'], 'uses' => 'EventController@huntDetails'])->name('event.huntDetails');
+	Route::get('getEventList', [ 'middleware' => ['permission:View Event'], 'uses' => 'EventController@getEventList'])->name('getEventList');
+	Route::post('addHuntDetails', [ 'middleware' => ['permission:Add Event'], 'uses' => 'EventController@addHuntDetails'])->name('event.addHuntDetails');
+	Route::post('updateEvent', [ 'middleware' => ['permission:Edit Event'], 'uses' => 'EventController@updateEvent'])->name('event.updateEvent');
+	Route::post('getHuntList', [ 'middleware' => ['permission:Add Event'], 'uses' => 'EventController@getHuntList'])->name('event.getHuntList');
 
 });
 

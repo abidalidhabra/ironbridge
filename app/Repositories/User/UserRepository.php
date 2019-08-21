@@ -32,7 +32,7 @@ class UserRepository implements UserRepositoryInterface
         return $this->user->available_skeleton_keys;
 	}
 
-    public function addGold($goldAmount){
+    public function addGold(int $goldAmount){
 
         $this->user->gold_balance += $goldAmount;
         $this->user->save();

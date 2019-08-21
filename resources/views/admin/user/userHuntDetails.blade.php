@@ -25,7 +25,7 @@
                         <th>Status</th>
                         <th>Game Name</th>
                         <th>Variation Name</th>
-                        <th>Reaveal at</th>
+                        <th>Revealed at</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -34,12 +34,23 @@
                     ?>
                     @forelse ($huntUserDetail as $user)
                         <tr>
+                            <!--  status [tobestart, running, paused, completed]  -->
+                            <?php
+                                if($user->status == 'tobestart'){
+                                    $status = 'Not Started';
+                                } elseif ($user->status == 'running' || $user->status == 'paused') {
+                                    $status = 'In Progress';
+                                } elseif ($user->status == 'completed') {
+                                    $status = 'Completed';
+                                }
+
+                            ?>
                             <td>{{ $i }}</td>
                             <td>{{ $user->finished_in }}</td>
-                            <td>{{ $user->status }}</td>
+                            <td>{{ $status }}</td>
                             <td>{{ $user->game->name }}</td>
                             <td>{{ $user->game_variation->variation_name }}</td>
-                            <td>{{ ($user->revealed_at)?$user->revealed_at->format('d-M-Y @ h:i A'):'Not Revealed' }}</td>
+                            <td>{{ ($user->revealed_at)?$user->revealed_at->format('d-M-Y @ h:i A'):'-' }}</td>
                         </tr>
                         @php $i++ @endphp 
                     @empty
