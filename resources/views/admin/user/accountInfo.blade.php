@@ -65,7 +65,7 @@
                 <h3>Registration info</h3>
                 <div class="accountinfo_rightbox">
                     <div class="accountcerated_text">
-                        <p>Account Cerated on</p>
+                        <p>Account Created on</p>
                         <h4>{{ $user->created_at->format('d-M-Y @ h:i a') }}</h4>
                     </div>
                     <!-- <div class="accountcerated_text">
