@@ -7,9 +7,13 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class EventsUser extends Eloquent
 {
-	protected $fillable = [ 'event_id', 'completed_at'];
+	protected $fillable = [ 'user_id','event_id', 'completed_at'];
 
 	protected $dates = [
 		'completed_at'
 	];
+
+	 protected $attributes = [
+        'completed_at' => null,
+    ];
 }
