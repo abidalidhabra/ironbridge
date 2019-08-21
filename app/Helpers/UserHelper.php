@@ -4,6 +4,7 @@ namespace App\Helpers;
 use App\Models\v1\Avatar;
 use App\Models\v1\City;
 use App\Models\v1\WidgetItem;
+use App\Repositories\EventRepository;
 use Auth;
 use MongoDB\BSON\ObjectId as MongoID;
 use Request;
@@ -33,11 +34,13 @@ class UserHelper {
 
         // $cities = City::select('_id','name')->get();
 
+		$eventCities = (new EventRepository)->cities();
 		return [
 			'avatars' => $avatars,
 			'widgets' => $widgets,
 			'user_avatar' => $user->avatar,
 			'user_widgets' => $user->widgets,
+			'event_cities' => $eventCities,
 			// 'used_widgets' => $user->used_widgets,
 			// 'plans' => $plans,
 			// 'events_data' => $events,
