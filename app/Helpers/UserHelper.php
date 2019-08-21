@@ -34,13 +34,13 @@ class UserHelper {
 
         // $cities = City::select('_id','name')->get();
 
-		$eventCities = (new EventRepository)->cities();
+		$eventsCities = (new EventRepository)->cities();
 		return [
 			'avatars' => $avatars,
 			'widgets' => $widgets,
 			'user_avatar' => $user->avatar,
 			'user_widgets' => $user->widgets,
-			'event_cities' => $eventCities,
+			'events_cities' => $eventsCities,
 			// 'used_widgets' => $user->used_widgets,
 			// 'plans' => $plans,
 			// 'events_data' => $events,
