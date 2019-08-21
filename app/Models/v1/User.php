@@ -106,24 +106,14 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    // /**
-    //  *
-    //  * Get the avatar selected by the user
-    //  * @var object
-    //  */
-    // public function avatar()
-    // {
-    //     return $this->hasOne('App\Models\v1\UserAvatar');
-    // }
-
     /**
      *
      * Get the events participated by the user
      * @var array
      */
-    public function event_participations()
+    public function events()
     {
-        return $this->hasMany('App\Models\v1\EventParticipation');
+        return $this->hasMany('App\Models\v2\EventsUser');
     }
 
     public function balance_sheet()

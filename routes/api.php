@@ -148,7 +148,8 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
 		// Route::post('addSkeletonKey', 'MGController@addSkeletonKey');
 		
 		/** Event **/
-		Route::get('getEventCityList', 'EventController@getEventCityList');
-		Route::get('getCityEventDetails', 'EventController@getCityEventDetails');
+		Route::get('getEventsCities', 'EventController@getEventsCities');
+		Route::get('getEventsInCity', 'EventController@getEventsInCity');
+		Route::post('participateInEvent', 'EventController@participateInEvent');
 	});
 });

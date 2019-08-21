@@ -9,9 +9,6 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 class Event extends Eloquent
 {
 
-
-    // hunt_details [ name, city, province, country, lat, long, place_name, search_place_name]
-
 	protected $fillable = [
         'name',
         'type',
@@ -50,6 +47,33 @@ class Event extends Eloquent
     public function prizes()
     {
         return $this->hasMany('App\Models\v2\Prize','event_id');
+    }
+
+    public function participants()
+    {
+        return $this->hasMany('App\Models\v1\User');
+    }
+
+     /**
+     * Scope a query to only include upcoming events.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeUpcoming($query)
+    {
+        $query->where('starts_at', '>=', now());
+    }
+
+    /**
+     * Scope a query to return events having requested city.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeHavingCity($query, $cityId)
+    {
+        return $query->where('city_id', $cityId);
     }
 }
 

@@ -2,55 +2,38 @@
 
 namespace App\Http\Controllers\Api\v2;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Validator;
-use App\Models\v2\Event;
+use App\Http\Requests\v2\GetEventsInCityRequest;
+use App\Http\Requests\v2\ParticipateInEventRequest;
 use App\Models\v1\City;
+use App\Models\v2\Event;
+use App\Repositories\EventRepository;
 use Auth;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Validator;
 
 class EventController extends Controller
 {
-    /* GET CITY LIST */
-    public function getEventCityList(Request $request)
-    {
-    	$todayDate = Carbon::today();
+    private $eventRepo;
 
-    	$cityList = City::select('_id','name')
-    					->whereHas('events',function($query) use ($todayDate){
-    						$query->where('starts_at','>=',$todayDate);
-    					})
-    					->get();
-        return response()->json(['message'=> 'City has been retrieved successfully.', 'data'=> $cityList]);
-    	
+    public function __construct()
+    {
+        $this->eventRepo = new EventRepository();
     }
 
-    public function getCityEventDetails(Request $request){
-    	$validator = Validator::make($request->all(),[
-                        'city_id'=> "required|exists:cities,_id",
-                    ]);
-        if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()->first()],422);
-        }
+    public function getEventsCities(Request $request)
+    {
+        return response()->json(['message'=> 'OK.', 'data'=> $this->eventRepo->cities()]);
+    }
 
-        $cityId = $request->get('city_id'); 
-    	$todayDate = Carbon::today();
+    public function getEventsInCity(GetEventsInCityRequest $request)
+    {
+        return response()->json(['message'=> 'OK.', 'data'=> $this->eventRepo->eventsInCity($request->city_id)]);
+    }
 
-        $events = Event::select('_id','name','fees','description','starts_at','ends_at','discount','city_id')
-        				->where('city_id',$cityId)
-        				->where('starts_at','>=',$todayDate)
-        				->with('prizes')
-        				->get()
-        				->map(function($query){
-        					// if ($query->prizes) {
-        					// 	$query->prizes;
-        					// }
-					        // exit();
-					        return $query;
-        				});
-       
-        
-        return $events;
+    public function participateInEvent(ParticipateInEventRequest $request)
+    {
+        return response()->json(['message'=> 'OK.', 'data'=> $this->eventRepo->create($request)]);
     }
 }

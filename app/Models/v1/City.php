@@ -26,4 +26,17 @@ class City extends Eloquent
     {
         return $this->hasMany('App\Models\v2\Event');
     }
+
+    /**
+     * Scope a query to only include upcoming events
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeHavingActiveEvents($query)
+    {
+        return $query->whereHas('events', function($query){
+                    $query->where('starts_at', '>=', now());
+                });
+    }
 }
