@@ -34,7 +34,7 @@ class UserHelper {
 
         // $cities = City::select('_id','name')->get();
 
-		$eventsCities = (new EventRepository)->cities();
+		$eventsCities = (new EventRepository($user))->cities();
 		return [
 			'avatars' => $avatars,
 			'widgets' => $widgets,

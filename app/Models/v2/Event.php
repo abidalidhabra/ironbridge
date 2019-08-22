@@ -60,7 +60,7 @@ class Event extends Eloquent
 
     public function getDiscountAmountAttribute()
     {
-        return ($this->fees - ($this->fees * ($this->discount / 100)));
+        return round($this->fees - ($this->fees * ($this->discount / 100)), 2);
     }
      /**
      * Scope a query to only include upcoming events.
