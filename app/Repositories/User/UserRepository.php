@@ -16,7 +16,7 @@ class UserRepository implements UserRepositoryInterface
         $this->user = $user;
     }
 
-	public function addSkeletonKeys($keysAmount, $additionalFields = null){
+	public function addSkeletonKeys(int $keysAmount, $additionalFields = null){
 
         for ($i=0; $i < $keysAmount; $i++) { 
             // $skeletonKey[$i]['key'] = [ 'key'=> new ObjectId(), 'created_at'=> new UTCDateTime(), 'used_at'=> null ];
@@ -47,6 +47,13 @@ class UserRepository implements UserRepositoryInterface
 
         $availableSkeletonKeys = $this->addSkeletonKeys($purchaseData->keys);
         return ['gold_balance'=> $this->user->gold_balance, 'available_skeleton_keys'=> $availableSkeletonKeys];
+    }
+
+    public function deductTheCoins(int $goldAmount){
+        $this->user->gold_balance -= $goldAmount;
+        $this->user->save();
+        
+        return $this->user->gold_balance;
     }
 
     // public function expandTheSkeletonBucket($keysAmount)

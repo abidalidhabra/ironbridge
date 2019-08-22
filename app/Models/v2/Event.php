@@ -16,6 +16,7 @@ class Event extends Eloquent
         'rejection_ratio',
         'winning_ratio',
         'city_id',
+        'user_id',
         'fees',
         'starts_at',
         'ends_at',
@@ -38,6 +39,9 @@ class Event extends Eloquent
         'discount_till'
     ];
 
+    protected $appends = [
+        'discount_amount'
+    ];
 
     public function city()
     {
@@ -49,11 +53,15 @@ class Event extends Eloquent
         return $this->hasMany('App\Models\v2\Prize','event_id');
     }
 
-    public function participants()
+    public function participations()
     {
-        return $this->hasMany('App\Models\v1\User');
+        return $this->hasMany('App\Models\v2\EventsUser');
     }
 
+    public function getDiscountAmountAttribute()
+    {
+        return ($this->fees - ($this->fees * ($this->discount / 100)));
+    }
      /**
      * Scope a query to only include upcoming events.
      *

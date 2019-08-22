@@ -4,16 +4,18 @@ namespace App\Rules\v2;
 
 use Illuminate\Contracts\Validation\Rule;
 
-class EventUniqueJoiningRule implements Rule
+class EventParticipationOwnershipRule implements Rule
 {
+    private $user;
+
     /**
      * Create a new rule instance.
      *
      * @return void
      */
-    private $user;
     public function __construct($user)
     {
+        //
         $this->user = $user;
     }
 
@@ -26,11 +28,15 @@ class EventUniqueJoiningRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        if ($this->user->events()->where('event_id', $value)->count()) {
-            return false;
-        }else{
-            return true;
-        }
+        // $ownable = $this->user()->events()->whereHas('minigames', function($query){
+        //                 return $query->where('_id', $value);
+        //             })->count();
+        
+        // if ($ownable) {
+        //     return true;
+        // }else{
+        //     return false;
+        // }
     }
 
     /**
@@ -40,6 +46,6 @@ class EventUniqueJoiningRule implements Rule
      */
     public function message()
     {
-        return 'You are already participated in this event.';
+        return 'Sorry! you are not authorize to do anything in this event.';
     }
 }

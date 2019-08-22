@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v2;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v2\GetEventsInCityRequest;
+use App\Http\Requests\v2\MarkTheEventMGAsCompleteRequest;
 use App\Http\Requests\v2\ParticipateInEventRequest;
 use App\Models\v1\City;
 use App\Models\v2\Event;
@@ -19,7 +20,10 @@ class EventController extends Controller
 
     public function __construct()
     {
-        $this->eventRepo = new EventRepository();
+        $this->middleware(function ($request, $next) {
+            $this->eventRepo = new EventRepository(auth()->user());
+            return $next($request);
+        });
     }
 
     public function getEventsCities(Request $request)
@@ -34,6 +38,21 @@ class EventController extends Controller
 
     public function participateInEvent(ParticipateInEventRequest $request)
     {
-        return response()->json(['message'=> 'OK.', 'data'=> $this->eventRepo->create($request)]);
+        try {
+            
+            return response()->json(['message'=> 'OK.', 'data'=> $this->eventRepo->create($request)]);
+        } catch (Exception $e) {
+            return $e->getMessage().' on '.$e->getLine().' of '.$e->getFile();   
+        }
+    }
+
+    public function markTheEventMGAsComplete(MarkTheEventMGAsCompleteRequest $request)
+    {
+        try {
+            
+            return response()->json(['message'=> 'OK.', 'data'=> $this->eventRepo->markMGAsComplete($request)]);
+        } catch (Exception $e) {
+            return $e->getMessage().' on '.$e->getLine().' of '.$e->getFile();   
+        }
     }
 }

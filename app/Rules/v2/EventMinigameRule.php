@@ -4,17 +4,16 @@ namespace App\Rules\v2;
 
 use Illuminate\Contracts\Validation\Rule;
 
-class EventUniqueJoiningRule implements Rule
+class EventMinigameRule implements Rule
 {
     /**
      * Create a new rule instance.
      *
      * @return void
      */
-    private $user;
-    public function __construct($user)
+    public function __construct()
     {
-        $this->user = $user;
+        //
     }
 
     /**
@@ -26,11 +25,7 @@ class EventUniqueJoiningRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        if ($this->user->events()->where('event_id', $value)->count()) {
-            return false;
-        }else{
-            return true;
-        }
+        //
     }
 
     /**
@@ -40,6 +35,6 @@ class EventUniqueJoiningRule implements Rule
      */
     public function message()
     {
-        return 'You are already participated in this event.';
+        return 'The validation error message.';
     }
 }

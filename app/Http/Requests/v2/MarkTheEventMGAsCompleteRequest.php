@@ -2,13 +2,13 @@
 
 namespace App\Http\Requests\v2;
 
-use App\Rules\v2\EventUniqueJoiningRule;
-use App\Rules\v2\GoldAvailabilityForEventRule;
+use App\Rules\v2\EventMinigameRule;
+use App\Rules\v2\EventParticipationOwnershipRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class ParticipateInEventRequest extends FormRequest
+class MarkTheEventMGAsCompleteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,7 +28,8 @@ class ParticipateInEventRequest extends FormRequest
     public function rules()
     {
         return [
-            'event_id'=> ['required', 'exists:events,_id', new EventUniqueJoiningRule($this->ownableUser()), new GoldAvailabilityForEventRule($this->ownableUser())]
+            'event_minigame_id' => ['required', 'exists:events_minigames,_id', new EventParticipationOwnershipRule($this->ownableUser())],
+            'minigame__unique_id' => ['required', new EventMinigameRule($this->ownableUser())],
         ];
     }
 
