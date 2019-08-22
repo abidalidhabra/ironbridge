@@ -198,8 +198,8 @@
         $('#map_reveal_date').datetimepicker({
             useCurrent: false,
             format: "DD-MM-YYYY hh:mm A",
-            minDate: moment(startdate),
-            maxDate: moment(enddate),
+            minDate: moment(enddate),
+            // maxDate: moment(),
             defaultDate: moment(startdate),
         });
 

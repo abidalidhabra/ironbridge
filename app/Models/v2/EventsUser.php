@@ -7,7 +7,10 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class EventsUser extends Eloquent
 {
-	protected $fillable = [ 'user_id','event_id', 'completed_at'];
+
+    /** status ->  [tobestart, closed, running, completed, eliminated] **/
+
+	protected $fillable = [ 'user_id','event_id', 'completed_at' , 'attempts' ,'status'];
 
 	protected $dates = [
 		'completed_at'
@@ -15,5 +18,7 @@ class EventsUser extends Eloquent
 
 	 protected $attributes = [
         'completed_at' => null,
+        'status'	   => 'tobestart'
+
     ];
 }
