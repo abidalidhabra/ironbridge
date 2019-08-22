@@ -2017,7 +2017,10 @@ background: #A5853B;
 }*/
 
 
-
+.prize_box{
+    display: inline-block;
+    width: 100%;
+}
 
 
 

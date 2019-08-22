@@ -252,12 +252,20 @@ class EventController extends Controller
             return response()->json(['status' => false,'message' => $message]);
         }
         $data = $request->all();
+        $eventId = $request->get('event_id');
+        $event = Event::where('_id',$eventId)->first();
 
+        $totalDay = $event->starts_at->diffInDays($event->ends_at->addDays('1'));
+        
+        if($totalDay != count($data['game_id'])){
+            return response()->json(['status' => false,'message' => 'Please manage the  day '.$totalDay]);
+        }
         $main_game = [];
         
         
         $gameCount = last(array_keys($data['game_id']))+1;
         
+        $p = 1;
         for ($i=0; $i<$gameCount ; $i++) { 
             if (isset($data['game_id'][$i])) {
 
@@ -273,11 +281,43 @@ class EventController extends Controller
                         
                         $gameDetail = Game::find($gameData[$k]);
                         
-                        $gameInfo = ['id'=> $gameData[$k], 'name'=> $gameDetail->name];
-                        
-                        /* IMAGES */
+                        if ($gameDetail->identifier == 'sudoku') {
+                            $basedOn = 'time';
+                        } else if ($gameDetail->identifier == 'number_search') {
+                            $basedOn = 'time';
+                        } else if ($gameDetail->identifier == 'jigsaw') {
+                            $basedOn = 'time';
+                        } else if ($gameDetail->identifier == 'sliding') {
+                            $basedOn = 'time';
+                        } else if ($gameDetail->identifier == 'word_search') {
+                            $basedOn = '';
+                        } else if ($gameDetail->identifier == '2048') {
+                            $basedOn = 'time';
+                        } else if ($gameDetail->identifier == 'block') {
+                            $basedOn = 'score';
+                        } else if ($gameDetail->identifier == 'hexa') {
+                            $basedOn = 'score';
+                        } else if ($gameDetail->identifier == 'bubble_shooter') {
+                            $basedOn = 'score';
+                        } else if ($gameDetail->identifier == 'snake') {
+                            $basedOn = 'time';
+                        } else if ($gameDetail->identifier == 'domino') {
+                            $basedOn = 'score';
+                        } else if ($gameDetail->identifier == 'slices') {
+                            $basedOn = 'score';
+                        } else if ($gameDetail->identifier == 'yatzy') {
+                            $basedOn = 'score';
+                        }
 
+                        $gameInfo = [
+                                    'id'         => $gameData[$k],
+                                    'name'       => $gameDetail->name,
+                                    'identifier' => $gameDetail->identifier,
+                                    'based_on'   => $basedOn
+                                ];
                         
+
+                        /* IMAGES */
                         $gameId = $gameData[$k];
                         if (($gameId == '5b0e306951b2010ec820fb4f' || $gameId == '5b0e304b51b2010ec820fb4e') && isset($variationImage)) {
 
@@ -373,16 +413,18 @@ class EventController extends Controller
                             //'from'  => Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['start_date'][$i]))), 
                     'from'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($startDate)), 
                     'to'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($endDate)),  
-                    'games' => $game, 
+                    'games' => $game,
+                    'day'   => $p 
                 ];
+                $p++;
             }
 
         }
         
         $data['mini_games'] = $main_game;
-        $eventId = $request->get('event_id');
+        
 
-        $event = Event::where('_id',$eventId)->first();
+        
         $event->mini_games = $data['mini_games'];
         $event->save();
 
@@ -416,6 +458,7 @@ class EventController extends Controller
             'start_rank.*'      => 'required|integer',
             'end_rank.*'        => 'required|integer',
             'prize_type.*'      => 'required',
+            'map_time_delay.*'  => 'required',
         ]);
 
         if ($validator->fails())
@@ -439,9 +482,15 @@ class EventController extends Controller
         $startRank = $request->get('start_rank');
         $endRank = $request->get('end_rank');
         $prizeType = $request->get('prize_type');
+        $mapTimeDelay = $request->get('map_time_delay');
         // $data = [];
         $totalPrizeIndex = last(array_keys($groupType))+1;
         
+        $allRank = array_merge($rank,$startRank,$endRank);
+        if ($event->winning_ratio < max($allRank)) {
+            return response()->json(['status' => false,'message' => 'Please manage rank in max '.$event->winning_ratio]);
+        }
+
         /* PRIZES ALL DELETE */
         $event->prizes()->delete();
         
@@ -449,10 +498,11 @@ class EventController extends Controller
             
             if (isset($groupType[$i])) {
                 $data = [];
-                $data['event_id']    = $eventId;
-                $data['group_type']  = $groupType[$i];
-                $data['prize_type']  = $prizeType[$i];
-                $data['prize_value'] = (int)$prize[$i];
+                $data['event_id']       = $eventId;
+                $data['group_type']     = $groupType[$i];
+                $data['prize_type']     = $prizeType[$i];
+                $data['prize_value']    = (int)$prize[$i];
+                $data['map_time_delay'] = (int)$mapTimeDelay[$i];
 
                 if (isset($rank[$i])) {
                     $data['rank'] = (int)$rank[$i];
@@ -552,6 +602,8 @@ class EventController extends Controller
             'start_rank.*'      => 'required|integer',
             'end_rank.*'        => 'required|integer',
             'prize_type.*'      => 'required',
+            'map_time_delay.*'  => 'required',
+
         ]);
 
 
@@ -587,11 +639,17 @@ class EventController extends Controller
         /* END BASIC DETAILS */
         
         /* MINI GAME */
+        $totalDay = $event->starts_at->diffInDays($event->ends_at->addDays('1'));
+        
+        if($totalDay != count($data['game_id'])){
+            return response()->json(['status' => false,'message' => 'Please manage the  day '.$totalDay]);
+        }
         $main_game = [];
         
         
         $gameCount = last(array_keys($data['game_id']))+1;
         
+        $p = 1;
         for ($i=0; $i<$gameCount ; $i++) { 
             if (isset($data['game_id'][$i])) {
 
@@ -607,11 +665,43 @@ class EventController extends Controller
                         
                         $gameDetail = Game::find($gameData[$k]);
                         
-                        $gameInfo = ['id'=> $gameData[$k], 'name'=> $gameDetail->name];
-                        
-                        /* IMAGES */
+                        if ($gameDetail->identifier == 'sudoku') {
+                            $basedOn = 'time';
+                        } else if ($gameDetail->identifier == 'number_search') {
+                            $basedOn = 'time';
+                        } else if ($gameDetail->identifier == 'jigsaw') {
+                            $basedOn = 'time';
+                        } else if ($gameDetail->identifier == 'sliding') {
+                            $basedOn = 'time';
+                        } else if ($gameDetail->identifier == 'word_search') {
+                            $basedOn = '';
+                        } else if ($gameDetail->identifier == '2048') {
+                            $basedOn = 'time';
+                        } else if ($gameDetail->identifier == 'block') {
+                            $basedOn = 'score';
+                        } else if ($gameDetail->identifier == 'hexa') {
+                            $basedOn = 'score';
+                        } else if ($gameDetail->identifier == 'bubble_shooter') {
+                            $basedOn = 'score';
+                        } else if ($gameDetail->identifier == 'snake') {
+                            $basedOn = 'time';
+                        } else if ($gameDetail->identifier == 'domino') {
+                            $basedOn = 'score';
+                        } else if ($gameDetail->identifier == 'slices') {
+                            $basedOn = 'score';
+                        } else if ($gameDetail->identifier == 'yatzy') {
+                            $basedOn = 'score';
+                        }
 
+                        $gameInfo = [
+                                    'id'         => $gameData[$k],
+                                    'name'       => $gameDetail->name,
+                                    'identifier' => $gameDetail->identifier,
+                                    'based_on'   => $basedOn
+                                ];
                         
+
+                        /* IMAGES */
                         $gameId = $gameData[$k];
                         if (($gameId == '5b0e306951b2010ec820fb4f' || $gameId == '5b0e304b51b2010ec820fb4e') && isset($variationImage)) {
 
@@ -674,6 +764,10 @@ class EventController extends Controller
                             $variation_data['variation_size'] = (int)$data['variation_size'][$i][$k];
                         }
 
+                        // if (isset($data['default_reveal_number']) && isset($data['default_reveal_number'][$i][$k])) {
+                        //     $variation_data['default_reveal_number'] = (int)$data['default_reveal_number'][$i][$k];
+                        // }
+
                         if (isset($data['number_generate']) && isset($data['number_generate'][$i][$k])) {
                             $variation_data['number_generate'] = (int)$data['number_generate'][$i][$k];
                         }
@@ -703,15 +797,15 @@ class EventController extends Controller
                             //'from'  => Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['start_date'][$i]))), 
                     'from'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($startDate)), 
                     'to'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($endDate)),  
-                    'games' => $game, 
+                    'games' => $game,
+                    'day'   => $p 
                 ];
+                $p++;
             }
 
         }
         
         $data['mini_games'] = $main_game;
-        
-
         $event->mini_games = $data['mini_games'];
 
         /* END MINI GAMES */
@@ -732,6 +826,8 @@ class EventController extends Controller
         $startRank = $request->get('start_rank');
         $endRank = $request->get('end_rank');
         $prizeType = $request->get('prize_type');
+        $mapTimeDelay = $request->get('map_time_delay');
+
         // $data = [];
         $totalPrizeIndex = last(array_keys($groupType))+1;
         
@@ -746,6 +842,7 @@ class EventController extends Controller
                 $data['group_type']  = $groupType[$i];
                 $data['prize_type']  = $prizeType[$i];
                 $data['prize_value'] = (int)$prize[$i];
+                $data['map_time_delay'] = (int)$mapTimeDelay[$i];
 
                 if (isset($rank[$i])) {
                     $data['rank'] = (int)$rank[$i];
