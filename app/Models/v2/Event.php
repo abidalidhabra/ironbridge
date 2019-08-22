@@ -50,7 +50,7 @@ class Event extends Eloquent
 
     public function prizes()
     {
-        return $this->hasMany('App\Models\v2\Prize','event_id');
+        return $this->hasMany('App\Models\v2\EventsPrize','event_id');
     }
 
     public function participations()
