@@ -120,7 +120,7 @@
                                     <input type="text" name="prize[{{ $key }}]" class="form-control" placeholder="Prize" value="{{ $value->prize_value }}">
                                 </div>
                                 <div class="form-group col-md-2">
-                                    <select class="form-control" name="prize_type[{{ $key }}]">
+                                    <select class="form-control prize_type" name="prize_type[{{ $key }}]">
                                         <option value="cash" @if(isset($value->prize_type) && $value->prize_type == "cash") {{ 'selected' }} @endif>Cash</option>
                                         <option value="gold" @if(isset($value->prize_type) && $value->prize_type == "gold") {{ 'selected' }} @endif>Gold</option>
                                     </select>
@@ -156,7 +156,7 @@
                                     <input type="text" name="prize[]" class="form-control" placeholder="Prize">
                                 </div>
                                 <div class="form-group col-md-2">
-                                    <select class="form-control" name="prize_type[]">
+                                    <select class="form-control prize_type" name="prize_type[]">
                                         <option value="cash">Cash</option>
                                         <option value="gold">Gold</option>
                                     </select>
@@ -190,7 +190,9 @@
     <script type="text/javascript">
         /* DATE TIME PICKER */
         $('[data-toggle="tooltip"]').tooltip();   
-
+        $('.prize_type').select2({
+          minimumResultsForSearch: Infinity
+        });
         var startdate = '{{ $event->starts_at }}';
         var enddate = '{{ $event->ends_at }}';
         
@@ -200,7 +202,7 @@
             format: "DD-MM-YYYY hh:mm A",
             minDate: moment(enddate),
             // maxDate: moment(),
-            defaultDate: moment(startdate),
+            // defaultDate: moment(startdate),
         });
 
         /* SUBMIT FORM */
@@ -297,7 +299,7 @@
                                 <input type="text" name="prize[`+currentIndex+`]" class="form-control" placeholder="Prize">
                             </div>
                             <div class="form-group col-md-2">
-                                <select class="form-control" name="prize_type[`+currentIndex+`]">
+                                <select class="form-control prize_type" name="prize_type[`+currentIndex+`]">
                                     <option value="cash">Cash</option>
                                     <option value="gold">Gold</option>
                                 </select>

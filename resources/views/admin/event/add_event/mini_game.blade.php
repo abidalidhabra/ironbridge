@@ -35,8 +35,8 @@
             </div>
             <div class="separate_mini_game_box">
                 <input type="hidden" name="event_id" value="{{ $event->_id }}">
-                @if($event->mini_games)   
-                    @forelse($event->mini_games as $key => $day)
+                @if($event->event_days)   
+                    @forelse($event->event_days as $key => $day)
                         <div class="mini_game">
                             <div class="daingaemtitlebox boxmapedset">
                                 @if($event->type == 'single')
@@ -48,23 +48,23 @@
                             <div class="form-group col-md-3">
                                 <label class="form-label">Date</label>
                             @if($event->type == 'single')
-                                <input type="text" class="form-control datetimepicker" placeholder="Enter the Time"  value="{{ $day['from']->toDateTime()->format('d-m-Y') }}" autocomplete="off" disabled="true">
+                                <input type="text" class="form-control datepicker" placeholder="Enter the Time"  value="{{ $day['from']->toDateTime()->format('d-m-Y') }}" autocomplete="off" disabled="true">
                                 <input type="hidden" name="date[{{ $key }}]" class="form-control" value="{{ $event->ends_at->format('d-m-Y') }}">
                             @else
-                                <input type="text" name="date[{{ $key }}]" class="form-control datetimepicker" placeholder="Enter the Time" id="date0" value="{{ $day['from']->toDateTime()->format('d-m-Y') }}" autocomplete="off">
+                                <input type="text" name="date[{{ $key }}]" class="form-control datepicker" placeholder="Enter the Time" value="{{ $day['from']->toDateTime()->format('d-m-Y') }}" autocomplete="off">
                             @endif
                             </div>
                             <div class="form-group col-md-3">
                                 <label class="form-label">Start Time
                                     <a data-toggle="tooltip" title="Portal open time for that day" data-placement="right">?</a>
                                 </label>
-                                <input type="text" name="start_time[{{ $key }}]" class="form-control datetimepicker" placeholder="Enter the start Time" id="starttime0" value="{{ $day['from']->toDateTime()->format('h:i A') }}" autocomplete="off">
+                                <input type="text" name="start_time[{{ $key }}]" class="form-control timepicker" placeholder="Enter the start Time" value="{{ $day['from']->toDateTime()->format('h:i A') }}" autocomplete="off">
                             </div>
                             <div class="form-group col-md-3">
                                 <label class="form-label">End Time
                                     <a data-toggle="tooltip" title="Portal close time for that day" data-placement="right">?</a>
                                 </label>
-                                <input type="text" name="end_time[{{ $key }}]" class="form-control datetimepicker" placeholder="Enter the end Time" id="enddate0" value="{{ $day['to']->toDateTime()->format('h:i A') }}" autocomplete="off">
+                                <input type="text" name="end_time[{{ $key }}]" class="form-control timepicker" placeholder="Enter the end Time" value="{{ $day['to']->toDateTime()->format('h:i A') }}" autocomplete="off">
                             </div>
                             <div class="form-group col-md-3 day_section">
                                 
@@ -72,10 +72,10 @@
                                 @if($event->type == 'multi')
                                     <!-- <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a> -->
                                     <?php
-                                        $eventCount = count($event->mini_games)-1;
+                                        $eventCount = count($event->event_days)-1;
                                     ?>
                                     @if($eventCount == $key)
-                                        @if($eventCount == 1)
+                                        @if($eventCount != 0)
                                             <a href="javascript:void(0)" class="btn remove_mini_game">Remove Day</a>
                                         @endif
                                         <a href="javascript:void(0)" class="btn add_mini_game">Add Day</a>
@@ -90,7 +90,7 @@
                             <input type="hidden" name="last_mini_game_index" value="{{ $key }}">
                             
                             <div class="separate_game_box">
-                                @forelse($day['games'] as $index => $miniGame)
+                                @forelse($day['mini_games'] as $index => $miniGame)
                                     <div class="game_box">
                                         <div class="form-group col-md-4">
                                             <label class="form-label">Game name</label>
@@ -116,27 +116,7 @@
                                                     <input type="text" name="variation_size[{{$index['current_index']}}][{{$index['game_index']}}]" class="form-control" value="{{ $miniGame['variation_data']['variation_size'] }}">
                                                 </div>
                                                 <input type="hidden" name="sudoku_id[{{$index['current_index']}}][{{$index['game_index']}}]" value="{{ $miniGame['variation_data']['sudoku_id'] }}">
-                                                <!-- <div class="form-group col-md-4">
-                                                    <label class="form-label">Sudoku Id</label>
-                                                    <select name="sudoku_id[{{$key}}][{{$index}}]" class="form-control">
-                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 1) { echo "selected";} ?> value="1">1</option>
-                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 2) { echo "selected";} ?> value="2">2</option>
-                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 3) { echo "selected";} ?> value="3">3</option>
-                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 4) { echo "selected";} ?> value="4">4</option>
-                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 5) { echo "selected";} ?> value="5">5</option>
-                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 6) { echo "selected";} ?> value="6">6</option>
-                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 7) { echo "selected";} ?> value="7">7</option>
-                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 8) { echo "selected";} ?> value="8">8</option>
-                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 9) { echo "selected";} ?> value="9">9</option>
-                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 10) { echo "selected";} ?> value="10">10</option>
-                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 11) { echo "selected";} ?> value="11">11</option>
-                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 12) { echo "selected";} ?> value="12">12</option>
-                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 13) { echo "selected";} ?> value="13">13</option>
-                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 14) { echo "selected";} ?> value="14">14</option>
-                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 15) { echo "selected";} ?> value="15">15</option>
-                                                        <option <?php //if ($miniGame['variation_data']['sudoku_id'] == 16) { echo "selected";} ?> value="16">16</option>
-                                                    </select>
-                                                </div> -->
+                                                
                                             <?php } else if($miniGameId == '5b0e303f51b2010ec820fb4d'){ ?>
                                                 <!-- Number search -->
                                                 <div class="form-group col-md-4">
@@ -252,10 +232,12 @@
                                         <div class="col-md-4 button_section">
                                             
                                             <?php
-                                                $miniGameCount = count($day['games'])-1;
+                                                $miniGameCount = count($day['mini_games'])-1;
                                             ?>
                                             @if($miniGameCount == $index)
-                                                <a href="javascript:void(0)" class="btn remove_game remove_game"><i class="fa fa-minus" aria-hidden="true"></i> Remove</a>
+                                                @if($miniGameCount != 0)
+                                                    <a href="javascript:void(0)" class="btn remove_game"><i class="fa fa-minus" aria-hidden="true"></i> Remove</a>
+                                                @endif
                                                 <a href="javascript:void(0)" class="btn add_game"><i class="fa fa-plus" aria-hidden="true"></i> Add</a>
                                             @else
                                                 <a href="javascript:void(0)" class="btn remove_game"><i class="fa fa-minus" aria-hidden="true"></i> Remove</a>
@@ -445,6 +427,20 @@
             template: 'dropdown'
         });
         $('#endtime0').timepicker({
+            //defaultTime: 'current',
+            minuteStep: 15,
+            disableFocus: true,
+            template: 'dropdown'
+        });
+
+        $('.datepicker').datepicker({
+            weekStart: 1,
+            startDate: new Date(startdate),
+            endDate: new Date(enddate),
+            autoclose: true,
+        });
+
+        $('.timepicker').timepicker({
             //defaultTime: 'current',
             minuteStep: 15,
             disableFocus: true,

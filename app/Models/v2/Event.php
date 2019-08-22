@@ -20,7 +20,7 @@ class Event extends Eloquent
         'fees',
         'starts_at',
         'ends_at',
-        'mini_games',
+        'event_days',
         'discount_details',
         'hunt_id',
         'map_reveal_date',

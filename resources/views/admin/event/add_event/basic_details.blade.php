@@ -165,6 +165,10 @@
         //$('.datetimepicker').datetimepicker();
         $(function () {
             $('#city_id').select2();
+            $('[name=type] , [name=coin_type]').select2({
+              minimumResultsForSearch: Infinity
+            });
+
             $('[data-toggle="tooltip"]').tooltip();   
 
             $('#discount_date').datepicker({
@@ -201,43 +205,8 @@
                 $('#startdate').datepicker('setEndDate', FromEndDate);
             });
 
-            // });
-
-            /*$('#startdate').datetimepicker({
-                useCurrent: false,
-                format: "DD-MM-YYYY hh:mm A",
-                minDate: moment()
-            });
-
-            $('#enddate').datetimepicker({
-                useCurrent: false,
-                format: "DD-MM-YYYY hh:mm A",
-                minDate: moment()
-            });
-            
-
-            $('#startdate').datetimepicker().on('dp.change', function (e) {
-                var incrementDay = moment(new Date(e.date));
-                if ($('select[name="type"]').val() == 'single') {
-                    incrementDay.add(0, 'days');
-                     $('#enddate').data('DateTimePicker').setMinDate(incrementDay);
-                } else {
-                    incrementDay.add(1, 'days');
-                    $('#enddate').data('DateTimePicker').setMinDate(incrementDay);
-                }
-                $(this).data("DateTimePicker").hide();
-            });
-
-            $('#enddate').datetimepicker().on('dp.change', function (e) {
-                var decrementDay = moment(new Date(e.date));
-                decrementDay.subtract(1, 'days');
-                $('#startdate').data('DateTimePicker').setMaxDate(decrementDay);
-                $(this).data("DateTimePicker").hide();
-            });*/
-
-            
             $(document).on('change','select[name="coin_type"]', function () {
-                    $('.coin_number_box').addClass('hidden');
+                $('.coin_number_box').addClass('hidden');
                 if($(this).val() == 'physical'){
                     $('.coin_number_box').removeClass('hidden')
                 }
