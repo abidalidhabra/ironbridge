@@ -8,6 +8,7 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class Prize extends Eloquent
 {
+
     protected $fillable = [
         'event_id',
         'group_type',
@@ -18,4 +19,6 @@ class Prize extends Eloquent
         'prize_value',
         'map_time_delay'
     ];
+
+    protected $table = 'events_prizes';
 }
