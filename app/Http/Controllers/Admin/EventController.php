@@ -16,7 +16,7 @@ use MongoDB\BSON\ObjectID;
 use Auth;
 use Yajra\Datatables\Datatables;
 use Yajra\DataTables\EloquentDataTable;
-use App\Models\v2\Prize;
+use App\Models\v2\EventsPrize;
 
 class EventController extends Controller
 {
