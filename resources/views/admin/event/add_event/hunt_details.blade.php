@@ -73,13 +73,13 @@
             <div class="allbasicdirmain">                
                 <div class="allbasicdirbox">
                     <div class="">
-                        <div class="form-group col-md-3">
+                        <div class="form-group col-md-2">
                             <label class="form-label">Group Type
                                 <a data-toggle="tooltip" title="Individual Prize or Bulk prize" data-placement="right">?</a>
                             </label>
                         </div>
                         
-                        <div class="form-group col-md-3">
+                        <div class="form-group col-md-2">
                             <label>Rank</label>
                         </div>
                         <div class="form-group col-md-2">
@@ -88,18 +88,21 @@
                         <div class="form-group col-md-2">
                             <label>Prize type</label>
                         </div>
+                        <div class="form-group col-md-2">
+                            <label>Map time delay</label>
+                        </div>
                     </div>
                     <div id="prize_box">
                         @forelse($event->prizes as $key => $value)
                             <div class="prize_box">
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-md-2">
                                     <select class="form-control group_type" name="group_type[{{ $key }}]">
                                         <option value="individual" @if(isset($value->group_type) && $value->group_type == "individual") {{ 'selected' }} @endif>Individual</option>
                                         <option value="group" @if(isset($value->group_type) && $value->group_type == "group") {{ 'selected' }} @endif>Group</option>
                                     </select>
                                 </div>
                                 <input type="hidden" name="prize_index" value="{{ $key }}">
-                                <div class="form-group col-md-3 rank_box">
+                                <div class="form-group col-md-2 rank_box">
                                     @if(isset($value->group_type) && $value->group_type == "individual")
                                         <input type="text" name="rank[{{ $key }}]" class="form-control" placeholder="Rank" value="{{ $value->rank }}">
                                     @else
@@ -122,6 +125,9 @@
                                         <option value="gold" @if(isset($value->prize_type) && $value->prize_type == "gold") {{ 'selected' }} @endif>Gold</option>
                                     </select>
                                 </div>
+                                <div class="form-group col-md-2">
+                                    <input type="text" name="map_time_delay[{{ $key }}]" class="form-control" placeholder="Map time delay" value="{{ $value->map_time_delay }}">
+                                </div>
                                 <div class="form-group col-md-2 button_box">
                                     <?php
                                         $totalPrize = count($event->prizes)-1;
@@ -136,14 +142,14 @@
                             </div>
                         @empty
                             <div class="prize_box">
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-md-2">
                                     <select class="form-control group_type" name="group_type[]">
                                         <option value="individual">Individual</option>
                                         <option value="group">Group</option>
                                     </select>
                                 </div>
                                 <input type="hidden" name="prize_index" value="0">
-                                <div class="form-group col-md-3 rank_box">
+                                <div class="form-group col-md-2 rank_box">
                                     <input type="text" name="rank[]" class="form-control" placeholder="Rank">
                                 </div>
                                 <div class="form-group col-md-2">
@@ -154,6 +160,9 @@
                                         <option value="cash">Cash</option>
                                         <option value="gold">Gold</option>
                                     </select>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <input type="text" name="map_time_delay[]" class="form-control" placeholder="Map time delay">
                                 </div>
                                 <div class="form-group col-md-2 button_box">
                                     <a href="javascript:void(0)" class="btn add_prize"><i class="fa fa-plus "></i></a>
@@ -274,14 +283,14 @@
                 let currentIndex = parseInt(prizeIndex)+1;
 
                 $('#prize_box').append(`<div class="prize_box">
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-2">
                                 <select class="form-control group_type" name="group_type[`+currentIndex+`]">
                                     <option value="individual">Individual</option>
                                     <option value="group">Group</option>
                                 </select>
                             </div>
                             <input type="hidden" name="prize_index" value="`+currentIndex+`">
-                            <div class="form-group col-md-3 rank_box">
+                            <div class="form-group col-md-2 rank_box">
                                 <input type="text" name="rank[`+currentIndex+`]" class="form-control" placeholder="Rank">
                             </div>
                             <div class="form-group col-md-2">
@@ -293,6 +302,9 @@
                                     <option value="gold">Gold</option>
                                 </select>
                             </div>
+                            <div class="form-group col-md-2">
+                                <input type="text" name="map_time_delay[`+currentIndex+`]" class="form-control" placeholder="Map time delay">
+                            </div>
                             <div class="form-group col-md-2 button_box">
                                 <a href="javascript:void(0)" class="btn add_prize"><i class="fa fa-plus "></i></a>
                                 <a href="javascript:void(0)" class="btn remove_prize"><i class="fa fa-minus "></i></a>
@@ -302,7 +314,7 @@
 
 
             $(document).on('click','.remove_prize',function(){
-                $(this).parents('.row').remove();
+                $(this).parents('.prize_box').remove();
                 $('.add_prize').remove();
                 $('#prize_box .prize_box:last').find('.button_box').prepend(`<a href="javascript:void(0)" class="btn add_prize"><i class="fa fa-plus "></i></a>`);
                 if($('#prize_box .prize_box').length == 1){

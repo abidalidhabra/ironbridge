@@ -15,6 +15,7 @@ class Prize extends Eloquent
         'start_rank',
         'end_rank',
         'prize_type',
-        'prize_value'
+        'prize_value',
+        'map_time_delay'
     ];
 }

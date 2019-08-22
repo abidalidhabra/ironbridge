@@ -257,7 +257,7 @@ class EventController extends Controller
         
         
         $gameCount = last(array_keys($data['game_id']))+1;
-        
+        $p = 1;
         for ($i=0; $i<$gameCount ; $i++) { 
             if (isset($data['game_id'][$i])) {
 
@@ -373,8 +373,10 @@ class EventController extends Controller
                             //'from'  => Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['start_date'][$i]))), 
                     'from'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($startDate)), 
                     'to'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($endDate)),  
-                    'games' => $game, 
+                    'games' => $game,
+                    'day'   => $p 
                 ];
+                $p++;
             }
 
         }
@@ -416,6 +418,7 @@ class EventController extends Controller
             'start_rank.*'      => 'required|integer',
             'end_rank.*'        => 'required|integer',
             'prize_type.*'      => 'required',
+            'map_time_delay.*'  => 'required',
         ]);
 
         if ($validator->fails())
@@ -439,6 +442,7 @@ class EventController extends Controller
         $startRank = $request->get('start_rank');
         $endRank = $request->get('end_rank');
         $prizeType = $request->get('prize_type');
+        $mapTimeDelay = $request->get('map_time_delay');
         // $data = [];
         $totalPrizeIndex = last(array_keys($groupType))+1;
         
@@ -449,10 +453,11 @@ class EventController extends Controller
             
             if (isset($groupType[$i])) {
                 $data = [];
-                $data['event_id']    = $eventId;
-                $data['group_type']  = $groupType[$i];
-                $data['prize_type']  = $prizeType[$i];
-                $data['prize_value'] = (int)$prize[$i];
+                $data['event_id']       = $eventId;
+                $data['group_type']     = $groupType[$i];
+                $data['prize_type']     = $prizeType[$i];
+                $data['prize_value']    = (int)$prize[$i];
+                $data['map_time_delay'] = (int)$mapTimeDelay[$i];
 
                 if (isset($rank[$i])) {
                     $data['rank'] = (int)$rank[$i];
