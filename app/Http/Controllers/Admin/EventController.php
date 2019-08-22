@@ -620,8 +620,8 @@ class EventController extends Controller
         $data = $request->all();
         $eventId = $request->get('event_id');
         $event = Event::where('_id',$eventId)
-                ->with('prizes')
-                ->first();
+                        ->with('prizes')
+                        ->first();
 
         /* BASIC  DETAILS */
         $event->fees            = (int)$data['fees']; 
@@ -635,6 +635,7 @@ class EventController extends Controller
         $event->coin_type       = $data['coin_type'];
         $event->name            = $data['name'];
         $event->city_id         = $data['city_id'];
+        $event->description      = $data['description'];
         if ($data['coin_type'] == 'physical') {
             $event->coin_number     = (int)$data['coin_number'];
         } else {
@@ -643,11 +644,14 @@ class EventController extends Controller
         /* END BASIC DETAILS */
         
         /* MINI GAME */
-        $totalDay = $event->starts_at->diffInDays($event->ends_at->addDays('1'));
+         $totalDay = $event->starts_at->diffInDays($event->ends_at->addDays('1'));
         
-        if($totalDay != count($data['game_id'])){
-            return response()->json(['status' => false,'message' => 'Please manage the  day '.$totalDay]);
+        if ($event->type == 'multi') {
+            if($totalDay != count($data['game_id'])){
+                return response()->json(['status' => false,'message' => 'Please manage the  day '.$totalDay]);
+            }
         }
+
         $event_days = [];
         
         
@@ -810,56 +814,57 @@ class EventController extends Controller
         }
         
         $data['event_days'] = $event_days;
-        $event->event_days = $data['event_days'];
+        $event->event_days = $data['event_days'];        
 
         /* END MINI GAMES */
 
         /* HUNT AND PRIZE*/
-        
         $event->map_reveal_date = Carbon::parse($request->get('map_reveal_date'))->format('Y-m-d H:i:s'); 
         $event->hunt_id = $request->get('search_place_name');
-
         $event->save();
-        
-        // print_r($event->toArray());
 
-        /* PRIZE */
-        $groupType = $request->get('group_type');
-        $prize = $request->get('prize');
-        $rank = $request->get('rank');
-        $startRank = $request->get('start_rank');
-        $endRank = $request->get('end_rank');
-        $prizeType = $request->get('prize_type');
-        $mapTimeDelay = $request->get('map_time_delay');
+            /* PRIZE */
+            $groupType = $request->get('group_type');
+            $prize = $request->get('prize');
+            $rank = $request->get('rank');
+            $startRank = $request->get('start_rank');
+            $endRank = $request->get('end_rank');
+            $prizeType = $request->get('prize_type');
+            $mapTimeDelay = $request->get('map_time_delay');
+            // $data = [];
+            $totalPrizeIndex = last(array_keys($groupType))+1;
 
-        // $data = [];
-        $totalPrizeIndex = last(array_keys($groupType))+1;
-        
-        /* PRIZES ALL DELETE */
-        $event->prizes()->delete();
-        
-        for ($i=0; $i < $totalPrizeIndex ; $i++) { 
+            $allRank = array_merge((isset($rank))?$rank:[],(isset($startRank))?$startRank:[],(isset($endRank))?$endRank:[]);
             
-            if (isset($groupType[$i])) {
-                $data = [];
-                $data['event_id']    = $eventId;
-                $data['group_type']  = $groupType[$i];
-                $data['prize_type']  = $prizeType[$i];
-                $data['prize_value'] = (int)$prize[$i];
-                $data['map_time_delay'] = (int)$mapTimeDelay[$i];
-
-                if (isset($rank[$i])) {
-                    $data['rank'] = (int)$rank[$i];
-                } 
-
-                if(isset($startRank[$i])){
-                    $data['start_rank'] = (int)$startRank[$i];
-                    $data['end_rank'] = (int)$endRank[$i];
-                }
-                $event->prizes()->create($data);
+            if ($event->winning_ratio < max($allRank)) {
+                return response()->json(['status' => false,'message' => 'Please manage rank in max '.$event->winning_ratio]);
             }
-        }
-        /* END PRIZE */
+
+            /* PRIZES ALL DELETE */
+            $event->prizes()->delete();
+            
+            for ($i=0; $i < $totalPrizeIndex ; $i++) { 
+                
+                if (isset($groupType[$i])) {
+                    $data = [];
+                    $data['event_id']       = $eventId;
+                    $data['group_type']     = $groupType[$i];
+                    $data['prize_type']     = $prizeType[$i];
+                    $data['prize_value']    = (int)$prize[$i];
+                    $data['map_time_delay'] = (int)$mapTimeDelay[$i];
+
+                    if (isset($rank[$i])) {
+                        $data['rank'] = (int)$rank[$i];
+                    } 
+
+                    if(isset($startRank[$i])){
+                        $data['start_rank'] = (int)$startRank[$i];
+                        $data['end_rank'] = (int)$endRank[$i];
+                    }
+                    $event->prizes()->create($data);
+                }
+            }
+            /* END PRIZE */
         /* END HUNT AND PRIZE */
         return response()->json([
             'status'  => true,

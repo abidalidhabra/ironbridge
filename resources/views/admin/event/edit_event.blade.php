@@ -145,9 +145,6 @@
                         </div>
                     </div>
                 </div>
-                 <div class="form-group Submitnextbtn">
-                    <button type="submit" class="btn btn-success btnSubmit">SUBMIT & GO NEXT</button>
-                </div>
             </div>
             <!-- END BASIC DETAILS -->
 
@@ -474,10 +471,6 @@
                         </div>
                     </div>
                 @endif
-                <div class="form-group Submitnextbtn">
-                    <a href="{{ route('admin.event.basicDetails',$id) }}" class="btn btn-success btnSubmit">PREVIOUS</a>
-                    <button type="submit" class="btn btn-success btnSubmit">SUBMIT & GO NEXT</button>
-                </div>
             </div>
             <!-- END GAME DETAILS -->
 
@@ -628,7 +621,6 @@
                 </div>
                 <div class="form-group Submitnextbtn">
                     <!-- <a href="{{ url('admin/miniGame',$id) }}" class="btn btn-success btnSubmit">PREVIOUS</a> -->
-                    <a href="{{ route('admin.event.miniGame',$id) }}" class="btn btn-success btnSubmit">PREVIOUS</a>
                     <button type="submit" class="btn btn-success btnSubmit">SUBMIT</button>
                 </div>
             </div>
