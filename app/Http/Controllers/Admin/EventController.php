@@ -100,7 +100,7 @@ class EventController extends Controller
         $data['map_reveal_at'] =  Carbon::parse($data['event_end_date'])->format('Y-m-d H:i:s');
         
 
-        $main_game = [];
+        $event_days = [];
 
 
         for ($i=0; $i<count($data['game_id']) ; $i++) { 
@@ -152,15 +152,15 @@ class EventController extends Controller
                 // exit();
             $startDate = Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['start_date'][$i])));
             $endDate = Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['end_date'][$i])));
-            $main_game[] = [
+            $event_days[] = [
                         //'from'  => Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['start_date'][$i]))), 
                 'from'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($startDate)), 
                 'to'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($endDate)),  
-                'games' => $game, 
+                'mini_games' => $game, 
             ];
 
         }
-        $data['mini_games'] = $main_game;
+        $data['event_days'] = $event_days;
         
         $evert = Event::create($data);
 
@@ -257,10 +257,13 @@ class EventController extends Controller
 
         $totalDay = $event->starts_at->diffInDays($event->ends_at->addDays('1'));
         
-        if($totalDay != count($data['game_id'])){
-            return response()->json(['status' => false,'message' => 'Please manage the  day '.$totalDay]);
+        if ($event->type == 'multi') {
+            if($totalDay != count($data['game_id'])){
+                return response()->json(['status' => false,'message' => 'Please manage the  day '.$totalDay]);
+            }
         }
-        $main_game = [];
+
+        $event_days = [];
         
         
         $gameCount = last(array_keys($data['game_id']))+1;
@@ -409,11 +412,11 @@ class EventController extends Controller
                 $startDate = Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['date'][$i].' '.$data['start_time'][$i])));
                 $endDate = Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['date'][$i].' '.$data['end_time'][$i])));
                 
-                $main_game[] = [
+                $event_days[] = [
                             //'from'  => Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['start_date'][$i]))), 
                     'from'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($startDate)), 
                     'to'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($endDate)),  
-                    'games' => $game,
+                    'mini_games' => $game,
                     'day'   => $p 
                 ];
                 $p++;
@@ -421,11 +424,11 @@ class EventController extends Controller
 
         }
         
-        $data['mini_games'] = $main_game;
+        $data['event_days'] = $event_days;
         
 
         
-        $event->mini_games = $data['mini_games'];
+        $event->event_days = $data['event_days'];
         $event->save();
 
         return response()->json([
@@ -485,8 +488,9 @@ class EventController extends Controller
         $mapTimeDelay = $request->get('map_time_delay');
         // $data = [];
         $totalPrizeIndex = last(array_keys($groupType))+1;
+
+        $allRank = array_merge((isset($rank))?$rank:[],(isset($startRank))?$startRank:[],(isset($endRank))?$endRank:[]);
         
-        $allRank = array_merge($rank,$startRank,$endRank);
         if ($event->winning_ratio < max($allRank)) {
             return response()->json(['status' => false,'message' => 'Please manage rank in max '.$event->winning_ratio]);
         }
@@ -616,8 +620,8 @@ class EventController extends Controller
         $data = $request->all();
         $eventId = $request->get('event_id');
         $event = Event::where('_id',$eventId)
-                ->with('prizes')
-                ->first();
+                        ->with('prizes')
+                        ->first();
 
         /* BASIC  DETAILS */
         $event->fees            = (int)$data['fees']; 
@@ -631,6 +635,7 @@ class EventController extends Controller
         $event->coin_type       = $data['coin_type'];
         $event->name            = $data['name'];
         $event->city_id         = $data['city_id'];
+        $event->description      = $data['description'];
         if ($data['coin_type'] == 'physical') {
             $event->coin_number     = (int)$data['coin_number'];
         } else {
@@ -639,12 +644,15 @@ class EventController extends Controller
         /* END BASIC DETAILS */
         
         /* MINI GAME */
-        $totalDay = $event->starts_at->diffInDays($event->ends_at->addDays('1'));
+         $totalDay = $event->starts_at->diffInDays($event->ends_at->addDays('1'));
         
-        if($totalDay != count($data['game_id'])){
-            return response()->json(['status' => false,'message' => 'Please manage the  day '.$totalDay]);
+        if ($event->type == 'multi') {
+            if($totalDay != count($data['game_id'])){
+                return response()->json(['status' => false,'message' => 'Please manage the  day '.$totalDay]);
+            }
         }
-        $main_game = [];
+
+        $event_days = [];
         
         
         $gameCount = last(array_keys($data['game_id']))+1;
@@ -793,11 +801,11 @@ class EventController extends Controller
                 $startDate = Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['date'][$i].' '.$data['start_time'][$i])));
                 $endDate = Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['date'][$i].' '.$data['end_time'][$i])));
                 
-                $main_game[] = [
+                $event_days[] = [
                             //'from'  => Carbon::createFromFormat('Y-m-d H:i:s',date('Y-m-d H:i:s',strtotime($data['start_date'][$i]))), 
                     'from'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($startDate)), 
                     'to'  =>  new \MongoDB\BSON\UTCDateTime(new \DateTime($endDate)),  
-                    'games' => $game,
+                    'mini_games' => $game,
                     'day'   => $p 
                 ];
                 $p++;
@@ -805,57 +813,58 @@ class EventController extends Controller
 
         }
         
-        $data['mini_games'] = $main_game;
-        $event->mini_games = $data['mini_games'];
+        $data['event_days'] = $event_days;
+        $event->event_days = $data['event_days'];        
 
         /* END MINI GAMES */
 
         /* HUNT AND PRIZE*/
-        
         $event->map_reveal_date = Carbon::parse($request->get('map_reveal_date'))->format('Y-m-d H:i:s'); 
         $event->hunt_id = $request->get('search_place_name');
-
         $event->save();
-        
-        // print_r($event->toArray());
 
-        /* PRIZE */
-        $groupType = $request->get('group_type');
-        $prize = $request->get('prize');
-        $rank = $request->get('rank');
-        $startRank = $request->get('start_rank');
-        $endRank = $request->get('end_rank');
-        $prizeType = $request->get('prize_type');
-        $mapTimeDelay = $request->get('map_time_delay');
+            /* PRIZE */
+            $groupType = $request->get('group_type');
+            $prize = $request->get('prize');
+            $rank = $request->get('rank');
+            $startRank = $request->get('start_rank');
+            $endRank = $request->get('end_rank');
+            $prizeType = $request->get('prize_type');
+            $mapTimeDelay = $request->get('map_time_delay');
+            // $data = [];
+            $totalPrizeIndex = last(array_keys($groupType))+1;
 
-        // $data = [];
-        $totalPrizeIndex = last(array_keys($groupType))+1;
-        
-        /* PRIZES ALL DELETE */
-        $event->prizes()->delete();
-        
-        for ($i=0; $i < $totalPrizeIndex ; $i++) { 
+            $allRank = array_merge((isset($rank))?$rank:[],(isset($startRank))?$startRank:[],(isset($endRank))?$endRank:[]);
             
-            if (isset($groupType[$i])) {
-                $data = [];
-                $data['event_id']    = $eventId;
-                $data['group_type']  = $groupType[$i];
-                $data['prize_type']  = $prizeType[$i];
-                $data['prize_value'] = (int)$prize[$i];
-                $data['map_time_delay'] = (int)$mapTimeDelay[$i];
-
-                if (isset($rank[$i])) {
-                    $data['rank'] = (int)$rank[$i];
-                } 
-
-                if(isset($startRank[$i])){
-                    $data['start_rank'] = (int)$startRank[$i];
-                    $data['end_rank'] = (int)$endRank[$i];
-                }
-                $event->prizes()->create($data);
+            if ($event->winning_ratio < max($allRank)) {
+                return response()->json(['status' => false,'message' => 'Please manage rank in max '.$event->winning_ratio]);
             }
-        }
-        /* END PRIZE */
+
+            /* PRIZES ALL DELETE */
+            $event->prizes()->delete();
+            
+            for ($i=0; $i < $totalPrizeIndex ; $i++) { 
+                
+                if (isset($groupType[$i])) {
+                    $data = [];
+                    $data['event_id']       = $eventId;
+                    $data['group_type']     = $groupType[$i];
+                    $data['prize_type']     = $prizeType[$i];
+                    $data['prize_value']    = (int)$prize[$i];
+                    $data['map_time_delay'] = (int)$mapTimeDelay[$i];
+
+                    if (isset($rank[$i])) {
+                        $data['rank'] = (int)$rank[$i];
+                    } 
+
+                    if(isset($startRank[$i])){
+                        $data['start_rank'] = (int)$startRank[$i];
+                        $data['end_rank'] = (int)$endRank[$i];
+                    }
+                    $event->prizes()->create($data);
+                }
+            }
+            /* END PRIZE */
         /* END HUNT AND PRIZE */
         return response()->json([
             'status'  => true,
@@ -884,7 +893,7 @@ class EventController extends Controller
         $skip = (int)$request->get('start');
         $take = (int)$request->get('length');
         $search = $request->get('search')['value'];
-        $events = Event::select('name','type','coin_type','starts_at','ends_at','rejection_ratio','winning_ratio','city_id','fees','starts_at','ends_at','mini_games');
+        $events = Event::select('name','type','coin_type','starts_at','ends_at','rejection_ratio','winning_ratio','city_id','fees','starts_at','ends_at','event_days');
         $admin = Auth::user();
         
         if($search != ''){
