@@ -8,6 +8,7 @@ use App\Http\Requests\v2\MarkTheEventMGAsCompleteRequest;
 use App\Http\Requests\v2\ParticipateInEventRequest;
 use App\Models\v1\City;
 use App\Models\v2\Event;
+use App\Refacing\JustJoinedEvent;
 use App\Refacing\RefaceJustJoinedEvent;
 use App\Repositories\EventRepository;
 use Auth;
@@ -41,13 +42,13 @@ class EventController extends Controller
     {
         try {
             
-            return response()->json(['message'=> 'OK.', 'data'=> $this->eventRepo->create($request, new RefaceJustJoinedEvent)]);
+            return response()->json(['message'=> 'OK.', 'data'=> $this->eventRepo->create($request)]);
         } catch (Exception $e) {
             return $e->getMessage().' on '.$e->getLine().' of '.$e->getFile();   
         }
     }
 
-    public function markTheEventMGAsComplete(Request $request)
+    public function markTheEventMGAsComplete(MarkTheEventMGAsCompleteRequest $request)
     {
         try {
             

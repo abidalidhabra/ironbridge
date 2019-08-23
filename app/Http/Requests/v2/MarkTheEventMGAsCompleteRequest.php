@@ -3,7 +3,7 @@
 namespace App\Http\Requests\v2;
 
 use App\Rules\v2\EventMinigameRule;
-use App\Rules\v2\EventParticipationOwnershipRule;
+use App\Rules\v2\EventParticipationRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -28,8 +28,10 @@ class MarkTheEventMGAsCompleteRequest extends FormRequest
     public function rules()
     {
         return [
-            'event_minigame_id' => ['required', 'exists:events_minigames,_id', new EventParticipationOwnershipRule($this->ownableUser())],
-            'minigame__unique_id' => ['required', new EventMinigameRule($this->ownableUser())],
+            'event_minigame_id' => ['required', 'exists:events_minigames,_id', new EventParticipationRule($this->minigame_unique_id, $this->ownableUser())],
+            'minigame_unique_id' => ['required'],
+            'completion_score' => ['required_without:completion_time', 'numeric', 'integer', 'min:1'],
+            'completion_time' => ['required_without:completion_score', 'numeric', 'integer', 'min:1'],
         ];
     }
 
@@ -44,6 +46,18 @@ class MarkTheEventMGAsCompleteRequest extends FormRequest
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json(['message' => $validator->messages()->first()], 422));
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'required_without' => 'You have to either provide completion_score or completion_time',
+        ];
     }
 
     public function ownableUser()

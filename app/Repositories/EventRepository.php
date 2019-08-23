@@ -7,7 +7,13 @@ use App\Models\v2\Event;
 use App\Models\v2\EventsMinigame;
 use App\Refacing\DayWiseMGOutput;
 use App\Refacing\DayWiseMGOutputInterface;
+use App\Refacing\JustJoinedEvent;
+use App\Refacing\JustJoinedEventInterface;
+use App\Refacing\MarkEventMGAsComplete;
+use App\Refacing\PriorToInsertRefaceable;
 use App\Refacing\RefaceJustJoinedEvent;
+use App\Refacing\Refaceable;
+use App\Refacing\RefaceablePriorToInsert;
 use App\Repositories\User\UserRepository;
 use Carbon\Carbon;
 use Exception;
@@ -54,22 +60,29 @@ class EventRepository
         return $events;
     }
 
-    public function create($eventData, RefaceJustJoinedEvent $refaceJustJoinedEvent)
+    public function create($eventData)
     {
 
+        $justJoinedEvent = new JustJoinedEvent();
+        
         $event = Event::find($eventData->event_id);
 
-        // this is hunt user shot
+        // shot the event user data into the database
         $eventUser = $this->addTheEventParticipation($event);
-            $eventUser->delete();
+        // $eventUser->delete();
 
-        // this shot is for hunt user's minigames
-        $eventUserMG = $this->addTheDayWiseMiniGames($event, $eventUser);
+        // prepare the data prior to insert
+        $eventUserMiniGame = $justJoinedEvent->prepareToInsert($event->event_days);
+
+        // shot minigame data into the database
+        $eventUserMG = $this->addTheDayWiseMiniGames($eventUser, $eventUserMiniGame);
 
         //deduct the coins
         $availableGold = $this->deductTheCoins($event->fees);
 
-        $eventUserMG = $refaceJustJoinedEvent->output($eventUserMG);
+        // prepare output for the client
+        $eventUserMG = $justJoinedEvent->output($eventUserMG);
+
         return ['event_user'=> $eventUser, 'event_user_minigames'=> $eventUserMG, 'available_gold'=> $availableGold];
     }
 
@@ -82,29 +95,9 @@ class EventRepository
         return $this->user->events()->create(['event_id'=> $event->_id, 'attempts'=> $event->attempts]);
     }
 
-    function addTheDayWiseMiniGames($event, $eventUser){
-
-        $data = $event->event_days;
-        foreach ($data as $key1 => &$day) {
-            foreach ($day['mini_games'] as $key2 => &$game) {
-                $game['completions'] = [];
-            }
-        }
-        return $eventUser->minigames()->createMany($data);
+    function addTheDayWiseMiniGames($eventUser, $eventUserMiniGame){
+        return $eventUser->minigames()->createMany($eventUserMiniGame);
     }
-
-    // function addTheDayWiseMiniGames($event, $eventUser){
-
-    //     $minigames = collect($event->mini_games)->map(function($day, $key1){
-    //         $day['games'] = collect($day['games'])->map(function($game, $key2){
-    //             $game['completions'] = [];
-    //             return $game;
-    //         })
-    //         ->toArray();
-    //         return $day;
-    //     });
-    //     return $eventUser->minigames()->createMany($minigames->toArray());
-    // }
 
     public function deductTheCoins($condsToBeDeduct)
     {
@@ -116,22 +109,31 @@ class EventRepository
         return EventsMinigame::where(['_id'=> $miniGameId])->firstOrFail();
     }
 
-    public function addMGCompletion($eventUserMG, $miniGameUniqueId, DayWiseMGOutputInterface $dayWiseMGOutputInterface)
+    public function addMGCompletion($miniGameData)
     {
-        $eventUserMG->where(['mini_games._id'=> $miniGameUniqueId])->push('mini_games.$.completions', ['completed_at'=> new UTCDateTime()]);
-        return $dayWiseMGOutputInterface->output($eventUserMG, $miniGameUniqueId);
+
+        $markEventMGAsComplete = new MarkEventMGAsComplete();
+
+        /** prepare the data prior to insert **/
+        $insertableData = $markEventMGAsComplete->prepareToInsert($miniGameData);
+        
+        /** shot into the database **/
+        EventsMinigame::where(['_id'=> $miniGameData->event_minigame_id, 'mini_games._id'=> $miniGameData->minigame_unique_id])
+                ->push('mini_games.$.completions', $insertableData);
+        
+        /** prepare output for the client **/
+        $insertedData = $markEventMGAsComplete->output($insertableData);
+
+        return $insertedData;
     }
 
     public function markMGAsComplete($miniGameData)
     {
 
-        // get day wise minigame record
-        $eventUserMG = $this->findMGById($miniGameData->event_minigame_id);
-
         // add the completion entry to that perticular minigame
-        $addedCompletion = $this->addMGCompletion($eventUserMG, $miniGameData->minigame_unique_id, new DayWiseMGOutput);
+        $insertedData = $this->addMGCompletion($miniGameData);
 
-        return $addedCompletion;
+        return $insertedData;
     }
 
     public function getTodayMiniGame($eventMiniGameId)
