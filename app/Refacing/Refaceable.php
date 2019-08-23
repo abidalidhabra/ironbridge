@@ -3,6 +3,13 @@
 namespace App\Refacing;
 
 interface Refaceable {
-
-	public function output($miniGameData);
+	
+	/**
+     * Reface the data to for response client.
+     *
+     * @param  array  $miniGameData
+     *
+     * @return array
+     */
+	public function output(array $miniGameData);
 }

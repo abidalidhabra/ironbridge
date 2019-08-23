@@ -4,5 +4,12 @@ namespace App\Refacing;
 
 interface TodaysMinigameInteface {
 
-	public function filter($eventUsersMiniGames);
+	/**
+     * Return only todays event round.
+     *
+     * @param  array  $eventUsersMiniGames
+     *
+     * @return array
+     */
+	public function todaysMiniGames($eventUsersMiniGames);
 }

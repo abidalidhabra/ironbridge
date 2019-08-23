@@ -2,12 +2,13 @@
 
 namespace App\Refacing;
 
-use App\Refacing\JustJoinedEventInterface;
+use App\Refacing\PriorToInsertRefaceable;
+use App\Refacing\Refaceable;
+use App\Refacing\TodaysMinigameInteface;
 
-// class JustJoinedEvent implements JustJoinedEventInterface {
-class JustJoinedEvent implements PriorToInsertRefaceable, Filterfable, Refaceable {
+class JustJoinedEvent implements PriorToInsertRefaceable, TodaysMinigameInteface, Refaceable {
 	
-	public function prepareToInsert($eventDays){
+	public function prepareToInsert(array $eventDays){
 
 		foreach ($eventDays as &$day) {
 			foreach ($day['mini_games'] as &$game) {
@@ -17,22 +18,25 @@ class JustJoinedEvent implements PriorToInsertRefaceable, Filterfable, Refaceabl
 		return $eventDays;
 	}
 
-	public function filter($eventUsersMiniGames)
+	public function todaysMiniGames($eventUsersMiniGames)
 	{
-		return $eventUsersMiniGames
+		return collect($eventUsersMiniGames)
 				->where('from', '>=', today())
 				->where('to', '<=', today()->endOfDay())
-				->makeHidden(['created_at', 'updated_at'])
+				->map(function($dayWiseMiniGames){
+					return collect($dayWiseMiniGames)->except(['created_at', 'updated_at']);
+				})
 				->toArray();
 	}
 
 	public function output($eventUsersMiniGames){
 
-		$eventUsersMiniGames = $this->filter($eventUsersMiniGames);
+		$eventUsersMiniGames = $this->todaysMiniGames($eventUsersMiniGames);
 
 		foreach ($eventUsersMiniGames as $key1 => &$day) {
 			foreach ($day['mini_games'] as $key2 => &$game) {
-				$game['_id'] = (string)$game['_id'];
+				// $game['_id'] = (string)$game['_id'];
+				$game['_id'] = $game['_id']->__toString();
 				foreach ($game['completions'] as $key3 => &$completedData) {
 					$completedData['completed_at'] = $completedData['completed_at']->toDateTime()->format('Y-m-d H:i:s');
 				}
