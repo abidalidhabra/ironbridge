@@ -370,48 +370,7 @@
         //$('.datetimepicker').datetimepicker();
         var startdate = '{{ $event->starts_at }}';
         var enddate = '{{ $event->ends_at }}';
-        // var enddate = '{{ $event->ends_at }}';
-        // @if($event->type == 'single')
-
-        //     var startdate = moment('{{ $event->starts_at }}').subtract(1, "days");;
-        //     var enddate = moment('{{ $event->ends_at }}').subtract(-1, "days");;
-        // @endif
-         
         
-        // $('#startdate0').datetimepicker({
-        //     useCurrent: false,
-        //     format: "DD-MM-YYYY hh:mm A",
-        //     defaultDate: moment(startdate),
-        //     minDate: moment(startdate),
-        //     maxDate: moment(enddate),
-        // });
-        // $('#enddate0').datetimepicker({
-        //     useCurrent: false,
-        //     format: "DD-MM-YYYY hh:mm A",
-        //     defaultDate: moment(enddate),
-        //     minDate: moment(startdate),
-        //     maxDate: moment(enddate),
-        // });
-
-        // $('#startdate0').datetimepicker().on('dp.change', function (e) {
-        //     var incrementDay = moment(new Date(e.date));
-        //     @if($event->type == 'single')
-        //         incrementDay.add(0, 'days');
-        //         $('#enddate0').data('DateTimePicker').setMinDate(incrementDay);
-        //     @else
-        //         console.log('hello1');
-        //         incrementDay.add(1, 'days');
-        //         $('#enddate0').data('DateTimePicker').setMinDate(incrementDay);
-        //     @endif
-        //     $(this).data("DateTimePicker").hide();
-        // });
-
-        // $('#enddate0').datetimepicker().on('dp.change', function (e) {
-        //     var decrementDay = moment(new Date(e.date));
-        //     decrementDay.subtract(1, 'days');
-        //     $('#startdate0').data('DateTimePicker').setMaxDate(decrementDay);
-        //     $(this).data("DateTimePicker").hide();
-        // });
 
         $('#date0').datepicker({
             weekStart: 1,

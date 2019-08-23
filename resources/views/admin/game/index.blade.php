@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | NEWS')
+@section('title','Ironbridge1779 | Games')
 @extends('admin.layouts.admin-app')
 @section('styles')
 <!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->
@@ -233,12 +233,11 @@
                 $("#editGame input[name='identifier']").val($(this).data('identifier'));
                 $("#editGame input[name='name']").val($(this).data('name'));
                 $("#editGame input[name='game_id']").val($(this).data('id'));
-                // $("#editGame select[name='status']").val($(this).data('status'));
-                $('#editGame select[name="status"] option').removeAttr('selected');
+                $('#editGame option[value="active"] , #editGame option[value="inactive"]').removeAttr('selected');
                 if ($(this).data('status') == true) {
-                    $("#editGame select[name='status']").find('option[value="active"]').attr('selected','selected');
+                    $("#editGame select[name='status']").find('option[value="active"]').prop('selected',true);
                 } else if($(this).data('status') == false){
-                    $("#editGame select[name='status']").find('option[value="inactive"]').attr('selected','selected');
+                    $("#editGame select[name='status']").find('option[value="inactive"]').prop('selected',true);
                 }
                 $('#editGame').modal('show');
             });
@@ -268,8 +267,12 @@
                         },
                         cache:false,
                         contentType: false,
+                        beforeSend: function() {
+                            $('#editGameForm [type=submit]').html('<i class="fa fa-spinner fa-spin"></i> Save');
+                        },
                         success: function(response)
                         {
+                            $('#editGameForm [type=submit]').html('Save');
                             if (response.status == true) {
                                 toastr.success(response.message);
                                 $('input[name="identifier"] , input[name="name"] , select[name="status"]').val('');

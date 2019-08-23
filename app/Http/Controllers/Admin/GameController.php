@@ -16,6 +16,7 @@ use Image;
 use stdClass;
 use Storage;
 use Auth;
+use App\Models\v1\HuntClue;
 
 class GameController extends Controller
 {
@@ -124,6 +125,58 @@ class GameController extends Controller
             'name' => $request->get('name'),
             'status' => ($request->get('status')== 'active')?true:false,
         ]);
+
+        /* REPLACE GAME IN HUNT CLUE */
+        if ($request->get('status') == 'inactive') {
+            $allGame = Game::where('status',true)
+                            ->where('_id','!=',$gameId)
+                            ->with('game_variation:_id,game_id')
+                            ->get();
+            
+            $huntClue = HuntClue::select('_id' , 'game_id', 'game_variation_id' ,'hunt_complexity_id')
+                                ->get()
+                                ->groupBy('hunt_complexity_id')
+                                ;
+
+            // $gameHuntClude =  $huntClue->where('game_id',$gameId)->groupBy('hunt_complexity_id');
+            /*foreach ($gameHuntClude as $key => $value) {
+                $usedGameId = [];
+                $usedGameId = $value->pluck('game_id')->toArray();
+                if (in_array($gameId, $usedGameId)) {
+                    $huntCludeGameId = $huntClue->where('hunt_complexity_id',$key)->pluck('game_id')->toArray();
+                    $usedGameId = array_merge($usedGameId, $huntCludeGameId);
+                    foreach ($value as $game) {
+                        if (in_array($gameId, $usedGameId)) {
+                            $newGame = $allGame->whereNotIn('_id',$usedGameId)->random(1)->first();
+                            array_push($usedGameId, $newGame->id);
+                            $game->game_id = $newGame->id; 
+                            $game->game_variation_id = $newGame->game_variation->random(1)->first()->id; 
+                            $game->save();
+                        }
+                    }
+                }
+            }*/
+            /*foreach ($huntClue as $key => $value) {
+                $usedGameId = [];
+                $usedGameId = $value->pluck('game_id')->toArray();
+                
+                if (in_array($gameId, $usedGameId)) {
+                    foreach ($value as $game) {
+                        if (in_array($game->game_id , $usedGameId)) {
+                            $newGame = $allGame->whereNotIn('_id',$usedGameId)->random(1)->first();
+                            // if (isset($newGame) && !empty($newGame->toArray)) {
+                                $game->game_id = $newGame->id; 
+                                $game->game_variation_id = $newGame->game_variation->random(1)->first()->id; 
+                                //$game->game_variation_id = $newGame->game_variation->random()->first()->id; 
+                                $game->save();
+                                array_push($usedGameId, $newGame->id);
+                            // }
+                        }
+                    }
+                }
+            }*/
+        }
+        /* END REPLACE GAME IN HUNT CLUE */
 
         return response()->json([
             'status' => true,

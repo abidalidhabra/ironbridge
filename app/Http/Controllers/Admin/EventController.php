@@ -203,12 +203,13 @@ class EventController extends Controller
         $data['rejection_ratio'] = (int)$data['rejection_ratio']; 
         $data['winning_ratio']   = (int)$data['winning_ratio']; 
         $data['starts_at']       = Carbon::parse($data['event_start_date'])->format('Y-m-d H:i:s');
-        $data['ends_at']         = Carbon::parse($data['event_end_date'])->format('Y-m-d H:i:s');
+        $data['ends_at']         = Carbon::parse($data['event_end_date'])->endOfDay()->format('Y-m-d H:i:s');
         $data['coin_number']     = (int)$data['coin_number'];
         $data['discount']        = (float)$data['discount_fees'];
         $data['discount_till']   = Carbon::parse($data['discount_date'])->format('Y-m-d H:i:s');
         $data['attempts']        = (int)$data['attempts'];
-        
+        $data['status'] = 'inactive';
+
         $event = Event::updateOrCreate(
             ['_id'=>$eventId],
             $data
@@ -426,9 +427,8 @@ class EventController extends Controller
         
         $data['event_days'] = $event_days;
         
-
-        
         $event->event_days = $data['event_days'];
+        $event->status = 'inactive';
         $event->save();
 
         return response()->json([
@@ -476,6 +476,7 @@ class EventController extends Controller
         ->first();
         $event->map_reveal_date = Carbon::parse($request->get('map_reveal_date'))->format('Y-m-d H:i:s'); 
         $event->hunt_id = $request->get('search_place_name');
+        $event->status = 'active';
         $event->save();
 
         /* PRIZE */
@@ -628,7 +629,7 @@ class EventController extends Controller
         $event->rejection_ratio = (int)$data['rejection_ratio']; 
         $event->winning_ratio   = (int)$data['winning_ratio']; 
         $event->starts_at       = Carbon::parse($data['event_start_date'])->format('Y-m-d H:i:s');
-        $event->ends_at         = Carbon::parse($data['event_end_date'])->format('Y-m-d H:i:s');
+        $event->ends_at         = Carbon::parse($data['event_end_date'])->endOfDay()->format('Y-m-d H:i:s');
         $event->discount        = (float)$data['discount_fees'];
         $event->discount_till   = Carbon::parse($data['discount_date'])->format('Y-m-d H:i:s');
         $event->attempts        = (int)$data['attempts'];
@@ -821,6 +822,7 @@ class EventController extends Controller
         /* HUNT AND PRIZE*/
         $event->map_reveal_date = Carbon::parse($request->get('map_reveal_date'))->format('Y-m-d H:i:s'); 
         $event->hunt_id = $request->get('search_place_name');
+        $event->status = 'active';
         $event->save();
 
             /* PRIZE */
