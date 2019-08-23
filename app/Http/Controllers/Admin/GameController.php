@@ -156,25 +156,26 @@ class GameController extends Controller
                     }
                 }
             }*/
-            /*foreach ($huntClue as $key => $value) {
+            foreach ($huntClue as $key => $value) {
                 $usedGameId = [];
                 $usedGameId = $value->pluck('game_id')->toArray();
                 
                 if (in_array($gameId, $usedGameId)) {
                     foreach ($value as $game) {
-                        if (in_array($game->game_id , $usedGameId)) {
-                            $newGame = $allGame->whereNotIn('_id',$usedGameId)->random(1)->first();
-                            // if (isset($newGame) && !empty($newGame->toArray)) {
+                        if ($gameId == $game->game_id) {
+                            if (in_array($game->game_id , $usedGameId)) {
+                                $newGame = $allGame->whereNotIn('_id',$usedGameId)->random(1)->first();
+                                // if (isset($newGame) && !empty($newGame->toArray)) {
                                 $game->game_id = $newGame->id; 
                                 $game->game_variation_id = $newGame->game_variation->random(1)->first()->id; 
                                 //$game->game_variation_id = $newGame->game_variation->random()->first()->id; 
                                 $game->save();
                                 array_push($usedGameId, $newGame->id);
-                            // }
+                            }
                         }
                     }
                 }
-            }*/
+            }
         }
         /* END REPLACE GAME IN HUNT CLUE */
 
