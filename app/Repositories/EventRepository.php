@@ -137,11 +137,11 @@ class EventRepository
             
             /** shot into the database **/
             EventsMinigame::where(['mini_games._id'=> $miniGameData->minigame_unique_id])->push('mini_games.$.completions', $insertableData);
-            $eventsMinigame = EventsMinigame::where(['_id'=> $miniGameData->event_minigame_id, 'mini_games._id'=> $miniGameData->minigame_unique_id])->select('_id', 'from', 'to', 'status')->first();
-            // $this->addMiniGameCompletion(['_id'=> $miniGameData->event_minigame_id, 'mini_games._id'=> $miniGameData->minigame_unique_id], $insertableData);
+            $eventsMinigame = EventsMinigame::where(['_id'=> $miniGameData->events_minigame_id, 'mini_games._id'=> $miniGameData->minigame_unique_id])->select('_id', 'from', 'to', 'status')->first();
+            // $this->addMiniGameCompletion(['_id'=> $miniGameData->events_minigame_id, 'mini_games._id'=> $miniGameData->minigame_unique_id], $insertableData);
 
             /** prepare output for the client **/
-            $insertedData = $markEventMGAsComplete->output(array_merge($insertableData, ['status'=> $eventsMinigame->status], $miniGameData->only('event_minigame_id', 'minigame_unique_id')));
+            $insertedData = $markEventMGAsComplete->output(array_merge($insertableData, ['status'=> $eventsMinigame->status], $miniGameData->only('events_minigame_id', 'minigame_unique_id')));
 
             return $insertedData;
         } catch (Throwable $e) {
@@ -160,16 +160,18 @@ class EventRepository
 
     public function getPresentDayEventDetail($requestedData)
     {
+
         $eventUser = $this->findEventsUserById($requestedData->events_user_id);
+        
+        $event = $eventUser->event()
+                    ->select('_id', 'name', 'discount_till', 'discount_countdown', 'starts_at', 'play_countdown', 'status')
+                    ->first();
+        
         $justJoinedEvent = new justJoinedEvent();
+        $eventUserMiniGames = $justJoinedEvent->output($eventUser->minigames()->get()->toArray());
 
         return response()->json([
-                'message'=>'OK', 
-                'data'=> [
-                    'event'=> $eventUser->event()->select('_id', 'name', 'discount_countdown', 'play_countdown', 'status')->first(),
-                    'event_user'=> $eventUser, 
-                    'event_user_minigames'=> $justJoinedEvent->output($eventUser->minigames()->get()->toArray()),
-                ]
+                'message'=>'OK', 'data'=> [ 'event'=> $event, 'event_user'=> $eventUser, 'event_user_minigames'=> $eventUserMiniGames ]
             ]);
     }
 }
