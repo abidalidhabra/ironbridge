@@ -47,7 +47,7 @@ class JustJoinedEvent implements PriorToInsertRefaceable, TodaysMinigameInteface
 			->toArray();
 	}
 
-	public function output($eventUsersMiniGames){
+	public function output(array $eventUsersMiniGames){
 
 		$countableUserMiniGames = $this->todaysMiniGames($eventUsersMiniGames);
 

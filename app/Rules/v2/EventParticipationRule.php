@@ -46,7 +46,7 @@ class EventParticipationRule implements Rule
             return false;
         }else if($event->minigames->count() && $event->minigames[0]['status']){
 
-            $this->message = 'Warning! Round is already closed.';
+            $this->message = 'Warning! Round is closed right now.';
             return false;
         }
         return true;
