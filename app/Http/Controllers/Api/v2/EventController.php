@@ -6,15 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\v2\GetEventsInCityRequest;
 use App\Http\Requests\v2\MarkTheEventMGAsCompleteRequest;
 use App\Http\Requests\v2\ParticipateInEventRequest;
-use App\Models\v1\City;
-use App\Models\v2\Event;
-use App\Refacing\JustJoinedEvent;
-use App\Refacing\RefaceJustJoinedEvent;
 use App\Repositories\EventRepository;
-use Auth;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Validator;
 
 class EventController extends Controller
 {
@@ -40,21 +33,11 @@ class EventController extends Controller
 
     public function participateInEvent(ParticipateInEventRequest $request)
     {
-        try {
-            
-            return response()->json(['message'=> 'OK.', 'data'=> $this->eventRepo->create($request)]);
-        } catch (Exception $e) {
-            return $e->getMessage().' on '.$e->getLine().' of '.$e->getFile();   
-        }
+        return  $this->eventRepo->create($request);
     }
 
     public function markTheEventMGAsComplete(MarkTheEventMGAsCompleteRequest $request)
     {
-        try {
-            
-            return response()->json(['message'=> 'OK.', 'data'=> $this->eventRepo->markMGAsComplete($request)]);
-        } catch (Exception $e) {
-            return $e->getMessage().' on '.$e->getLine().' of '.$e->getFile();   
-        }
+        return $this->eventRepo->markMGAsComplete($request);
     }
 }

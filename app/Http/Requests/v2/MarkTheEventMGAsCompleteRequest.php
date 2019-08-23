@@ -30,8 +30,8 @@ class MarkTheEventMGAsCompleteRequest extends FormRequest
         return [
             'event_minigame_id' => ['required', 'exists:events_minigames,_id', new EventParticipationRule($this->minigame_unique_id, $this->ownableUser())],
             'minigame_unique_id' => ['required'],
-            'completion_score' => ['required_without:completion_time', 'numeric', 'integer', 'min:1'],
-            'completion_time' => ['required_without:completion_score', 'numeric', 'integer', 'min:1'],
+            'completion_score' => ['nullable', 'numeric', 'integer', 'min:1'],
+            'completion_time' => ['nullable', 'numeric', 'integer', 'min:1'],
         ];
     }
 
