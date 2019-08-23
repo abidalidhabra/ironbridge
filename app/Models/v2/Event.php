@@ -8,7 +8,8 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class Event extends Eloquent
 {
-
+    
+    /** status ->  [tobestart, running, closed, finished, terminated] **/
 	protected $fillable = [
         'name',
         'type',
@@ -29,7 +30,8 @@ class Event extends Eloquent
         'discount_till',
         'discount',
         'description',
-        'attempts'
+        'attempts',
+        'status'
     ];    
 
     protected $dates = [
@@ -37,6 +39,10 @@ class Event extends Eloquent
         'ends_at',
         'map_reveal_date',
         'discount_till'
+    ];
+
+     protected $attributes = [
+        'status' => 'tobestart',
     ];
 
     protected $appends = [

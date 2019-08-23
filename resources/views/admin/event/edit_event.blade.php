@@ -996,7 +996,7 @@
         $('.prize_type').select2({
           minimumResultsForSearch: Infinity
         });
-        var startdate = '{{ $event->starts_at }}';
+        var mapdate = '{{ $event->map_reveal_date }}';
         var enddate = '{{ $event->ends_at }}';
         
         
@@ -1005,7 +1005,7 @@
             format: "DD-MM-YYYY hh:mm A",
             minDate: moment(enddate),
             // maxDate: moment(),
-            // defaultDate: moment(startdate),
+            defaultDate: moment(mapdate),
         });
 
         /* SUBMIT FORM */
