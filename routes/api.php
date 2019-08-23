@@ -152,5 +152,6 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
 		Route::get('getEventsInCity', 'EventController@getEventsInCity');
 		Route::post('participateInEvent', 'EventController@participateInEvent');
 		Route::post('markTheEventMGAsComplete', 'EventController@markTheEventMGAsComplete');
+		Route::get('getPresentDayEventDetail', 'EventController@getPresentDayEventDetail');
 	});
 });

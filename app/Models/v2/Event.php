@@ -40,7 +40,9 @@ class Event extends Eloquent
     ];
 
     protected $appends = [
-        'discount_amount'
+        'discount_amount',
+        'discount_countdown',
+        'play_countdown',
     ];
 
     public function city()
@@ -62,6 +64,17 @@ class Event extends Eloquent
     {
         return round($this->fees - ($this->fees * ($this->discount / 100)), 2);
     }
+
+    public function getDiscountCountDownAttribute()
+    {
+        return ($this->discount_till > now())? $this->discount_till->diffInSeconds(): 0;
+    }
+
+    public function getPlayCountDownAttribute()
+    {
+        return ($this->starts_at > now())? $this->starts_at->diffInSeconds(): 0;
+    }
+
      /**
      * Scope a query to only include upcoming events.
      *

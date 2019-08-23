@@ -38,6 +38,11 @@ class EventController extends Controller
 
     public function markTheEventMGAsComplete(MarkTheEventMGAsCompleteRequest $request)
     {
-        return $this->eventRepo->markMGAsComplete($request);
+        return $this->eventRepo->markMiniGameAsComplete($request);
+    }
+
+    public function getPresentDayEventDetail(Request $request)
+    {
+        return $this->eventRepo->getPresentDayEventDetail($request);
     }
 }

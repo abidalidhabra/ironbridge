@@ -38,7 +38,8 @@ class MarkEventMGAsComplete implements PriorToInsertRefaceable, Refaceable  {
 			'completion_score'=> $completionData['completion_score'],
 			'completion_time'=> $completionData['completion_time'],
 			'event_minigame_id'=> $completionData['event_minigame_id'],
-			'minigame_unique_id'=> $completionData['minigame_unique_id']
+			'minigame_unique_id'=> $completionData['minigame_unique_id'],
+			'status'=> $completionData['status']
 		];
 	}
 }

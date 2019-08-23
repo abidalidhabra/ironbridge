@@ -6,13 +6,14 @@ use App\Helpers\ExceptionHelpers;
 use App\Models\v1\City;
 use App\Models\v2\Event;
 use App\Models\v2\EventsMinigame;
+use App\Models\v2\EventsUser;
 use App\Refacing\JustJoinedEvent;
 use App\Refacing\MarkEventMGAsComplete;
 use App\Repositories\User\UserRepository;
+use Exception;
 use MongoDB\BSON\ObjectId;
 use MongoDB\BSON\UTCDateTime;
 use Throwable;
-use Exception;
 
 class EventRepository
 {
@@ -25,7 +26,8 @@ class EventRepository
         $this->userRepo = new UserRepository($user);
     }
 
-	public function cities(){
+	public function cities()
+    {
 
         $cities = City::select('_id','name')->havingActiveEvents()->get();
         return $cities;
@@ -43,13 +45,9 @@ class EventRepository
                     ->with(['participations'=> function($query){
                         $query->where('user_id', $this->user->id)->select('_id', 'event_id', 'user_id', 'status');
                     }])
-                    ->select('_id','name','fees','description','starts_at','ends_at','discount','discount_amount','city_id')
-                    ->get()
-                    ->map(function($event){ 
-                        $event->play_countdown = ($event->starts_at > now())? $event->starts_at->diffInSeconds(): 0;
-                        $event->discount_countdown = ($event->discount_till > now())? $event->discount_till->diffInSeconds(): 0;
-                        return $event;
-                    });
+                    ->select('_id', 'name', 'fees', 'description', 'starts_at', 'ends_at', 'discount', 'discount_amount', 'city_id', 'play_countdown', 'discount_countdown', 'status')
+                    ->get();
+                    
         return $events;
     }
 
@@ -63,7 +61,7 @@ class EventRepository
 
             // shot the event user data into the database
             $eventUser = $this->addTheEventParticipation($event);
-            $eventUser->delete();
+            // $eventUser->delete();
 
             // prepare the data prior to insert
             $eventUserMiniGame = $justJoinedEvent->prepareToInsert($event->event_days);
@@ -80,6 +78,7 @@ class EventRepository
             return response()->json([
                 'message'=>'OK', 
                 'data'=> [
+                    'event'=> $event->only('_id', 'name', 'discount_countdown', 'play_countdown', 'status'),
                     'event_user'=> $eventUser, 
                     'event_user_minigames'=> $eventUserMG, 
                     'available_gold'=> $availableGold
@@ -98,11 +97,13 @@ class EventRepository
         return Event::find($eventId);
     }
 
-    function addTheEventParticipation($event){
+    function addTheEventParticipation($event)
+    {
         return $this->user->events()->create(['event_id'=> $event->_id, 'attempts'=> $event->attempts]);
     }
 
-    function addTheDayWiseMiniGames($eventUser, $eventUserMiniGame){
+    function addTheDayWiseMiniGames($eventUser, $eventUserMiniGame)
+    {
         return $eventUser->minigames()->createMany($eventUserMiniGame);
     }
 
@@ -111,16 +112,21 @@ class EventRepository
         return $this->userRepo->deductTheCoins($condsToBeDeduct);
     }
 
-    public function findMGById($miniGameId)
+    public function findMiniGameById($miniGameId)
     {
         return EventsMinigame::where(['_id'=> $miniGameId])->firstOrFail();
     }
 
-    public function addMGCompletion($fields, $dataToPush)
+    public function findEventsUserById($eventsUserId)
+    {
+        return EventsUser::where(['_id'=> $eventsUserId])->firstOrFail();
+    }
+
+    public function addMiniGameCompletion($fields, $dataToPush)
     {
         return EventsMinigame::where($fields)->push('mini_games.$.completions', $dataToPush);
     }
-    public function markMGAsComplete($miniGameData)
+    public function markMiniGameAsComplete($miniGameData)
     {
         try {
 
@@ -130,10 +136,12 @@ class EventRepository
             $insertableData = $markEventMGAsComplete->prepareToInsert($miniGameData->all());
             
             /** shot into the database **/
-            $this->addMGCompletion(['_id'=> $miniGameData->event_minigame_id, 'mini_games._id'=> $miniGameData->minigame_unique_id], $insertableData);
+            EventsMinigame::where(['mini_games._id'=> $miniGameData->minigame_unique_id])->push('mini_games.$.completions', $insertableData);
+            $eventsMinigame = EventsMinigame::where(['_id'=> $miniGameData->event_minigame_id, 'mini_games._id'=> $miniGameData->minigame_unique_id])->select('_id', 'from', 'to', 'status')->first();
+            // $this->addMiniGameCompletion(['_id'=> $miniGameData->event_minigame_id, 'mini_games._id'=> $miniGameData->minigame_unique_id], $insertableData);
 
             /** prepare output for the client **/
-            $insertedData = $markEventMGAsComplete->output(array_merge($insertableData, $miniGameData->only('event_minigame_id', 'minigame_unique_id')));
+            $insertedData = $markEventMGAsComplete->output(array_merge($insertableData, ['status'=> $eventsMinigame->status], $miniGameData->only('event_minigame_id', 'minigame_unique_id')));
 
             return $insertedData;
         } catch (Throwable $e) {
@@ -148,5 +156,20 @@ class EventRepository
         return EventsMinigame::where('from', '>=', new UTCDateTime(today()))
                 ->where('to', '<=', new UTCDateTime(today()->endOfDay()))
                 ->first();
+    }
+
+    public function getPresentDayEventDetail($requestedData)
+    {
+        $eventUser = $this->findEventsUserById($requestedData->events_user_id);
+        $justJoinedEvent = new justJoinedEvent();
+
+        return response()->json([
+                'message'=>'OK', 
+                'data'=> [
+                    'event'=> $eventUser->event()->select('_id', 'name', 'discount_countdown', 'play_countdown', 'status')->first(),
+                    'event_user'=> $eventUser, 
+                    'event_user_minigames'=> $justJoinedEvent->output($eventUser->minigames()->get()->toArray()),
+                ]
+            ]);
     }
 }

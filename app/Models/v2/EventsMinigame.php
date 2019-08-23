@@ -15,4 +15,17 @@ class EventsMinigame extends Eloquent
 		'from',
 		'to',
 	];
+
+	protected $appends = [
+        'status',
+    ];
+
+    public function getStatusAttribute()
+    {
+    	if ($this->from <= now() && $this->to >= now()) {
+			return 'running';
+		}else{
+			return 'closed';
+		}
+    }
 }

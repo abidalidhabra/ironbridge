@@ -7,7 +7,7 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class EventsUser extends Eloquent
 {
-    /** status ->  [tobestart, closed, running, completed, eliminated] **/
+    /** status ->  [tobestart, eliminated, persisted] **/
 	protected $fillable = [ 'user_id','event_id', 'completed_at' , 'attempts' ,'status'];
 
 	protected $dates = [
@@ -22,5 +22,10 @@ class EventsUser extends Eloquent
 	public function minigames()
 	{
 		return $this->hasMany('App\Models\v2\EventsMinigame');
+	}
+
+	public function event()
+	{
+		return $this->belongsTo('App\Models\v2\Event');
 	}
 }
