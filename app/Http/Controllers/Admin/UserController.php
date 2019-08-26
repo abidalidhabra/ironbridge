@@ -334,8 +334,8 @@ class UserController extends Controller
                     ->with([
                             'hunt_user_v1:user_id,hunt_id,hunt_complexity_id,status,hunt_mode,complexity',
                             'hunt_user_v1.hunt:_id,fees',
-                            'plan_purchase.plan:_id,name,price,gold_value,type',
-                            'plan_purchase.country:name,code,currency'
+                            'plans_purchases.plan:_id,name,price,gold_value,type',
+                            'plans_purchases.country:name,code,currency'
                             ])
                     ->where('_id',$id)
                     ->first(); 
@@ -348,9 +348,8 @@ class UserController extends Controller
             $data['usedGold'] = $user->hunt_user_v1->where('hunt_mode','challenge')->pluck('hunt.fees')->sum();
             $data['currentGold'] = $user->gold_balance;
             $data['totalGold'] = $data['usedGold'] + $data['currentGold'];
-            $data['plan_purchase'] = $user->plan_purchase;
+            $data['plan_purchase'] = $user->plans_purchases;
         }
-
         return view('admin.user.activity',compact('id','data'));
     }
 

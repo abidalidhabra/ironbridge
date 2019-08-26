@@ -85,11 +85,22 @@
             <div class="innerdatingactivity">
                 <div class="swoped_detlisbox">
                     @forelse($data['plan_purchase'] as $plan_purchase)
+                        <?php
+                            /*echo "<pre>";
+                            print_r($plan_purchase->toArray());
+                            exit();*/
+                        ?>
                         <div class="swoped_detlisleft">
                            <p>{{ ($plan_purchase->plan)?ucfirst($plan_purchase->plan->type):'-' }}</p> 
                         </div>
                         <div class="swoped_detlisright">
-                            <span>{{ $plan_purchase->gold_value }} Gold</span>
+                            @if(isset($plan_purchase->gold_value))
+                                <span>{{ $plan_purchase->gold_value }} Gold</span>
+                            @endif
+                            @if(isset($plan_purchase->skeleton_keys_amount))
+                                <span>{{ $plan_purchase->skeleton_keys_amount }} Skeleton keys Amount</span>
+                            @endif
+                            
                             <p>( {{ $plan_purchase->price .' '.$plan_purchase->country->currency }} )</p>
                             <p>{{ $plan_purchase->created_at->format('d-m-Y @ h:i a') }}</p>
                         </div>

@@ -52,6 +52,8 @@
                             </select>
                         </div>
                         <input type="hidden" name="event_id" value="@if(isset($event->id)){{ $event->id }} @endif">
+                        <input type="hidden" id="datepicker_start" value="{{ $event->starts_at }}">
+                        <input type="hidden" id="datepicker_end" value="{{ $event->ends_at }}">
                         <div class="form-group col-md-4">
                             <label class="form-label">Coin Type</label>
                             <select name="coin_type" class="form-control">
@@ -122,7 +124,7 @@
                         </div>
                         <div class="form-group col-md-4">
                             <label class="form-label">Discount expire date</label>
-                            <input type="text" name="discount_date" class="form-control" id="discount_date" placeholder="Enter the discount date" value="@if(isset($event->discount_till)){{ $event->discount_till->format('d-m-Y') }}@endif" autocomplete="off">
+                            <input type="text" name="discount_date" class="form-control" id="discount_date" placeholder="Enter the discount date" value="@if(isset($event->discount_till)){{ $event->discount_till->format('d-m-Y h:i A') }}@endif" autocomplete="off">
                         </div>
                         <div class="form-group col-md-4">
                             <label class="form-label">Discount %</label>
@@ -682,8 +684,16 @@
 
             $('[data-toggle="tooltip"]').tooltip();   
 
-            $('#discount_date').datepicker({
+            /*$('#discount_date').datepicker({
                 startDate: new Date()
+            });*/
+            $('#discount_date').datetimepicker({
+                useCurrent: true,
+                format: "DD-MM-YYYY hh:mm A",
+                minDate: moment(),
+                ignoreReadonly: true,
+                keepInvalid: true,
+                // maxDate: moment(),
             });           
 
             var startDate = new Date();
@@ -695,6 +705,9 @@
                 startDate = new Date(selected.date.valueOf());
                 startDate.setDate(startDate.getDate(new Date(selected.date.valueOf())));
                 $('#enddate').datepicker('setStartDate', startDate);
+                $('.datepicker').datepicker('setStartDate', startDate);
+                $('#datepicker_start').val('');
+                $('#datepicker_start').val(startDate);
             }); 
 
             $('#enddate').datepicker({
@@ -705,6 +718,9 @@
                 FromEndDate = new Date(selected.date.valueOf());
                 FromEndDate.setDate(FromEndDate.getDate(new Date(selected.date.valueOf())));
                 $('#startdate').datepicker('setEndDate', FromEndDate);
+                $('.datepicker').datepicker('setEndDate', FromEndDate);
+                $('#datepicker_end').val('');
+                $('#datepicker_end').val(FromEndDate);
             });
 
             $(document).on('change','select[name="coin_type"]', function () {
@@ -813,7 +829,7 @@
                                         </div>
                                         <div class="form-group col-md-3">
                                             <label class="form-label">Date</label>
-                                            <input type="text" name="date[`+currentIndex+`]" class="form-control datetimepicker" placeholder="Enter the time" id="date`+currentIndex+`" value="" autocomplete="off">
+                                            <input type="text" name="date[`+currentIndex+`]" class="form-control" placeholder="Enter the time" id="date`+currentIndex+`" value="" autocomplete="off">
                                         </div>
                                         <div class="form-group col-md-3">
                                             <label class="form-label">Start Time
@@ -866,15 +882,17 @@
 
                 
                 //$('.datetimepicker').datetimepicker();
-                var myDate = new Date(startdate);
+                //var myDate = new Date(startdate);
+                var newstartdate = $('#datepicker_start').val();
+                var newenddate = $('#datepicker_end').val();
+                var myDate = new Date(newstartdate);
                 myDate.setDate(myDate.getDate() + currentIndex);
-                
                 $('#date'+currentIndex).datepicker({
                     weekStart: 1,
-                    startDate: new Date(startdate),
-                    endDate: new Date(enddate),
+                    startDate: new Date(newstartdate),
+                    endDate: new Date(newenddate),
                     autoclose: true,
-                }).datepicker("update", myDate); 
+                }).datepicker("update", myDate);
 
                 $('#starttime'+currentIndex).timepicker({
                     //defaultTime: 'current',
@@ -1003,7 +1021,7 @@
         $('#map_reveal_date').datetimepicker({
             useCurrent: false,
             format: "DD-MM-YYYY hh:mm A",
-            minDate: moment(enddate),
+            // minDate: moment(enddate),
             // maxDate: moment(),
             defaultDate: moment(mapdate),
         });
