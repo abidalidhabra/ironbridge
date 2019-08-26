@@ -2,13 +2,11 @@
 
 namespace App\Refacing;
 
-use App\Refacing\LastFinishedEventRoundInterface;
-use App\Refacing\PriorToInsertRefaceable;
-use App\Refacing\Refaceable;
-use App\Refacing\TodaysMinigameInteface;
-use Carbon\Carbon;
+use App\Refacing\Contracts\EventsMiniGameRefaceInterface;
+use MongoDB\BSON\UTCDateTime;
+use MongoDB\BSON\ObjectId;
 
-class JustJoinedEvent implements PriorToInsertRefaceable, TodaysMinigameInteface, Refaceable, LastFinishedEventRoundInterface {
+class EventsMiniGameReface implements EventsMiniGameRefaceInterface {
 	
 	public function prepareToInsert(array $eventDays){
 
@@ -20,27 +18,25 @@ class JustJoinedEvent implements PriorToInsertRefaceable, TodaysMinigameInteface
 		return $eventDays;
 	}
 
-	public function todaysMiniGames($eventUsersMiniGames)
+	public function todaysMiniGames(array $eventUsersMiniGames)
 	{
 
 		return collect($eventUsersMiniGames)
 				->where('from', '<=', now())
 				->where('to', '>=', now())
 				->map(function($dayWiseMiniGames){
-					// $dayWiseMiniGames = $this->getEventsUserMiniGamesStatus($dayWiseMiniGames);
 					return collect($dayWiseMiniGames)->except(['created_at', 'updated_at']);
 				})
 				->values()
 				->toArray();
 	}
 
-	public function lastFinishedMiniGames($eventUsersMiniGames)
+	public function lastFinishedMiniGames(array $eventUsersMiniGames)
 	{
 		return collect($eventUsersMiniGames)
 			->where('from', '<=', now())
 			->where('to', '<=', now())
 			->map(function($dayWiseMiniGames){
-				// $dayWiseMiniGames = $this->getEventsUserMiniGamesStatus($dayWiseMiniGames);
 				return collect($dayWiseMiniGames)->except(['created_at', 'updated_at']);
 			})
 			->values()
@@ -66,17 +62,36 @@ class JustJoinedEvent implements PriorToInsertRefaceable, TodaysMinigameInteface
 		return $countableUserMiniGames;
 	}
 
-	// public function getEventsUserMiniGamesStatus($dayWiseMiniGames)
-	// {
+	public function prepareCompletionDataToInsert(array $requestData){
 
-	// 	// $dayWiseMiniGames['mini_games_countdown'] = ($dayWiseMiniGames['from'] > now())? Carbon::parse($dayWiseMiniGames['from'])->diffInSeconds(): 0;
+		$completedAt = new UTCDateTime();
 
-	// 	if ($dayWiseMiniGames['from'] <= now() && $dayWiseMiniGames['to'] >= now()) {
-	// 		$dayWiseMiniGames['status'] = 'running';
-	// 	}else{
-	// 		$dayWiseMiniGames['status'] = 'closed';
-	// 	}
+		if (isset($requestData['completion_score'])) {
+			$completionScore = (int)$requestData['completion_score'];
+		}
 
-	// 	return $dayWiseMiniGames;
-	// }
+		if (isset($requestData['completion_time'])) {
+			$completionTime = (int)$requestData['completion_time'];
+		}
+		
+		return [
+			'_id'=> new ObjectId(), 
+			'completed_at'=> $completedAt, 
+			'completion_score'=> $completionScore ?? null, 
+			'completion_time'=> $completionTime ?? null
+		];
+	}
+
+	public function outputInsertedCompletionData(array $preparedCompletionData)
+	{
+		return [
+			'_id'=> $preparedCompletionData['_id']->__toString(), 
+			'completed_at'=> $preparedCompletionData['completed_at']->toDateTime()->format('Y-m-d H:i:s'), 
+			'completion_score'=> $preparedCompletionData['completion_score'],
+			'completion_time'=> $preparedCompletionData['completion_time'],
+			'events_minigame_id'=> $preparedCompletionData['events_minigame_id'],
+			'minigame_unique_id'=> $preparedCompletionData['minigame_unique_id'],
+			'status'=> $preparedCompletionData['status']
+		];
+	}
 }

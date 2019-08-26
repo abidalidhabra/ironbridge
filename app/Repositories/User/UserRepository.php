@@ -49,7 +49,7 @@ class UserRepository implements UserRepositoryInterface
         return ['gold_balance'=> $this->user->gold_balance, 'available_skeleton_keys'=> $availableSkeletonKeys];
     }
 
-    public function deductTheCoins(int $goldAmount){
+    public function deductGold(int $goldAmount){
         $this->user->gold_balance -= $goldAmount;
         $this->user->save();
         
