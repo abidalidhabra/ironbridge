@@ -36,7 +36,8 @@ class City extends Eloquent
     public function scopeHavingActiveEvents($query)
     {
         return $query->whereHas('events', function($query){
-                    $query->where('starts_at', '>=', now());
+                    // $query->where('starts_at', '>=', now());
+                    $query->where('ends_at', '>=', now());
                 });
     }
 }

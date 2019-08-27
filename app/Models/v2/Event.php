@@ -89,7 +89,7 @@ class Event extends Eloquent
      */
     public function scopeUpcoming($query)
     {
-        $query->where('starts_at', '>=', now());
+        $query->where('ends_at', '>=', now());
     }
 
     /**
