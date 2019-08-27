@@ -28,4 +28,9 @@ class EventsUser extends Eloquent
 	{
 		return $this->belongsTo('App\Models\v2\Event');
 	}
+
+	public function user()
+    {
+    	return $this->belongsTo('App\Models\v1\User','user_id');
+    }
 }

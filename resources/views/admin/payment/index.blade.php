@@ -15,7 +15,7 @@
             <div class="total_usersdetlis">
                 <ul>
                     <li>
-                        <img src="http://localhost/ironbridge1779/public/admin_assets/svg/user.svg">
+                        <img src="{{ asset('admin_assets/svg/user.svg') }}">
                         <h3>${{ $data['collected'] }}</h3>
                         <p>Collected</p>
                     </li>

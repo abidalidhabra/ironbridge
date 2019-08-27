@@ -38,76 +38,6 @@
         </table>
     </div>
 </div>
-<div class="container">  
-    <div class="addnewsmodal_box">
-        <div class="modal fade" id="addNews" role="dialog">
-            <div class="modal-dialog">
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Add Game</h4>       
-                    </div>
-                    <form method="post" id="addGameForm">
-                        @csrf
-                        <div class="modal-body">
-                            <div class="modalbodysetbox">
-                                <div class="newstitlebox_inputbox">
-                                    <div class="form-group">
-                                        <input type="text" name="identifier" placeholder="identifier">
-                                    </div>
-                                </div>
-                                <div class="newstitlebox_inputbox">
-                                    <div class="form-group">
-                                        <input type="text" name="name" placeholder="name">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-success">Save</button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div class="modal fade" id="editGame" role="dialog">
-            <div class="modal-dialog">
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Edit News</h4>       
-                    </div>
-                    <form method="post" id="editGameForm">
-                        @method('PUT')
-                        @csrf
-                        <div class="modal-body">
-                            <input type="hidden" name="game_id">
-                            <div class="modalbodysetbox">
-                                <div class="newstitlebox_inputbox">
-                                    <div class="form-group">
-                                        <input type="text" name="identifier" placeholder="identifier">
-                                    </div>
-                                </div>
-                                <div class="newstitlebox_inputbox">
-                                    <div class="form-group">
-                                        <input type="text" name="name" placeholder="name">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-success">Save</button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
 
 @section('scripts')
@@ -153,42 +83,6 @@
                 ],
 
             });
-
-            //ADD NEWS
-            $('#addGameForm').submit(function(e) {
-                e.preventDefault();
-            })
-            .validate({
-                focusInvalid: false, 
-                ignore: "",
-                rules: {
-                    identifier: { required: true },
-                    name: { required: true },
-                },
-                submitHandler: function (form) {
-                    var formData = new FormData(form);
-                    $.ajax({
-                        type: "POST",
-                        url: '{{ route("admin.addgame") }}',
-                        data: formData,
-                        processData:false,
-                        cache:false,
-                        contentType: false,
-                        success: function(response)
-                        {
-                            if (response.status == true) {
-                                toastr.success(response.message);
-                                $('input[name="subject"] , textarea[name="description"] , input[name="valid_till"]').val('');
-                                $('#addNews').modal('hide');
-                                table.ajax.reload();
-                            } else {
-                                toastr.warning(response.message);
-                            }
-                        }
-                    });
-                }
-            });
-
 
             function afterfunction(){
 
