@@ -113,7 +113,7 @@
                                                 <!-- Sudoku -->
                                                 <div class="form-group col-md-4">
                                                     <label class="form-label">Reveal Numbers <small class="form-text text-muted">must be between [1 to 81]</small></label>
-                                                    <input type="text" name="variation_size[{{$index['current_index']}}][{{$index['game_index']}}]" class="form-control" value="{{ $miniGame['variation_data']['variation_size'] }}">
+                                                    <input type="text" name="variation_size[{{$key}}][{{$index}}]" class="form-control" value="{{ $miniGame['variation_data']['variation_size'] }}">
                                                 </div>
                                                 <input type="hidden" name="sudoku_id[{{$index['current_index']}}][{{$index['game_index']}}]" value="{{ $miniGame['variation_data']['sudoku_id'] }}">
                                                 

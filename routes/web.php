@@ -140,6 +140,11 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::post('updateEvent', [ 'middleware' => ['permission:Edit Event'], 'uses' => 'EventController@updateEvent'])->name('event.updateEvent');
 	Route::post('getHuntList', [ 'middleware' => ['permission:Add Event'], 'uses' => 'EventController@getHuntList'])->name('event.getHuntList');
 
+
+	//PAYMENT
+	Route::get('payment', [ 'middleware' => ['permission:View Payments'], 'uses' => 'PaymentController@index' ])->name('payment.index');
+	Route::get('getPaymentList', [ 'middleware' => ['permission:View Payments'], 'uses' => 'PaymentController@getPaymentList' ])->name('getPaymentList');
+
 });
 
 Auth::routes();

@@ -121,7 +121,7 @@
                         </div>
                         <div class="form-group col-md-4">
                             <label class="form-label">Discount expire date</label>
-                            <input type="text" name="discount_date" class="form-control" id="discount_date" placeholder="Enter the discount date" value="@if(isset($event->discount_till)){{ $event->discount_till->format('d-m-Y') }}@endif" autocomplete="off">
+                            <input type="text" name="discount_date" class="form-control" id="discount_date" placeholder="Enter the discount date" value="@if(isset($event->discount_till)){{ $event->discount_till->format('d-m-Y h:i A') }}@endif" autocomplete="off">
                         </div>
                         <div class="form-group col-md-4">
                             <label class="form-label">Discount %</label>
@@ -171,8 +171,14 @@
 
             $('[data-toggle="tooltip"]').tooltip();   
 
-            $('#discount_date').datepicker({
+            /*$('#discount_date').datepicker({
                 startDate: new Date()
+            });*/
+            $('#discount_date').datetimepicker({
+                useCurrent: false,
+                format: "DD-MM-YYYY hh:mm A",
+                minDate: moment(enddate),
+                // maxDate: moment(),
             });
 
            /* $('#startdate').datepicker({

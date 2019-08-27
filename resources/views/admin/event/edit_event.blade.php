@@ -52,6 +52,8 @@
                             </select>
                         </div>
                         <input type="hidden" name="event_id" value="@if(isset($event->id)){{ $event->id }} @endif">
+                        <input type="hidden" id="datepicker_start" value="{{ $event->starts_at }}">
+                        <input type="hidden" id="datepicker_end" value="{{ $event->ends_at }}">
                         <div class="form-group col-md-4">
                             <label class="form-label">Coin Type</label>
                             <select name="coin_type" class="form-control">
@@ -122,7 +124,7 @@
                         </div>
                         <div class="form-group col-md-4">
                             <label class="form-label">Discount expire date</label>
-                            <input type="text" name="discount_date" class="form-control" id="discount_date" placeholder="Enter the discount date" value="@if(isset($event->discount_till)){{ $event->discount_till->format('d-m-Y') }}@endif" autocomplete="off">
+                            <input type="text" name="discount_date" class="form-control" id="discount_date" placeholder="Enter the discount date" value="@if(isset($event->discount_till)){{ $event->discount_till->format('d-m-Y h:i A') }}@endif" autocomplete="off">
                         </div>
                         <div class="form-group col-md-4">
                             <label class="form-label">Discount %</label>
@@ -234,9 +236,9 @@
                                                 <!-- Sudoku -->
                                                 <div class="form-group col-md-4">
                                                     <label class="form-label">Reveal Numbers <small class="form-text text-muted">must be between [1 to 81]</small></label>
-                                                    <input type="text" name="variation_size[{{$index['current_index']}}][{{$index['game_index']}}]" class="form-control" value="{{ $miniGame['variation_data']['variation_size'] }}">
+                                                    <input type="text" name="variation_size[{{$key}}][{{$index}}]" class="form-control" value="{{ @$miniGame['variation_data']['variation_size'] }}">
                                                 </div>
-                                                <input type="hidden" name="sudoku_id[{{$index['current_index']}}][{{$index['game_index']}}]" value="{{ $miniGame['variation_data']['sudoku_id'] }}">
+                                                <input type="hidden" name="sudoku_id[{{$key}}][{{$index}}]" value="{{ @$miniGame['variation_data']['sudoku_id'] }}">
                                                 
                                             <?php } else if($miniGameId == '5b0e303f51b2010ec820fb4d'){ ?>
                                                 <!-- Number search -->
@@ -505,7 +507,7 @@
                     <div class="form-group col-md-3">
                         <div class="addhunteyrefbtn">
                             <a href="javascript:void(0)" class="btn hunt_details" data-toggle="tooltip" title="View Hunt"><i class="fa fa-eye "></i></a>
-                            <a href="javascript:void(0)" class="btn" id="refresh" data-toggle="tooltip" title="Refresh Hunts List"><i class="fa fa-refresh"></i></a>
+                            <a href="javascript:void(0)" class="btn" id="refresh" data-toggle="tooltip" title="Refresh Hunts List" data-id="{{ $event->city_id }}"><i class="fa fa-refresh"></i></a>
                             <a href="{{ route('admin.add_location') }}" target='_blank' class="btn" >Add New</a>
                         </div>
                     </div>
@@ -676,14 +678,27 @@
             });
 
             $('#city_id').select2();
+
+            $(document).on('change','#city_id',function(){
+                $('#refresh').attr('data-id',$(this).val());
+                huntCityList($(this).val());
+            });
             $('[name=type] , [name=coin_type]').select2({
               minimumResultsForSearch: Infinity
             });
 
             $('[data-toggle="tooltip"]').tooltip();   
 
-            $('#discount_date').datepicker({
+            /*$('#discount_date').datepicker({
                 startDate: new Date()
+            });*/
+            $('#discount_date').datetimepicker({
+                useCurrent: true,
+                format: "DD-MM-YYYY hh:mm A",
+                minDate: moment(),
+                ignoreReadonly: true,
+                keepInvalid: true,
+                // maxDate: moment(),
             });           
 
             var startDate = new Date();
@@ -695,6 +710,9 @@
                 startDate = new Date(selected.date.valueOf());
                 startDate.setDate(startDate.getDate(new Date(selected.date.valueOf())));
                 $('#enddate').datepicker('setStartDate', startDate);
+                $('.datepicker').datepicker('setStartDate', startDate);
+                $('#datepicker_start').val('');
+                $('#datepicker_start').val(startDate);
             }); 
 
             $('#enddate').datepicker({
@@ -705,6 +723,9 @@
                 FromEndDate = new Date(selected.date.valueOf());
                 FromEndDate.setDate(FromEndDate.getDate(new Date(selected.date.valueOf())));
                 $('#startdate').datepicker('setEndDate', FromEndDate);
+                $('.datepicker').datepicker('setEndDate', FromEndDate);
+                $('#datepicker_end').val('');
+                $('#datepicker_end').val(FromEndDate);
             });
 
             $(document).on('change','select[name="coin_type"]', function () {
@@ -813,7 +834,7 @@
                                         </div>
                                         <div class="form-group col-md-3">
                                             <label class="form-label">Date</label>
-                                            <input type="text" name="date[`+currentIndex+`]" class="form-control datetimepicker" placeholder="Enter the time" id="date`+currentIndex+`" value="" autocomplete="off">
+                                            <input type="text" name="date[`+currentIndex+`]" class="form-control" placeholder="Enter the time" id="date`+currentIndex+`" value="" autocomplete="off">
                                         </div>
                                         <div class="form-group col-md-3">
                                             <label class="form-label">Start Time
@@ -866,15 +887,17 @@
 
                 
                 //$('.datetimepicker').datetimepicker();
-                var myDate = new Date(startdate);
+                //var myDate = new Date(startdate);
+                var newstartdate = $('#datepicker_start').val();
+                var newenddate = $('#datepicker_end').val();
+                var myDate = new Date(newstartdate);
                 myDate.setDate(myDate.getDate() + currentIndex);
-                
                 $('#date'+currentIndex).datepicker({
                     weekStart: 1,
-                    startDate: new Date(startdate),
-                    endDate: new Date(enddate),
+                    startDate: new Date(newstartdate),
+                    endDate: new Date(newenddate),
                     autoclose: true,
-                }).datepicker("update", myDate); 
+                }).datepicker("update", myDate);
 
                 $('#starttime'+currentIndex).timepicker({
                     //defaultTime: 'current',
@@ -1003,7 +1026,7 @@
         $('#map_reveal_date').datetimepicker({
             useCurrent: false,
             format: "DD-MM-YYYY hh:mm A",
-            minDate: moment(enddate),
+            // minDate: moment(enddate),
             // maxDate: moment(),
             defaultDate: moment(mapdate),
         });
@@ -1027,7 +1050,10 @@
 
             /* REFRESH BUTTON */
             $(document).on('click','#refresh',function(){
-                $.ajax({
+                var id = $(this).attr('data-id')
+                huntCityList(id);
+                // huntCityList('{{ $event->city_id }}');
+                /*$.ajax({
                     type: "POST",
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -1050,7 +1076,7 @@
                             toastr.warning(response.message);
                         }
                     }
-                });
+                });*/
             });
 
 
@@ -1123,4 +1149,39 @@
         });
     </script>
     <!-- HUNT -->
+
+    <!-- CITY BASED Search Place Name  -->
+    <script type="text/javascript">
+
+        //$(document).on('click','#refresh',function(){
+        function huntCityList(id){
+            $.ajax({
+                type: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '{{ route("admin.event.getHuntList") }}',
+                data: {id : id},
+                beforeSend: function(){
+                    $('#refresh i').addClass('fa-spin');
+                },
+                success: function(response)
+                {
+                    $('#refresh i').removeClass('fa-spin');
+                    if (response.status == true) {
+                        $('select[name="search_place_name"]').html('');
+                        $('select[name="search_place_name"]').append('<option value="">Select Place</option>')
+                        jQuery.each( response.data, function( index, val ) {
+                            
+                            $('select[name="search_place_name"]').append('<option value="'+val._id+'">'+val.name+'</option>')
+                        });
+                    } else {
+                        toastr.warning(response.message);
+                    }
+                }
+            });
+        }
+    </script>
+
+
 @endsection

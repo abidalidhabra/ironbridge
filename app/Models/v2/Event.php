@@ -102,6 +102,35 @@ class Event extends Eloquent
     {
         return $query->where('city_id', $cityId);
     }
+
+    /**
+     * Scope a query to return paticipation of user only if he/she is participated in it.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWithParticipation($query, $userId)
+    {
+        return $query->with(['participations'=> function($query) use ($userId){
+            $query->where('user_id', $userId)->select('_id', 'event_id', 'user_id', 'status');
+        }]);
+    }
+
+    /**
+     * Scope a query to return First Rank Prize.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWithWinningPrize($query)
+    {
+        return $query->with(['prizes'=> function($query) {
+            $query->where(function($query){
+                $query->orWhere('rank', 1)->orWhere('start_rank', 1);
+            })
+            ->select('_id','event_id','group_type','prize_type','prize_value','rank', 'start_rank', 'end_rank');
+        }]);
+    }
 }
 
     

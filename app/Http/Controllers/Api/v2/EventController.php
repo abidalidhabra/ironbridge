@@ -2,47 +2,41 @@
 
 namespace App\Http\Controllers\Api\v2;
 
+use App\Helpers\ResponseHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v2\GetEventsInCityRequest;
-use App\Http\Requests\v2\MarkTheEventMGAsCompleteRequest;
-use App\Http\Requests\v2\ParticipateInEventRequest;
-use App\Repositories\EventRepository;
+use App\Models\v1\City;
+use App\Models\v2\Event;
 use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
-    private $eventRepo;
+    private $user;
 
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
-            $this->eventRepo = new EventRepository(auth()->user());
+            $this->user = auth()->user();
             return $next($request);
         });
     }
 
     public function getEventsCities(Request $request)
     {
-        return response()->json(['message'=> 'OK.', 'data'=> $this->eventRepo->cities()]);
+        $cities = City::select('_id','name')->havingActiveEvents()->get();
+
+        return ResponseHelpers::successResponse($cities);
     }
 
     public function getEventsInCity(GetEventsInCityRequest $request)
     {
-        return response()->json(['message'=> 'OK.', 'data'=> $this->eventRepo->eventsInCity($request->city_id)]);
-    }
-
-    public function participateInEvent(ParticipateInEventRequest $request)
-    {
-        return  $this->eventRepo->create($request);
-    }
-
-    public function markTheEventMGAsComplete(MarkTheEventMGAsCompleteRequest $request)
-    {
-        return response()->json(['message'=> 'OK.', 'data'=> $this->eventRepo->markMiniGameAsComplete($request)]);
-    }
-
-    public function getPresentDayEventDetail(Request $request)
-    {
-        return $this->eventRepo->getPresentDayEventDetail($request);
+        $events = Event::upcoming()
+                    ->havingCity($request->city_id)
+                    ->withWinningPrize()
+                    ->withParticipation($this->user->id)
+                    ->select('_id', 'name', 'fees', 'description', 'starts_at', 'ends_at', 'discount', 'discount_amount', 'city_id', 'play_countdown', 'discount_countdown', 'status')
+                    ->get();
+                    
+        return ResponseHelpers::successResponse($events);
     }
 }

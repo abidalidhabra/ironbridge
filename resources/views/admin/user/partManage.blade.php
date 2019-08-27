@@ -43,7 +43,15 @@
 @section('scripts')
     <script type="text/javascript">
         $(document).ready(function() {
-            $('.table').DataTable();
+            $('.table').DataTable({
+                "order": [],
+                columnDefs: [
+                    {
+                        orderable: false,
+                        targets: [0],
+                    }
+                ],
+            });
         });
     </script>
 @endsection

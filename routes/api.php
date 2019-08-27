@@ -150,8 +150,8 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
 		/** Event **/
 		Route::get('getEventsCities', 'EventController@getEventsCities');
 		Route::get('getEventsInCity', 'EventController@getEventsInCity');
-		Route::post('participateInEvent', 'EventController@participateInEvent');
-		Route::post('markTheEventMGAsComplete', 'EventController@markTheEventMGAsComplete');
-		Route::get('getPresentDayEventDetail', 'EventController@getPresentDayEventDetail');
+		Route::post('participateInEvent', 'EventsUserController@participateInEvent');
+		Route::post('markMiniGameAsComplete', 'EventsMiniGameController@markMiniGameAsComplete');
+		Route::get('getPresentDayEventDetail', 'EventsUserController@getPresentDayEventDetail');
 	});
 });

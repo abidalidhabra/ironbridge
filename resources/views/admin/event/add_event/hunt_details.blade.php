@@ -255,7 +255,7 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     url: '{{ route("admin.event.getHuntList") }}',
-                    data: {id : '{{ $id }}'},
+                    data: {id : '{{ $event->city_id }}'},
                     beforeSend: function(){
                         $('#refresh i').addClass('fa-spin');
                     },
