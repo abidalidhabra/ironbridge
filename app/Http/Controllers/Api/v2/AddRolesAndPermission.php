@@ -54,6 +54,7 @@ class AddRolesAndPermission extends Controller
 		Permission::create(['name' => 'Edit Event','guard_name' => 'admin', 'module'=>'Events']);
 		Permission::create(['name' => 'Delete Event','guard_name' => 'admin', 'module'=>'Events']);
 
+		Permission::create(['name' => 'View Payments','guard_name' => 'admin', 'module'=>'Payments']);
 
 		/*$data = [
 					['name' => 'Practice Games Targets','guard_name' => 'admin', 'module'=>'practiceGamesTargets'],

@@ -39,8 +39,8 @@
                 pageLength: 50,
                 processing: true,
                 responsive: true,
-                serverSide: true,
-                order: [[1, 'desc']],
+                // serverSide: true,
+                order: [],
                 lengthMenu: [[10, 50, 100, -1], [10, 50, 100, "All"]],
                 ajax: {
                     type: "get",
@@ -63,6 +63,12 @@
                     { data:'outfits',name:'outfits' },
                     { data:'bottom',name:'bottom' },
                     { data:'action',name:'action'},
+                ],
+                columnDefs: [
+                    {
+                        orderable: false,
+                        targets: [0,7],
+                    }
                 ],
 
             });

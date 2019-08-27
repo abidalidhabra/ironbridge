@@ -93,8 +93,8 @@
                 pageLength: 50,
                 processing: true,
                 responsive: true,
-                serverSide: true,
-                order: [[1, 'desc']],
+                // serverSide: true,
+                order:[],
                 lengthMenu: [[10, 50, 100, -1], [10, 50, 100, "All"]],
                 ajax: {
                     type: "get",
@@ -108,7 +108,7 @@
                     }
                 },
                 columns:[
-                    { data:'DT_RowIndex',name:'_id' },
+                    { data:'DT_RowIndex',name:'_id'},
                     { data:'created_at',name:'created_at'},
                     { data:'name',name:'name' },
                     { data:'email',name:'email' },
@@ -119,6 +119,12 @@
                     @if(auth()->user()->hasPermissionTo('Add Users'))
                     { className : 'details-control', defaultContent : '', data    : null,orderable : false},
                     @endif
+                ],
+                columnDefs: [
+                    {
+                        orderable: false,
+                        targets: [0],
+                    }
                 ],
 
             });

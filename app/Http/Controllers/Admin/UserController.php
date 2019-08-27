@@ -330,26 +330,35 @@ class UserController extends Controller
     //activity
     public function activity($id){
         $user = User::select('gold_balance')
-                    ->whereHas('hunt_user_v1')
                     ->with([
                             'hunt_user_v1:user_id,hunt_id,hunt_complexity_id,status,hunt_mode,complexity',
                             'hunt_user_v1.hunt:_id,fees',
                             'plans_purchases.plan:_id,name,price,gold_value,type',
-                            'plans_purchases.country:name,code,currency'
+                            'plans_purchases.country:name,code,currency,currency_full_name'
                             ])
                     ->where('_id',$id)
                     ->first(); 
+
         $data['usedGold'] = 0;
         $data['currentGold'] = 0;
         $data['totalGold'] = 0;
         $data['plan_purchase'] = [];
-        $data['goldPurchased'] = $data['usedGold'] + $data['currentGold'];
+        $data['goldPurchased'] = 0;
         if ($user) {
-            $data['usedGold'] = $user->hunt_user_v1->where('hunt_mode','challenge')->pluck('hunt.fees')->sum();
             $data['currentGold'] = $user->gold_balance;
-            $data['totalGold'] = $data['usedGold'] + $data['currentGold'];
-            $data['plan_purchase'] = $user->plans_purchases;
+            $data['totalGold'] = $data['usedGold'] + $data['currentGold'] + $data['goldPurchased'];
+            
+            if ($user->plans_purchases) {
+                $data['goldPurchased'] = $user->plans_purchases->pluck('gold_value')->sum();
+                $data['plan_purchase'] = $user->plans_purchases;
+            }
+
+            if ($user->hunt_user_v1) {
+                $data['usedGold'] = $user->hunt_user_v1->where('hunt_mode','challenge')->pluck('hunt.fees')->sum() + $data['goldPurchased'];
+            }
+
         }
+        
         return view('admin.user.activity',compact('id','data'));
     }
 

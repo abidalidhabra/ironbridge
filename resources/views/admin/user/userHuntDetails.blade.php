@@ -69,7 +69,15 @@
     <!-- <script type="text/javascript" src="{{ asset('js/toastr.min.js') }}"></script> -->
     <script type="text/javascript">
         $(document).ready(function() {
-            $('#dataTable').DataTable();
+            $('#dataTable').DataTable({
+                order:[],
+                columnDefs: [
+                    {
+                        orderable: false,
+                        targets: [0],
+                    }
+                ],
+            });
         });
     </script>
 @endsection

@@ -236,9 +236,9 @@
                                                 <!-- Sudoku -->
                                                 <div class="form-group col-md-4">
                                                     <label class="form-label">Reveal Numbers <small class="form-text text-muted">must be between [1 to 81]</small></label>
-                                                    <input type="text" name="variation_size[{{$index['current_index']}}][{{$index['game_index']}}]" class="form-control" value="{{ $miniGame['variation_data']['variation_size'] }}">
+                                                    <input type="text" name="variation_size[{{$key}}][{{$index}}]" class="form-control" value="{{ @$miniGame['variation_data']['variation_size'] }}">
                                                 </div>
-                                                <input type="hidden" name="sudoku_id[{{$index['current_index']}}][{{$index['game_index']}}]" value="{{ $miniGame['variation_data']['sudoku_id'] }}">
+                                                <input type="hidden" name="sudoku_id[{{$key}}][{{$index}}]" value="{{ @$miniGame['variation_data']['sudoku_id'] }}">
                                                 
                                             <?php } else if($miniGameId == '5b0e303f51b2010ec820fb4d'){ ?>
                                                 <!-- Number search -->
@@ -507,7 +507,7 @@
                     <div class="form-group col-md-3">
                         <div class="addhunteyrefbtn">
                             <a href="javascript:void(0)" class="btn hunt_details" data-toggle="tooltip" title="View Hunt"><i class="fa fa-eye "></i></a>
-                            <a href="javascript:void(0)" class="btn" id="refresh" data-toggle="tooltip" title="Refresh Hunts List"><i class="fa fa-refresh"></i></a>
+                            <a href="javascript:void(0)" class="btn" id="refresh" data-toggle="tooltip" title="Refresh Hunts List" data-id="{{ $event->city_id }}"><i class="fa fa-refresh"></i></a>
                             <a href="{{ route('admin.add_location') }}" target='_blank' class="btn" >Add New</a>
                         </div>
                     </div>
@@ -678,6 +678,11 @@
             });
 
             $('#city_id').select2();
+
+            $(document).on('change','#city_id',function(){
+                $('#refresh').attr('data-id',$(this).val());
+                huntCityList($(this).val());
+            });
             $('[name=type] , [name=coin_type]').select2({
               minimumResultsForSearch: Infinity
             });
@@ -1045,7 +1050,10 @@
 
             /* REFRESH BUTTON */
             $(document).on('click','#refresh',function(){
-                $.ajax({
+                var id = $(this).attr('data-id')
+                huntCityList(id);
+                // huntCityList('{{ $event->city_id }}');
+                /*$.ajax({
                     type: "POST",
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -1068,7 +1076,7 @@
                             toastr.warning(response.message);
                         }
                     }
-                });
+                });*/
             });
 
 
@@ -1141,4 +1149,39 @@
         });
     </script>
     <!-- HUNT -->
+
+    <!-- CITY BASED Search Place Name  -->
+    <script type="text/javascript">
+
+        //$(document).on('click','#refresh',function(){
+        function huntCityList(id){
+            $.ajax({
+                type: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '{{ route("admin.event.getHuntList") }}',
+                data: {id : id},
+                beforeSend: function(){
+                    $('#refresh i').addClass('fa-spin');
+                },
+                success: function(response)
+                {
+                    $('#refresh i').removeClass('fa-spin');
+                    if (response.status == true) {
+                        $('select[name="search_place_name"]').html('');
+                        $('select[name="search_place_name"]').append('<option value="">Select Place</option>')
+                        jQuery.each( response.data, function( index, val ) {
+                            
+                            $('select[name="search_place_name"]').append('<option value="'+val._id+'">'+val.name+'</option>')
+                        });
+                    } else {
+                        toastr.warning(response.message);
+                    }
+                }
+            });
+        }
+    </script>
+
+
 @endsection

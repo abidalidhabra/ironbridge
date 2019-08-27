@@ -92,8 +92,8 @@
                 pageLength: 10,
                 processing: true,
                 responsive: true,
-                serverSide: true,
-                order: [[1, 'desc']],
+                serverSide: false,
+                order: [],
                 lengthMenu: [[10, 50, 100, -1], [10, 50, 100, "All"]],
                 ajax: {
                     type: "get",
@@ -114,6 +114,12 @@
                 @if(auth()->user()->hasPermissionTo('Edit Complexity Targets'))
                 { data:'action',name:'action' },
                 @endif
+                ],
+                columnDefs: [
+                    {
+                        orderable: false,
+                        targets: [0,4],
+                    }
                 ],
 
             });

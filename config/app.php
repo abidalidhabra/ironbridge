@@ -178,6 +178,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
         Maklad\Permission\PermissionServiceProvider::class,
+        App\Providers\IronBridgeServiceProvider::class,
 
     ],
 

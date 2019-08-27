@@ -32,17 +32,17 @@
                        <p>Gold Purchased</p> 
                     </div>
                     <div class="swoped_detlisright">
-                        <p>0 Gold </p>
+                        <p>{{ $data['goldPurchased'] }} Gold </p>
                     </div>
                 </div>
-                <div class="swoped_detlisbox">
+                <!-- <div class="swoped_detlisbox">
                     <div class="swoped_detlisleft">
                        <p>Gold Earned</p> 
                     </div>
                     <div class="swoped_detlisright">
                         <p>0 Gold</p>
                     </div>
-                </div>
+                </div> -->
                 <div class="swoped_detlisbox">
                     <div class="swoped_detlisleft">
                        <p>Used Gold</p> 
@@ -56,7 +56,11 @@
                        <p>Total Money Spent</p> 
                     </div>
                     <div class="swoped_detlisright">
-                        <p></p>
+                        @forelse($data['plan_purchase']->groupBy('country_code')  as $price)
+                            <p>{{ number_format($price->pluck('price')->sum(),2).' '.$price[0]['country']['currency_full_name'] }}</p>
+                        @empty
+                            <p>No data found</p>
+                        @endforelse
                     </div>
                 </div>
                 <div class="swoped_detlisbox">
@@ -73,7 +77,11 @@
                        <p>Purchased Packages</p> 
                     </div>
                     <div class="swoped_detlisright">
-                        <p>No data found</p>
+                        @forelse($data['plan_purchase']->groupBy('plan_id')  as $plane)
+                            <p>{{ $plane[0]->gold_value.' Golds - '.number_format($plane[0]->price,2).' '.$plane[0]->country->currency .' ( '. count($plane) .' Times )'}}</p>
+                        @empty
+                            <p>No data found</p>
+                        @endforelse
                     </div>
                 </div>
             </div>

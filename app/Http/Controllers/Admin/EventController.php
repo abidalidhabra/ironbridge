@@ -244,6 +244,7 @@ class EventController extends Controller
             'start_time.*'         => 'required',
             'end_time.*'           => 'required',
             'date.*'               => 'required',
+            'no_of_balls.*.*'  => 'required|integer',
         ]);
 
 
@@ -596,6 +597,7 @@ class EventController extends Controller
             'variation_image.*.*' => 'required|mimes:jpeg,jpg,png',
             'map_reveal_date.*.*' => 'required',
             'variation_size.*.*'  => 'required|integer',
+            'no_of_balls.*.*'  => 'required|integer',
             // 'variation_name.*.*'  => 'required',
             // 'variation_complexity.*.*'  => 'required',
             'number_generate.*.*'  => 'required|integer',
@@ -967,18 +969,25 @@ class EventController extends Controller
 
     //GET HUNT DETAILS
     public function getHuntList(Request $request){
-        $eventId = $request->get('id');
-        $event = Event::where('_id',$eventId)->with('city:_id,name')->first();
-        
+        $cityId = $request->get('id');
+        // $event = Event::where('city_id',$cityId)->with('city:_id,name')->first();
+        $city = City::where('_id',$cityId)->first();
         $hunts = Hunt::select('name','place_name','city')
-        ->where('city',$event->city->name)
-        ->get();
+                ->where('city',$city->name)
+                ->get();
 
-        return response()->json([
-            'status'  => true,
-            'message' => 'Get data successfully',
-            'data' => $hunts,
-        ]);
+        if (count($hunts) > 0) {
+            return response()->json([
+                'status'  => true,
+                'message' => 'Get data successfully',
+                'data' => $hunts,
+            ]);
+        } else {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Hunt city not found please try again',
+            ]);
+        }
     }
 
 }

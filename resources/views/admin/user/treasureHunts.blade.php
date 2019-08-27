@@ -51,8 +51,8 @@
                 pageLength: 50,
                 processing: true,
                 responsive: true,
-                serverSide: true,
-                // order: [[1, 'desc']],
+                // serverSide: true,
+                order: [],
                 lengthMenu: [[50, 100, 200, -1], [50, 100, 200, "All"]],
                 ajax: {
                     type: "get",
@@ -75,6 +75,12 @@
                     { data:'clue_progress',name:'clue_progress' },
                     { data:'distance_progress',name:'distance_progress'},
                     { data:'view',name:'view'},
+                ],
+                columnDefs: [
+                    {
+                        orderable: false,
+                        targets: [0,6],
+                    }
                 ],
             });
 

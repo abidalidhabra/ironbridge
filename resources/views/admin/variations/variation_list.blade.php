@@ -117,8 +117,8 @@
                 pageLength: 10,
                 processing: true,
                 responsive: true,
-                serverSide: true,
-                order: [[1, 'desc']],
+                // serverSide: true,
+                order: [],
                 lengthMenu: [[10, 50, 100, -1], [10, 50, 100, "All"]],
                 ajax: {
                     type: "GET",
@@ -142,6 +142,12 @@
                 @if(auth()->user()->hasPermissionTo('Edit Game Variations') || auth()->user()->hasPermissionTo('Delete Game Variations'))
                 { data:'action',name:'action' },
                 @endif
+                ],
+                columnDefs: [
+                    {
+                        orderable: false,
+                        targets: [0 , 6],
+                    }
                 ],
 
             });

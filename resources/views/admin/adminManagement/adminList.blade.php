@@ -119,8 +119,8 @@
                 pageLength: 50,
                 processing: true,
                 responsive: true,
-                serverSide: true,
-                order: [[1, 'desc']],
+                // serverSide: true,
+                order: [],
                 lengthMenu: [[10, 50, 100, -1], [10, 50, 100, "All"]],
                 ajax: {
                     type: "get",
@@ -140,6 +140,12 @@
                 { data:'created_at',name:'created_at'},
                 { data:'resend_mail',name:'resend_mail'},
                 { data:'action',name:'action'},
+                ],
+                columnDefs: [
+                    {
+                        orderable: false,
+                        targets: [0,4],
+                    }
                 ],
 
             });
