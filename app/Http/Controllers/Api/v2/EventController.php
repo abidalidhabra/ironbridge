@@ -30,7 +30,7 @@ class EventController extends Controller
 
     public function getEventsInCity(GetEventsInCityRequest $request)
     {
-        $events = Event::upcoming()
+        $events = Event::soonActivatedOrParticipated(auth()->user()->id)
                     ->havingCity($request->city_id)
                     ->withWinningPrize()
                     ->withParticipation($this->user->id)

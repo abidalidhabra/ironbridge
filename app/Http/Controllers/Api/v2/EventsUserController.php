@@ -67,7 +67,7 @@ class EventsUserController extends Controller
             $availableGold = $this->userInterface->deductGold($event->fees);
 
             // prepare output of minigames for the client
-            $eventsUserMiniGamesReface = $this->eventsMiniGameRefaceInterface->output($eventsUserMiniGames->toArray());
+            $eventsUserMiniGamesReface = $this->eventsMiniGameRefaceInterface->output($event, $eventsUserMiniGames);
             
             // prepare output of event for the client
             $eventReface = $this->eventRefaceInterface->output($event);
@@ -97,7 +97,8 @@ class EventsUserController extends Controller
         $miniGames = $this->eventsUserInterface->miniGames($eventsUser);
 
         // prepare output for the client
-        $eventsUserMiniGames = $this->eventsMiniGameRefaceInterface->output($miniGames->toArray());
+
+        $eventsUserMiniGames = $this->eventsMiniGameRefaceInterface->output($event, $miniGames);
 
         return ResponseHelpers::successResponse([
             'event'=> $event,

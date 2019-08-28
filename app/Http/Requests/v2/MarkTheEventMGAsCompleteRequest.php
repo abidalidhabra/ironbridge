@@ -3,7 +3,7 @@
 namespace App\Http\Requests\v2;
 
 use App\Rules\v2\EventMinigameRule;
-use App\Rules\v2\EventParticipationRule;
+use App\Rules\v2\EventMiniGameRoundRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -28,10 +28,10 @@ class MarkTheEventMGAsCompleteRequest extends FormRequest
     public function rules()
     {
         return [
-            'events_minigame_id' => ['required', 'exists:events_minigames,_id', new EventParticipationRule($this->minigame_unique_id, $this->ownableUser())],
+            'events_minigame_id' => ['required', 'exists:events_minigames,_id', new EventMiniGameRoundRule($this->minigame_unique_id, $this->ownableUser())],
             'minigame_unique_id' => ['required'],
             'completion_score' => ['nullable', 'numeric', 'integer', 'min:1'],
-            'completion_time' => ['nullable', 'numeric', 'integer', 'min:1'],
+            'completion_time' => ['required', 'numeric', 'integer', 'min:1'],
         ];
     }
 

@@ -4,7 +4,7 @@ namespace App\Rules\v2;
 
 use Illuminate\Contracts\Validation\Rule;
 
-class EventMinigameRule implements Rule
+class EventEligibilityRule implements Rule
 {
     /**
      * Create a new rule instance.
