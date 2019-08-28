@@ -100,17 +100,51 @@
                     <div class="fdaboxallset">
                         <div class="form-group col-md-4">
                             <label class="form-label">Rejection Ratio
-                                <small> In percentage (enter 0 if no rejection ratio)</small>
+                                <small> In percentage</small>
                                 <a data-toggle="tooltip" title="% of people who will be going to eliminate daily basis" data-placement="right">?</a>
                             </label>
-                            <input type="text" name="rejection_ratio" class="form-control" placeholder="Enter the rejection ratio" value="@if(isset($event->rejection_ratio)){{ $event->rejection_ratio }} @endif">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="text" name="rejection_ratio" class="form-control" placeholder="Enter the rejection ratio" value="@if(isset($event->rejection_ratio)){{ $event->rejection_ratio }} @endif">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" name="rejection_ratio_check">No Rejection Ratio
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group col-md-4">
                             <label class="form-label">Winning Ratio
-                                <small> In fix amount (enter 0 if no winning ratio)</small>
+                                <small> In fix amount</small>
                                 <a data-toggle="tooltip" title="# of people who will be going to win this game" data-placement="right">?</a>
                             </label>
-                            <input type="text" name="winning_ratio" class="form-control" id="winning_ratio" placeholder="Enter the winning ratio" value="@if(isset($event->winning_ratio)){{ $event->winning_ratio }}@endif">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="text" name="winning_ratio" class="form-control" id="winning_ratio" placeholder="Enter the winning ratio" value="@if(isset($event->winning_ratio)){{ $event->winning_ratio }}@endif">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" name="winning_ratio_check">No Winning Ratio
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label class="form-label">Maximum Participants
+                                <!-- <small> In fix amount (enter 0 if no winning ratio)</small>
+                                <a data-toggle="tooltip" title="# of people who will be going to win this game" data-placement="right">?</a> -->
+                            </label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="text" name="participation" class="form-control" id="participation" placeholder="Enter the participation" value="@if(isset($event->participation)){{ $event->participation }}@endif">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" name="participation_check">No limit
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -143,6 +177,7 @@
                             <textarea name="description" class="form-control" placeholder="Enter the description">@if(isset($event->description)){{ $event->description }}@endif</textarea>
                         </div>
                     </div>
+
                 </div>
                  <div class="form-group Submitnextbtn">
                     <button type="submit" class="btn btn-success btnSubmit">SUBMIT & GO NEXT</button>
@@ -164,12 +199,70 @@
         /* DATE TIME PICKER */
         //$('.datetimepicker').datetimepicker();
         $(function () {
+
+
+
             $('#city_id').select2();
             $('[name=type] , [name=coin_type]').select2({
               minimumResultsForSearch: Infinity
             });
 
             $('[data-toggle="tooltip"]').tooltip();   
+
+            /* CHECK BOX  */
+            $(document).on('click','input[name="rejection_ratio_check"]',function(){
+                if($(this).prop("checked") == true){
+                    $('[name=rejection_ratio]').prop("disabled", true);
+                } else if($(this).prop("checked") == false){
+                    $('[name=rejection_ratio]').prop("disabled", false);
+                    
+                }
+            })
+
+            $(document).on('click','input[name="winning_ratio_check"]',function(){
+                if($(this).prop("checked") == true){
+                    $('[name=winning_ratio]').prop("disabled", true);
+                } else if($(this).prop("checked") == false){
+                    $('[name=winning_ratio]').prop("disabled", false);
+                    
+                }
+            })
+
+            $(document).on('click','input[name="participation_check"]',function(){
+                if($(this).prop("checked") == true){
+                    $('[name=participation]').prop("disabled", true);
+                } else if($(this).prop("checked") == false){
+                    $('[name=participation]').prop("disabled", false);
+                }
+            })
+
+
+            @if($event)
+                @if(isset($event->rejection_ratio))
+                    $('[name=rejection_ratio]').prop("disabled", false);
+                    $('[name=rejection_ratio_check]').prop('checked', false); 
+                @else
+                    $('[name=rejection_ratio_check]').prop('checked', true); 
+                    $('[name=rejection_ratio]').prop("disabled", true);
+                @endif
+
+                @if(isset($event->winning_ratio))
+                    $('[name=winning_ratio]').prop("disabled", false);
+                    $('[name=winning_ratio_check]').prop('checked', false); 
+                @else
+                    $('[name=winning_ratio_check]').prop('checked', true); 
+                    $('[name=winning_ratio]').prop("disabled", true);
+                @endif
+
+                @if(isset($event->participation))
+                    $('[name=participation]').prop("disabled", false);
+                    $('[name=participation_check]').prop('checked', false); 
+                @else
+                    $('[name=participation_check]').prop('checked', true); 
+                    $('[name=participation]').prop("disabled", true);
+                @endif
+            @endif
+            /* END CHECK BOX */
 
             /*$('#discount_date').datepicker({
                 startDate: new Date()
@@ -179,16 +272,7 @@
                 format: "DD-MM-YYYY hh:mm A",
                 minDate: moment(enddate),
                 // maxDate: moment(),
-            });
-
-           /* $('#startdate').datepicker({
-                startDate: new Date()
-            });
-
-            $('#enddate').datepicker({
-                startDate: new Date()
-            });*/
-            
+            });          
 
             var startDate = new Date();
             $('#startdate').datepicker({

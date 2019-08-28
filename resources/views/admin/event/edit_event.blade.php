@@ -103,17 +103,51 @@
                     <div class="fdaboxallset">
                         <div class="form-group col-md-4">
                             <label class="form-label">Rejection Ratio
-                                <small> In percentage (enter 0 if no rejection ratio)</small>
+                                <small> In percentage</small>
                                 <a data-toggle="tooltip" title="% of people who will be going to eliminate daily basis" data-placement="right">?</a>
                             </label>
-                            <input type="text" name="rejection_ratio" class="form-control" placeholder="Enter the rejection ratio" value="@if(isset($event->rejection_ratio)){{ $event->rejection_ratio }} @endif">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="text" name="rejection_ratio" class="form-control" placeholder="Enter the rejection ratio" value="@if(isset($event->rejection_ratio)){{ $event->rejection_ratio }} @endif">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" name="rejection_ratio_check">No Rejection Ratio
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group col-md-4">
                             <label class="form-label">Winning Ratio
-                                <small> In fix amount (enter 0 if no winning ratio)</small>
+                                <small> In fix amount</small>
                                 <a data-toggle="tooltip" title="# of people who will be going to win this game" data-placement="right">?</a>
                             </label>
-                            <input type="text" name="winning_ratio" class="form-control" id="winning_ratio" placeholder="Enter the winning ratio" value="@if(isset($event->winning_ratio)){{ $event->winning_ratio }}@endif">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="text" name="winning_ratio" class="form-control" id="winning_ratio" placeholder="Enter the winning ratio" value="@if(isset($event->winning_ratio)){{ $event->winning_ratio }}@endif">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" name="winning_ratio_check">No Winning Ratio
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label class="form-label">Maximum Participants
+                                <!-- <small> In fix amount (enter 0 if no winning ratio)</small>
+                                <a data-toggle="tooltip" title="# of people who will be going to win this game" data-placement="right">?</a> -->
+                            </label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="text" name="participation" class="form-control" id="participation" placeholder="Enter the participation" value="@if(isset($event->participation)){{ $event->participation }}@endif">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" name="participation_check">No limit
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -242,14 +276,16 @@
                                                 
                                             <?php } else if($miniGameId == '5b0e303f51b2010ec820fb4d'){ ?>
                                                 <!-- Number search -->
-                                                <div class="form-group col-md-4">
+                                                <!-- <div class="form-group col-md-4">
                                                     <label class="form-label">Row</label>
                                                     <input type="text" value="{{ $miniGame['variation_data']['row'] }}" name="row[{{$key}}][{{$index}}]" id="row" class="form-control">
                                                 </div>
                                                 <div class="form-group col-md-4">
                                                     <label class="form-label">Column</label>
                                                     <input type="text" value="{{ $miniGame['variation_data']['column'] }}" name="column[{{$key}}][{{$index}}]" id="column" class="form-control">
-                                                </div>
+                                                </div> -->
+                                                <input type="hidden" value="10" name="row[{{$key}}][{{$index}}]" class="form-control">
+                                                <input type="hidden" value="10" name="column[{{$key}}][{{$index}}]" class="form-control">
                                                 <div class="form-group col-md-4">
                                                     <label class="form-label">Number Generate</label>
                                                     <input type="text" value="{{ $miniGame['variation_data']['number_generate'] }}" name="number_generate[{{$key}}][{{$index}}]" id="number_generate" class="form-control">
@@ -305,11 +341,11 @@
                                             <?php } else if($miniGameId == '5c188ab5719a1408746c473b'){ ?>
                                                 <!-- 2048 -->
                                                 <div class="form-group col-md-4">
-                                                    <label class="form-label">Row <small class="form-text text-muted">must of [4,6,8]</small></label>
+                                                    <label class="form-label">Row <small class="form-text text-muted">must of [4,5,6]</small></label>
                                                     <input type="text" value="{{ $miniGame['variation_data']['row'] }}" name="row[{{$key}}][{{$index}}]" id="row" class="form-control">
                                                 </div>
                                                 <div class="form-group col-md-4">
-                                                    <label class="form-label">Column <small class="form-text text-muted">must of [4,6,8]</small></label>
+                                                    <label class="form-label">Column <small class="form-text text-muted">must of [4,5,6]</small></label>
                                                     <input type="text" value="{{ $miniGame['variation_data']['column'] }}" name="column[{{$key}}][{{$index}}]" id="column" class="form-control">
                                                 </div>
                                                 <!-- <div class="form-group col-md-4">
@@ -318,18 +354,20 @@
                                                 </div> -->
                                             <?php } else if($miniGameId == '5c188b06719a1408746c473c'){ ?>
                                                 <!-- Block Game -->
-                                                <div class="form-group col-md-4">
+                                                <!-- <div class="form-group col-md-4">
                                                     <label class="form-label">Row <small class="form-text text-muted">must of [9,10]</small></label>
                                                     <input type="text" value="{{ $miniGame['variation_data']['row'] }}" name="row[{{$key}}][{{$index}}]" id="row" class="form-control">
                                                 </div>
                                                 <div class="form-group col-md-4">
                                                     <label class="form-label">Column <small class="form-text text-muted">must of [9,10]</small></label>
                                                     <input type="text" value="{{ $miniGame['variation_data']['column'] }}" name="column[{{$key}}][{{$index}}]" id="column" class="form-control">
-                                                </div>
+                                                </div> -->
                                                 <!-- <div class="form-group col-md-4">
                                                     <label class="form-label">Target</label>
                                                     <input type="text" value="@if(isset($miniGame['variation_data']['target'])){{ $miniGame['variation_data']['target'] }}@endif" name="target[{{$key}}][{{$index}}]" id="target" class="form-control">
                                                 </div> -->
+                                                <input type="hidden" value="10" name="row[{{$key}}][{{$index}}]" class="form-control">
+                                                <input type="hidden" value="10" name="column[{{$key}}][{{$index}}]" class="form-control">
                                             
                                             <?php } else if($miniGameId == '5c39a1f3697b251760c0d5fc'){ ?>
                                                 <!-- Bubble Shooter -->
@@ -341,8 +379,14 @@
                                                     <label class="form-label">No Of balls</label>
                                                     <input type="text"  value="{{ $miniGame['variation_data']['no_of_balls'] }}" name="no_of_balls[{{$key}}][{{$index}}]" id="no_of_balls" class="form-control">
                                                 </div>                                            
-                                            <?php } else if($miniGameId == '5c80fd106650bf31a808abed' || $miniGameId == '5c80fd226650bf31a808abee' || $miniGameId == '5c5d282b697b25205433531d' || $miniGameId == '5c5d279c697b25205433531c' || $miniGameId == '5c399831697b251760c0d5e2'){ ?>
-                                                <!-- Slices -->
+                                            <?php } else if($miniGameId == '5c5d279c697b25205433531c'){ ?>
+                                                <!-- snake -->
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Target</label>
+                                                    <input type="text" value="@if(isset($miniGame['variation_data']['target'])){{ $miniGame['variation_data']['target'] }}@endif" name="target[{{$key}}][{{$index}}]" class="form-control">
+                                                </div>
+                                            <?php } else if ($miniGameId == '5c80fd106650bf31a808abed' || $miniGameId == '5c80fd226650bf31a808abee' || $miniGameId == '5c5d282b697b25205433531d' || $miniGameId == '5c399831697b251760c0d5e2') {?>
+                                            
                                                 <!-- <div class="form-group col-md-4">
                                                     <label class="form-label">Target</label>
                                                     <input type="text" value="@if(isset($miniGame['variation_data']['target'])){{ $miniGame['variation_data']['target'] }}@endif" name="target[{{$key}}][{{$index}}]" id="target" class="form-control">
@@ -529,7 +573,7 @@
                             </label>
                         </div>
                         
-                        <div class="form-group col-md-2">
+                        <div class="form-group col-md-3">
                             <label>Rank</label>
                         </div>
                         <div class="form-group col-md-2">
@@ -538,9 +582,9 @@
                         <div class="form-group col-md-2">
                             <label>Prize type</label>
                         </div>
-                        <div class="form-group col-md-2">
+                        <!-- <div class="form-group col-md-2">
                             <label>Map time delay</label>
-                        </div>
+                        </div> -->
                     </div>
                     <div id="prize_box">
                         @forelse($event->prizes as $key => $value)
@@ -552,7 +596,7 @@
                                     </select>
                                 </div>
                                 <input type="hidden" name="prize_index" value="{{ $key }}">
-                                <div class="form-group col-md-2 rank_box">
+                                <div class="form-group col-md-3 rank_box">
                                     @if(isset($value->group_type) && $value->group_type == "individual")
                                         <input type="text" name="rank[{{ $key }}]" class="form-control" placeholder="Rank" value="{{ $value->rank }}">
                                     @else
@@ -575,16 +619,18 @@
                                         <option value="gold" @if(isset($value->prize_type) && $value->prize_type == "gold") {{ 'selected' }} @endif>Gold</option>
                                     </select>
                                 </div>
-                                <div class="form-group col-md-2">
+                                <!-- <div class="form-group col-md-2">
                                     <input type="text" name="map_time_delay[{{ $key }}]" class="form-control" placeholder="Map time delay" value="{{ $value->map_time_delay }}">
-                                </div>
+                                </div> -->
                                 <div class="form-group col-md-2 button_box">
                                     <?php
                                         $totalPrize = count($event->prizes)-1;
                                     ?>
                                     @if($totalPrize == $key)
                                         <a href="javascript:void(0)" class="btn add_prize"><i class="fa fa-plus "></i></a>
-                                        <a href="javascript:void(0)" class="btn remove_prize"><i class="fa fa-minus "></i></a>
+                                        @if($totalPrize != 0)
+                                            <a href="javascript:void(0)" class="btn remove_prize"><i class="fa fa-minus "></i></a>
+                                        @endif
                                     @else
                                         <a href="javascript:void(0)" class="btn remove_prize"><i class="fa fa-minus "></i></a>
                                     @endif
@@ -599,7 +645,7 @@
                                     </select>
                                 </div>
                                 <input type="hidden" name="prize_index" value="0">
-                                <div class="form-group col-md-2 rank_box">
+                                <div class="form-group col-md-3 rank_box">
                                     <input type="text" name="rank[]" class="form-control" placeholder="Rank">
                                 </div>
                                 <div class="form-group col-md-2">
@@ -611,11 +657,96 @@
                                         <option value="gold">Gold</option>
                                     </select>
                                 </div>
-                                <div class="form-group col-md-2">
+                                <!-- <div class="form-group col-md-2">
+                                    <input type="text" name="map_time_delay[]" class="form-control" placeholder="Map time delay">
+                                </div> -->
+                                <div class="form-group col-md-2 button_box">
+                                    <a href="javascript:void(0)" class="btn add_prize"><i class="fa fa-plus "></i></a>
+                                </div>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+            <!-- PRIZE START CODE -->     
+
+            <!-- MAP TIME DEALY --> 
+            <div class="daingaemtitlebox">
+                <h4>Map time delay</h4>
+            </div>
+            <div class="allbasicdirmain">                
+                <div class="allbasicdirbox">
+                    <div class="">
+                        <div class="form-group col-md-3">
+                            <label class="form-label">Group Type
+                                <a data-toggle="tooltip" title="Individual Prize or Bulk prize" data-placement="right">?</a>
+                            </label>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Rank</label>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label>Map time delay</label>
+                        </div>
+                    </div>
+                    <div id="map_time_dealy_box">
+                        @forelse($event->event_map_time_delay as $key => $value)
+                            <div class="map_time_dealy_box">
+                                <div class="form-group col-md-3">
+                                    <select class="form-control map_time_group_type" name="map_time_group_type[{{ $key }}]">
+                                        <option value="individual" @if(isset($value->group_type) && $value->group_type == "individual") {{ 'selected' }} @endif>Individual</option>
+                                        <option value="group" @if(isset($value->group_type) && $value->group_type == "group") {{ 'selected' }} @endif>Group</option>
+                                    </select>
+                                </div>
+                                <input type="hidden" name="map_time_index" value="{{ $key }}">
+                                <div class="form-group col-md-3 rank_box">
+                                    @if(isset($value->group_type) && $value->group_type == "individual")
+                                        <input type="text" name="map_time_rank[{{ $key }}]" class="form-control" placeholder="Rank" value="{{ $value->rank }}">
+                                    @else
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <input type="text" name="map_time_start_rank[{{ $key }}]" class="form-control col-md-12" placeholder="Start" value="{{ $value->start_rank }}">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="text" name="map_time_end_rank[{{ $key }}]" class="form-control col-md-12" placeholder="End" value="{{ $value->end_rank }}">
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <input type="text" name="map_time_delay[{{ $key }}]" class="form-control" placeholder="Map time delay" value="{{ $value->map_time_delay/60 }}">
+                                </div>
+                                <div class="form-group col-md-2 button_box">
+                                    <?php
+                                        $totalPrize = count($event->event_map_time_delay)-1;
+                                    ?>
+                                    @if($totalPrize == $key)
+                                        <a href="javascript:void(0)" class="btn add_map_time"><i class="fa fa-plus "></i></a>
+                                        @if($totalPrize != 0)
+                                            <a href="javascript:void(0)" class="btn remove_map_time"><i class="fa fa-minus "></i></a>
+                                        @endif
+                                    @else
+                                        <a href="javascript:void(0)" class="btn remove_map_time"><i class="fa fa-minus "></i></a>
+                                    @endif
+                                </div>
+                            </div>
+                        @empty
+                            <div class="map_time_dealy_box">
+                                <div class="form-group col-md-3">
+                                    <select class="form-control map_time_group_type" name="map_time_group_type[]">
+                                        <option value="individual">Individual</option>
+                                        <option value="group">Group</option>
+                                    </select>
+                                </div>
+                                <input type="hidden" name="map_time_index" value="0">
+                                <div class="form-group col-md-3 rank_box">
+                                    <input type="text" name="map_time_rank[]" class="form-control" placeholder="Rank">
+                                </div>
+                                <div class="form-group col-md-3">
                                     <input type="text" name="map_time_delay[]" class="form-control" placeholder="Map time delay">
                                 </div>
                                 <div class="form-group col-md-2 button_box">
-                                    <a href="javascript:void(0)" class="btn add_prize"><i class="fa fa-plus "></i></a>
+                                    <a href="javascript:void(0)" class="btn add_map_time"><i class="fa fa-plus "></i></a>
                                 </div>
                             </div>
                         @endforelse
@@ -626,8 +757,7 @@
                     <button type="submit" class="btn btn-success btnSubmit">SUBMIT</button>
                 </div>
             </div>
-            <!-- PRIZE START CODE -->     
-
+            <!-- END MAP TIME DEALY --> 
             
     </form>
     </div>
@@ -688,6 +818,60 @@
             });
 
             $('[data-toggle="tooltip"]').tooltip();   
+
+            /* CHECK BOX  */
+            $(document).on('click','input[name="rejection_ratio_check"]',function(){
+                if($(this).prop("checked") == true){
+                    $('[name=rejection_ratio]').prop("disabled", true);
+                } else if($(this).prop("checked") == false){
+                    $('[name=rejection_ratio]').prop("disabled", false);
+                    
+                }
+            })
+
+            $(document).on('click','input[name="winning_ratio_check"]',function(){
+                if($(this).prop("checked") == true){
+                    $('[name=winning_ratio]').prop("disabled", true);
+                } else if($(this).prop("checked") == false){
+                    $('[name=winning_ratio]').prop("disabled", false);
+                    
+                }
+            })
+
+             $(document).on('click','input[name="participation_check"]',function(){
+                if($(this).prop("checked") == true){
+                    $('[name=participation]').prop("disabled", true);
+                } else if($(this).prop("checked") == false){
+                    $('[name=participation]').prop("disabled", false);
+                }
+            })
+
+            @if($event)
+                @if(isset($event->rejection_ratio))
+                    $('[name=rejection_ratio]').prop("disabled", false);
+                    $('[name=rejection_ratio_check]').prop('checked', false); 
+                @else
+                    $('[name=rejection_ratio_check]').prop('checked', true); 
+                    $('[name=rejection_ratio]').prop("disabled", true);
+                @endif
+
+                @if(isset($event->winning_ratio))
+                    $('[name=winning_ratio]').prop("disabled", false);
+                    $('[name=winning_ratio_check]').prop('checked', false); 
+                @else
+                    $('[name=winning_ratio_check]').prop('checked', true); 
+                    $('[name=winning_ratio]').prop("disabled", true);
+                @endif
+
+                @if(isset($event->participation))
+                    $('[name=participation]').prop("disabled", false);
+                    $('[name=participation_check]').prop('checked', false); 
+                @else
+                    $('[name=participation_check]').prop('checked', true); 
+                    $('[name=participation]').prop("disabled", true);
+                @endif
+            @endif
+            /* END CHECK BOX */
 
             /*$('#discount_date').datepicker({
                 startDate: new Date()
@@ -1096,7 +1280,7 @@
                                 </select>
                             </div>
                             <input type="hidden" name="prize_index" value="`+currentIndex+`">
-                            <div class="form-group col-md-2 rank_box">
+                            <div class="form-group col-md-3 rank_box">
                                 <input type="text" name="rank[`+currentIndex+`]" class="form-control" placeholder="Rank">
                             </div>
                             <div class="form-group col-md-2">
@@ -1108,9 +1292,9 @@
                                     <option value="gold">Gold</option>
                                 </select>
                             </div>
-                            <div class="form-group col-md-2">
+                            <!--<div class="form-group col-md-2">
                                 <input type="text" name="map_time_delay[`+currentIndex+`]" class="form-control" placeholder="Map time delay">
-                            </div>
+                            </div>-->
                             <div class="form-group col-md-2 button_box">
                                 <a href="javascript:void(0)" class="btn add_prize"><i class="fa fa-plus "></i></a>
                                 <a href="javascript:void(0)" class="btn remove_prize"><i class="fa fa-minus "></i></a>
@@ -1147,6 +1331,106 @@
             });
 
         });
+
+         /* Map time delay */
+            $(document).on('click','.add_map_time',function(){
+                $(this).parents('.button_box').find('.remove_map_time').remove();
+                $(this).parents('.button_box').append('<a href="javascript:void(0)" class="btn remove_map_time"><i class="fa fa-minus "></i></a>');
+                $(this).remove();
+                let prizeIndex = $('input[name="map_time_index"]:last').val();
+                let currentIndex = parseInt(prizeIndex)+1;
+
+                $('#map_time_dealy_box').append(`<div class="map_time_dealy_box">
+                            <div class="form-group col-md-3">
+                                    <select class="form-control map_time_group_type" name="map_time_group_type[]">
+                                        <option value="individual">Individual</option>
+                                        <option value="group">Group</option>
+                                    </select>
+                                </div>
+                            <input type="hidden" name="map_time_index" value="0">
+                            <div class="form-group col-md-3 rank_box">
+                                <input type="text" name="map_time_rank[]" class="form-control" placeholder="Rank">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <input type="text" name="map_time_delay[]" class="form-control" placeholder="Map time delay">
+                            </div>
+                            <div class="form-group col-md-2 button_box">
+                                <a href="javascript:void(0)" class="btn add_map_time"><i class="fa fa-plus "></i></a>
+                                <a href="javascript:void(0)" class="btn remove_map_time"><i class="fa fa-minus "></i></a>
+                            </div>
+                        </div>`);
+            });
+
+            $(document).on('click','.remove_map_time',function(){
+                $(this).parents('.map_time_dealy_box').remove();
+                $('.add_map_time').remove();
+                $('#map_time_dealy_box .map_time_dealy_box:last').find('.button_box').prepend(`<a href="javascript:void(0)" class="btn add_map_time"><i class="fa fa-plus "></i></a>`);
+                if($('#map_time_dealy_box .map_time_dealy_box').length == 1){
+                    $('.remove_map_time').remove();
+                }
+            });
+
+            /* MAP TIME DELAY RANK CLICK */
+            $(document).on('focusout','input[name^="map_time_rank"] , input[name^="map_time_start_rank"] , input[name^="map_time_end_rank"]',function(){
+                var rank_array = [];
+                $('input[name^="rank"] , input[name^="start_rank"] , input[name^="end_rank"]').each(function() {
+                    rank_array.push($(this).val());
+                });
+                var rank = parseInt($(this).val());
+                var max_rank = Math.max.apply(Math,rank_array);
+                var min_rank = Math.min.apply(Math,rank_array);
+
+                if (min_rank > rank) {
+                    toastr.warning('Min value rank '+ min_rank);
+                } 
+
+                if(max_rank < rank) {
+                    toastr.warning('Max value rank '+ max_rank);
+                }
+            });
+
+            function rankCheck(){
+                $('input[name^="map_time_rank"] , input[name^="map_time_start_rank"] , input[name^="map_time_end_rank"]').each(function(){
+                    var rank_array = [];
+                    $('input[name^="rank"] , input[name^="start_rank"] , input[name^="end_rank"]').each(function() {
+                        rank_array.push($(this).val());
+                    });
+                    var rank = parseInt($(this).val());
+                    var max_rank = Math.max.apply(Math,rank_array);
+                    var min_rank = Math.min.apply(Math,rank_array);
+
+                    if (min_rank > rank) {
+                        toastr.warning('Min value rank '+ min_rank);
+                        return false;
+                    } 
+
+                    if(max_rank < rank) {
+                        toastr.warning('Max value rank '+ max_rank);
+                        return false;
+                    }
+                    
+                    // return true;            
+                });
+            }
+
+            $(document).on('change','.map_time_group_type',function(){
+                var group_type = $(this).val();
+                let mapIndex = $(this).parents('.map_time_dealy_box').find('input[name="map_time_index"]').val();
+                if (group_type == 'group') {
+                    $(this).parents('.map_time_dealy_box').find('.rank_box').html(`<div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <input type="text" name="map_time_start_rank[`+mapIndex+`]" class="form-control col-md-12 start_rank" placeholder="Start">
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <input type="text" name="map_time_end_rank[`+mapIndex+`]" class="form-control col-md-12" placeholder="End">
+                                                                    </div>
+                                                                </div>`);
+                } else if(group_type == 'individual'){
+
+                    $(this).parents('.map_time_dealy_box').find('.rank_box').html(`<input type="text" name="map_time_rank[`+mapIndex+`]" class="form-control" placeholder="Rank">`);
+                }
+            });
+        /* END MAP TIME DELAY */
     </script>
     <!-- HUNT -->
 

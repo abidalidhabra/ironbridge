@@ -10,6 +10,8 @@ use App\Models\v1\News;
 use App\Models\v1\User;
 use App\Models\v2\Hunt;
 use App\Models\v2\HuntUser;
+use App\Models\v2\Event;
+use App\Models\v2\EventsUser;
 use Carbon\Carbon;
 use Validator;
 use Auth;
@@ -51,6 +53,14 @@ class AdminController extends Controller
             $data['huntTop'][$value] = $hunt->name;
         }
 
+
+        /* EVENT */
+        $events = Event::select('_id','status','name')
+                        ->get();
+        $eventsUser = EventsUser::count();
+        
+        $data['total_event'] = $events->count();
+        $data['event_participations'] = $eventsUser;
         return view('admin.admin-home',compact('data'));
 
     }

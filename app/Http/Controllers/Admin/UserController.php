@@ -16,6 +16,7 @@ use Validator;
 use App\Models\v2\PracticeGameUser;
 use App\Models\v2\PlanPurchase;
 use MongoDB\BSON\ObjectId as MongoDBId;
+use App\Models\v2\EventsUser;
 
 class UserController extends Controller
 {
@@ -439,5 +440,16 @@ class UserController extends Controller
         
         return view('admin.user.partManage',compact('id','practiceGames'));
     }
+
+    public function eventsUser($id){
+        $eventsUser = EventsUser::where('user_id',$id)
+                                ->with('event.city:_id,name')
+                                ->with('event:_id,city_id,name,starts_at,ends_at')
+                                ->get();
+                                
+        return view('admin.user.events',compact('id','eventsUser'));
+    }
+
+
 
 }

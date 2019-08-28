@@ -126,11 +126,25 @@
         </div>
         <div class="verified_detlisbox">
             <ul>
+                <h3>Events</h3>
                 <li>
+                    <img src="{{ asset('admin_assets/svg/news.svg') }}">
+                    <h3>{{ $data['total_event'] }}</h3>
+                    <p>Total Events</p>
+                </li>
+                <li>
+                    <img src="{{ asset('admin_assets/svg/news.svg') }}">
+                    <h3>{{ $data['event_participations'] }}</h3>
+                    <p>Total Participated</p>
+                </li>     
+            </ul>
+            <ul>
+                <!-- <li>
                     <img src="{{ asset('admin_assets/svg/news.svg') }}">
                     <h3>{{ $data['news'] }}</h3>
                     <p>Total News</p>
-                </li>
+                </li> -->
+                <h3>Hunts</h3>
                 <li>
                     <img src="{{ asset('admin_assets/svg/earth.svg') }}">
                     <h3>{{ $data['total_country'] }}</h3>
@@ -150,17 +164,7 @@
                     <img src="{{ asset('admin_assets/svg/map.svg') }}">
                     <h3>{{ $data['treasure_locations'] }}</h3>
                     <p>Total Treasure Locations</p>
-                </li>         
-                <!-- <li>
-                    <img src="{{ asset('admin_assets/svg/map.svg') }}">
-                    <h3>{{ $data['huntCompleted'] }}</h3>
-                    <p>Completed Hunt</p>
-                </li>
-                <li>
-                    <img src="{{ asset('admin_assets/svg/map.svg') }}">
-                    <h3>{{ $data['huntProgress'] }}</h3>
-                    <p>In Progress Hunt</p>
-                </li> -->     
+                </li>     
             </ul>
         </div>
     </div>

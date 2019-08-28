@@ -53,6 +53,7 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::post('/addSkeletonKey',[ 'middleware' => ['permission:Add Users'], 'uses' => 'UserController@addSkeletonKey'])->name('addSkeletonKey');
 
 	Route::get('/practiceGameUser/{id}','UserController@practiceGameUser')->name('practiceGameUser');
+	Route::get('/events/{id}','UserController@eventsUser')->name('eventsUser');
 	
 
 
@@ -139,6 +140,10 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::post('addHuntDetails', [ 'middleware' => ['permission:Add Event'], 'uses' => 'EventController@addHuntDetails'])->name('event.addHuntDetails');
 	Route::post('updateEvent', [ 'middleware' => ['permission:Edit Event'], 'uses' => 'EventController@updateEvent'])->name('event.updateEvent');
 	Route::post('getHuntList', [ 'middleware' => ['permission:Add Event'], 'uses' => 'EventController@getHuntList'])->name('event.getHuntList');
+
+	//event participated
+	Route::get('event_participated', [ 'middleware' => ['permission:View Event Participated'], 'uses' => 'EventParticipatedController@index'])->name('eventparticipated.index');
+	Route::get('getEventParticipatedList', [ 'middleware' => ['permission:View Event Participated'], 'uses' => 'EventParticipatedController@getEventParticipatedList'])->name('getEventParticipatedList');
 
 
 	//PAYMENT
