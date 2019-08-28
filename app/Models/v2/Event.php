@@ -31,7 +31,8 @@ class Event extends Eloquent
         'discount',
         'description',
         'attempts',
-        'status'
+        'status',
+        'participation'
     ];    
 
     protected $dates = [
@@ -60,6 +61,13 @@ class Event extends Eloquent
     {
         return $this->hasMany('App\Models\v2\EventsPrize','event_id');
     }
+
+    public function event_map_time_delay()
+    {
+        return $this->hasMany('App\Models\v2\EventMapTimeDelay','event_id');
+    }
+
+
 
     public function participations()
     {

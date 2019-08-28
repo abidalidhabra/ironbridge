@@ -119,14 +119,18 @@
                                                 
                                             <?php } else if($miniGameId == '5b0e303f51b2010ec820fb4d'){ ?>
                                                 <!-- Number search -->
-                                                <div class="form-group col-md-4">
+                                                <!-- <div class="form-group col-md-4">
                                                     <label class="form-label">Row</label>
                                                     <input type="text" value="{{ $miniGame['variation_data']['row'] }}" name="row[{{$key}}][{{$index}}]" id="row" class="form-control">
                                                 </div>
                                                 <div class="form-group col-md-4">
                                                     <label class="form-label">Column</label>
                                                     <input type="text" value="{{ $miniGame['variation_data']['column'] }}" name="column[{{$key}}][{{$index}}]" id="column" class="form-control">
-                                                </div>
+                                                </div> -->
+                                                    <input type="hidden" value="10" name="row[{{$key}}][{{$index}}]" class="form-control">
+
+                                                    <input type="hidden" value="10" name="column[{{$key}}][{{$index}}]" class="form-control">
+
                                                 <div class="form-group col-md-4">
                                                     <label class="form-label">Number Generate</label>
                                                     <input type="text" value="{{ $miniGame['variation_data']['number_generate'] }}" name="number_generate[{{$key}}][{{$index}}]" id="number_generate" class="form-control">
@@ -182,11 +186,11 @@
                                             <?php } else if($miniGameId == '5c188ab5719a1408746c473b'){ ?>
                                                 <!-- 2048 -->
                                                 <div class="form-group col-md-4">
-                                                    <label class="form-label">Row <small class="form-text text-muted">must of [4,6,8]</small></label>
+                                                    <label class="form-label">Row <small class="form-text text-muted">must of [4,5,6]</small></label>
                                                     <input type="text" value="{{ $miniGame['variation_data']['row'] }}" name="row[{{$key}}][{{$index}}]" id="row" class="form-control">
                                                 </div>
                                                 <div class="form-group col-md-4">
-                                                    <label class="form-label">Column <small class="form-text text-muted">must of [4,6,8]</small></label>
+                                                    <label class="form-label">Column <small class="form-text text-muted">must of [4,5,6]</small></label>
                                                     <input type="text" value="{{ $miniGame['variation_data']['column'] }}" name="column[{{$key}}][{{$index}}]" id="column" class="form-control">
                                                 </div>
                                                 <!-- <div class="form-group col-md-4">
@@ -195,18 +199,20 @@
                                                 </div> -->
                                             <?php } else if($miniGameId == '5c188b06719a1408746c473c'){ ?>
                                                 <!-- Block Game -->
-                                                <div class="form-group col-md-4">
+                                                <!-- <div class="form-group col-md-4">
                                                     <label class="form-label">Row <small class="form-text text-muted">must of [9,10]</small></label>
-                                                    <input type="text" value="{{ $miniGame['variation_data']['row'] }}" name="row[{{$key}}][{{$index}}]" id="row" class="form-control">
+                                                    <input type="text" value="{{ $miniGame['variation_data']['row'] }}" name="row[{{$key}}][{{$index}}]" class="form-control">
                                                 </div>
                                                 <div class="form-group col-md-4">
                                                     <label class="form-label">Column <small class="form-text text-muted">must of [9,10]</small></label>
-                                                    <input type="text" value="{{ $miniGame['variation_data']['column'] }}" name="column[{{$key}}][{{$index}}]" id="column" class="form-control">
-                                                </div>
+                                                    <input type="text" value="{{ $miniGame['variation_data']['column'] }}" name="column[{{$key}}][{{$index}}]" class="form-control">
+                                                </div> -->
                                                 <!-- <div class="form-group col-md-4">
                                                     <label class="form-label">Target</label>
                                                     <input type="text" value="@if(isset($miniGame['variation_data']['target'])){{ $miniGame['variation_data']['target'] }}@endif" name="target[{{$key}}][{{$index}}]" id="target" class="form-control">
                                                 </div> -->
+                                                <input type="hidden" value="10" name="row[{{$key}}][{{$index}}]" class="form-control">
+                                                <input type="hidden" value="10" name="column[{{$key}}][{{$index}}]" class="form-control">
                                             
                                             <?php } else if($miniGameId == '5c39a1f3697b251760c0d5fc'){ ?>
                                                 <!-- Bubble Shooter -->
@@ -218,14 +224,19 @@
                                                     <label class="form-label">No Of balls</label>
                                                     <input type="text"  value="{{ $miniGame['variation_data']['no_of_balls'] }}" name="no_of_balls[{{$key}}][{{$index}}]" id="no_of_balls" class="form-control">
                                                 </div>                                            
-                                            <?php } else if($miniGameId == '5c80fd106650bf31a808abed' || $miniGameId == '5c80fd226650bf31a808abee' || $miniGameId == '5c5d282b697b25205433531d' || $miniGameId == '5c5d279c697b25205433531c' || $miniGameId == '5c399831697b251760c0d5e2'){ ?>
-                                                <!-- Slices -->
+                                            <?php } else if($miniGameId == '5c5d279c697b25205433531c'){ ?>
+                                                <!-- snake -->
+                                                <div class="form-group col-md-4">
+                                                    <label class="form-label">Target</label>
+                                                    <input type="text" value="@if(isset($miniGame['variation_data']['target'])){{ $miniGame['variation_data']['target'] }}@endif" name="target[{{$key}}][{{$index}}]" class="form-control">
+                                                </div>
+                                            <?php } else if ($miniGameId == '5c80fd106650bf31a808abed' || $miniGameId == '5c80fd226650bf31a808abee' || $miniGameId == '5c5d282b697b25205433531d' || $miniGameId == '5c399831697b251760c0d5e2') {?>
+                                            
                                                 <!-- <div class="form-group col-md-4">
                                                     <label class="form-label">Target</label>
                                                     <input type="text" value="@if(isset($miniGame['variation_data']['target'])){{ $miniGame['variation_data']['target'] }}@endif" name="target[{{$key}}][{{$index}}]" id="target" class="form-control">
                                                 </div> -->
                                             <?php } ?>
-                                         
                                         
                                         </div>
                                         

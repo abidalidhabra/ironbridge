@@ -632,8 +632,10 @@ header{
 .verified_detlisbox ul {
     display: inline-block;
     width: 100%;
-    padding: 0px;
-    margin: 0px;
+    padding: 8px;
+    margin: 0px 0px 11px;
+    border: 1px solid #F1F1F1;
+    -webkit-box-shadow:-1px 0px 11px -6px rgba(158,158,158,0.88);
 }
 .verified_detlisbox ul li {
     display: inline-block;
@@ -1822,7 +1824,7 @@ table i.iconsetaddbox{
     font-size: 20px;
 }
 
-.button_box .add_prize{
+.button_box .add_prize , .button_box .add_map_time{
 background: #A5853B;
     border: 0px;
     font-size: 15px;
@@ -1833,7 +1835,7 @@ background: #A5853B;
     padding-top: 5px;
     padding-bottom: 3px;
 }
-.button_box .remove_prize{
+.button_box .remove_prize , .button_box .remove_map_time{
 background: #A5853B;
     border: 0px;
     font-size: 15px;
@@ -2017,7 +2019,7 @@ background: #A5853B;
 }*/
 
 
-.prize_box{
+.prize_box , .map_time_dealy_box{
     display: inline-block;
     width: 100%;
 }

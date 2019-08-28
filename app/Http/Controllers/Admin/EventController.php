@@ -172,6 +172,25 @@ class EventController extends Controller
     }
 
     public function addBasicStore(Request $request){
+        
+        if (isset($request['winning_ratio_check'])) {
+            $request['winning_ratio_check'] = 'true';
+        } else {
+            $request['winning_ratio_check'] = 'false';
+        }
+
+        if (isset($request['rejection_ratio_check'])) {
+            $request['rejection_ratio_check'] = 'true';
+        } else {
+            $request['rejection_ratio_check'] = 'false';
+        }
+
+        if (isset($request['participation_check'])) {
+            $request['participation_check'] = 'true';
+        } else {
+            $request['participation_check'] = 'false';
+        }
+
         $validator = Validator::make($request->all(),[
             'name'             => 'required',
             'type'             => 'required|in:single,multi',
@@ -179,8 +198,11 @@ class EventController extends Controller
             'city_id'          => 'required',
             'event_start_date' => 'required',
             'event_end_date'   => 'required',
-            'rejection_ratio'  => 'required|integer',
-            'winning_ratio'    => 'required|integer',
+            // 'rejection_ratio'  => 'required|integer',
+            // 'winning_ratio'    => 'required|integer',
+            'rejection_ratio'  => 'required_if:rejection_ratio_check,false',
+            'winning_ratio'    => 'required_if:winning_ratio_check,false',
+            'participation'    => 'required_if:participation_check,false',
             'fees'             => 'required|numeric',
             'coin_number'      => 'required_if:coin_type,physical',
             'discount_date'    => 'required',
@@ -200,15 +222,16 @@ class EventController extends Controller
         $data                    = $request->all();
         $eventId                 = $data['event_id']; 
         $data['fees']            = (int)$data['fees']; 
-        $data['rejection_ratio'] = (int)$data['rejection_ratio']; 
-        $data['winning_ratio']   = (int)$data['winning_ratio']; 
+        $data['rejection_ratio'] = (isset($data['rejection_ratio'])?(int)$data['rejection_ratio']:null); 
+        $data['winning_ratio']   = (isset($data['winning_ratio'])?(int)$data['winning_ratio']:null); 
+        $data['participation']   = (isset($data['participation'])?(int)$data['participation']:null); 
         $data['starts_at']       = Carbon::parse($data['event_start_date'])->format('Y-m-d H:i:s');
         $data['ends_at']         = Carbon::parse($data['event_end_date'])->endOfDay()->format('Y-m-d H:i:s');
         $data['coin_number']     = (int)$data['coin_number'];
         $data['discount']        = (float)$data['discount_fees'];
         $data['discount_till']   = Carbon::parse($data['discount_date'])->format('Y-m-d H:i:s');
         $data['attempts']        = (int)$data['attempts'];
-        $data['status'] = 'inactive';
+        $data['status']          = 'inactive';
 
         $event = Event::updateOrCreate(
             ['_id'=>$eventId],
@@ -442,6 +465,7 @@ class EventController extends Controller
     public function huntDetails($id){
         $event = Event::where('_id',$id)
         ->with('prizes')
+        ->with('event_map_time_delay')
         ->with('city:_id,name')
         ->first();
         
@@ -454,15 +478,19 @@ class EventController extends Controller
 
     public function addHuntDetails(Request $request){
         $validator = Validator::make($request->all(),[
-            'map_reveal_date'   => 'required',
-            'search_place_name' => 'required|exists:hunts,_id',
-            'group_type.*'      => 'required',
-            'rank.*'            => 'required|integer',
-            'prize.*'           => 'required|integer',
-            'start_rank.*'      => 'required|integer',
-            'end_rank.*'        => 'required|integer',
-            'prize_type.*'      => 'required',
-            'map_time_delay.*'  => 'required',
+            'map_reveal_date'       => 'required',
+            'search_place_name'     => 'required|exists:hunts,_id',
+            'group_type.*'          => 'required',
+            'prize.*'               => 'required|integer',
+            'rank.*'                => 'required|integer',
+            'start_rank.*'          => 'required|integer',
+            'end_rank.*'            => 'required|integer',
+            'prize_type.*'          => 'required',
+            'map_time_delay.*'      => 'required',
+            'map_time_group_type.*' => 'required',
+            'map_time_rank.*'       => 'required|integer',
+            'map_time_start_rank.*' => 'required|integer',
+            'map_time_end_rank.*'   => 'required|integer',
         ]);
 
         if ($validator->fails())
@@ -473,29 +501,53 @@ class EventController extends Controller
 
         $eventId = $request->get('event_id');
         $event = Event::where('_id',$eventId)
-        ->with('prizes')
-        ->first();
+                    ->with('prizes')
+                    ->first();
         $event->map_reveal_date = Carbon::parse($request->get('map_reveal_date'))->format('Y-m-d H:i:s'); 
         $event->hunt_id = $request->get('search_place_name');
         $event->status = 'active';
-        $event->save();
-
-        /* PRIZE */
+        
+        /* PRIZE VAR */
         $groupType = $request->get('group_type');
         $prize = $request->get('prize');
         $rank = $request->get('rank');
         $startRank = $request->get('start_rank');
         $endRank = $request->get('end_rank');
         $prizeType = $request->get('prize_type');
-        $mapTimeDelay = $request->get('map_time_delay');
-        // $data = [];
         $totalPrizeIndex = last(array_keys($groupType))+1;
+        /* END PRIZE VAR */
+
+        /* MAP TIME DELAY VAR */
+        $mapTimeDelay = $request->get('map_time_delay');
+
+        $mapRank = $request->get('map_time_rank');
+        $mapStartrank = $request->get('map_time_start_rank');
+        $mapEndRank = $request->get('map_time_end_rank');
+        $mapGroupType = $request->get('map_time_group_type');
+        $totalMapTimeIndex = last(array_keys($mapGroupType))+1;
+
+        /* END MAP TIME DELAY VAR */
 
         $allRank = array_merge((isset($rank))?$rank:[],(isset($startRank))?$startRank:[],(isset($endRank))?$endRank:[]);
         
-        if ($event->winning_ratio < max($allRank)) {
-            return response()->json(['status' => false,'message' => 'Please manage rank in max '.$event->winning_ratio]);
+        if (isset($event->winning_ratio) && $event->winning_ratio < max($allRank)) {
+            return response()->json(['status' => false,'message' => 'Please manage prize rank in max '.$event->winning_ratio]);
         }
+        
+        $mapTimeAllRank = array_merge((isset($mapRank))?$mapRank:[],(isset($mapStartrank))?$mapStartrank:[],(isset($mapEndRank))?$mapEndRank:[]);
+        if (max($allRank) < max($mapTimeAllRank)) {
+            return response()->json(['status' => false,'message' => 'Please manage Map time delay rank in max '.max($allRank)]);            
+        }
+        if (min($allRank) > min($mapTimeAllRank)) {
+            return response()->json(['status' => false,'message' => 'Please manage Map time delay rank in min '.min($allRank)]);            
+        }
+
+
+
+        $event->save();
+
+        
+
 
         /* PRIZES ALL DELETE */
         $event->prizes()->delete();
@@ -508,7 +560,7 @@ class EventController extends Controller
                 $data['group_type']     = $groupType[$i];
                 $data['prize_type']     = $prizeType[$i];
                 $data['prize_value']    = (int)$prize[$i];
-                $data['map_time_delay'] = (int)$mapTimeDelay[$i];
+                // $data['map_time_delay'] = (int)$mapTimeDelay[$i];
 
                 if (isset($rank[$i])) {
                     $data['rank'] = (int)$rank[$i];
@@ -522,7 +574,34 @@ class EventController extends Controller
             }
         }
         /* END PRIZE */
+
+
+
+        /*Map TIME DELAY */
+        $event->event_map_time_delay()->delete();
         
+        for ($i=0; $i < $totalMapTimeIndex ; $i++) { 
+            
+            if (isset($groupType[$i])) {
+                $data = [];
+                $data['event_id']       = $eventId;
+                $data['group_type']     = $mapGroupType[$i];
+                $data['prize_value']    = (int)$prize[$i];
+                $data['map_time_delay'] = (int)$mapTimeDelay[$i]*60;
+
+                if (isset($mapRank[$i])) {
+                    $data['rank'] = (int)$mapRank[$i];
+                } 
+
+                if(isset($mapStartrank[$i])){
+                    $data['start_rank'] = (int)$mapStartrank[$i];
+                    $data['end_rank'] = (int)$mapEndRank[$i];
+                }
+                $event->event_map_time_delay()->create($data);
+            }
+        }
+        
+        /*END MAP TIME DELAY*/
         // print_r($request->all());
         return response()->json([
             'status'  => true,
@@ -575,6 +654,24 @@ class EventController extends Controller
     }
 
     public function updateEvent(request $request){
+        if (isset($request['winning_ratio_check'])) {
+            $request['winning_ratio_check'] = 'true';
+        } else {
+            $request['winning_ratio_check'] = 'false';
+        }
+
+        if (isset($request['rejection_ratio_check'])) {
+            $request['rejection_ratio_check'] = 'true';
+        } else {
+            $request['rejection_ratio_check'] = 'false';
+        }
+
+        if (isset($request['participation_check'])) {
+            $request['participation_check'] = 'true';
+        } else {
+            $request['participation_check'] = 'false';
+        }
+
         $validator = Validator::make($request->all(),[
             'name'             => 'required',
             'type'             => 'required|in:single,multi',
@@ -582,8 +679,11 @@ class EventController extends Controller
             'city_id'          => 'required',
             'event_start_date' => 'required',
             'event_end_date'   => 'required',
-            'rejection_ratio'  => 'required|integer',
-            'winning_ratio'    => 'required|integer',
+            // 'rejection_ratio'  => 'required|integer',
+            // 'winning_ratio'    => 'required|integer',
+            'rejection_ratio'  => 'required_if:rejection_ratio_check,false',
+            'winning_ratio'    => 'required_if:winning_ratio_check,false',
+            'participation'    => 'required_if:participation_check,false',
             'fees'             => 'required|numeric',
             'coin_number'      => 'required_if:coin_type,physical',
             'discount_date'    => 'required',
@@ -609,8 +709,11 @@ class EventController extends Controller
             'start_rank.*'      => 'required|integer',
             'end_rank.*'        => 'required|integer',
             'prize_type.*'      => 'required',
-            'map_time_delay.*'  => 'required',
-
+            'map_time_delay.*'      => 'required',
+            'map_time_group_type.*' => 'required',
+            'map_time_rank.*'       => 'required|integer',
+            'map_time_start_rank.*' => 'required|integer',
+            'map_time_end_rank.*'   => 'required|integer',
         ]);
 
 
@@ -628,8 +731,11 @@ class EventController extends Controller
 
         /* BASIC  DETAILS */
         $event->fees            = (int)$data['fees']; 
-        $event->rejection_ratio = (int)$data['rejection_ratio']; 
-        $event->winning_ratio   = (int)$data['winning_ratio']; 
+        //$event->rejection_ratio = (int)$data['rejection_ratio']; 
+        //$event->winning_ratio   = (int)$data['winning_ratio']; 
+        $event->rejection_ratio = (isset($data['rejection_ratio'])?(int)$data['rejection_ratio']:null); 
+        $event->winning_ratio   = (isset($data['winning_ratio'])?(int)$data['winning_ratio']:null);
+        $event->participation   = (isset($data['participation'])?(int)$data['participation']:null);
         $event->starts_at       = Carbon::parse($data['event_start_date'])->format('Y-m-d H:i:s');
         $event->ends_at         = Carbon::parse($data['event_end_date'])->endOfDay()->format('Y-m-d H:i:s');
         $event->discount        = (float)$data['discount_fees'];
@@ -644,6 +750,7 @@ class EventController extends Controller
         } else {
             $event->coin_number = null;
         }
+        
         /* END BASIC DETAILS */
         
         /* MINI GAME */
@@ -825,23 +932,43 @@ class EventController extends Controller
         $event->map_reveal_date = Carbon::parse($request->get('map_reveal_date'))->format('Y-m-d H:i:s'); 
         $event->hunt_id = $request->get('search_place_name');
         $event->status = 'active';
-        $event->save();
 
-            /* PRIZE */
+
+        $event->save();
+            
+            /* PRIZE VAR */
             $groupType = $request->get('group_type');
             $prize = $request->get('prize');
             $rank = $request->get('rank');
             $startRank = $request->get('start_rank');
             $endRank = $request->get('end_rank');
             $prizeType = $request->get('prize_type');
-            $mapTimeDelay = $request->get('map_time_delay');
-            // $data = [];
             $totalPrizeIndex = last(array_keys($groupType))+1;
+            /* END PRIZE VAR */
+
+            /* MAP TIME DELAY VAR */
+            $mapTimeDelay = $request->get('map_time_delay');
+
+            $mapRank = $request->get('map_time_rank');
+            $mapStartrank = $request->get('map_time_start_rank');
+            $mapEndRank = $request->get('map_time_end_rank');
+            $mapGroupType = $request->get('map_time_group_type');
+            $totalMapTimeIndex = last(array_keys($mapGroupType))+1;
+
+            /* END MAP TIME DELAY VAR */
 
             $allRank = array_merge((isset($rank))?$rank:[],(isset($startRank))?$startRank:[],(isset($endRank))?$endRank:[]);
             
-            if ($event->winning_ratio < max($allRank)) {
-                return response()->json(['status' => false,'message' => 'Please manage rank in max '.$event->winning_ratio]);
+            if (isset($event->winning_ratio) && $event->winning_ratio < max($allRank)) {
+                return response()->json(['status' => false,'message' => 'Please manage prize rank in max '.$event->winning_ratio]);
+            }
+            
+            $mapTimeAllRank = array_merge((isset($mapRank))?$mapRank:[],(isset($mapStartrank))?$mapStartrank:[],(isset($mapEndRank))?$mapEndRank:[]);
+            if (max($allRank) < max($mapTimeAllRank)) {
+                return response()->json(['status' => false,'message' => 'Please manage Map time delay rank in max '.max($allRank)]);            
+            }
+            if (min($allRank) > min($mapTimeAllRank)) {
+                return response()->json(['status' => false,'message' => 'Please manage Map time delay rank in min '.min($allRank)]);            
             }
 
             /* PRIZES ALL DELETE */
@@ -855,7 +982,7 @@ class EventController extends Controller
                     $data['group_type']     = $groupType[$i];
                     $data['prize_type']     = $prizeType[$i];
                     $data['prize_value']    = (int)$prize[$i];
-                    $data['map_time_delay'] = (int)$mapTimeDelay[$i];
+                    // $data['map_time_delay'] = (int)$mapTimeDelay[$i];
 
                     if (isset($rank[$i])) {
                         $data['rank'] = (int)$rank[$i];
@@ -869,6 +996,33 @@ class EventController extends Controller
                 }
             }
             /* END PRIZE */
+
+
+            /*Map TIME DELAY */
+            $event->event_map_time_delay()->delete();
+            
+            for ($i=0; $i < $totalMapTimeIndex ; $i++) { 
+                
+                if (isset($groupType[$i])) {
+                    $data = [];
+                    $data['event_id']       = $eventId;
+                    $data['group_type']     = $mapGroupType[$i];
+                    $data['prize_value']    = (int)$prize[$i];
+                    $data['map_time_delay'] = (int)$mapTimeDelay[$i]*60;
+
+                    if (isset($mapRank[$i])) {
+                        $data['rank'] = (int)$mapRank[$i];
+                    } 
+
+                    if(isset($mapStartrank[$i])){
+                        $data['start_rank'] = (int)$mapStartrank[$i];
+                        $data['end_rank'] = (int)$mapEndRank[$i];
+                    }
+                    $event->event_map_time_delay()->create($data);
+                }
+            }
+            
+            /*END MAP TIME DELAY*/
         /* END HUNT AND PRIZE */
         return response()->json([
             'status'  => true,
