@@ -103,7 +103,7 @@
                     <div class="fdaboxallset">
                         <div class="form-group col-md-4">
                             <label class="form-label">Rejection Ratio
-                                <small> In percentage (enter 0 if no rejection ratio)</small>
+                                <small> In percentage</small>
                                 <a data-toggle="tooltip" title="% of people who will be going to eliminate daily basis" data-placement="right">?</a>
                             </label>
                             <div class="row">
@@ -112,14 +112,14 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="checkbox-inline">
-                                        <input type="checkbox" name="rejection_ratio_check">Rejection Ratio
+                                        <input type="checkbox" name="rejection_ratio_check">No Rejection Ratio
                                     </label>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group col-md-4">
                             <label class="form-label">Winning Ratio
-                                <small> In fix amount (enter 0 if no winning ratio)</small>
+                                <small> In fix amount</small>
                                 <a data-toggle="tooltip" title="# of people who will be going to win this game" data-placement="right">?</a>
                             </label>
                             <div class="row">
@@ -128,13 +128,13 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="checkbox-inline">
-                                        <input type="checkbox" name="winning_ratio_check">Winning Ratio
+                                        <input type="checkbox" name="winning_ratio_check">No Winning Ratio
                                     </label>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group col-md-4">
-                            <label class="form-label">Add Participation
+                            <label class="form-label">Maximum Participants
                                 <!-- <small> In fix amount (enter 0 if no winning ratio)</small>
                                 <a data-toggle="tooltip" title="# of people who will be going to win this game" data-placement="right">?</a> -->
                             </label>
@@ -144,7 +144,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="checkbox-inline">
-                                        <input type="checkbox" name="participation_check">Participation
+                                        <input type="checkbox" name="participation_check">No limit
                                     </label>
                                 </div>
                             </div>
