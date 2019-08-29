@@ -111,12 +111,12 @@
         </div>
         <div class="verified_detlisbox">
             <ul>
-                <h3>Payment</h3>
+                <h3>Total Payment</h3>
                 <li>
                     <img src="{{ asset('admin_assets/svg/news.svg') }}">
                     <a href="{{ route('admin.payment.index') }}">
                         <h3>${{ $data['total_payment'] }}</h3>
-                        <p>Total Payment</p>
+                        <p>Total Collected</p>
                     </a>
                 </li>
             </ul>
