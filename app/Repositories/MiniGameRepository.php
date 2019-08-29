@@ -37,14 +37,15 @@ class MiniGameRepository
         	$data = [];
         	$games = Game::active()->get()->map(function($game, $index) use (&$data){
                 
-                if ($index % 3 == 0) {
-                    $piece = 1;
-                }else if($index % 3 == 1){
-                    $piece = 2;
-                }else if($index % 3 == 2){
-                    $piece = 3;
-                }
-                $data[] = ['game_id'=> $game->id, 'piece'=> $piece];
+                // if ($index % 3 == 0) {
+                //     $piece = 1;
+                // }else if($index % 3 == 1){
+                //     $piece = 2;
+                // }else if($index % 3 == 2){
+                //     $piece = 3;
+                // }
+                // $data[] = ['game_id'=> $game->id, 'piece'=> $piece];
+                $data[] = ['game_id'=> $game->id];
         	});
         	$practiceGameData = $this->user->practice_games()->createMany($data);
         	return $practiceGameData;
@@ -58,31 +59,32 @@ class MiniGameRepository
         
         /** Gateway 2 **/
         $userId = $this->user->id;
-        $haveAllPieces = PracticeGameUser::raw(function($collection) use ($userId) {
-            return $collection->aggregate([
-                [
-                    '$match' => [
-                        'user_id' => ['$eq' => $userId],
-                        'piece_collected' => ['$eq' => true]
-                    ]       
-                ],  
-                [   
-                    '$group' => [
-                        '_id' => '$piece',
-                        'completed_at' => ['$last' => '$completed_at'],
-                        'piece_collected' => ['$last' => '$piece_collected'],
-                        'user_id' => ['$last' => '$user_id'],
-                        'key' => ['$last' => '$key'],
-                        'id' => ['$last' => '$_id'],
-                    ]   
-                ],  
-                [   
-                    '$sort' => ['_id' => 1]   
-                ]
-            ]); 
-        });
+        // $haveAllPieces = PracticeGameUser::raw(function($collection) use ($userId) {
+        //     return $collection->aggregate([
+        //         [
+        //             '$match' => [
+        //                 'user_id' => ['$eq' => $userId],
+        //                 'piece_collected' => ['$eq' => true]
+        //             ]       
+        //         ],  
+        //         [   
+        //             '$group' => [
+        //                 '_id' => '$piece',
+        //                 'completed_at' => ['$last' => '$completed_at'],
+        //                 'piece_collected' => ['$last' => '$piece_collected'],
+        //                 'user_id' => ['$last' => '$user_id'],
+        //                 'key' => ['$last' => '$key'],
+        //                 'id' => ['$last' => '$_id'],
+        //             ]   
+        //         ],  
+        //         [   
+        //             '$sort' => ['_id' => 1]   
+        //         ]
+        //     ]); 
+        // });
 
-        $piecesInfo = PracticeGameUser::whereIn('_id', $haveAllPieces->pluck('id'))->get();
+        // $piecesInfo = PracticeGameUser::whereIn('_id', $haveAllPieces->pluck('id'))->get();
+        $haveAllPieces = PracticeGameUser::where(['user_id'=> $userId, 'piece_collected'=> true])->get();
 
         /** Status of 1 & 2 & 3 Gateways **/
         if ($haveAllPieces->count() >= 3) {
@@ -97,7 +99,7 @@ class MiniGameRepository
                     (new UserRepository($this->user))->addSkeletonKeys(1, ['plan_purchase_id' => $planPurchaseData->id]);
                 }
             }
-            PracticeGameUser::whereIn('_id', $haveAllPieces->pluck('id'))->update(['piece_collected'=> false]);
+            PracticeGameUser::whereIn('_id', $haveAllPieces->pluck('_id'))->update(['piece_collected'=> false]);
         }
 
         return $this->user->available_skeleton_keys;
