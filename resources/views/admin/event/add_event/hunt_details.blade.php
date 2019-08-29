@@ -126,7 +126,7 @@
                                     </select>
                                 </div>
                                 <!-- <div class="form-group col-md-2">
-                                    <input type="text" name="map_time_delay[{{ $key }}]" class="form-control" placeholder="Map time delay" value="{{ $value->map_time_delay }}">
+                                    <input type="text" name="map_delay_time[{{ $key }}]" class="form-control" placeholder="Map time delay" value="{{ $value->map_delay_time }}">
                                 </div> -->
                                 <div class="form-group col-md-2 button_box">
                                     <?php
@@ -164,7 +164,7 @@
                                     </select>
                                 </div>
                                 <!-- <div class="form-group col-md-2">
-                                    <input type="text" name="map_time_delay[]" class="form-control" placeholder="Map time delay">
+                                    <input type="text" name="map_delay_time[]" class="form-control" placeholder="Map time delay">
                                 </div> -->
                                 <div class="form-group col-md-2 button_box">
                                     <a href="javascript:void(0)" class="btn add_prize"><i class="fa fa-plus "></i></a>
@@ -196,47 +196,49 @@
                         </div>
                     </div>
                     <div id="map_time_dealy_box">
-                        @forelse($event->event_map_time_delay as $key => $value)
-                            <div class="map_time_dealy_box">
-                                <div class="form-group col-md-3">
-                                    <select class="form-control map_time_group_type" name="map_time_group_type[{{ $key }}]">
-                                        <option value="individual" @if(isset($value->group_type) && $value->group_type == "individual") {{ 'selected' }} @endif>Individual</option>
-                                        <option value="group" @if(isset($value->group_type) && $value->group_type == "group") {{ 'selected' }} @endif>Group</option>
-                                    </select>
-                                </div>
-                                <input type="hidden" name="map_time_index" value="{{ $key }}">
-                                <div class="form-group col-md-3 rank_box">
-                                    @if(isset($value->group_type) && $value->group_type == "individual")
-                                        <input type="text" name="map_time_rank[{{ $key }}]" class="form-control" placeholder="Rank" value="{{ $value->rank }}">
-                                    @else
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <input type="text" name="map_time_start_rank[{{ $key }}]" class="form-control col-md-12" placeholder="Start" value="{{ $value->start_rank }}">
+                        @if($event->map_delay_time)
+                            @foreach($event->map_delay_time as $key => $value)
+                                <div class="map_time_dealy_box">
+                                    <div class="form-group col-md-3">
+                                        <select class="form-control map_time_group_type" name="map_time_group_type[{{ $key }}]">
+                                            <option value="individual" @if(isset($value['group_type']) && $value['group_type'] == "individual") {{ 'selected' }} @endif>Individual</option>
+                                            <option value="group" @if(isset($value['group_type']) && $value['group_type'] == "group") {{ 'selected' }} @endif>Group</option>
+                                        </select>
+                                    </div>
+                                    <input type="hidden" name="map_time_index" value="{{ $key }}">
+                                    <div class="form-group col-md-3 rank_box">
+                                        @if(isset($value['group_type']) && $value['group_type'] == "individual")
+                                            <input type="text" name="map_time_rank[{{ $key }}]" class="form-control" placeholder="Rank" value="{{ $value['rank'] }}">
+                                        @else
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <input type="text" name="map_time_start_rank[{{ $key }}]" class="form-control col-md-12" placeholder="Start" value="{{ $value['start_rank'] }}">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <input type="text" name="map_time_end_rank[{{ $key }}]" class="form-control col-md-12" placeholder="End" value="{{ $value['end_rank'] }}">
+                                                </div>
                                             </div>
-                                            <div class="col-md-6">
-                                                <input type="text" name="map_time_end_rank[{{ $key }}]" class="form-control col-md-12" placeholder="End" value="{{ $value->end_rank }}">
-                                            </div>
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <input type="text" name="map_time_delay[{{ $key }}]" class="form-control" placeholder="Map time delay" value="{{ $value->map_time_delay/60 }}">
-                                </div>
-                                <div class="form-group col-md-2 button_box">
-                                    <?php
-                                        $totalPrize = count($event->event_map_time_delay)-1;
-                                    ?>
-                                    @if($totalPrize == $key)
-                                        <a href="javascript:void(0)" class="btn add_map_time"><i class="fa fa-plus "></i></a>
-                                        @if($totalPrize != 0)
+                                        @endif
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <input type="text" name="map_delay_time[{{ $key }}]" class="form-control" placeholder="Map time delay" value="{{ $value['map_delay_time']/60 }}">
+                                    </div>
+                                    <div class="form-group col-md-2 button_box">
+                                        <?php
+                                            $totalPrize = count($event->map_delay_time)-1;
+                                        ?>
+                                        @if($totalPrize == $key)
+                                            <a href="javascript:void(0)" class="btn add_map_time"><i class="fa fa-plus "></i></a>
+                                            @if($totalPrize != 0)
+                                                <a href="javascript:void(0)" class="btn remove_map_time"><i class="fa fa-minus "></i></a>
+                                            @endif
+                                        @else
                                             <a href="javascript:void(0)" class="btn remove_map_time"><i class="fa fa-minus "></i></a>
                                         @endif
-                                    @else
-                                        <a href="javascript:void(0)" class="btn remove_map_time"><i class="fa fa-minus "></i></a>
-                                    @endif
+                                    </div>
                                 </div>
-                            </div>
-                        @empty
+                            @endforeach
+                        @else
                             <div class="map_time_dealy_box">
                                 <div class="form-group col-md-3">
                                     <select class="form-control map_time_group_type" name="map_time_group_type[]">
@@ -249,13 +251,13 @@
                                     <input type="text" name="map_time_rank[]" class="form-control" placeholder="Rank">
                                 </div>
                                 <div class="form-group col-md-3">
-                                    <input type="text" name="map_time_delay[]" class="form-control" placeholder="Map time delay">
+                                    <input type="text" name="map_delay_time[]" class="form-control" placeholder="Map time delay">
                                 </div>
                                 <div class="form-group col-md-2 button_box">
                                     <a href="javascript:void(0)" class="btn add_map_time"><i class="fa fa-plus "></i></a>
                                 </div>
                             </div>
-                        @endforelse
+                        @endif
                     </div>
                 </div>
                 <div class="form-group Submitnextbtn">
@@ -379,10 +381,10 @@
                                 </select>
                             </div>
                             <input type="hidden" name="prize_index" value="`+currentIndex+`">
-                            <div class="form-group col-md-2 rank_box">
+                            <div class="form-group col-md-3 rank_box">
                                 <input type="text" name="rank[`+currentIndex+`]" class="form-control" placeholder="Rank" data-action='rank'>
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-2">
                                 <input type="text" name="prize[`+currentIndex+`]" class="form-control" placeholder="Prize">
                             </div>
                             <div class="form-group col-md-2">
@@ -392,7 +394,7 @@
                                 </select>
                             </div>
                             <!--<div class="form-group col-md-2">
-                                <input type="text" name="map_time_delay[`+currentIndex+`]" class="form-control" placeholder="Map time delay">
+                                <input type="text" name="map_delay_time[`+currentIndex+`]" class="form-control" placeholder="Map time delay">
                             </div>-->
                             <div class="form-group col-md-2 button_box">
                                 <a href="javascript:void(0)" class="btn add_prize"><i class="fa fa-plus "></i></a>
@@ -441,17 +443,17 @@
 
                 $('#map_time_dealy_box').append(`<div class="map_time_dealy_box">
                             <div class="form-group col-md-3">
-                                    <select class="form-control map_time_group_type" name="map_time_group_type[]">
+                                    <select class="form-control map_time_group_type" name="map_time_group_type[`+currentIndex+`]">
                                         <option value="individual">Individual</option>
                                         <option value="group">Group</option>
                                     </select>
                                 </div>
-                            <input type="hidden" name="map_time_index" value="0">
+                            <input type="hidden" name="map_time_index" value="`+currentIndex+`">
                             <div class="form-group col-md-3 rank_box">
-                                <input type="text" name="map_time_rank[]" class="form-control" placeholder="Rank">
+                                <input type="text" name="map_time_rank[`+currentIndex+`]" class="form-control" placeholder="Rank">
                             </div>
                             <div class="form-group col-md-3">
-                                <input type="text" name="map_time_delay[]" class="form-control" placeholder="Map time delay">
+                                <input type="text" name="map_delay_time[`+currentIndex+`]" class="form-control" placeholder="Map time delay">
                             </div>
                             <div class="form-group col-md-2 button_box">
                                 <a href="javascript:void(0)" class="btn add_map_time"><i class="fa fa-plus "></i></a>

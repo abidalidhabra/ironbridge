@@ -20,6 +20,7 @@
                     <th width="7%">Sr.</th>
                     <th>Event Name</th>
                     <th>Name</th>
+                    <th>City</th>
                     <th>Completed Date</th>
                     <th>Status</th>
                     @if(auth()->user()->hasPermissionTo('View Users'))
@@ -59,6 +60,7 @@
                 { data:'DT_RowIndex',name:'_id' },
                 { data:'event_name',name:'event_name' },
                 { data:'user_name',name:'user_name' },
+                { data:'city',name:'city' },
                 { data:'completed_at',name:'completed_at' },
                 { data:'status',name:'status' },
                 @if(auth()->user()->hasPermissionTo('View Users'))

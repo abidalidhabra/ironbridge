@@ -16,6 +16,8 @@ use Carbon\Carbon;
 use Validator;
 use Auth;
 use Hash;
+use App\Models\v2\PlanPurchase;
+
 
 class AdminController extends Controller
 {
@@ -34,7 +36,8 @@ class AdminController extends Controller
         $data['male']       = $user->where('gender','male')->count();
         $data['female']     = $user->where('gender','female')->count();
         $data['total_user'] = $user->count();
-        
+        $data['first_record_date'] = $user->first()->created_at;
+        $data['last_record_date'] = $user->last()->created_at;
 
         /* huntuser */
         $huntUser = HuntUser::select('user_id','hunt_id','status')
@@ -61,8 +64,63 @@ class AdminController extends Controller
         
         $data['total_event'] = $events->count();
         $data['event_participations'] = $eventsUser;
+        
+        /* PAYMENT */
+        $plans = PlanPurchase::get();
+        $data['total_payment'] =  number_format($plans->sum('price'),2);
+
+
         return view('admin.admin-home',compact('data'));
 
+    }
+
+    public function signedUpDateFilter(Request $request){
+        $date = explode('-', $request->get('date'));
+        $startAt = new \DateTime(date('Y-m-d',strtotime(str_replace(' ', '-', trim($date[0])))));
+        $endAt= new \DateTime((date('Y-m-d',strtotime(str_replace(' ', '-', trim($date[1]))))));
+        $endAt->modify('+1 day');
+        $twoDays = Carbon::now()->subDays(2);
+        
+        /* USER  */
+        $user = User::whereBetween('created_at', [$startAt,$endAt])->get();
+        
+        $data['device_ios']     = $user->where('device_type','ios')->count();
+        $data['device_android'] = $user->where('device_type','android')->count();
+        $data['male']       = $user->where('gender','male')->count();
+        $data['female']     = $user->where('gender','female')->count();
+        $data['total_user'] = $user->count();
+        
+        /* END USER */
+
+        /* HUNT USED */
+        $huntUser = HuntUser::select('user_id','hunt_id','status','created_at')
+                            ->whereHas('hunt')
+                            ->whereHas('user',function($query) use ($startAt,$endAt){
+                                $query->whereBetween('created_at', [$startAt,$endAt]);
+                            })
+                            ->get();
+        $data['hunt_completed'] = $huntUser->where('status','completed')->groupBy('hunt_id')->count();
+        $data['hunt_progress'] = $huntUser->whereIn('status',['participated', 'paused', 'running'])->groupBy('hunt_id')->count();
+
+        $userHuntId = $huntUser->pluck('hunt_id')->toArray();
+        $userHuntIdValue = array_count_values($userHuntId);
+        arsort($userHuntIdValue);
+        $data['huntTop'] = [];
+        $i = 1;
+        foreach ($userHuntIdValue as $key => $value) {
+            $hunt = Hunt::select('name')->where('_id',$key)->first();
+            $data['huntTop'][$value] = $hunt->name;
+            if ($i == 5) {
+                break;
+            }
+            $i++;
+        }
+        
+        return response()->json([
+            'status'  => true,
+            'message' => 'Get data successfully',
+            'data'    => $data
+        ]);
     }
 
     public function setPassword($token){
