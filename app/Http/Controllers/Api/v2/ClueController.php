@@ -4,16 +4,17 @@ namespace App\Http\Controllers\Api\v2;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\ActionOnClueRequest;
+use App\Models\v1\User;
 use App\Models\v1\WidgetItem;
 use App\Models\v2\HuntReward;
-use App\Models\v1\User;
 use App\Models\v2\HuntUser;
 use App\Models\v2\HuntUserDetail;
+use App\Models\v2\PracticeGameUser;
+use Exception;
 use Illuminate\Http\Request;
 use MongoDB\BSON\ObjectId as MongoDBId;
 use MongoDB\BSON\UTCDateTime as MongoDBDate;
 use stdClass;
-use Exception;
 
 class ClueController extends Controller
 {
@@ -56,6 +57,7 @@ class ClueController extends Controller
 
             case 'completed':
                 $this->calculateTheTimer($huntUserDetail,'completed');
+                $this->unlockeMiniGameIfLocked($huntUserDetail->game_id, $userId);
                 // $stillRemain = $huntUserDetail->hunt_user->hunt_user_details()->whereIn('status', ['tobestart','progress','pause'])->count();
                 $stillRemain = $huntUserDetail->hunt_user->hunt_user_details()->where('status', '!=', 'completed')->count();
                 break;
@@ -254,5 +256,11 @@ class ClueController extends Controller
         unset($selectedReward->min_range, $selectedReward->max_range);
         \Log::info([ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData]);
         return [ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData];
+    }
+
+    public function unlockeMiniGameIfLocked($completedGameId, $userId)
+    {
+        return PracticeGameUser::where(['game_id'=> $completedGameId, 'user_id'=> $userId])->whereNull('unlocked_at')
+                ->update(['unlocked_at'=> new MongoDBDate(now())]);
     }
 }
