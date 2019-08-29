@@ -652,6 +652,9 @@ header{
     float: left;
     margin-right: 10px;
 }
+.verified_detlisbox ul h3 {
+    margin-top: 0px;
+}
 .verified_detlisbox ul li h3 {
     margin: 0px;
     font-size: 22px;

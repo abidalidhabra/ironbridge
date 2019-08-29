@@ -36,6 +36,7 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 
 	//dashboards
 	Route::get('/', [ 'middleware' => ['permission:Dashboard'], 'uses' => 'AdminController@index' ])->name('dashboards');
+	Route::get('signedUpDateFilter', [ 'middleware' => ['permission:Dashboard'], 'uses' => 'AdminController@signedUpDateFilter' ])->name('signedUpDateFilter');
 	
 	//User List
 	Route::get('/userList', [ 'middleware' => ['permission:View Users'], 'uses' => 'UserController@index' ])->name('userList');

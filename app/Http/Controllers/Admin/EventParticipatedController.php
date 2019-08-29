@@ -51,6 +51,9 @@ class EventParticipatedController extends Controller
         ->addColumn('user_name', function($event){
             return $event->user->first_name.' '.$event->user->last_name;
         })
+        ->addColumn('city', function($event){
+            return ($event->event)?$event->event->city->name:'';
+        })
         ->editColumn('completed_at', function($event){
         	return ($event->completed_at != null)?$event->completed_at->format('d-M-Y @ h:i A'):'-';
         })

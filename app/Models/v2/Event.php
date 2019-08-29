@@ -32,7 +32,8 @@ class Event extends Eloquent
         'description',
         'attempts',
         'status',
-        'participation'
+        'participation',
+        'map_delay_time'
     ];    
 
     protected $dates = [

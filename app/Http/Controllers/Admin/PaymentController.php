@@ -16,7 +16,7 @@ class PaymentController extends Controller
     public function index()
     {
         $plans = PlanPurchase::get();
-    	$data['collected'] =  number_format($plans->sum('price'));
+    	$data['collected'] =  number_format($plans->sum('price'),2);
         $data['android'] =  number_format('0');
         $data['ios'] =  number_format('0');
         return view('admin.payment.index',compact('data'));

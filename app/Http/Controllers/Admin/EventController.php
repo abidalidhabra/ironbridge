@@ -465,7 +465,7 @@ class EventController extends Controller
     public function huntDetails($id){
         $event = Event::where('_id',$id)
         ->with('prizes')
-        ->with('event_map_time_delay')
+        // ->with('event_map_time_delay')
         ->with('city:_id,name')
         ->first();
         
@@ -518,7 +518,7 @@ class EventController extends Controller
         /* END PRIZE VAR */
 
         /* MAP TIME DELAY VAR */
-        $mapTimeDelay = $request->get('map_time_delay');
+        $mapTimeDelay = $request->get('map_delay_time');
 
         $mapRank = $request->get('map_time_rank');
         $mapStartrank = $request->get('map_time_start_rank');
@@ -542,13 +542,31 @@ class EventController extends Controller
             return response()->json(['status' => false,'message' => 'Please manage Map time delay rank in min '.min($allRank)]);            
         }
 
+        /* MAP TIMR DELAY EVENT MODULE STORE */
+        $mapTimeDelayArray = [];
+        for ($m=0; $m < $totalMapTimeIndex ; $m++) { 
+            
+            if (isset($mapGroupType[$m])) {
+                $data = [];
+                $data['group_type']     = $mapGroupType[$m];
+                $data['map_delay_time'] = (int)$mapTimeDelay[$m]*60;
 
+                if (isset($mapRank[$m])) {
+                    $data['rank'] = (int)$mapRank[$m];
+                } 
 
-        $event->save();
-
+                if(isset($mapStartrank[$m])){
+                    $data['start_rank'] = (int)$mapStartrank[$m];
+                    $data['end_rank'] = (int)$mapEndRank[$m];
+                }
+                $mapTimeDelayArray[] =$data;
+            }
+        }
+        $event->map_delay_time = $mapTimeDelayArray; 
+        /* END MAP TIMR DELAY EVENT MODULE STORE */
         
-
-
+        $event->save();
+                
         /* PRIZES ALL DELETE */
         $event->prizes()->delete();
         
@@ -578,28 +596,28 @@ class EventController extends Controller
 
 
         /*Map TIME DELAY */
-        $event->event_map_time_delay()->delete();
+        // $event->event_map_time_delay()->delete();
         
-        for ($i=0; $i < $totalMapTimeIndex ; $i++) { 
+        // for ($i=0; $i < $totalMapTimeIndex ; $i++) { 
             
-            if (isset($groupType[$i])) {
-                $data = [];
-                $data['event_id']       = $eventId;
-                $data['group_type']     = $mapGroupType[$i];
-                $data['prize_value']    = (int)$prize[$i];
-                $data['map_time_delay'] = (int)$mapTimeDelay[$i]*60;
+        //     if (isset($groupType[$i])) {
+        //         $data = [];
+        //         $data['event_id']       = $eventId;
+        //         $data['group_type']     = $mapGroupType[$i];
+        //         $data['prize_value']    = (int)$prize[$i];
+        //         $data['map_time_delay'] = (int)$mapTimeDelay[$i]*60;
 
-                if (isset($mapRank[$i])) {
-                    $data['rank'] = (int)$mapRank[$i];
-                } 
+        //         if (isset($mapRank[$i])) {
+        //             $data['rank'] = (int)$mapRank[$i];
+        //         } 
 
-                if(isset($mapStartrank[$i])){
-                    $data['start_rank'] = (int)$mapStartrank[$i];
-                    $data['end_rank'] = (int)$mapEndRank[$i];
-                }
-                $event->event_map_time_delay()->create($data);
-            }
-        }
+        //         if(isset($mapStartrank[$i])){
+        //             $data['start_rank'] = (int)$mapStartrank[$i];
+        //             $data['end_rank'] = (int)$mapEndRank[$i];
+        //         }
+        //         $event->event_map_time_delay()->create($data);
+        //     }
+        // }
         
         /*END MAP TIME DELAY*/
         // print_r($request->all());
@@ -934,7 +952,7 @@ class EventController extends Controller
         $event->status = 'active';
 
 
-        $event->save();
+        
             
             /* PRIZE VAR */
             $groupType = $request->get('group_type');
@@ -947,7 +965,7 @@ class EventController extends Controller
             /* END PRIZE VAR */
 
             /* MAP TIME DELAY VAR */
-            $mapTimeDelay = $request->get('map_time_delay');
+            $mapTimeDelay = $request->get('map_delay_time');
 
             $mapRank = $request->get('map_time_rank');
             $mapStartrank = $request->get('map_time_start_rank');
@@ -970,6 +988,32 @@ class EventController extends Controller
             if (min($allRank) > min($mapTimeAllRank)) {
                 return response()->json(['status' => false,'message' => 'Please manage Map time delay rank in min '.min($allRank)]);            
             }
+
+
+            /* MAP TIMR DELAY EVENT MODULE STORE */
+            $mapTimeDelayArray = [];
+            for ($i=0; $i < $totalMapTimeIndex ; $i++) { 
+                
+                if (isset($mapGroupType[$i])) {
+                    $data = [];
+                    $data['group_type']     = $mapGroupType[$i];
+                    $data['map_delay_time'] = (int)$mapTimeDelay[$i]*60;
+
+                    if (isset($mapRank[$i])) {
+                        $data['rank'] = (int)$mapRank[$i];
+                    } 
+
+                    if(isset($mapStartrank[$i])){
+                        $data['start_rank'] = (int)$mapStartrank[$i];
+                        $data['end_rank'] = (int)$mapEndRank[$i];
+                    }
+                    $mapTimeDelayArray[] =$data;
+                }
+            }
+            $event->map_delay_time = $mapTimeDelayArray; 
+            /* END MAP TIMR DELAY EVENT MODULE STORE */
+
+            $event->save();
 
             /* PRIZES ALL DELETE */
             $event->prizes()->delete();
@@ -999,7 +1043,7 @@ class EventController extends Controller
 
 
             /*Map TIME DELAY */
-            $event->event_map_time_delay()->delete();
+            /*$event->event_map_time_delay()->delete();
             
             for ($i=0; $i < $totalMapTimeIndex ; $i++) { 
                 
@@ -1020,7 +1064,7 @@ class EventController extends Controller
                     }
                     $event->event_map_time_delay()->create($data);
                 }
-            }
+            }*/
             
             /*END MAP TIME DELAY*/
         /* END HUNT AND PRIZE */
@@ -1039,7 +1083,10 @@ class EventController extends Controller
      */
     public function destroy($id)
     {
-        Event::where('_id', $id)->delete();
+        $event = Event::where('_id', $id)->first();
+        $event->prizes()->delete();
+        // $event->event_map_time_delay()->delete();
+        $event->delete();
         return response()->json([
             'status' => true,
             'message'=>'Event has been deleted successfully.',
