@@ -30,7 +30,7 @@ class MGController extends Controller
     	try {
     		
             $response = [];
-            $userMiniGames = auth()->user()->practice_games()->select('_id', 'game_id', 'piece', 'key', 'completed_at', 'piece_collected')->get();
+            $userMiniGames = auth()->user()->practice_games()->select('_id', 'game_id', 'piece', 'key', 'completed_at', 'piece_collected', 'unlocked_at')->get();
             $userMiniGames->map(function($miniGame, $index) use (&$response){
                 $response[] = $miniGame;
                 $game = $miniGame->game()->first();

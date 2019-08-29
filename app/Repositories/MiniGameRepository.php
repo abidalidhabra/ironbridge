@@ -45,7 +45,10 @@ class MiniGameRepository
                 //     $piece = 3;
                 // }
                 // $data[] = ['game_id'=> $game->id, 'piece'=> $piece];
-                $data[] = ['game_id'=> $game->id];
+                $data[$index]['game_id'] = $game->id;
+                if ($game->practice_default_active) {
+                    $data[$index]['unlocked_at'] = now();
+                }
         	});
         	$practiceGameData = $this->user->practice_games()->createMany($data);
         	return $practiceGameData;

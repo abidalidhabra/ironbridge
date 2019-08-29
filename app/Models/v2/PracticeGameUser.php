@@ -9,15 +9,17 @@ use MongoDB\BSON\UTCDateTime;
 
 class PracticeGameUser extends Eloquent
 {
-    protected $fillable = ['user_id', 'game_id', 'completed_at', /*'piece',*/ 'piece_collected'];
+    protected $fillable = ['user_id', 'game_id', 'completed_at', /*'piece',*/ 'piece_collected', 'unlocked_at'];
 
     protected $dates = [
-        'completed_at'
+        'completed_at',
+        'unlocked_at',
     ];
 
     protected $attributes = [
         'completed_at' => null,
         'piece_collected' => false,
+        'unlocked_at' => null,
     ];
     
     public function setCompletedAtAttribute($value)

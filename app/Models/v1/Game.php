@@ -16,7 +16,8 @@ class Game extends Eloquent
     protected $fillable = [
         'identifier', 
         'name',
-        'status'
+        'status',
+        'practice_default_active'
     ];
 
     public function scopeActive($query)
