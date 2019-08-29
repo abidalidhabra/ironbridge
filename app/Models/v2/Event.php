@@ -140,6 +140,21 @@ class Event extends Eloquent
             ->select('_id','event_id','group_type','prize_type','prize_value','rank', 'start_rank', 'end_rank');
         }]);
     }
+
+    /**
+     * Scope a query to only include upcoming events and participated events.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSoonActivatedOrParticipated($query, $userId)
+    {
+        return $query->whereHas('participations', function($query) use ($userId){
+                    $query->where('user_id', $userId);
+                })
+                ->orWhere('starts_at', '>=', now())
+                ->orWhere('event_days.0.from', '>=', now());
+    }
 }
 
     

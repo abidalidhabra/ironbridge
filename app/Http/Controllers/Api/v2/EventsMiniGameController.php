@@ -25,7 +25,7 @@ class EventsMiniGameController extends Controller
         $this->eventsMiniGameRefaceInterface = $eventsMiniGameRefaceInterface;
     }
 
-    public function markMiniGameAsComplete(MarkTheEventMGAsCompleteRequest $request)
+    public function markTheEventMGAsComplete(MarkTheEventMGAsCompleteRequest $request)
     {
         try {
 

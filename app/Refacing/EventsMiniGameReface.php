@@ -2,9 +2,11 @@
 
 namespace App\Refacing;
 
+use App\Models\v2\Event;
 use App\Refacing\Contracts\EventsMiniGameRefaceInterface;
-use MongoDB\BSON\UTCDateTime;
+use Illuminate\Support\Collection;
 use MongoDB\BSON\ObjectId;
+use MongoDB\BSON\UTCDateTime;
 
 class EventsMiniGameReface implements EventsMiniGameRefaceInterface {
 	
@@ -18,7 +20,21 @@ class EventsMiniGameReface implements EventsMiniGameRefaceInterface {
 		return $eventDays;
 	}
 
-	public function todaysMiniGames(array $eventUsersMiniGames)
+	public function firstRoundMiniGames($eventUsersMiniGames)
+	{
+
+		return collect($eventUsersMiniGames)
+				->where('day', 1)
+				// ->where('from', '>=', now())
+				// ->where('to', '>=', now())
+				->map(function($dayWiseMiniGames){
+					return collect($dayWiseMiniGames)->except(['created_at', 'updated_at']);
+				})
+				->values()
+				->toArray();
+	}
+
+	public function todaysRoundMiniGames($eventUsersMiniGames)
 	{
 
 		return collect($eventUsersMiniGames)
@@ -31,7 +47,7 @@ class EventsMiniGameReface implements EventsMiniGameRefaceInterface {
 				->toArray();
 	}
 
-	public function lastFinishedMiniGames(array $eventUsersMiniGames)
+	public function lastFinishedRoundMiniGames($eventUsersMiniGames)
 	{
 		return collect($eventUsersMiniGames)
 			->where('from', '<=', now())
@@ -43,13 +59,18 @@ class EventsMiniGameReface implements EventsMiniGameRefaceInterface {
 			->toArray();
 	}
 
-	public function output(array $eventUsersMiniGames){
+	public function output(Event $event, Collection $eventMinigame){
 
-		$countableUserMiniGames = $this->todaysMiniGames($eventUsersMiniGames);
-
-		if (!$countableUserMiniGames) {
-			$countableUserMiniGames = $this->lastFinishedMiniGames($eventUsersMiniGames);
+		$firstDayRound = $eventMinigame->where('day', 1)->first();
+		if (($event->starts_at < now() && $firstDayRound->from > now()) || $event->starts_at > now()) {
+			$countableUserMiniGames = $this->firstRoundMiniGames($eventMinigame);
+		}else {
+			$countableUserMiniGames = $this->todaysRoundMiniGames($eventMinigame);
+			if (!$countableUserMiniGames) {
+				$countableUserMiniGames = $this->lastFinishedRoundMiniGames($eventMinigame);
+			}
 		}
+
 		foreach ($countableUserMiniGames as $key1 => &$day) {
 			foreach ($day['mini_games'] as $key2 => &$game) {
 				$game['_id'] = $game['_id']->__toString();
@@ -61,6 +82,25 @@ class EventsMiniGameReface implements EventsMiniGameRefaceInterface {
 		}
 		return $countableUserMiniGames;
 	}
+
+	// public function output(array $eventUsersMiniGames){
+
+	// 	$countableUserMiniGames = $this->todaysRoundMiniGames($eventUsersMiniGames);
+
+	// 	if (!$countableUserMiniGames) {
+	// 		$countableUserMiniGames = $this->lastFinishedRoundMiniGames($eventUsersMiniGames);
+	// 	}
+	// 	foreach ($countableUserMiniGames as $key1 => &$day) {
+	// 		foreach ($day['mini_games'] as $key2 => &$game) {
+	// 			$game['_id'] = $game['_id']->__toString();
+	// 			foreach ($game['completions'] as $key3 => &$completedData) {
+	// 				$completedData['_id'] = $completedData['_id']->__toString();
+	// 				$completedData['completed_at'] = $completedData['completed_at']->toDateTime()->format('Y-m-d H:i:s');
+	// 			}
+	// 		}
+	// 	}
+	// 	return $countableUserMiniGames;
+	// }
 
 	public function prepareCompletionDataToInsert(array $requestData){
 

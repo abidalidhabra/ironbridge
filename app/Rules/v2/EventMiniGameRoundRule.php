@@ -4,7 +4,7 @@ namespace App\Rules\v2;
 
 use Illuminate\Contracts\Validation\Rule;
 
-class EventParticipationRule implements Rule
+class EventMiniGameRoundRule implements Rule
 {
     private $eventUserMiniGameUniqueId;
     private $user;
