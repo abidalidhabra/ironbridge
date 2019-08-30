@@ -114,13 +114,17 @@ class UserController extends Controller
             'reffered_id'   => $reffered_id,
             'avatar'   => [
                 "avatar_id" => "5c9b66739846f40e807a4498", 
-                "eyes_color" => "#F08081", 
-                "hairs_color" => "#F08082", 
-                "skin_color" => "#F08083"
+                "eyes_color" => "#2a5aa1", 
+                "hairs_color" => "#e5db96", 
+                "skin_color" => "#f0cfb6"
             ],
             'widgets'   => [
                 ['id'=> "5d246f0c0b6d7b19fb5ab590", 'selected'=> false],
-                ['id'=> "5d246f230b6d7b1a0a232482", 'selected'=> true]
+                ['id'=> "5d246f0c0b6d7b19fb5ab594", 'selected'=> false],
+                ['id'=> "5d246f0c0b6d7b19fb5ab593", 'selected'=> false],
+                ['id'=> "5d246f230b6d7b1a0a232482", 'selected'=> true],
+                ['id'=> "5d246f230b6d7b1a0a232484", 'selected'=> false],
+                ['id'=> "5d246f230b6d7b1a0a232486", 'selected'=> false],
             ],
             // 'settings'   => [
             //     'sound_fx' => true,
