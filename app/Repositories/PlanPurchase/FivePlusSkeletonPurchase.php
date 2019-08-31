@@ -26,12 +26,14 @@ class FivePlusSkeletonPurchase implements Purchase
 		$planPurchase->plan_id 		  = $planData->plan_id;
 		$planPurchase->country_code   = $planData->country_code;
 		$planPurchase->skeleton_keys_amount     = (int)$this->plan->skeleton_keys_amount;
-		$planPurchase->expandable_skeleton_keys = (int)$this->plan->skeleton_keys_amount;
+		// $planPurchase->expandable_skeleton_keys = (int)$this->plan->skeleton_keys_amount;
 		$planPurchase->price 		  = (float)$this->plan->price;
 		$planPurchase->transaction_id = $planData->transaction_id;
 		$planPurchase->save();
     	
+    	(new UserRepository($this->user))->addSkeletonsBucket($this->plan->skeleton_keys_amount);
+    	
     	/** return the available skeleton keys **/
-    	return ['expandable_skeleton_keys'=> $this->plan->skeleton_keys_amount];
+    	return ['skeletons_bucket_size'=> $this->user->skeletons_bucket];
     }
 }

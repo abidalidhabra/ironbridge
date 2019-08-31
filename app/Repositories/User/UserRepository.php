@@ -56,6 +56,12 @@ class UserRepository implements UserRepositoryInterface
         return $this->user->gold_balance;
     }
 
+    public function addSkeletonsBucket(int $size)
+    {
+        $this->user->skeletons_bucket += $size;
+        $this->user->save();
+        return $this->user->skeletons_bucket;
+    }
     // public function expandTheSkeletonBucket($keysAmount)
     // {
     //     $this->user->expnadable_skeleton_keys += $keysAmount;

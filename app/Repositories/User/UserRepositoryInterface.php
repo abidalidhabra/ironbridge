@@ -9,4 +9,6 @@ interface UserRepositoryInterface{
 	public function addGold(int $goldAmount);
 	
 	public function buySkeletonKeysFromGold($purchaseData);
+	
+	public function addSkeletonsBucket(int $size);
 }

@@ -29,23 +29,24 @@ class UserTitleOfMiniGame implements Rule
     {
         $userId = auth()->user()->id;
         $miniGameUserData = PracticeGameUser::where('_id', request()->practice_game_user_id)->first();
-        
-        $coolDown = ($miniGameUserData->completed_at && $miniGameUserData->completed_at->diffInHours() < 24)?true:false;
+        if ($miniGameUserData) {
+            $coolDown = ($miniGameUserData->completed_at && $miniGameUserData->completed_at->diffInHours() < 24)?true:false;
 
-        if ($miniGameUserData && $miniGameUserData->user_id == $userId && !$coolDown) {
-            return true;
-        }
+            if ($miniGameUserData && $miniGameUserData->user_id == $userId && !$coolDown) {
+                return true;
+            }
 
-        if (!$miniGameUserData) {
-            $this->message = 'Wrong practice game user id provided.';
-        }else if ($miniGameUserData->user_id != $userId){
-            $this->message = 'You are not authorized to access this practice game user id.';
-        }else if ($miniGameUserData->piece_collected === true){
-            $this->message = 'This mini game is already completed, try different game.';
-        }else if ($coolDown){
-            $this->message = 'This mini game is under the freeze mode.';
+            if (!$miniGameUserData) {
+                $this->message = 'Wrong practice game user id provided.';
+            }else if ($miniGameUserData->user_id != $userId){
+                $this->message = 'You are not authorized to access this practice game user id.';
+            }else if ($miniGameUserData->piece_collected === true){
+                $this->message = 'This mini game is already completed, try different game.';
+            }else if ($coolDown){
+                $this->message = 'This mini game is under the freeze mode.';
+            }
+            return false;
         }
-        return false;
     }
 
     /**
