@@ -31,8 +31,9 @@ class SkeletonPurchase implements Purchase
 		$planPurchase->save();
 
     	/** Add skeleton keys in user's table **/
-    	$userRepository = new UserRepository($this->user);
-    	$availableSkeletonLeys = $userRepository->addSkeletonKeys($this->plan->skeleton_keys_amount);
+    	// $userRepository = new UserRepository($this->user);
+    	// $availableSkeletonLeys = $userRepository->addSkeletonKeys($this->plan->skeleton_keys_amount);
+    	(new UserRepository($this->user))->addSkeletonsBucket($this->plan->skeleton_keys_amount);
     	
     	/** return the available skeleton keys **/
     	return ['available_skeleton_keys'=> $availableSkeletonLeys];
