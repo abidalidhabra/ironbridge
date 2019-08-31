@@ -36,6 +36,6 @@ class SkeletonPurchase implements Purchase
     	(new UserRepository($this->user))->addSkeletonsBucket($this->plan->skeleton_keys_amount);
     	
     	/** return the available skeleton keys **/
-    	return ['available_skeleton_keys'=> $availableSkeletonLeys];
+    	return ['available_skeleton_keys'=> $this->user->skeletons_bucket];
     }
 }
