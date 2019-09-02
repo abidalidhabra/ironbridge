@@ -22,6 +22,7 @@ class MiniGameRepository
         $mGUserData = PracticeGameUser::where('_id', $request->practice_game_user_id)->first();
         $mGUserData->completed_at = now();
         $mGUserData->piece_collected = true;
+        $mGUserData->completion_times += 1;
         $mGUserData->save();
 
         $result = $this->allotKeyIfEligible();

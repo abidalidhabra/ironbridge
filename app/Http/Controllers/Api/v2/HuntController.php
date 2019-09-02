@@ -409,7 +409,7 @@ class HuntController extends Controller
                 $completedDist = (($huntDetails->distance / $totalClues) * $completedClues);
                 if ($userParticipation->ended_at) {
 	                $nextPlayDate = $userParticipation->ended_at->addHours(21);
-	                $coolDown = (now() < $nextPlayDate)?now()->diffInSeconds($userParticipation->ended_at): null;
+	                $coolDown = (now() < $nextPlayDate)?now()->diffInSeconds($nextPlayDate): null;
                 }
             }
 
