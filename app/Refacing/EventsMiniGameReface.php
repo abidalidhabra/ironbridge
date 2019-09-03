@@ -20,7 +20,7 @@ class EventsMiniGameReface implements EventsMiniGameRefaceInterface {
 		return $eventDays;
 	}
 
-	public function firstRoundMiniGames($eventUsersMiniGames)
+	public function firstRoundMiniGames(Collection $eventUsersMiniGames)
 	{
 
 		return collect($eventUsersMiniGames)
@@ -34,7 +34,7 @@ class EventsMiniGameReface implements EventsMiniGameRefaceInterface {
 				->toArray();
 	}
 
-	public function todaysRoundMiniGames($eventUsersMiniGames)
+	public function todaysRoundMiniGames(Collection $eventUsersMiniGames)
 	{
 
 		return collect($eventUsersMiniGames)
@@ -47,7 +47,7 @@ class EventsMiniGameReface implements EventsMiniGameRefaceInterface {
 				->toArray();
 	}
 
-	public function lastFinishedRoundMiniGames($eventUsersMiniGames)
+	public function lastFinishedRoundMiniGames(Collection $eventUsersMiniGames)
 	{
 		return collect($eventUsersMiniGames)
 			->where('from', '<=', now())
