@@ -51,7 +51,7 @@ class EventsUserController extends Controller
     {
         try {
 
-            $event = $this->eventInterface->find($request->event_id, ['_id', 'name', 'discount_countdown', 'discount_till', 'play_countdown', 'starts_at', 'status', 'event_days', 'fees']);
+            $event = $this->eventInterface->find($request->event_id, ['_id', 'name', 'discount_countdown', 'discount_till', 'play_countdown', 'starts_at', 'status', 'event_days', 'fees', 'attempts']);
 
             // shot the event user data into the database
             $eventsUser = $this->eventsUserInterface->createByUser($this->user, $event);
