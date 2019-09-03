@@ -63,9 +63,10 @@
                                     <label class="radio-inline"><input type="radio" name="discount_types" value="gold_credit" checked>Gold Credits</label>
                                     <label class="radio-inline"><input type="radio" name="discount_types" value="discount_percentage">Discount Percentage</label>
                                 </div>
-                                <div class="form-group">
-                                    <label>Discount:</label>
-                                    <input type="text" name="discount" class="form-control" placeholder="Enter Discount">
+                                <br/>
+                                <div class="form-group discount_box">
+                                    <label>Discount Gold:</label>
+                                    <input type="text" name="discount" class="form-control" placeholder="Enter Discount Gold">
                                 </div>
                                 <div class="form-group">
                                     <label>Number Of Uses:</label>
@@ -132,8 +133,12 @@
                 var radio =  $(this).val();
                 if (radio == 'gold_credit') {
                     $('.mutitime_use').hide();
+                    $('.discount_box').find('label').text('Discount Gold:');
+                    $('.discount_box').find('input').attr('placeholder','Enter Discount Gold');
                 } else if (radio == 'discount_percentage'){
                     $('.mutitime_use').show();
+                    $('.discount_box').find('label').text('Discount Percentage:');
+                    $('.discount_box').find('input').attr('placeholder','Enter Discount Percentage');
                 }
             });
 
@@ -243,6 +248,8 @@
                                 $('input[name="can_mutitime_use"]:last').prop("checked",true);
                                 $('.mutitime_use').hide();
                                 $('#addDiscount').modal('hide');
+                                $('.discount_box').find('label').text('Discount Gold:');
+                                $('.discount_box').find('input').attr('placeholder','Enter Discount Gold');
                                 table.ajax.reload();
                             } else {
                                 toastr.warning(response.message);
@@ -343,6 +350,8 @@
                                 $('input[name="discount_code"] , input[name="discount"] , input[name="number_of_uses"] , textarea ').val('');
                                 $('input[name="discount_types"]:first').prop("checked",true);
                                 $('input[name="can_mutitime_use"]:last').prop("checked",true);
+                                $('.discount_box').find('label').text('Discount Gold:');
+                                $('.discount_box').find('input').attr('placeholder','Enter Discount Gold');
                                 $('.mutitime_use').hide();
                                 $('#editDiscount').modal('hide');
                                 table.ajax.reload();

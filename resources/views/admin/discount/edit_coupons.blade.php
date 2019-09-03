@@ -9,9 +9,15 @@
     <label class="radio-inline"><input type="radio" name="discount_types" value="discount_percentage" @if($discount->discount_types=='discount_percentage') {{ 'checked' }} @endif>Discount Percentage</label>
 </div>
 <input type="hidden" name="discount_id" value="{{ $discount->id }}" id="discount_id">
-<div class="form-group">
-    <label>Discount:</label>
-    <input type="text" name="discount" class="form-control" placeholder="Enter Discount" value="{{ $discount->discount }}">
+<br/>
+<div class="form-group discount_box">
+    @if($discount->discount_types=='gold_credit')
+        <label>Discount Gold:</label>
+        <input type="text" name="discount" class="form-control" placeholder="Enter Discount Gold" value="{{ $discount->discount }}">
+    @else
+        <label>Discount Percentage:</label>
+        <input type="text" name="discount" class="form-control" placeholder="Enter Discount Percentage" value="{{ $discount->discount }}">
+    @endif
 </div>
 <div class="form-group">
     <label>Number Of Uses:</label>
