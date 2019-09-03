@@ -243,7 +243,7 @@ class HuntController extends Controller
                         ->where('status', '!=', 'completed');
                 })
                 ->with(['hunt_users' => function($query) use ($userId){
-					$query->where('status', '!=', 'completed')->select('_id','status','hunt_id','hunt_mode','complexity','user_id');
+					$query->where('user_id', $userId)->where('status', '!=', 'completed')->select('_id','status','hunt_id','hunt_mode','complexity','user_id');
                 }])
                 ->select('_id', 'name', 'place_name', 'location')
                 ->get();

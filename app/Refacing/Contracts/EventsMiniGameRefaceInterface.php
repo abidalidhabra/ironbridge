@@ -9,11 +9,11 @@ interface EventsMiniGameRefaceInterface {
 	
 	public function prepareToInsert(array $eventDays);
 
-	public function firstRoundMiniGames(array $eventUsersMiniGames);
+	public function firstRoundMiniGames(Collection $eventUsersMiniGames);
 
-	public function todaysRoundMiniGames(array $eventUsersMiniGames);
+	public function todaysRoundMiniGames(Collection $eventUsersMiniGames);
 
-	public function lastFinishedRoundMiniGames(array $eventUsersMiniGames);
+	public function lastFinishedRoundMiniGames(Collection $eventUsersMiniGames);
 
 	// public function output(array $eventUsersMiniGames);
 

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\v2;
 
+use App\Exceptions\PracticeMiniGame\FreezeModeRunningException;
+use App\Exceptions\PracticeMiniGame\PieceAlreadyCollectedException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v2\PracticeGameFinishRequest;
 use App\Models\v1\Game;
@@ -68,9 +70,17 @@ class MGController extends Controller
             $miniGameRepository = new MiniGameRepository($this->user);
             $availableSkeletonKeys = $miniGameRepository->completeAMiniGame($request);
 
-            return response()->json(['message'=> 'This mini game is marked as completed.', 'available_skeleton_keys'=> $availableSkeletonKeys]);
+            return response()->json([
+                'message'=> 'This mini game is marked as completed.', 
+                'available_skeleton_keys'=> $availableSkeletonKeys['available_skeleton_keys'],
+                'completion_times'=> $availableSkeletonKeys['completion_times']
+            ]);
+        } catch(PieceAlreadyCollectedException $e) {
+            return response()->json(['message'=> $e->getMessage(), 'completion_times'=> $e->getcompletionTimes()], 422);
+        } catch(FreezeModeRunningException $e) {
+            return response()->json(['message'=> $e->getMessage(), 'completion_times'=> $e->getcompletionTimes()], 422);
         } catch (Exception $e) {
-            return response()->json(['message'=> $e->getMessage()], 500);
+            return response()->json(['message'=> $e->getMessage().' on line '.$e->getLine().' in '.$e->getFile()], 500);
         }
     }
 }

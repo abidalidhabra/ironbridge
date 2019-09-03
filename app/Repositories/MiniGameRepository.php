@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use App\Exceptions\PracticeMiniGame\FreezeModeRunningException;
+use App\Exceptions\PracticeMiniGame\PieceAlreadyCollectedException;
 use App\Models\v1\Game;
 use App\Models\v2\PracticeGameUser;
 use App\Repositories\User\UserRepository;
@@ -17,16 +19,40 @@ class MiniGameRepository
         $this->user = $user;
     }
 
+    /**
+     *
+     * @param Illuminate\Http\Request
+     * @return App\Exceptions\PracticeMiniGame\PieceAlreadyCollectedException
+     * @return App\Exceptions\PracticeMiniGame\FreezeModeRunningException
+     * @return Array
+     *
+     */
     public function completeAMiniGame($request)
     {
-        $mGUserData = PracticeGameUser::where('_id', $request->practice_game_user_id)->first();
-        $mGUserData->completed_at = now();
-        $mGUserData->piece_collected = true;
-        $mGUserData->completion_times += 1;
-        $mGUserData->save();
+        
+        // Findout the minigame data of user
+        $practiceGameUser = PracticeGameUser::where('_id', $request->practice_game_user_id)->first();
+        
+        // Just Increase the completion time of minigame
+        $this->addCompletionTimes($practiceGameUser);
+        
+        // Throw an exception if minigame's piece is already collected
+        if ($practiceGameUser->piece_collected === true) {
+            throw new PieceAlreadyCollectedException('This mini game is already completed, try different game.', $practiceGameUser->completion_times);
+        }
 
-        $result = $this->allotKeyIfEligible();
-        return $result;
+        // Throw an exception if cooldown period is active
+        if ($practiceGameUser->completed_at && $practiceGameUser->completed_at->diffInHours() < 24) {
+            throw new FreezeModeRunningException('This mini game is under the freeze mode.', $practiceGameUser->completion_times);
+        }
+
+        // Mark the minigame as complete and peice as collected
+        $this->markPracticeMiniGameAsComplete($practiceGameUser);
+
+        // Allot a key to user's account if aligible
+        $availableSkeletonKeys = $this->allotKeyIfEligible();
+
+        return ['available_skeleton_keys'=> $availableSkeletonKeys, 'completion_times'=> $practiceGameUser->completion_times];
     }
 
     public function createIfnotExist()
@@ -113,5 +139,20 @@ class MiniGameRepository
     public function miniGameParticipation()
     {
         return $this->user->practice_games()->first();
+    }
+
+    public function addCompletionTimes($practiceGameUser)
+    {
+        $practiceGameUser->completion_times += 1;
+        $practiceGameUser->save();
+        return $practiceGameUser;
+    }
+
+    public function markPracticeMiniGameAsComplete($practiceGameUser)
+    {
+        $practiceGameUser->completed_at = now();
+        $practiceGameUser->piece_collected = true;
+        $practiceGameUser->save();
+        return $practiceGameUser;
     }
 }
