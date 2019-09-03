@@ -12,8 +12,8 @@
 <br/>
 <div class="form-group discount_box">
     @if($discount->discount_types=='gold_credit')
-        <label>Discount Gold:</label>
-        <input type="text" name="discount" class="form-control" placeholder="Enter Discount Gold" value="{{ $discount->discount }}">
+        <label>Gold Credits:</label>
+        <input type="text" name="discount" class="form-control" placeholder="Enter Gold Credits" value="{{ $discount->discount }}">
     @else
         <label>Discount Percentage:</label>
         <input type="text" name="discount" class="form-control" placeholder="Enter Discount Percentage" value="{{ $discount->discount }}">
@@ -21,7 +21,16 @@
 </div>
 <div class="form-group">
     <label>Number Of Uses:</label>
-    <input type="text" name="number_of_uses" class="form-control" placeholder="Enter number of uses" value="{{ $discount->number_of_uses }}">
+    <div class="row">
+        <div class="col-md-6">
+            <input type="text" name="number_of_uses" class="form-control" placeholder="Enter number of uses" value="{{ $discount->number_of_uses }}" @if($discount->number_of_uses == null) {{ 'disabled' }} @endif>
+        </div>
+        <div class="col-md-6">
+            <label class="checkbox-inline">
+                <input type="checkbox" name="number_of_uses_checked" @if($discount->number_of_uses == null) {{ 'checked' }} @endif>No Limit
+            </label>
+        </div>
+
 </div>
 <div class="form-radio mutitime_use" style="@if($discount->discount_types=='gold_credit') {{ "display: none;" }} @endif" >
     <label>Single User Can Use Multiple Time?:</label>
@@ -31,7 +40,16 @@
 </div>
 <div class="form-group">
     <label>Expired In:</label>
-    <input type="text" name="expiry_date" class="form-control" value="{{ $discount->start_at->format('M d, Y').' - '.$discount->end_at->format('M d, Y') }}" placeholder="Enter number of uses">
+    <div class="row">
+        <div class="col-md-6">
+            <input type="text" name="expiry_date" class="form-control" value="{{ ($discount->start_at)?$discount->start_at->format('M d, Y').' - '.$discount->end_at->format('M d, Y'):'' }}" placeholder="Enter number of uses" @if($discount->start_at == null) {{ 'disabled' }} @endif>
+        </div>
+        <div class="col-md-6">
+            <label class="checkbox-inline">
+                <input type="checkbox" name="expiry_date_checked" @if($discount->start_at == null) {{ 'checked' }} @endif>No Limit
+            </label>
+        </div>
+    </div>
 </div>
 <div class="form-group">
     <label>Description:</label>

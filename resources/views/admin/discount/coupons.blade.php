@@ -65,12 +65,21 @@
                                 </div>
                                 <br/>
                                 <div class="form-group discount_box">
-                                    <label>Discount Gold:</label>
-                                    <input type="text" name="discount" class="form-control" placeholder="Enter Discount Gold">
+                                    <label>Gold Credits:</label>
+                                    <input type="text" name="discount" class="form-control" placeholder="Enter Gold Credits">
                                 </div>
                                 <div class="form-group">
                                     <label>Number Of Uses:</label>
-                                    <input type="text" name="number_of_uses" class="form-control" placeholder="Enter number of uses">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <input type="text" name="number_of_uses" class="form-control" placeholder="Enter number of uses">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="checkbox-inline">
+                                                <input type="checkbox" name="number_of_uses_checked">No Limit
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="form-radio mutitime_use" style="display: none;">
                                     <label>Single User Can Use Multiple Time?:</label>
@@ -80,7 +89,16 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Expired In:</label>
-                                    <input type="text" name="expiry_date" class="form-control" placeholder="Enter number of uses">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <input type="text" name="expiry_date" class="form-control" placeholder="Enter number of uses">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="checkbox-inline">
+                                                <input type="checkbox" name="expiry_date_checked">No Limit
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="form-group">
                                     <label>Description:</label>
@@ -133,14 +151,32 @@
                 var radio =  $(this).val();
                 if (radio == 'gold_credit') {
                     $('.mutitime_use').hide();
-                    $('.discount_box').find('label').text('Discount Gold:');
-                    $('.discount_box').find('input').attr('placeholder','Enter Discount Gold');
+                    $('.discount_box').find('label').text('Gold Credits:');
+                    $('.discount_box').find('input').attr('placeholder','Enter Gold Credits');
                 } else if (radio == 'discount_percentage'){
                     $('.mutitime_use').show();
                     $('.discount_box').find('label').text('Discount Percentage:');
                     $('.discount_box').find('input').attr('placeholder','Enter Discount Percentage');
                 }
             });
+
+
+            $(document).on('change','[name=number_of_uses_checked]',function(){
+                if($(this).prop("checked") == true){
+                    $('[name=number_of_uses]').prop("disabled", true);
+                } else if($(this).prop("checked") == false){
+                    $('[name=number_of_uses]').prop("disabled", false);   
+                }
+            });
+
+            $(document).on('change','[name=expiry_date_checked]',function(){
+                if($(this).prop("checked") == true){
+                    $('[name=expiry_date]').prop("disabled", true);
+                } else if($(this).prop("checked") == false){
+                    $('[name=expiry_date]').prop("disabled", false);   
+                }
+            });
+
 
             /* DATE RANGE PICKER */
             dateRangePicker();
@@ -248,8 +284,8 @@
                                 $('input[name="can_mutitime_use"]:last').prop("checked",true);
                                 $('.mutitime_use').hide();
                                 $('#addDiscount').modal('hide');
-                                $('.discount_box').find('label').text('Discount Gold:');
-                                $('.discount_box').find('input').attr('placeholder','Enter Discount Gold');
+                                $('.discount_box').find('label').text('Gold Credits:');
+                                $('.discount_box').find('input').attr('placeholder','Enter Gold Credits');
                                 table.ajax.reload();
                             } else {
                                 toastr.warning(response.message);
@@ -350,8 +386,8 @@
                                 $('input[name="discount_code"] , input[name="discount"] , input[name="number_of_uses"] , textarea ').val('');
                                 $('input[name="discount_types"]:first').prop("checked",true);
                                 $('input[name="can_mutitime_use"]:last').prop("checked",true);
-                                $('.discount_box').find('label').text('Discount Gold:');
-                                $('.discount_box').find('input').attr('placeholder','Enter Discount Gold');
+                                $('.discount_box').find('label').text('Gold Credits:');
+                                $('.discount_box').find('input').attr('placeholder','Enter Gold Credits');
                                 $('.mutitime_use').hide();
                                 $('#editDiscount').modal('hide');
                                 table.ajax.reload();

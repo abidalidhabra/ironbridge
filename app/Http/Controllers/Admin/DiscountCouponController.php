@@ -42,14 +42,28 @@ class DiscountCouponController extends Controller
      */
     public function store(Request $request)
     {
+        if (isset($request['expiry_date_checked'])) {
+            $request['expiry_date_checked'] = 'true';
+        } else {
+            $request['expiry_date_checked'] = 'false';
+        }
+
+        if (isset($request['number_of_uses_checked'])) {
+            $request['number_of_uses_checked'] = 'true';
+        } else {
+            $request['number_of_uses_checked'] = 'false';
+        }
+
+        $request['discount_code'] = strtoupper($request['discount_code']);
+        
         $validator = Validator::make($request->all(),[
             // 'discount_code'    => 'required|exists:discount_coupons,discount_code',
             'discount_code'    => 'required|unique:discount_coupons,discount_code',            
             'discount_types'   => 'required|in:gold_credit,discount_percentage',
             'discount'         => 'required|numeric',
-            'number_of_uses'   => 'required|integer',
+            'number_of_uses'   => 'required_if:number_of_uses_checked,false',
             'can_mutitime_use' => 'required',
-            'expiry_date'      => 'required',
+            'expiry_date'      => 'required_if:expiry_date_checked,false',
             'description'      => 'required',
         ]);
         
@@ -59,16 +73,23 @@ class DiscountCouponController extends Controller
             return response()->json(['status' => false,'message' => $message]);
         }
 
-        $expiryDate = $request->get('expiry_date');
-        $dates = explode(' - ', $expiryDate);
-        $startDate = Carbon::parse($dates[0]);
-        $endDate = Carbon::parse($dates[1]);
-        
+
         $data = $request->all();
+
+        if ($data['expiry_date_checked'] == 'false') {
+            $expiryDate = $request->get('expiry_date');
+            $dates = explode(' - ', $expiryDate);
+            $startDate = Carbon::parse($dates[0]);
+            $endDate = Carbon::parse($dates[1]);
+        } else {
+            $startDate = null;
+            $endDate = null;
+        }
+        
         $data['start_at'] = $startDate;
         $data['end_at']  = $endDate;
         $data['discount'] = (float)$data['discount'];
-        $data['number_of_uses'] = (int)$data['number_of_uses'];
+        $data['number_of_uses'] = (($data['number_of_uses_checked'] == 'false')?(int)$data['number_of_uses']:null);
         $data['can_mutitime_use'] = ($data['can_mutitime_use']=='true')?true:false;
 
         DiscountCoupon::create($data);
@@ -111,13 +132,27 @@ class DiscountCouponController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (isset($request['expiry_date_checked'])) {
+            $request['expiry_date_checked'] = 'true';
+        } else {
+            $request['expiry_date_checked'] = 'false';
+        }
+
+        if (isset($request['number_of_uses_checked'])) {
+            $request['number_of_uses_checked'] = 'true';
+        } else {
+            $request['number_of_uses_checked'] = 'false';
+        }
+
+        $request['discount_code'] = strtoupper($request['discount_code']);
+
         $validator = Validator::make($request->all(),[
             'discount_code'    => 'required|unique:discount_coupons,discount_code,'.$id.',_id',
             'discount_types'   => 'required|in:gold_credit,discount_percentage',
             'discount'         => 'required|numeric',
-            'number_of_uses'   => 'required|integer',
+            'number_of_uses'   => 'required_if:number_of_uses_checked,false',
             'can_mutitime_use' => 'required',
-            'expiry_date'      => 'required',
+            'expiry_date'      => 'required_if:expiry_date_checked,false',
             'description'      => 'required',
         ]);
         
@@ -129,16 +164,22 @@ class DiscountCouponController extends Controller
 
         $discount = DiscountCoupon::where('_id',$id)->first();
         
-        $expiryDate = $request->get('expiry_date');
-        $dates = explode(' - ', $expiryDate);
-        $startDate = Carbon::parse($dates[0]);
-        $endDate = Carbon::parse($dates[1]);
-        
         $data = $request->all();
+        
+        if ($data['expiry_date_checked'] == 'false') {
+            $expiryDate = $request->get('expiry_date');
+            $dates = explode(' - ', $expiryDate);
+            $startDate = Carbon::parse($dates[0]);
+            $endDate = Carbon::parse($dates[1]);
+        } else {
+            $startDate = null;
+            $endDate = null;
+        }
+                
         $data['start_at'] = $startDate;
         $data['end_at']  = $endDate;
         $data['discount'] = (float)$data['discount'];
-        $data['number_of_uses'] = (int)$data['number_of_uses'];
+        $data['number_of_uses'] = (($data['number_of_uses_checked'] == 'false')?(int)$data['number_of_uses']:null);
         $data['can_mutitime_use'] = ($data['can_mutitime_use']=='true')?true:false;
 
         $discount->update($data);
@@ -199,19 +240,27 @@ class DiscountCouponController extends Controller
         })
         ->editColumn('discount', function($discount){
             if ($discount->discount_types == 'gold_credit') {
-                return $discount->discount.'(Gold)';
+                return $discount->discount.' Gold';
             } else if ($discount->discount_types == 'discount_percentage') {
-                return $discount->discount.'(%)';
+                return $discount->discount.'%';
             }
         })
         ->editColumn('can_mutitime_use', function($discount){
             return ($discount->can_mutitime_use)?'Yes':'No';
         })
         ->editColumn('start_at', function($discount){
-            return $discount->start_at->format('d M,Y');
+            if (is_null($discount->start_at)) {
+                return '-';
+            } else {
+                return $discount->start_at->format('d M,Y');
+            }
         })
         ->editColumn('end_at', function($discount){
-            return $discount->end_at->format('d M,Y');
+            if (is_null($discount->end_at)) {
+                return '-';
+            } else {
+                return $discount->end_at->format('d M,Y');
+            }
         })
         ->addColumn('action', function($discount) use ($admin){
             $data = '';
