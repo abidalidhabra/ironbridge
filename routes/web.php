@@ -151,6 +151,13 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('payment', [ 'middleware' => ['permission:View Payments'], 'uses' => 'PaymentController@index' ])->name('payment.index');
 	Route::get('getPaymentList', [ 'middleware' => ['permission:View Payments'], 'uses' => 'PaymentController@getPaymentList' ])->name('getPaymentList');
 
+
+	/* Discount Coupons */
+	Route::group(['middleware' => ['permission:View Discount Coupons']], function () {
+		Route::resource('discounts', 'DiscountCouponController');
+		Route::get('getDiscountsList', 'DiscountCouponController@getDiscountsList')->name('getDiscountsList');
+	});
+	
 });
 
 Auth::routes();

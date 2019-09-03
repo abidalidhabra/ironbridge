@@ -2,7 +2,7 @@
 @extends('admin.layouts.admin-app')
 @section('styles')
 
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.css" />
+   
 @endsection('styles')
 
 @section('content')
@@ -167,7 +167,7 @@
 @endsection
 
 @section('scripts')
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.js"></script>
+   
     <script type="text/javascript">
         $( document ).ready(function() {
             var startDate = "{{ $data['last_record_date']->format('d M Y') }}";
