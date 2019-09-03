@@ -58,6 +58,13 @@ class AddRolesAndPermission extends Controller
 
 		Permission::create(['name' => 'View Payments','guard_name' => 'admin', 'module'=>'Payments']);
 
+
+
+		Permission::create(['name' => 'View Discount Coupons','guard_name' => 'admin', 'module'=>'Discount Coupons']);
+		Permission::create(['name' => 'Add Discount Coupons','guard_name' => 'admin', 'module'=>'Discount Coupons']);
+		Permission::create(['name' => 'Edit Discount Coupons','guard_name' => 'admin', 'module'=>'Discount Coupons']);
+		Permission::create(['name' => 'Delete Discount Coupons','guard_name' => 'admin', 'module'=>'Discount Coupons']);
+
 		/*$data = [
 					['name' => 'Practice Games Targets','guard_name' => 'admin', 'module'=>'practiceGamesTargets'],
 					
