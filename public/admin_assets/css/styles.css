@@ -960,7 +960,9 @@ table i.iconsetaddbox{
   /*background: linear-gradient(135deg, #ff5f6d 0%, #ffc371 100%);*/
 }
 
-
+.mutitime_use{
+    margin-bottom: 8px; 
+}
 
 .nav-offcanvas {
   width: 100%;

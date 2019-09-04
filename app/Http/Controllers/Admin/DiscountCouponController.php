@@ -68,7 +68,7 @@ class DiscountCouponController extends Controller
             'number_of_uses'   => 'required_if:number_of_uses_checked,false',
             'can_mutitime_use' => 'required',
             'expiry_date'      => 'required_if:expiry_date_checked,false',
-            'description'      => 'required',
+            // 'description'      => 'required',
             'avatar_ids'       => 'required_if:discount_percentage,avatar_item',
         ]);
         
@@ -162,7 +162,7 @@ class DiscountCouponController extends Controller
             'number_of_uses'   => 'required_if:number_of_uses_checked,false',
             'can_mutitime_use' => 'required',
             'expiry_date'      => 'required_if:expiry_date_checked,false',
-            'description'      => 'required',
+            // 'description'      => 'required',
             'avatar_ids'       => 'required_if:discount_percentage,avatar_item',
         ]);
         

@@ -51,7 +51,7 @@
                 <input type="checkbox" name="number_of_uses_checked" @if($discount->number_of_uses == null) {{ 'checked' }} @endif>No Limit
             </label>
         </div>
-
+    </div>
 </div>
 <div class="form-radio mutitime_use" style="@if($discount->discount_types=='gold_credit' || $discount->discount_types=='avatar_item') {{ "display: none;" }} @endif" >
     <label>Single User Can Use Multiple Time?:</label>
