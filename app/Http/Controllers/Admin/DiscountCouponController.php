@@ -190,6 +190,7 @@ class DiscountCouponController extends Controller
         $data['end_at']  = $endDate;
         if ($data['discount_types'] == 'gold_credit' || $data['discount_types'] == 'discount_percentage') {
             $data['discount'] = (float)$data['discount'];
+            $data['avatar_ids'] = [];
         }
         // $data['discount'] = (float)$data['discount'];
         $data['number_of_uses'] = (($data['number_of_uses_checked'] == 'false')?(int)$data['number_of_uses']:null);

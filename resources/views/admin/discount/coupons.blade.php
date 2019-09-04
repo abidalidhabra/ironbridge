@@ -81,6 +81,7 @@
                                     @empty
                                     @endforelse
                                 </div>
+                                <br>
                                 <div class="form-group discount_box">
                                     <label>Gold Credits:</label>
                                     <input type="text" name="discount" class="form-control" placeholder="Enter Gold Credits">

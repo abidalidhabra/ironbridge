@@ -36,6 +36,7 @@
         <label>Discount Percentage:</label>
         <input type="text" name="discount" class="form-control" placeholder="Enter Discount Percentage" value="{{ $discount->discount }}">
     @else
+        <label>Gold Credits:</label>
         <input type="text" name="discount" class="form-control" placeholder="Enter Discount Percentage" value="{{ $discount->discount }}" disabled>
     @endif
 </div>
