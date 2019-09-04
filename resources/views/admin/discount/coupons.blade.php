@@ -62,14 +62,42 @@
                                     <br/>
                                     <label class="radio-inline"><input type="radio" name="discount_types" value="gold_credit" checked>Gold Credits</label>
                                     <label class="radio-inline"><input type="radio" name="discount_types" value="discount_percentage">Discount Percentage</label>
+                                    <label class="radio-inline"><input type="radio" name="discount_types" value="avatar_item">Avatar Item</label>
                                 </div>
-                                <div class="form-group">
-                                    <label>Discount:</label>
-                                    <input type="text" name="discount" class="form-control" placeholder="Enter Discount">
+                                
+                                <div id="avatar_item_box" class="allavtitembox avatar_item_box" style="display: none;">
+                                    @forelse($widgetItem as $widget)
+                                        @if(File::exists(public_path('admin_assets/widgets/'.$widget->id.'.png')))
+                                        <div class="avt_itemboxset">
+                                            <img class="card-img-top" src="{{ asset('admin_assets/widgets/'.$widget->id.'.png') }}">
+                                            <div class="custboxslt">
+                                                <label class="select_container">
+                                                  <input type="checkbox" name="avatar_ids[]" value="{{ $widget->id }}">
+                                                  <span class="checkmark"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        @endif
+                                    @empty
+                                    @endforelse
+                                </div>
+                                <br>
+                                <div class="form-group discount_box">
+                                    <label>Gold Credits:</label>
+                                    <input type="text" name="discount" class="form-control" placeholder="Enter Gold Credits">
                                 </div>
                                 <div class="form-group">
                                     <label>Number Of Uses:</label>
-                                    <input type="text" name="number_of_uses" class="form-control" placeholder="Enter number of uses">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <input type="text" name="number_of_uses" class="form-control" placeholder="Enter number of uses">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="checkbox-inline">
+                                                <input type="checkbox" name="number_of_uses_checked">No Limit
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="form-radio mutitime_use" style="display: none;">
                                     <label>Single User Can Use Multiple Time?:</label>
@@ -79,7 +107,16 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Expired In:</label>
-                                    <input type="text" name="expiry_date" class="form-control" placeholder="Enter number of uses">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <input type="text" name="expiry_date" class="form-control" placeholder="Enter number of uses" autocomplete="off">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="checkbox-inline">
+                                                <input type="checkbox" name="expiry_date_checked">No Limit
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="form-group">
                                     <label>Description:</label>
@@ -132,17 +169,69 @@
                 var radio =  $(this).val();
                 if (radio == 'gold_credit') {
                     $('.mutitime_use').hide();
+                    $('.avatar_item_box').hide();
+                    $('.discount_box').show();
+                    $('.discount_box').find('label').text('Gold Credits:');
+                    $('.discount_box').find('input').attr('placeholder','Enter Gold Credits');
+                    $('.discount_box').find('input').prop("disabled", false);
                 } else if (radio == 'discount_percentage'){
                     $('.mutitime_use').show();
+                    $('.avatar_item_box').hide();
+                    $('.discount_box').show();
+                    $('.discount_box').find('label').text('Discount Percentage:');
+                    $('.discount_box').find('input').attr('placeholder','Enter Discount Percentage');
+                    $('.discount_box').find('input').prop("disabled", false);
+                } else if (radio == 'avatar_item'){
+                    $('.avatar_item_box').show();
+                    $('.mutitime_use').hide();
+                    $('.discount_box').hide();
+                    $('.discount_box').find('label').text('Gold Credits:');
+                    $('.discount_box').find('input').prop("disabled", true);
+
                 }
             });
+
+
+            $(document).on('change','[name=number_of_uses_checked]',function(){
+                if($(this).prop("checked") == true){
+                    $('[name=number_of_uses]').prop("disabled", true);
+                } else if($(this).prop("checked") == false){
+                    $('[name=number_of_uses]').prop("disabled", false);   
+                }
+            });
+
+            $(document).on('change','[name=expiry_date_checked]',function(){
+                if($(this).prop("checked") == true){
+                    $('[name=expiry_date]').prop("disabled", true);
+                } else if($(this).prop("checked") == false){
+                    $('[name=expiry_date]').prop("disabled", false);   
+                }
+            });
+
 
             /* DATE RANGE PICKER */
             dateRangePicker();
             function dateRangePicker(){
-                var start = moment().subtract(30, 'days');
-                var end = moment();
-                function cb(start, end) {
+                $('input[name="expiry_date"]').daterangepicker({
+                    autoUpdateInput: false,
+                    autoApply: true,
+                    locale: {
+                        cancelLabel: 'Clear',
+                        format: 'MMM D, YYYY',
+                    }
+                });
+
+                  $('input[name="expiry_date"]').on('apply.daterangepicker', function(ev, picker) {
+                      $(this).val(picker.startDate.format('MMM D, YYYY') + ' - ' + picker.endDate.format('MMM D, YYYY'));
+                  });
+
+                  $('input[name="expiry_date"]').on('cancel.daterangepicker', function(ev, picker) {
+                      $(this).val('');
+                  });
+
+                // var start = moment().subtract(30, 'days');
+                // var end = moment();
+                /*function cb(start, end) {
                     $('input[name=expiry_date]').val(start.format('MMM D, YYYY') + ' - ' + end.format('MMM D, YYYY'));
                 }
                 $('input[name=expiry_date]').daterangepicker({
@@ -163,7 +252,7 @@
                         'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
                     }
                 },cb);
-                cb(start, end);
+                cb(start, end);*/
             }
 
 
@@ -212,44 +301,37 @@
             //ADD NEWS
             $('#addDiscountForm').submit(function(e) {
                 e.preventDefault();
-            })
-            .validate({
-                focusInvalid: false, 
-                ignore: "",
-                rules: {
-                    discount_code: { required: true },
-                    discount: { required: true },
-                    number_of_uses: { required: true },
-                    description: { required: true },
-                },
-                submitHandler: function (form) {
-                    var formData = new FormData(form);
-                    $.ajax({
-                        type: "POST",
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        url: '{{ route("admin.discounts.store") }}',
-                        data: formData,
-                        processData:false,
-                        cache:false,
-                        contentType: false,
-                        success: function(response)
-                        {
-                            if (response.status == true) {
-                                toastr.success(response.message);
-                                $('input[name="discount_code"] , input[name="discount"] , input[name="number_of_uses"] , textarea ').val('');
-                                $('input[name="discount_types"]:first').prop("checked",true);
-                                $('input[name="can_mutitime_use"]:last').prop("checked",true);
-                                $('.mutitime_use').hide();
-                                $('#addDiscount').modal('hide');
-                                table.ajax.reload();
-                            } else {
-                                toastr.warning(response.message);
-                            }
+                var formData = new FormData($(this)[0]);
+                $.ajax({
+                    type: "POST",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '{{ route("admin.discounts.store") }}',
+                    data: formData,
+                    processData:false,
+                    cache:false,
+                    contentType: false,
+                    success: function(response)
+                    {
+                        if (response.status == true) {
+                            toastr.success(response.message);
+                            $('input[name="discount_code"] , input[name="discount"] , input[name="number_of_uses"] , textarea ').val('');
+                            $('input[name="discount_types"]:first').prop("checked",true);
+                            $('input[name="can_mutitime_use"]:last').prop("checked",true);
+                            $('.mutitime_use').hide();
+                            $('.avatar_item_box').hide();
+                            $('#addDiscount').modal('hide');
+                            $('.discount_box').show();
+                            $('.discount_box').find('label').text('Gold Credits:');
+                            $('.discount_box').find('input').attr('placeholder','Enter Gold Credits');
+                            $('.discount_box').find('input').prop("disabled", false);
+                            table.ajax.reload();
+                        } else {
+                            toastr.warning(response.message);
                         }
-                    });
-                }
+                    }
+                });
             });
 
 
@@ -309,49 +391,42 @@
             //EDIT NEWS
             $('#editDiscountForm').submit(function(e) {
                 e.preventDefault();
-            })
-            .validate({
-                focusInvalid: false, 
-                ignore: "",
-                rules: {
-                    discount_code: { required: true },
-                    discount: { required: true },
-                    number_of_uses: { required: true },
-                    description: { required: true },
-                },
-                submitHandler: function (form) {
-                    var formData = new FormData(form);
-                    var id = $('#discount_id').val();
-                    $.ajax({
-                        type: "POST",
-                        url: '{{ route("admin.discounts.update","") }}/'+id,
-                        data: formData,
-                        processData:false,
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        cache:false,
-                        contentType: false,
-                        beforeSend: function() {
-                            //$('#editGameForm [type=submit]').html('<i class="fa fa-spinner fa-spin"></i> Save');
-                        },
-                        success: function(response)
-                        {
-                            
-                            if (response.status == true) {
-                                toastr.success(response.message);
-                                $('input[name="discount_code"] , input[name="discount"] , input[name="number_of_uses"] , textarea ').val('');
-                                $('input[name="discount_types"]:first').prop("checked",true);
-                                $('input[name="can_mutitime_use"]:last').prop("checked",true);
-                                $('.mutitime_use').hide();
-                                $('#editDiscount').modal('hide');
-                                table.ajax.reload();
-                            } else {
-                                toastr.warning(response.message);
-                            }
+                var formData = new FormData($(this)[0]);
+                var id = $('#discount_id').val();
+                $.ajax({
+                    type: "POST",
+                    url: '{{ route("admin.discounts.update","") }}/'+id,
+                    data: formData,
+                    processData:false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    cache:false,
+                    contentType: false,
+                    beforeSend: function() {
+                        //$('#editGameForm [type=submit]').html('<i class="fa fa-spinner fa-spin"></i> Save');
+                    },
+                    success: function(response)
+                    {
+                        
+                        if (response.status == true) {
+                            toastr.success(response.message);
+                            $('input[name="discount_code"] , input[name="discount"] , input[name="number_of_uses"] , textarea ').val('');
+                            $('input[name="discount_types"]:first').prop("checked",true);
+                            $('input[name="can_mutitime_use"]:last').prop("checked",true);
+                            $('.discount_box').find('label').text('Gold Credits:');
+                            $('.discount_box').show();
+                            $('.discount_box').find('input').attr('placeholder','Enter Gold Credits');
+                            $('.mutitime_use').hide();
+                            $('.avatar_item_box').hide();
+                            $('#editDiscount').modal('hide');
+                            $('.discount_box').find('input').prop("disabled", false);
+                            table.ajax.reload();
+                        } else {
+                            toastr.warning(response.message);
                         }
-                    });
-                }
+                    }
+                });
             });
         });
     </script>

@@ -153,5 +153,10 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
 		Route::post('participateInEvent', 'EventsUserController@participateInEvent');
 		Route::post('markTheEventMGAsComplete', 'EventsMiniGameController@markTheEventMGAsComplete');
 		Route::get('getPresentDayEventDetail', 'EventsUserController@getPresentDayEventDetail');
+	
+		/** DISCOUNT COUPON */
+		//Route::get('getDiscountCoupon', 'DiscountCouponController@getDiscountCoupon');
+		Route::post('useTheGoldCoupon', 'DiscountCouponController@useTheGoldCoupon');
+		
 	});
 });
