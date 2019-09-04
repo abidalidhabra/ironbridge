@@ -99,8 +99,9 @@ class ClueController extends Controller
 
             // $skeletonExists = User::where(['skeleton_keys.used_at' => null, '_id'=> $userId])->project(['_id'=> true, 'skeleton_keys.$'=>true])->first();
             $skeletonExists = User::where(['skeleton_keys.used_at' => null, '_id'=> $userId])->update(['skeleton_keys.$.used_at'=> new MongoDBDate()]);
+            $freshUser = User::where('_id', $userId)->first();
             if (!$skeletonExists) {
-                return response()->json(['message'=>'You does not have any key to use.'], 422);
+                return response()->json(['message'=>'You do not have sufficient skeleton keys.'], 422);
             }
 
             // $huntFinished = $this->actionOnClue($huntUserDetail, 'completed');
@@ -109,7 +110,7 @@ class ClueController extends Controller
             $actionOnClueRequest->request->add(['hunt_user_details_id'=> $huntUserDetailId, 'status'=> 'completed']);
             $huntFinished = (new ClueController)->actionOnClue($actionOnClueRequest);
 
-            return response()->json(['message'=> 'Clue Timer has been ended successfully.', 'hunt_action'=> $huntFinished->original, 'available_skeleton_keys'=> $user->available_skeleton_keys]);
+            return response()->json(['message'=> 'Clue Timer has been ended successfully.', 'hunt_action'=> $huntFinished->original, 'available_skeleton_keys'=> $freshUser->available_skeleton_keys]);
            
         } catch (Exception $e) {
             return response()->json(['message'=> $e->getMessage()]);
