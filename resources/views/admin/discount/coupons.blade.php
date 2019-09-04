@@ -169,18 +169,24 @@
                 if (radio == 'gold_credit') {
                     $('.mutitime_use').hide();
                     $('.avatar_item_box').hide();
+                    $('.discount_box').show();
                     $('.discount_box').find('label').text('Gold Credits:');
                     $('.discount_box').find('input').attr('placeholder','Enter Gold Credits');
+                    $('.discount_box').find('input').prop("disabled", false);
                 } else if (radio == 'discount_percentage'){
                     $('.mutitime_use').show();
                     $('.avatar_item_box').hide();
+                    $('.discount_box').show();
                     $('.discount_box').find('label').text('Discount Percentage:');
                     $('.discount_box').find('input').attr('placeholder','Enter Discount Percentage');
+                    $('.discount_box').find('input').prop("disabled", false);
                 } else if (radio == 'avatar_item'){
                     $('.avatar_item_box').show();
                     $('.mutitime_use').hide();
+                    $('.discount_box').hide();
                     $('.discount_box').find('label').text('Gold Credits:');
-                    $('.discount_box').find('input').attr('placeholder','Enter Gold Credits');
+                    $('.discount_box').find('input').prop("disabled", true);
+
                 }
             });
 
@@ -294,47 +300,37 @@
             //ADD NEWS
             $('#addDiscountForm').submit(function(e) {
                 e.preventDefault();
-            })
-            .validate({
-                focusInvalid: false, 
-                ignore: "",
-                rules: {
-                    discount_code: { required: true },
-                    discount: { required: true },
-                    number_of_uses: { required: true },
-                    description: { required: true },
-                },
-                submitHandler: function (form) {
-                    var formData = new FormData(form);
-                    $.ajax({
-                        type: "POST",
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        url: '{{ route("admin.discounts.store") }}',
-                        data: formData,
-                        processData:false,
-                        cache:false,
-                        contentType: false,
-                        success: function(response)
-                        {
-                            if (response.status == true) {
-                                toastr.success(response.message);
-                                $('input[name="discount_code"] , input[name="discount"] , input[name="number_of_uses"] , textarea ').val('');
-                                $('input[name="discount_types"]:first').prop("checked",true);
-                                $('input[name="can_mutitime_use"]:last').prop("checked",true);
-                                $('.mutitime_use').hide();
-                                $('.avatar_item_box').hide();
-                                $('#addDiscount').modal('hide');
-                                $('.discount_box').find('label').text('Gold Credits:');
-                                $('.discount_box').find('input').attr('placeholder','Enter Gold Credits');
-                                table.ajax.reload();
-                            } else {
-                                toastr.warning(response.message);
-                            }
+                var formData = new FormData($(this)[0]);
+                $.ajax({
+                    type: "POST",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '{{ route("admin.discounts.store") }}',
+                    data: formData,
+                    processData:false,
+                    cache:false,
+                    contentType: false,
+                    success: function(response)
+                    {
+                        if (response.status == true) {
+                            toastr.success(response.message);
+                            $('input[name="discount_code"] , input[name="discount"] , input[name="number_of_uses"] , textarea ').val('');
+                            $('input[name="discount_types"]:first').prop("checked",true);
+                            $('input[name="can_mutitime_use"]:last').prop("checked",true);
+                            $('.mutitime_use').hide();
+                            $('.avatar_item_box').hide();
+                            $('#addDiscount').modal('hide');
+                            $('.discount_box').show();
+                            $('.discount_box').find('label').text('Gold Credits:');
+                            $('.discount_box').find('input').attr('placeholder','Enter Gold Credits');
+                            $('.discount_box').find('input').prop("disabled", false);
+                            table.ajax.reload();
+                        } else {
+                            toastr.warning(response.message);
                         }
-                    });
-                }
+                    }
+                });
             });
 
 
@@ -394,52 +390,42 @@
             //EDIT NEWS
             $('#editDiscountForm').submit(function(e) {
                 e.preventDefault();
-            })
-            .validate({
-                focusInvalid: false, 
-                ignore: "",
-                rules: {
-                    discount_code: { required: true },
-                    discount: { required: true },
-                    number_of_uses: { required: true },
-                    description: { required: true },
-                },
-                submitHandler: function (form) {
-                    var formData = new FormData(form);
-                    var id = $('#discount_id').val();
-                    $.ajax({
-                        type: "POST",
-                        url: '{{ route("admin.discounts.update","") }}/'+id,
-                        data: formData,
-                        processData:false,
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        cache:false,
-                        contentType: false,
-                        beforeSend: function() {
-                            //$('#editGameForm [type=submit]').html('<i class="fa fa-spinner fa-spin"></i> Save');
-                        },
-                        success: function(response)
-                        {
-                            
-                            if (response.status == true) {
-                                toastr.success(response.message);
-                                $('input[name="discount_code"] , input[name="discount"] , input[name="number_of_uses"] , textarea ').val('');
-                                $('input[name="discount_types"]:first').prop("checked",true);
-                                $('input[name="can_mutitime_use"]:last').prop("checked",true);
-                                $('.discount_box').find('label').text('Gold Credits:');
-                                $('.discount_box').find('input').attr('placeholder','Enter Gold Credits');
-                                $('.mutitime_use').hide();
-                                $('.avatar_item_box').hide();
-                                $('#editDiscount').modal('hide');
-                                table.ajax.reload();
-                            } else {
-                                toastr.warning(response.message);
-                            }
+                var formData = new FormData($(this)[0]);
+                var id = $('#discount_id').val();
+                $.ajax({
+                    type: "POST",
+                    url: '{{ route("admin.discounts.update","") }}/'+id,
+                    data: formData,
+                    processData:false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    cache:false,
+                    contentType: false,
+                    beforeSend: function() {
+                        //$('#editGameForm [type=submit]').html('<i class="fa fa-spinner fa-spin"></i> Save');
+                    },
+                    success: function(response)
+                    {
+                        
+                        if (response.status == true) {
+                            toastr.success(response.message);
+                            $('input[name="discount_code"] , input[name="discount"] , input[name="number_of_uses"] , textarea ').val('');
+                            $('input[name="discount_types"]:first').prop("checked",true);
+                            $('input[name="can_mutitime_use"]:last').prop("checked",true);
+                            $('.discount_box').find('label').text('Gold Credits:');
+                            $('.discount_box').show();
+                            $('.discount_box').find('input').attr('placeholder','Enter Gold Credits');
+                            $('.mutitime_use').hide();
+                            $('.avatar_item_box').hide();
+                            $('#editDiscount').modal('hide');
+                            $('.discount_box').find('input').prop("disabled", false);
+                            table.ajax.reload();
+                        } else {
+                            toastr.warning(response.message);
                         }
-                    });
-                }
+                    }
+                });
             });
         });
     </script>

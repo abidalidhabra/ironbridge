@@ -28,13 +28,15 @@
 </div>
 <input type="hidden" name="discount_id" value="{{ $discount->id }}" id="discount_id">
 <br/>
-<div class="form-group discount_box">
+<div class="form-group discount_box" style="@if($discount->discount_types == 'avatar_item') {{ "display: none;" }} @endif">
     @if($discount->discount_types=='gold_credit')
         <label>Gold Credits:</label>
         <input type="text" name="discount" class="form-control" placeholder="Enter Gold Credits" value="{{ $discount->discount }}">
-    @else
+    @elseif($discount->discount_types == 'discount_percentage')
         <label>Discount Percentage:</label>
         <input type="text" name="discount" class="form-control" placeholder="Enter Discount Percentage" value="{{ $discount->discount }}">
+    @else
+        <input type="text" name="discount" class="form-control" placeholder="Enter Discount Percentage" value="{{ $discount->discount }}" disabled>
     @endif
 </div>
 <div class="form-group">
@@ -50,7 +52,7 @@
         </div>
 
 </div>
-<div class="form-radio mutitime_use" style="@if($discount->discount_types=='gold_credit') {{ "display: none;" }} @endif" >
+<div class="form-radio mutitime_use" style="@if($discount->discount_types=='gold_credit' || $discount->discount_types=='avatar_item') {{ "display: none;" }} @endif" >
     <label>Single User Can Use Multiple Time?:</label>
     <br/>
     <label class="radio-inline"><input type="radio" name="can_mutitime_use" value="true" @if($discount->can_mutitime_use==true) {{ 'checked' }} @endif>Yes</label>

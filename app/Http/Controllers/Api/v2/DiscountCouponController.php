@@ -48,20 +48,32 @@ class DiscountCouponController extends Controller
         $request['discount_code'] = strtoupper($request['discount_code']);
 
     	$validator = Validator::make($request->all(),[
-    		'coupon_id'=>'required|exists:discount_coupons,_id',
+    		'discount_code'=>'required|exists:discount_coupons,discount_code',
     	]);
 
     	if ($validator->fails()) {
             return response()->json(['message'=>$validator->messages()->first()], 422);
         }
 
-        $id = $request->get('coupon_id');
+        $coupon = $request->get('discount_code');
         $user = Auth::User();
         $userId = $user->id;
+        $date =  Carbon::today();
 
-        $discount = DiscountCoupon::where('_id',$id)
+        $discount = DiscountCoupon::where('discount_code',$coupon)
+                                    ->where(function($query) use ($date){
+                                        $query->whereNull('start_at')
+                                                ->orWhere(function($query1) use ($date){
+                                                    $query1->where('start_at','<=',$date)
+                                                    ->where('end_at','>=',$date);
+                                                });
+                                    })
+                                    ->where('discount_types','gold_credit')
         							->first();
 
+        if (!$discount) {
+            return response()->json(['message'=>'Coupon not valid'], 422);
+        }
 
         if(!is_null($discount->number_of_uses) && $discount->number_of_uses <= $discount->total_used_coupon){
             return response()->json(['message'=>'Coupon limited offer'], 422);

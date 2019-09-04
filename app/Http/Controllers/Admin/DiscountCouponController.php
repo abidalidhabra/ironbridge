@@ -63,7 +63,8 @@ class DiscountCouponController extends Controller
             // 'discount_code'    => 'required|exists:discount_coupons,discount_code',
             'discount_code'    => 'required|unique:discount_coupons,discount_code',            
             'discount_types'   => 'required|in:gold_credit,discount_percentage,avatar_item',
-            'discount'         => 'required|numeric',
+            'discount'         => 'numeric',
+            'discount'         => 'required_if:discount_types,gold_credit,discount_percentage',
             'number_of_uses'   => 'required_if:number_of_uses_checked,false',
             'can_mutitime_use' => 'required',
             'expiry_date'      => 'required_if:expiry_date_checked,false',
@@ -92,7 +93,9 @@ class DiscountCouponController extends Controller
         
         $data['start_at'] = $startDate;
         $data['end_at']  = $endDate;
-        $data['discount'] = (float)$data['discount'];
+        if ($data['discount_types'] == 'gold_credit' || $data['discount_types'] == 'discount_percentage') {
+            $data['discount'] = (float)$data['discount'];
+        }
         $data['number_of_uses'] = (($data['number_of_uses_checked'] == 'false')?(int)$data['number_of_uses']:null);
         $data['can_mutitime_use'] = ($data['can_mutitime_use']=='true')?true:false;
 
@@ -154,7 +157,8 @@ class DiscountCouponController extends Controller
         $validator = Validator::make($request->all(),[
             'discount_code'    => 'required|unique:discount_coupons,discount_code,'.$id.',_id',
             'discount_types'   => 'required|in:gold_credit,discount_percentage,avatar_item',
-            'discount'         => 'required|numeric',
+            'discount'         => 'numeric',
+            'discount'         => 'required_if:discount_types,gold_credit,discount_percentage',
             'number_of_uses'   => 'required_if:number_of_uses_checked,false',
             'can_mutitime_use' => 'required',
             'expiry_date'      => 'required_if:expiry_date_checked,false',
@@ -184,7 +188,10 @@ class DiscountCouponController extends Controller
                 
         $data['start_at'] = $startDate;
         $data['end_at']  = $endDate;
-        $data['discount'] = (float)$data['discount'];
+        if ($data['discount_types'] == 'gold_credit' || $data['discount_types'] == 'discount_percentage') {
+            $data['discount'] = (float)$data['discount'];
+        }
+        // $data['discount'] = (float)$data['discount'];
         $data['number_of_uses'] = (($data['number_of_uses_checked'] == 'false')?(int)$data['number_of_uses']:null);
         $data['can_mutitime_use'] = ($data['can_mutitime_use']=='true')?true:false;
 

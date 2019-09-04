@@ -213,16 +213,16 @@ header{
     color: #a94442;
 }
 .modalbuttonadd button{
- background: #A5853B;
- border: 0px;
- font-size: 15px;
- font-family: 'Montserrat-Regular';
+   background: #A5853B;
+   border: 0px;
+   font-size: 15px;
+   font-family: 'Montserrat-Regular';
 }
 .modalbuttonadd a{
- background: #A5853B;
- border: 0px;
- font-size: 15px;
- font-family: 'Montserrat-Regular';
+   background: #A5853B;
+   border: 0px;
+   font-size: 15px;
+   font-family: 'Montserrat-Regular';
 }
 .customdatatable_box .table-hover>tbody>tr:hover {
     background-color: #fff;
@@ -240,22 +240,22 @@ header{
     font-family: 'Montserrat-Medium';
 }
 .modalbuttonadd:hover button ,.modalbuttonadd:hover a{
- background: #A5853B;
+   background: #A5853B;
 }
 .modalbuttonadd .btn-info.active, .btn-info:active, .open>.dropdown-toggle.btn-info {
- color: #fff;
- background: #A5853B;
- border-color: #A5853B;
+   color: #fff;
+   background: #A5853B;
+   border-color: #A5853B;
 }
 .modalbuttonadd .btn-info.focus, .btn-info:focus {
- color: #fff;
- background: #A5853B;
- border-color: #A5853B;
+   color: #fff;
+   background: #A5853B;
+   border-color: #A5853B;
 }
 .modalbuttonadd .btn-info.active.focus, .btn-info.active:focus, .btn-info.active:hover, .btn-info:active.focus, .btn-info:active:focus, .btn-info:active:hover, .open>.dropdown-toggle.btn-info.focus, .open>.dropdown-toggle.btn-info:focus, .open>.dropdown-toggle.btn-info:hover {
- color: #fff;
- background-color: #A5853B;
- border-color: #A5853B;
+   color: #fff;
+   background-color: #A5853B;
+   border-color: #A5853B;
 }
 
 
@@ -330,6 +330,13 @@ header{
     display: inline-block;
     width: 100%;
 }
+.customcheck .checkcontainer{
+    padding-left: 0;
+}
+.customcheck .checkmark{
+    float: left;
+    margin-right: 5px;
+}
 .checkcontainer {
     font-weight: normal;
     display: block;
@@ -362,8 +369,13 @@ header{
     width: 22px;
     background-color: #eee;
 }
+.customcheck .checkmark{
+    height: 22px;
+    width: 22px;
+}
+
 .checkcontainer:hover input ~ .checkmark {
-  background-color: #ccc;
+  background-color: #ffffff;
 }
 .checkcontainer input:checked ~ .checkmark {
   background-color: #A5853B;
@@ -377,8 +389,8 @@ header{
   display: block;
 }
 .checkcontainer .checkmark:after {
-    left: 8px;
-    top: 4px;
+    left: 7px;
+    top: 3px;
     width: 7px;
     height: 12px;
     border: solid white;
@@ -451,20 +463,20 @@ header{
     top: 8px;
 }
 .date_textboxpart input {
- margin: 0px;
- font-size: 15px;
- color: #4D4F5C;    
- border: 1px solid #DEE2EC;
- border-radius: 17px;
- padding: 5px 13px 5px 5px;
- width: 92%;
- float: right;
- padding-left: 34px;
- padding-right: 24px;
- font-size: 14px;
- text-align: left;
- padding-top: 6px;
- font-family: 'Montserrat-Regular';
+   margin: 0px;
+   font-size: 15px;
+   color: #4D4F5C;    
+   border: 1px solid #DEE2EC;
+   border-radius: 17px;
+   padding: 5px 13px 5px 5px;
+   width: 92%;
+   float: right;
+   padding-left: 34px;
+   padding-right: 24px;
+   font-size: 14px;
+   text-align: left;
+   padding-top: 6px;
+   font-family: 'Montserrat-Regular';
 }
 .signeup_innerborderbox {
     display: inline-block;
@@ -1120,10 +1132,10 @@ table i.iconsetaddbox{
             display: inline-block;
         }
         .closeicon a img{
-         width: 15px;
-         margin-top: 7px;
-     }
-     .photosboxset{
+           width: 15px;
+           margin-top: 7px;
+       }
+       .photosboxset{
         display: inline-block;
         width: 100%;
         height: 230px;
@@ -1837,23 +1849,23 @@ table i.iconsetaddbox{
 }
 
 .button_box .add_prize , .button_box .add_map_time{
-background: #A5853B;
+    background: #A5853B;
     border: 0px;
     font-size: 15px;
     font-family: 'Montserrat-Regular';
     color: #ffffff !important;
-        padding-left: 11px;
+    padding-left: 11px;
     padding-right: 11px;
     padding-top: 5px;
     padding-bottom: 3px;
 }
 .button_box .remove_prize , .button_box .remove_map_time{
-background: #A5853B;
+    background: #A5853B;
     border: 0px;
     font-size: 15px;
     font-family: 'Montserrat-Regular';
     color: #ffffff !important;
-       padding-left: 11px;
+    padding-left: 11px;
     padding-right: 11px;
     padding-top: 5px;
     padding-bottom: 3px;
@@ -1876,7 +1888,7 @@ background: #A5853B;
 
 .remove_mini_game , .remove_mini_game1 , .add_mini_game , .add_game , .remove_game , .remove_game1{
     background: #A5853B;
-   background: #A5853B;
+    background: #A5853B;
     border: 0px;
     font-size: 12px;
     color: #FFFFFF;
@@ -1889,7 +1901,7 @@ background: #A5853B;
     margin-top: 5px;
     margin-right: 5px;
     float: left;
-        font-size: 11px;
+    font-size: 11px;
 }
 .remove_mini_game:hover , .remove_mini_game1:hover , .add_mini_game:hover , .add_game:hover , .remove_game:hover, .remove_game1:hover{
     color: #FFFFFF;
@@ -1921,8 +1933,8 @@ background: #A5853B;
     visibility: hidden;
     text-indent: 0;
     &:before {
-     visibility: visible;
- }
+       visibility: visible;
+   }
 }
 
 
@@ -1978,115 +1990,115 @@ background: #A5853B;
 }
 .addhunteyrefbtn a{
     color: #A5853B;
-}*/
+    }*/
 
-.tooltip.right{
-    width: 100% !important;
-}
-
-
-.eventpagetitle{
-    display: inline-block;
-    width: 100%;
-}
-.eventpagetitle h4{
-    font-family: 'Montserrat-Medium';
-    color: #A5853B;
-    margin: 0;
-    margin-bottom: 0px;
-    font-size: 20px;
-}
-
-.separate_mini_game_box .form-group .form-label a{
-    background: #000000;
-    border-radius: 50%;
-    width: 15px;
-    height: 15px;
-    display: inline-block;
-    text-align: center;
-    color: #A5853B;
-    line-height: 1;
-    font-size: 14px;
-}
-.allbasicdirmain .allbasicdirbox .form-group .form-label a{
-    background: #000000;
-    border-radius: 50%;
-    width: 15px;
-    height: 15px;
-    display: inline-block;
-    text-align: center;
-    color: #A5853B;
-    line-height: 1;
-    font-size: 14px;
-}
+    .tooltip.right{
+        width: 100% !important;
+    }
 
 
-.boxmapedset{
-    margin-bottom: 13px;
-}
+    .eventpagetitle{
+        display: inline-block;
+        width: 100%;
+    }
+    .eventpagetitle h4{
+        font-family: 'Montserrat-Medium';
+        color: #A5853B;
+        margin: 0;
+        margin-bottom: 0px;
+        font-size: 20px;
+    }
+
+    .separate_mini_game_box .form-group .form-label a{
+        background: #000000;
+        border-radius: 50%;
+        width: 15px;
+        height: 15px;
+        display: inline-block;
+        text-align: center;
+        color: #A5853B;
+        line-height: 1;
+        font-size: 14px;
+    }
+    .allbasicdirmain .allbasicdirbox .form-group .form-label a{
+        background: #000000;
+        border-radius: 50%;
+        width: 15px;
+        height: 15px;
+        display: inline-block;
+        text-align: center;
+        color: #A5853B;
+        line-height: 1;
+        font-size: 14px;
+    }
+
+
+    .boxmapedset{
+        margin-bottom: 13px;
+    }
 
 
 /*.allbasicdirbox .form-group .form-label{
     margin-bottom: 10px;
-}*/
+    }*/
 
 
-.prize_box , .map_time_dealy_box{
-    display: inline-block;
-    width: 100%;
-}
+    .prize_box , .map_time_dealy_box{
+        display: inline-block;
+        width: 100%;
+    }
 
 
-.allavtitembox{
-    display: inline-block;
-    width: 100%;
-    margin-top: 14px;
-    margin-bottom: 14px;
-    max-height: 220px;
-    overflow: auto;
-}
-.avt_itemboxset{
-    display: inline-block;
-    width: 14.66%;
-    float: left;
-    text-align: center;
-    margin-top: 8px;
-    margin-bottom: 5px;
-    border: 1px solid #A5853B;
-    border-radius: 5px;
-    margin-left: 1%;
-    margin-right: 1%;
-}
-.avt_itemboxset img{
-    width: 55px;
-}
+    .allavtitembox{
+        display: inline-block;
+        width: 100%;
+        margin-top: 14px;
+        margin-bottom: 14px;
+        max-height: 220px;
+        overflow: auto;
+    }
+    .avt_itemboxset{
+        display: inline-block;
+        width: 23%;
+        float: left;
+        text-align: center;
+        margin-top: 8px;
+        margin-bottom: 5px;
+        border: 1px solid #A5853B;
+        border-radius: 5px;
+        margin-left: 1%;
+        margin-right: 1%;
+    }
+    .avt_itemboxset img{
+        width: 100%;
+    }
 
-.custboxslt{
-    display: inline-block;
-    width: 100%;
-}
-/* The container */
-.select_container {
-  display: block;
-  position: relative;
-  padding-left: 35px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  font-size: 22px;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-.select_container input {
-  /*position: absolute;*/
-    opacity: 0;
-    cursor: pointer;
-    height: 0;
-    width: 0;
-    display: none;
-}
-.checkmark {
+    .custboxslt{
+        display: inline-block;
+        width: 100%;
+    }
+    /* The container */
+    .select_container {
+      display: block;
+      position: relative;
+      padding-left: 35px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      font-size: 22px;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+  }
+  .select_container input {
+      /*position: absolute;*/
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+      display: none;
+  }
+  .checkmark {
     position: relative;
     height: 20px;
     width: 20px;

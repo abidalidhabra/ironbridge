@@ -155,7 +155,7 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
 		Route::get('getPresentDayEventDetail', 'EventsUserController@getPresentDayEventDetail');
 	
 		/** DISCOUNT COUPON */
-		Route::get('getDiscountCoupon', 'DiscountCouponController@getDiscountCoupon');
+		//Route::get('getDiscountCoupon', 'DiscountCouponController@getDiscountCoupon');
 		Route::post('useTheGoldCoupon', 'DiscountCouponController@useTheGoldCoupon');
 		
 	});
