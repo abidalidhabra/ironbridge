@@ -62,8 +62,25 @@
                                     <br/>
                                     <label class="radio-inline"><input type="radio" name="discount_types" value="gold_credit" checked>Gold Credits</label>
                                     <label class="radio-inline"><input type="radio" name="discount_types" value="discount_percentage">Discount Percentage</label>
+                                    <label class="radio-inline"><input type="radio" name="discount_types" value="avatar_item">Avatar Item</label>
                                 </div>
-                                <br/>
+                                
+                                <div id="avatar_item_box" class="allavtitembox avatar_item_box" style="display: none;">
+                                    @forelse($widgetItem as $widget)
+                                        @if(File::exists(public_path('admin_assets/widgets/'.$widget->id.'.png')))
+                                        <div class="avt_itemboxset">
+                                            <img class="card-img-top" src="{{ asset('admin_assets/widgets/'.$widget->id.'.png') }}">
+                                            <div class="custboxslt">
+                                                <label class="select_container">
+                                                  <input type="checkbox" name="avatar_ids[]" value="{{ $widget->id }}">
+                                                  <span class="checkmark"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        @endif
+                                    @empty
+                                    @endforelse
+                                </div>
                                 <div class="form-group discount_box">
                                     <label>Gold Credits:</label>
                                     <input type="text" name="discount" class="form-control" placeholder="Enter Gold Credits">
@@ -91,7 +108,7 @@
                                     <label>Expired In:</label>
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <input type="text" name="expiry_date" class="form-control" placeholder="Enter number of uses">
+                                            <input type="text" name="expiry_date" class="form-control" placeholder="Enter number of uses" autocomplete="off">
                                         </div>
                                         <div class="col-md-6">
                                             <label class="checkbox-inline">
@@ -151,12 +168,19 @@
                 var radio =  $(this).val();
                 if (radio == 'gold_credit') {
                     $('.mutitime_use').hide();
+                    $('.avatar_item_box').hide();
                     $('.discount_box').find('label').text('Gold Credits:');
                     $('.discount_box').find('input').attr('placeholder','Enter Gold Credits');
                 } else if (radio == 'discount_percentage'){
                     $('.mutitime_use').show();
+                    $('.avatar_item_box').hide();
                     $('.discount_box').find('label').text('Discount Percentage:');
                     $('.discount_box').find('input').attr('placeholder','Enter Discount Percentage');
+                } else if (radio == 'avatar_item'){
+                    $('.avatar_item_box').show();
+                    $('.mutitime_use').hide();
+                    $('.discount_box').find('label').text('Gold Credits:');
+                    $('.discount_box').find('input').attr('placeholder','Enter Gold Credits');
                 }
             });
 
@@ -181,9 +205,26 @@
             /* DATE RANGE PICKER */
             dateRangePicker();
             function dateRangePicker(){
-                var start = moment().subtract(30, 'days');
-                var end = moment();
-                function cb(start, end) {
+                $('input[name="expiry_date"]').daterangepicker({
+                    autoUpdateInput: false,
+                    autoApply: true,
+                    locale: {
+                        cancelLabel: 'Clear',
+                        format: 'MMM D, YYYY',
+                    }
+                });
+
+                  $('input[name="expiry_date"]').on('apply.daterangepicker', function(ev, picker) {
+                      $(this).val(picker.startDate.format('MMM D, YYYY') + ' - ' + picker.endDate.format('MMM D, YYYY'));
+                  });
+
+                  $('input[name="expiry_date"]').on('cancel.daterangepicker', function(ev, picker) {
+                      $(this).val('');
+                  });
+
+                // var start = moment().subtract(30, 'days');
+                // var end = moment();
+                /*function cb(start, end) {
                     $('input[name=expiry_date]').val(start.format('MMM D, YYYY') + ' - ' + end.format('MMM D, YYYY'));
                 }
                 $('input[name=expiry_date]').daterangepicker({
@@ -204,7 +245,7 @@
                         'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
                     }
                 },cb);
-                cb(start, end);
+                cb(start, end);*/
             }
 
 
@@ -283,6 +324,7 @@
                                 $('input[name="discount_types"]:first').prop("checked",true);
                                 $('input[name="can_mutitime_use"]:last').prop("checked",true);
                                 $('.mutitime_use').hide();
+                                $('.avatar_item_box').hide();
                                 $('#addDiscount').modal('hide');
                                 $('.discount_box').find('label').text('Gold Credits:');
                                 $('.discount_box').find('input').attr('placeholder','Enter Gold Credits');
@@ -389,6 +431,7 @@
                                 $('.discount_box').find('label').text('Gold Credits:');
                                 $('.discount_box').find('input').attr('placeholder','Enter Gold Credits');
                                 $('.mutitime_use').hide();
+                                $('.avatar_item_box').hide();
                                 $('#editDiscount').modal('hide');
                                 table.ajax.reload();
                             } else {

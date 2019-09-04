@@ -2037,6 +2037,110 @@ background: #A5853B;
 }
 
 
+.allavtitembox{
+    display: inline-block;
+    width: 100%;
+    margin-top: 14px;
+    margin-bottom: 14px;
+    max-height: 220px;
+    overflow: auto;
+}
+.avt_itemboxset{
+    display: inline-block;
+    width: 14.66%;
+    float: left;
+    text-align: center;
+    margin-top: 8px;
+    margin-bottom: 5px;
+    border: 1px solid #A5853B;
+    border-radius: 5px;
+    margin-left: 1%;
+    margin-right: 1%;
+}
+.avt_itemboxset img{
+    width: 55px;
+}
+
+.custboxslt{
+    display: inline-block;
+    width: 100%;
+}
+/* The container */
+.select_container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.select_container input {
+  /*position: absolute;*/
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+    display: none;
+}
+.checkmark {
+    position: relative;
+    height: 20px;
+    width: 20px;
+    background-color: #ffffff;
+    border: 1px solid #A5853B;
+    border-radius: 4px;
+    /*top: 0;
+    left: 0;*/
+    display: inline-block;
+}
+.select_container:hover input ~ .checkmark {
+  background-color: #ffffff;
+}
+.select_container input:checked ~ .checkmark {
+  background-color: #ffffff;
+}
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+.select_container input:checked ~ .checkmark:after {
+  display: block;
+}
+.select_container .checkmark:after {
+    left: 6px;
+    top: 2px;
+    width: 6px;
+    height: 11px;
+    border: solid #A5853B;
+    border-width: 0 2px 2px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+.custboxslt .select_container{
+    position: relative;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

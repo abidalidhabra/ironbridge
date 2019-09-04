@@ -7,6 +7,24 @@
     <br/>
     <label class="radio-inline"><input type="radio" name="discount_types" value="gold_credit" @if($discount->discount_types=='gold_credit') {{ 'checked' }} @endif>Gold Credits</label>
     <label class="radio-inline"><input type="radio" name="discount_types" value="discount_percentage" @if($discount->discount_types=='discount_percentage') {{ 'checked' }} @endif>Discount Percentage</label>
+    <label class="radio-inline"><input type="radio" name="discount_types" value="avatar_item" @if($discount->discount_types=='avatar_item') {{ 'checked' }} @endif>Avatar Item</label>
+
+</div>
+<div id="avatar_item_box" class="allavtitembox avatar_item_box" style="@if($discount->discount_types != 'avatar_item') {{ "display: none;" }} @endif">
+    @forelse($widgetItem as $widget)
+        @if(File::exists(public_path('admin_assets/widgets/'.$widget->id.'.png')))
+        <div class="avt_itemboxset">
+            <img class="card-img-top" src="{{ asset('admin_assets/widgets/'.$widget->id.'.png') }}">
+            <div class="custboxslt">
+                <label class="select_container">
+                  <input type="checkbox" name="avatar_ids[]" value="{{ $widget->id }}" @if(in_array($widget->id,$discount->avatar_ids)) {{ 'checked' }} @endif>
+                  <span class="checkmark"></span>
+                </label>
+            </div>
+        </div>
+        @endif
+    @empty
+    @endforelse
 </div>
 <input type="hidden" name="discount_id" value="{{ $discount->id }}" id="discount_id">
 <br/>
@@ -42,7 +60,7 @@
     <label>Expired In:</label>
     <div class="row">
         <div class="col-md-6">
-            <input type="text" name="expiry_date" class="form-control" value="{{ ($discount->start_at)?$discount->start_at->format('M d, Y').' - '.$discount->end_at->format('M d, Y'):'' }}" placeholder="Enter number of uses" @if($discount->start_at == null) {{ 'disabled' }} @endif>
+            <input type="text" name="expiry_date" autocomplete="off" class="form-control" value="{{ ($discount->start_at)?$discount->start_at->format('M d, Y').' - '.$discount->end_at->format('M d, Y'):'' }}" placeholder="Enter number of uses" @if($discount->start_at == null) {{ 'disabled' }} @endif>
         </div>
         <div class="col-md-6">
             <label class="checkbox-inline">

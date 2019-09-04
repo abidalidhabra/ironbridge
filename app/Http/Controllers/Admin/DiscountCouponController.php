@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\v2\DiscountCoupon;
+use App\Models\v1\WidgetItem;
 use Validator;
 use Carbon\Carbon;
 use MongoDB\BSON\UTCDateTime as MongoDBDate;
@@ -21,7 +22,9 @@ class DiscountCouponController extends Controller
      */
     public function index()
     {
-        return view('admin.discount.coupons');   
+        $widgetItem = WidgetItem::get();
+        
+        return view('admin.discount.coupons',compact('widgetItem'));
     }
 
     /**
@@ -59,12 +62,13 @@ class DiscountCouponController extends Controller
         $validator = Validator::make($request->all(),[
             // 'discount_code'    => 'required|exists:discount_coupons,discount_code',
             'discount_code'    => 'required|unique:discount_coupons,discount_code',            
-            'discount_types'   => 'required|in:gold_credit,discount_percentage',
+            'discount_types'   => 'required|in:gold_credit,discount_percentage,avatar_item',
             'discount'         => 'required|numeric',
             'number_of_uses'   => 'required_if:number_of_uses_checked,false',
             'can_mutitime_use' => 'required',
             'expiry_date'      => 'required_if:expiry_date_checked,false',
             'description'      => 'required',
+            'avatar_ids'       => 'required_if:discount_percentage,avatar_item',
         ]);
         
         if ($validator->fails())
@@ -119,8 +123,9 @@ class DiscountCouponController extends Controller
     public function edit($id)
     {
         $discount = DiscountCoupon::find($id);
+        $widgetItem = WidgetItem::get();
 
-        return view('admin.discount.edit_coupons',compact('discount'));
+        return view('admin.discount.edit_coupons',compact('discount','widgetItem'));
     }
 
     /**
@@ -148,12 +153,13 @@ class DiscountCouponController extends Controller
 
         $validator = Validator::make($request->all(),[
             'discount_code'    => 'required|unique:discount_coupons,discount_code,'.$id.',_id',
-            'discount_types'   => 'required|in:gold_credit,discount_percentage',
+            'discount_types'   => 'required|in:gold_credit,discount_percentage,avatar_item',
             'discount'         => 'required|numeric',
             'number_of_uses'   => 'required_if:number_of_uses_checked,false',
             'can_mutitime_use' => 'required',
             'expiry_date'      => 'required_if:expiry_date_checked,false',
             'description'      => 'required',
+            'avatar_ids'       => 'required_if:discount_percentage,avatar_item',
         ]);
         
         if ($validator->fails())
