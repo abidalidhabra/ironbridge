@@ -39,9 +39,9 @@ class MiniGameRepository implements MiniGameInterface
         $this->addCompletionTimes($practiceGameUser);
         
         // Throw an exception if minigame's piece is already collected
-        if ($practiceGameUser->piece_collected === true) {
-            throw new PieceAlreadyCollectedException('This mini game is already completed, try different game.', $practiceGameUser->completion_times);
-        }
+        // if ($practiceGameUser->piece_collected === true) {
+        //     throw new PieceAlreadyCollectedException('This mini game is already completed, try different game.', $practiceGameUser->completion_times);
+        // }
 
         // Throw an exception if cooldown period is active
         // if ($practiceGameUser->completed_at && $practiceGameUser->completed_at->diffInHours() < 24) {

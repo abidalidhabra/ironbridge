@@ -71,7 +71,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function deductSkeletonKeys(int $keysAmount){
 
-        $user = User::where('_id', $this->user->_id)->select('_id', 'skeleton_keys')->first();
+        $user = User::where('_id', $this->user->id)->select('_id', 'skeleton_keys')->first();
         $skeletonToBeUpdate = collect($user->skeleton_keys)->where('used_at', null)->take($keysAmount)->pluck('key');
         User::where('_id',$user->id)
             ->update(
