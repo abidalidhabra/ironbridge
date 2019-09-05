@@ -124,7 +124,7 @@ class MiniGameRepository implements MiniGameInterface
         // $this->user->save();
 
         /** Status of 1 & 2 & 3 Gateways **/
-        // if ($haveAllPieces->count() >= 3) {
+        if ($peiceToBeUpdate > 0) {
             if ($keyToBeCredit) {
                 (new UserRepository($this->user))->addSkeletonKeys($keyToBeCredit);
                 // $piecesInfo->markAsIncomplete();
@@ -138,7 +138,7 @@ class MiniGameRepository implements MiniGameInterface
             //     }
             // }
             // PracticeGameUser::whereIn('_id', $haveAllPieces->pluck('_id'))->update(['piece_collected'=> false]);
-        // }
+        }
 
         return $this->user->available_skeleton_keys;
     }

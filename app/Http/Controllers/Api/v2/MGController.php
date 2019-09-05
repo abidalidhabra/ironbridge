@@ -80,7 +80,8 @@ class MGController extends Controller
             return response()->json([
                 'message'=> 'This mini game is marked as completed.', 
                 'available_skeleton_keys'=> $availableSkeletonKeys['available_skeleton_keys'],
-                'completion_times'=> $availableSkeletonKeys['completion_times']
+                'completion_times'=> $availableSkeletonKeys['completion_times'],
+                'pieces_collected'=> $this->user->pieces_collected,
             ]);
         } catch(PieceAlreadyCollectedException $e) {
             return response()->json(['message'=> $e->getMessage(), 'completion_times'=> $e->getcompletionTimes()], 422);
