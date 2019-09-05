@@ -116,7 +116,7 @@ class MGController extends Controller
         // give response to client
         return response()->json([ 
             'message'=> 'Minigame tutorial has been marked as complete.',
-            'game_id'=> $request->game_id
+            // 'game_id'=> $request->game_id
         ]);
     }
 }

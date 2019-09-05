@@ -27,7 +27,7 @@ class MiniGameTutorialCompletionRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        if (collect($this->user->minigame_tutorials)->where('game_id', $value)->count()) {
+        if (collect($this->user->minigame_tutorials)->where('game_id', $value)->where('completed_at', '!=', null)->count()) {
             return false;
         }else{
             return true;
