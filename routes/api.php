@@ -145,6 +145,7 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
 		Route::get('getGamesData', 'MGController@getGamesData');
 		Route::post('markTheGameAsComplete', 'MGController@markTheGameAsComplete');
 		Route::post('setupMiniGamesForUser', 'MGController@setupMiniGamesForUser');
+		Route::post('unlockAMiniGame', 'MGController@unlockAMiniGame');
 		// Route::post('addSkeletonKey', 'MGController@addSkeletonKey');
 		
 		/** Event **/

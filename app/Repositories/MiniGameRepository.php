@@ -9,6 +9,7 @@ use App\Models\v2\PracticeGameUser;
 use App\Repositories\User\UserRepository;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use MongoDB\BSON\UTCDateTime;
 
 class MiniGameRepository
 {
@@ -42,7 +43,8 @@ class MiniGameRepository
         }
 
         // Throw an exception if cooldown period is active
-        if ($practiceGameUser->completed_at && $practiceGameUser->completed_at->diffInHours() < 24) {
+        // if ($practiceGameUser->completed_at && $practiceGameUser->completed_at->diffInHours() < 24) {
+        if ($practiceGameUser->completed_at && $practiceGameUser->completed_at->gte(today())) {
             throw new FreezeModeRunningException('This mini game is under the freeze mode.', $practiceGameUser->completion_times);
         }
 
@@ -114,10 +116,13 @@ class MiniGameRepository
         // });
 
         // $piecesInfo = PracticeGameUser::whereIn('_id', $haveAllPieces->pluck('id'))->get();
-        $haveAllPieces = PracticeGameUser::where(['user_id'=> $userId, 'piece_collected'=> true])->get();
+        // $haveAllPieces = PracticeGameUser::where(['user_id'=> $userId, 'piece_collected'=> true])->get();
+        $peiceToBeUpdate = (($user->pieces_collected + 1) == 3)? 0: 1; 
+        $user->pieces_collected = $peiceToBeUpdate;
+        $user->save();
 
         /** Status of 1 & 2 & 3 Gateways **/
-        if ($haveAllPieces->count() >= 3) {
+        // if ($haveAllPieces->count() >= 3) {
             if ($keyToBeCredit) {
                 (new UserRepository($this->user))->addSkeletonKeys($keyToBeCredit);
                 // $piecesInfo->markAsIncomplete();
@@ -130,8 +135,8 @@ class MiniGameRepository
             //         (new UserRepository($this->user))->addSkeletonKeys(1, ['plan_purchase_id' => $planPurchaseData->id]);
             //     }
             // }
-            PracticeGameUser::whereIn('_id', $haveAllPieces->pluck('_id'))->update(['piece_collected'=> false]);
-        }
+            // PracticeGameUser::whereIn('_id', $haveAllPieces->pluck('_id'))->update(['piece_collected'=> false]);
+        // }
 
         return $this->user->available_skeleton_keys;
     }
@@ -151,8 +156,13 @@ class MiniGameRepository
     public function markPracticeMiniGameAsComplete($practiceGameUser)
     {
         $practiceGameUser->completed_at = now();
-        $practiceGameUser->piece_collected = true;
+        // $practiceGameUser->piece_collected = true;
         $practiceGameUser->save();
         return $practiceGameUser;
+    }
+
+    public function unlockAMiniGame($gameId)
+    {
+        return $this->user->practice_games()->where('game_id', $gameId)->update(['unlocked_at'=> new UTCDateTime(now())]);
     }
 }

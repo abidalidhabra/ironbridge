@@ -39,6 +39,7 @@ class User extends Authenticatable implements JWTSubject
         'avatar',
         'skeleton_keys',
         'skeletons_bucket',
+        'pieces_collected',
         // 'expnadable_skeleton_keys',
     ];
 
@@ -79,6 +80,7 @@ class User extends Authenticatable implements JWTSubject
         'skeleton_keys' => [],
         'gold_balance'   => 0,
         'skeletons_bucket' => 5,
+        'pieces_collected' => 0,
         // 'expnadable_skeleton_keys'   => 0,
         // 'user_widgets' => [],
         // 'used_widgets' => [],
