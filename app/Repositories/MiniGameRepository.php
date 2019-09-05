@@ -49,7 +49,7 @@ class MiniGameRepository implements MiniGameInterface
             throw new FreezeModeRunningException('This mini game is under the freeze mode.', $practiceGameUser->completion_times);
         }
 
-        // Mark the minigame as complete and peice as collected
+        // Mark the minigame as complete and piece as collected
         $this->markPracticeMiniGameAsComplete($practiceGameUser);
 
         // Allot a key to user's account if aligible
@@ -118,13 +118,13 @@ class MiniGameRepository implements MiniGameInterface
 
         // $piecesInfo = PracticeGameUser::whereIn('_id', $haveAllPieces->pluck('id'))->get();
         // $haveAllPieces = PracticeGameUser::where(['user_id'=> $userId, 'piece_collected'=> true])->get();
-        $peiceToBeUpdate = (($this->user->pieces_collected + 1) == 3)? -2: 1; 
-        $this->user->increment('pieces_collected', $peiceToBeUpdate);
-        // $this->user->pieces_collected = $peiceToBeUpdate;
+        $pieceToBeUpdate = (($this->user->pieces_collected + 1) == 3)? -2: 1; 
+        $this->user->increment('pieces_collected', $pieceToBeUpdate);
+        // $this->user->pieces_collected = $pieceToBeUpdate;
         // $this->user->save();
 
         /** Status of 1 & 2 & 3 Gateways **/
-        if ($peiceToBeUpdate < 0) {
+        if ($pieceToBeUpdate < 0) {
             if ($keyToBeCredit) {
                 (new UserRepository($this->user))->addSkeletonKeys($keyToBeCredit);
                 // $piecesInfo->markAsIncomplete();
