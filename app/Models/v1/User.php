@@ -39,6 +39,7 @@ class User extends Authenticatable implements JWTSubject
         'avatar',
         'skeleton_keys',
         'skeletons_bucket',
+        'minigame_tutorials'
         // 'expnadable_skeleton_keys',
     ];
 

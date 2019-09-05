@@ -154,6 +154,7 @@ class UserController extends Controller
             // }
 
             // $user->delete();
+            UserHelper::minigameTutorials($user);
             return response()->json([
                 'token' => $token,
                 'data'  => $user,
@@ -373,5 +374,23 @@ class UserController extends Controller
             return json_encode(array("status"=>1));
         else
             return json_encode(array("status"=>0));
+    }
+
+    public function minigameTutorialsCompleted(Request $request){
+        $validator = Validator::make($request->all(),[
+            'game_id'   => "required|string|exists:games,_id",
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message'=>$validator->messages()], 422);
+        }
+
+        $user = Auth::User();
+        $gameid = $request->get('game_id');
+        $user = $user->where('minigame_tutorials.game_id',$gameid)
+                    ->update(['minigame_tutorials.$.completed_at'=>new \MongoDB\BSON\UTCDateTime(new \DateTime('now'))]);
+        
+        return response()->json(['message' => 'Mini game updated successfully']); 
+         
     }
 }

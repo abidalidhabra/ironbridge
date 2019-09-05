@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Controllers\Controller;
 use App\Repositories\MiniGameRepository;
 use App\Rules\CheckThePassword;
+use UserHelper;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use stdClass;
+use App\Models\v1\Game;
 
 class AuthController extends Controller
 {
@@ -78,6 +80,8 @@ class AuthController extends Controller
                     $miniGameRepository = new MiniGameRepository($user);
                     $miniGameRepository->createIfnotExist();
                 }
+                    
+                UserHelper::minigameTutorials($user);
 
                 return response()->json([
                     'message'=>'You logged-in successfully.', 
@@ -100,6 +104,23 @@ class AuthController extends Controller
        }
     }
 
+    /*public function minigameTutorials($user){
+        if (!$user->minigame_tutorial) {
+            $game = Game::where('status',true)->get();
+            $minigameTutorial = []; 
+
+            foreach ($game as $key => $value) {
+                $minigameTutorial[] = [
+                                            'game_id'      => $value->id,
+                                            'completed_at' => null,
+                                        ];
+            }
+
+            $user->minigame_tutorial = $minigameTutorial;
+
+           $user->save();
+        }
+    }*/
 
     public function checkUsernameEmail(Request $request)
     {
