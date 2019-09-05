@@ -2,12 +2,12 @@
 
 namespace App\Http\Requests\MiniGame;
 
-use App\Rules\MiniGame\UnlockMiniGameRule;
+use App\Rules\MiniGame\MiniGameTutorialCompletionRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class UnlockAMiniGameRequest extends FormRequest
+class MarkMiniGameTutorialAsCompleteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,11 +27,11 @@ class UnlockAMiniGameRequest extends FormRequest
     public function rules()
     {
         return [
-            'game_id'=> ['required', 'exists:games,_id', new UnlockMiniGameRule($this->ownableUser())]
+            'game_id'=> ['required', 'exists:games,_id', new MiniGameTutorialCompletionRule($this->ownableUser())]
         ];
     }
 
-     /**
+    /**
      * Handle a failed validation attempt.
      *
      * @param  \Illuminate\Contracts\Validation\Validator  $validator

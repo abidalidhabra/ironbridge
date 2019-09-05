@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v2;
 use App\Exceptions\PracticeMiniGame\FreezeModeRunningException;
 use App\Exceptions\PracticeMiniGame\PieceAlreadyCollectedException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\MiniGame\MarkMiniGameTutorialAsCompleteRequest;
 use App\Http\Requests\MiniGame\UnlockAMiniGameRequest;
 use App\Http\Requests\v2\PracticeGameFinishRequest;
 use App\Models\v1\Game;
@@ -103,7 +104,19 @@ class MGController extends Controller
         return response()->json([ 
             'message'=> 'Minigame unlocked successfully.', 
             'available_skeleton_keys'=> $availableSkeletonKeys, 
-            'game_id'=> $request->game_id  
+            // 'game_id'=> $request->game_id  
+        ]);
+    }
+
+    public function markMiniGameTutorialAsComplete(MarkMiniGameTutorialAsCompleteRequest $request)
+    {
+        // mark the minigame tutorial's status as complete
+        $availableSkeletonKeys = $this->userInterface->markMiniGameTutorialAsComplete($request->game_id);
+
+        // give response to client
+        return response()->json([ 
+            'message'=> 'Minigame tutorial has been marked as complete.',
+            'game_id'=> $request->game_id
         ]);
     }
 }

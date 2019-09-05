@@ -60,7 +60,7 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 		Route::post('unlockWidgetItem', 'UserController@unlockWidgetItem');
 		// Route::post('selectkWidgetItem', 'UserController@selectkWidgetItem');
 		Route::post('setMyAvatar', 'UserController@setMyAvatar');
-		Route::post('minigameTutorialsCompleted', 'UserController@minigameTutorialsCompleted');
+		// Route::post('minigameTutorialsCompleted', 'UserController@minigameTutorialsCompleted');
 		// Route::get('getWarehouseData', 'UserController@getWarehouseData');
 		
 		/** Plans related requets **/
@@ -147,6 +147,7 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
 		Route::post('markTheGameAsComplete', 'MGController@markTheGameAsComplete');
 		Route::post('setupMiniGamesForUser', 'MGController@setupMiniGamesForUser');
 		Route::post('unlockAMiniGame', 'MGController@unlockAMiniGame');
+		Route::post('markMiniGameTutorialAsComplete', 'MGController@markMiniGameTutorialAsComplete');
 		// Route::post('addSkeletonKey', 'MGController@addSkeletonKey');
 		
 		/** Event **/

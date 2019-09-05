@@ -80,4 +80,10 @@ class UserRepository implements UserRepositoryInterface
             );
         return $user->available_skeleton_keys - 1;
     }
+
+    public function markMiniGameTutorialAsComplete(string $gameId)
+    {
+        return User::where(['_id'=> $this->user->id, 'minigame_tutorials.game_id'=> $gameId])
+                    ->update(['minigame_tutorials.$.completed_at'=> new UTCDateTime(now()) ]);
+    }
 }

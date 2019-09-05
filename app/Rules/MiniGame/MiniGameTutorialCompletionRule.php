@@ -4,10 +4,9 @@ namespace App\Rules\MiniGame;
 
 use Illuminate\Contracts\Validation\Rule;
 
-class UnlockMiniGameRule implements Rule
+class MiniGameTutorialCompletionRule implements Rule
 {
     private $user;
-    private $message;
 
     /**
      * Create a new rule instance.
@@ -28,13 +27,9 @@ class UnlockMiniGameRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        if ($this->user->practice_games()->where('game_id', $value)->whereNotNull('unlocked_at')->count()) {
-            $this->message = 'This minigame is already marked as unlock.';
+        if (collect($this->user->minigame_tutorials)->where('game_id', $value)->count()) {
             return false;
-        }else if($this->user->available_skeleton_keys <= 0) {
-            $this->message = 'You don\'t have enough skeleton keys to unlock minigame.';
-            return false;
-        }else if($this->user->available_skeleton_keys > 0) {
+        }else{
             return true;
         }
     }
@@ -46,6 +41,6 @@ class UnlockMiniGameRule implements Rule
      */
     public function message()
     {
-        return $this->message;
+        return 'Tutorial of this minigame is already marked as complete.';
     }
 }

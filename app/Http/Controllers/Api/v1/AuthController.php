@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Controllers\Controller;
 use App\Repositories\MiniGameRepository;
 use App\Rules\CheckThePassword;
-use UserHelper;
+// use UserHelper;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -81,7 +81,7 @@ class AuthController extends Controller
                     $miniGameRepository->createIfnotExist();
                 }
                     
-                UserHelper::minigameTutorials($user);
+                // UserHelper::minigameTutorials($user);
 
                 return response()->json([
                     'message'=>'You logged-in successfully.', 

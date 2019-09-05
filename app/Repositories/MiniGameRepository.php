@@ -6,12 +6,13 @@ use App\Exceptions\PracticeMiniGame\FreezeModeRunningException;
 use App\Exceptions\PracticeMiniGame\PieceAlreadyCollectedException;
 use App\Models\v1\Game;
 use App\Models\v2\PracticeGameUser;
+use App\Repositories\Contracts\MiniGameInterface;
 use App\Repositories\User\UserRepository;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use MongoDB\BSON\UTCDateTime;
 
-class MiniGameRepository
+class MiniGameRepository implements MiniGameInterface
 {
 	
     protected $user;
@@ -117,9 +118,10 @@ class MiniGameRepository
 
         // $piecesInfo = PracticeGameUser::whereIn('_id', $haveAllPieces->pluck('id'))->get();
         // $haveAllPieces = PracticeGameUser::where(['user_id'=> $userId, 'piece_collected'=> true])->get();
-        $peiceToBeUpdate = (($user->pieces_collected + 1) == 3)? 0: 1; 
-        $user->pieces_collected = $peiceToBeUpdate;
-        $user->save();
+        $peiceToBeUpdate = (($this->user->pieces_collected + 1) == 3)? -2: 1; 
+        $this->user->increment('pieces_collected', $peiceToBeUpdate);
+        // $this->user->pieces_collected = $peiceToBeUpdate;
+        // $this->user->save();
 
         /** Status of 1 & 2 & 3 Gateways **/
         // if ($haveAllPieces->count() >= 3) {
@@ -161,7 +163,7 @@ class MiniGameRepository
         return $practiceGameUser;
     }
 
-    public function unlockAMiniGame($gameId)
+    public function unlockAMiniGame(string $gameId)
     {
         return $this->user->practice_games()->where('game_id', $gameId)->update(['unlocked_at'=> new UTCDateTime(now())]);
     }
