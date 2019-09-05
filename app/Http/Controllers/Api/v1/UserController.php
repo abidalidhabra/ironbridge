@@ -382,7 +382,7 @@ class UserController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()], 422);
+            return response()->json(['message'=>$validator->messages()->first()], 422);
         }
 
         $user = Auth::User();
