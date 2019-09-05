@@ -124,7 +124,7 @@ class MiniGameRepository implements MiniGameInterface
         // $this->user->save();
 
         /** Status of 1 & 2 & 3 Gateways **/
-        if ($peiceToBeUpdate > 0) {
+        if ($peiceToBeUpdate < 0) {
             if ($keyToBeCredit) {
                 (new UserRepository($this->user))->addSkeletonKeys($keyToBeCredit);
                 // $piecesInfo->markAsIncomplete();
