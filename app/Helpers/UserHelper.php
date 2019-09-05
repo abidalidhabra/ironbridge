@@ -3,6 +3,7 @@
 namespace App\Helpers;
 use App\Models\v1\Avatar;
 use App\Models\v1\City;
+use App\Models\v1\Game;
 use App\Models\v1\WidgetItem;
 use App\Repositories\EventRepository;
 use Auth;
@@ -196,4 +197,23 @@ class UserHelper {
         }
         return response()->json([ 'message' => 'Participation into the practice event completed successfully.'],200);
 	}
+
+
+	public static function minigameTutorials($user){
+        if (!$user->minigame_tutorials) {
+            $game = Game::where('status',true)->get();
+            $minigameTutorial = []; 
+
+            foreach ($game as $key => $value) {
+                $minigameTutorial[] = [
+                                            'game_id'      => $value->id,
+                                            'completed_at' => null,
+                                        ];
+            }
+
+            $user->minigame_tutorials = $minigameTutorial;
+
+           $user->save();
+        }
+    }
 }

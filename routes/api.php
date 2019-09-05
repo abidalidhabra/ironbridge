@@ -60,6 +60,7 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 		Route::post('unlockWidgetItem', 'UserController@unlockWidgetItem');
 		// Route::post('selectkWidgetItem', 'UserController@selectkWidgetItem');
 		Route::post('setMyAvatar', 'UserController@setMyAvatar');
+		Route::post('minigameTutorialsCompleted', 'UserController@minigameTutorialsCompleted');
 		// Route::get('getWarehouseData', 'UserController@getWarehouseData');
 		
 		/** Plans related requets **/
