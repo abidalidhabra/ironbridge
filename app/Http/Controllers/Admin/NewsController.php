@@ -11,6 +11,9 @@ use MongoDB\BSON\UTCDateTime as MongoDBDate;
 use Yajra\Datatables\Datatables;
 use Yajra\DataTables\EloquentDataTable;
 use Auth;
+use File;
+use Image;
+use Storage;
 
 class NewsController extends Controller
 {
@@ -59,6 +62,23 @@ class NewsController extends Controller
         $data = $request->all();
         $data['valid_till'] = date('Y-m-d H:i:s',strtotime($request->get('valid_till')));
 
+        if($request->hasfile('image')){
+            $image = $request->file('image');
+            if(!File::exists(storage_path('app/public/news/'))){
+                $directoryPath = storage_path('app/public/news/');
+                File::makeDirectory($directoryPath,0755,true);
+            }            
+            $extension = $image->getClientOriginalExtension();
+            $img = Image::make($image);
+            $height = $img->height();
+            $width = $img->width();
+            
+            $imageUniqueName = uniqid(uniqid(true).'_').'.'.$extension;
+            $img->save(storage_path('app/public/news/'.$imageUniqueName));
+            $data['image'] = $imageUniqueName;
+            
+        }
+        
         News::create($data);
         
         return response()->json([
@@ -117,9 +137,32 @@ class NewsController extends Controller
         }
         $data['valid_till'] = date('Y-m-d H:i:s',strtotime($request->get('valid_till')));
 
-        
-        $news = News::where('_id',$id)
-        ->update($data);
+        $news = News::where('_id',$id)->first();
+
+        if($request->hasfile('image')){
+            $image = $request->file('image');
+
+            if ($news->image != '') {
+                $news1 = \DB::table('news')->where('_id',$id)->first();
+                Storage::disk('public')->delete('news/'.$news1['image']);    
+            }
+
+            if(!File::exists(storage_path('app/public/news/'))){
+                $directoryPath = storage_path('app/public/news/');
+                File::makeDirectory($directoryPath,0755,true);
+            }            
+            $extension = $image->getClientOriginalExtension();
+            $img = Image::make($image);
+            $height = $img->height();
+            $width = $img->width();
+            
+            $imageUniqueName = uniqid(uniqid(true).'_').'.'.$extension;
+            $img->save(storage_path('app/public/news/'.$imageUniqueName));
+            $data['image'] = $imageUniqueName;
+            
+        }
+
+        $news->update($data);
 
         return response()->json([
             'status' => true,
@@ -146,7 +189,7 @@ class NewsController extends Controller
         $skip = (int)$request->get('start');
         $take = (int)$request->get('length');
         $search = $request->get('search')['value'];
-        $news = News::select('subject','description','valid_till');
+        $news = News::select('subject','description','valid_till','image');
         $admin = Auth::user();
 
         if($search != ''){
@@ -166,17 +209,24 @@ class NewsController extends Controller
                 ->orWhere('valid_till','like','%'.$search.'%');
             })->count();
         }
+
         return DataTables::of($news)
         ->addIndexColumn()
         ->editColumn('valid_till', function($news){
             return Carbon::parse($news->valid_till)->format('d-M-Y');
+        })
+        ->editColumn('image', function($news){
+            if ($news->image!="") {
+                return '<img src="'.$news->image.'" style="width: 77px;">';
+            }
+            return '';
         })
         ->addColumn('action', function($news) use ($admin){
             $date = Carbon::parse($news->valid_till)->format('d-m-Y');
             
             $data = '';
             if($admin->hasPermissionTo('Edit News')){
-                $data .=  '<a href="javascript:void(0)" class="edit_company" data-action="edit" data-id="'.$news->id.'" data-subject="'.$news->subject.'" data-valid_till="'.$date.'" data-description="'.$news->description.'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+                $data .=  '<a href="javascript:void(0)" class="edit_company" data-action="edit" data-id="'.$news->id.'" data-subject="'.$news->subject.'" data-valid_till="'.$date.'" data-description="'.$news->description.'" data-image="'.$news->image.'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
             }
             if($admin->hasPermissionTo('Delete News')){
                 $data .=  '<a href="javascript:void(0)" class="delete_company" data-action="delete" data-placement="left" data-id="'.$news->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>
@@ -185,7 +235,7 @@ class NewsController extends Controller
 
             return $data;
         })
-        ->rawColumns(['action'])
+        ->rawColumns(['action','image'])
         ->order(function ($query) {
             if (request()->has('created_at')) {
                 $query->orderBy('created_at', 'DESC');
