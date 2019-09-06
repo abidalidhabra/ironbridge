@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Models\v1;
+use Storage;
+
 
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 // use Illuminate\Database\Eloquent\Model;
@@ -14,7 +16,7 @@ class News extends Eloquent
      * @var array
      */
     protected $fillable = [
-        'subject', 'description', 'valid_till'
+        'subject', 'description', 'valid_till','image'
     ];
 
     /**
@@ -25,4 +27,13 @@ class News extends Eloquent
     protected $dates = [
     	'valid_till'
     ];
+
+    public function getImageAttribute($value)
+    {
+        if (Storage::disk('public')->has('news/'.$value) && !is_null($value)) {
+            return asset('storage/news/').'/'.$value;
+        } else {
+            return ' ';
+        }   
+    }
 }

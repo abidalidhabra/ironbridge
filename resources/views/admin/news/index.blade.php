@@ -28,6 +28,7 @@
                     <th>Subject</th>
                     <th>Description</th>
                     <th width="10%">News Date</th>
+                    <th>Image</th>
                     @if(auth()->user()->hasPermissionTo('Edit News') || auth()->user()->hasPermissionTo('Delete News'))
                     <th width="5%">Action</th>
                     @endif
@@ -55,19 +56,35 @@
                                     <div class="form-group">
                                         <input type="text" name="subject" placeholder="subject">
                                     </div>
-                                </div>             
+                                </div>      
+                                <div class="newstitlebox_inputbox">
+                                    <div class="form-group input-group date" data-provide="datepicker">
+                                        <input type="text" class="" name="valid_till" placeholder="Date" autocomplete="off">
+                                        <div class="input-group-addon">                   
+                                        </div>
+                                    </div>
+                                </div>       
                                 <div class="newstitlebox_inputbox">
                                     <div class="form-group">                  
                                         <textarea class="form-control rounded-0" name="description" rows="3" placeholder="Description"></textarea>
                                     </div>
                                 </div>
-                                <div class="newstitlebox_inputbox">
-                                    <div class="input-group date" data-provide="datepicker">
-                                        <input type="text" class="" name="valid_till" placeholder="Date" autocomplete="off">
-                                        <div class="input-group-addon">                   
-                                        </div>
+                                
+                                <!-- <div class="newstitlebox_inputbox">
+                                    <div class="form-group">                  
+                                        <input type="file" name="image">
                                     </div>
+                                </div> -->
+                                <div class="upload_container">
+                                    <input type="file" id="input-file" name="image" accept="image/*"  hidden/>
+                                    <label class="btn-upload" for="input-file" role="button">
+                                        Upload Photo
+                                    </label>
+                                    <div class="preview-box">
+                                        <img class="preview-content">
+                                    </div>  
                                 </div>
+
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -97,17 +114,26 @@
                                         <input type="text" name="subject" placeholder="subject">
                                     </div>
                                 </div>             
-                                <div class="newstitlebox_inputbox">
-                                    <div class="form-group">                  
-                                        <textarea class="form-control rounded-0" name="description" rows="3" placeholder="Description"></textarea>
-                                    </div>
                                 </div>
                                 <div class="newstitlebox_inputbox">
-                                    <div class="input-group date" data-provide="datepicker">
+                                    <div class="form-group input-group date" data-provide="datepicker">
                                         <input type="text" class="" name="valid_till" placeholder="Date" autocomplete="off">
                                         <div class="input-group-addon">                   
                                         </div>
                                     </div>
+                                </div>
+                                <div class="newstitlebox_inputbox">
+                                    <div class="form-group">                  
+                                        <textarea class="form-control rounded-0" name="description" rows="3" placeholder="Description"></textarea>
+                                    </div>
+                                <div class="upload_container">
+                                    <input type="file" id="input-file1" name="image" accept="image/*"  hidden/>
+                                    <label class="btn-upload" for="input-file1" role="button">
+                                        Upload Photo
+                                    </label>
+                                    <div class="preview-box">
+                                        <img class="preview-content">
+                                    </div>  
                                 </div>
                             </div>
                         </div>
@@ -124,6 +150,25 @@
 @endsection
 
 @section('scripts')
+<script type="text/javascript">
+
+    function readURL(input) {
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        
+        reader.onload = function(e) {
+          $('.preview-content').attr('src', e.target.result);
+        }
+        
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    $("input[name=image]").change(function() {
+      readURL(this);
+    });
+
+</script>
 <script type="text/javascript">
     $(document).ready(function() {
             //GET USER LIST
@@ -151,6 +196,7 @@
                 { data:'subject',name:'created_at'},
                 { data:'description',name:'description' },
                 { data:'valid_till',name:'valid_till' },
+                { data:'image',name:'image' },
                 @if(auth()->user()->hasPermissionTo('Edit News') || auth()->user()->hasPermissionTo('Delete News'))
                 { data:'action',name:'action' },
                 @endif
@@ -191,6 +237,7 @@
                             if (response.status == true) {
                                 toastr.success(response.message);
                                 $('input[name="subject"] , textarea[name="description"] , input[name="valid_till"]').val('');
+                                $('.preview-content').attr('src',' ')
                                 $('#addNews').modal('hide');
                                 table.ajax.reload();
                             } else {
@@ -239,6 +286,7 @@
                 $("#editNews textarea[name='description']").val($(this).data('description'));
                 $("#editNews input[name='valid_till']").val($(this).data('valid_till'));
                 $("#editNews input[name='news_id']").val($(this).data('id'));
+                $("#editNews .preview-content").attr('src',$(this).data('image'));
                 $('#editNews').modal('show');
             });
 
@@ -273,6 +321,7 @@
                             if (response.status == true) {
                                 toastr.success(response.message);
                                 $('input[name="subject"] , textarea[name="description"] , input[name="valid_till"]').val('');
+                                $('.preview-content').attr('src',' ')
                                 $('#editNews').modal('hide');
                                 table.ajax.reload();
                             } else {
