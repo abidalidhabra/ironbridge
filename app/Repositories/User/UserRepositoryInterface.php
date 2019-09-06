@@ -11,4 +11,6 @@ interface UserRepositoryInterface{
 	public function buySkeletonKeysFromGold($purchaseData);
 	
 	public function addSkeletonsBucket(int $size);
+    
+    public function markMiniGameTutorialAsComplete(string $gameId);
 }

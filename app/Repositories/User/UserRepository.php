@@ -2,6 +2,7 @@
 
 namespace App\Repositories\User;
 
+use App\Models\v1\User;
 use App\Repositories\User\UserRepositoryInterface;
 use Exception;
 use MongoDB\BSON\ObjectId;
@@ -67,4 +68,22 @@ class UserRepository implements UserRepositoryInterface
     //     $this->user->expnadable_skeleton_keys += $keysAmount;
     //     $this->user->save();
     // }
+
+    public function deductSkeletonKeys(int $keysAmount){
+
+        $user = User::where('_id', $this->user->id)->select('_id', 'skeleton_keys')->first();
+        $skeletonToBeUpdate = collect($user->skeleton_keys)->where('used_at', null)->take($keysAmount)->pluck('key');
+        User::where('_id',$user->id)
+            ->update(
+                [ 'skeleton_keys.$[identifier].used_at'=> new UTCDateTime(now()) ],
+                [ 'arrayFilters'=> [ [ "identifier.key"=> ['$in'=> $skeletonToBeUpdate->toArray()] ] ], 'new'=> true ]
+            );
+        return $user->available_skeleton_keys - 1;
+    }
+
+    public function markMiniGameTutorialAsComplete(string $gameId)
+    {
+        return User::where(['_id'=> $this->user->id, 'minigame_tutorials.game_id'=> $gameId])
+                    ->update(['minigame_tutorials.$.completed_at'=> new UTCDateTime(now()) ]);
+    }
 }

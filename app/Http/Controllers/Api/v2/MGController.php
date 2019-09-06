@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Api\v2;
 use App\Exceptions\PracticeMiniGame\FreezeModeRunningException;
 use App\Exceptions\PracticeMiniGame\PieceAlreadyCollectedException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\MiniGame\MarkMiniGameTutorialAsCompleteRequest;
+use App\Http\Requests\MiniGame\UnlockAMiniGameRequest;
 use App\Http\Requests\v2\PracticeGameFinishRequest;
 use App\Models\v1\Game;
 use App\Models\v1\User;
+use App\Repositories\Contracts\UserInterface;
 use App\Repositories\MiniGameRepository;
 use Exception;
 use Illuminate\Http\Request;
@@ -18,11 +21,15 @@ class MGController extends Controller
 {
     
     protected $user;
+    protected $miniGameRepository;
+    protected $userInterface;
     
     public function __construct(Request $request)
     {
         $this->middleware(function ($request, $next) {
             $this->user = auth()->user();
+            $this->miniGameRepository = new MiniGameRepository($this->user);
+            $this->userInterface = app(UserInterface::class)($this->user);
             return $next($request);
         });
     }
@@ -73,7 +80,8 @@ class MGController extends Controller
             return response()->json([
                 'message'=> 'This mini game is marked as completed.', 
                 'available_skeleton_keys'=> $availableSkeletonKeys['available_skeleton_keys'],
-                'completion_times'=> $availableSkeletonKeys['completion_times']
+                'completion_times'=> $availableSkeletonKeys['completion_times'],
+                'pieces_collected'=> $this->user->pieces_collected,
             ]);
         } catch(PieceAlreadyCollectedException $e) {
             return response()->json(['message'=> $e->getMessage(), 'completion_times'=> $e->getcompletionTimes()], 422);
@@ -82,5 +90,34 @@ class MGController extends Controller
         } catch (Exception $e) {
             return response()->json(['message'=> $e->getMessage().' on line '.$e->getLine().' in '.$e->getFile()], 500);
         }
+    }
+
+    public function unlockAMiniGame(UnlockAMiniGameRequest $request)
+    {
+
+        // Deduct a skeleton key from user's account
+        $availableSkeletonKeys = $this->userInterface->deductSkeletonKeys(1);
+        
+        // unlock a minigame
+        $status = $this->miniGameRepository->unlockAMiniGame($request->game_id);
+        
+        // give response to client
+        return response()->json([ 
+            'message'=> 'Minigame unlocked successfully.', 
+            'available_skeleton_keys'=> $availableSkeletonKeys, 
+            // 'game_id'=> $request->game_id  
+        ]);
+    }
+
+    public function markMiniGameTutorialAsComplete(MarkMiniGameTutorialAsCompleteRequest $request)
+    {
+        // mark the minigame tutorial's status as complete
+        $availableSkeletonKeys = $this->userInterface->markMiniGameTutorialAsComplete($request->game_id);
+
+        // give response to client
+        return response()->json([ 
+            'message'=> 'Minigame tutorial has been marked as complete.',
+            // 'game_id'=> $request->game_id
+        ]);
     }
 }

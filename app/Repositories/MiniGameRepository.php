@@ -6,11 +6,13 @@ use App\Exceptions\PracticeMiniGame\FreezeModeRunningException;
 use App\Exceptions\PracticeMiniGame\PieceAlreadyCollectedException;
 use App\Models\v1\Game;
 use App\Models\v2\PracticeGameUser;
+use App\Repositories\Contracts\MiniGameInterface;
 use App\Repositories\User\UserRepository;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use MongoDB\BSON\UTCDateTime;
 
-class MiniGameRepository
+class MiniGameRepository implements MiniGameInterface
 {
 	
     protected $user;
@@ -37,16 +39,17 @@ class MiniGameRepository
         $this->addCompletionTimes($practiceGameUser);
         
         // Throw an exception if minigame's piece is already collected
-        if ($practiceGameUser->piece_collected === true) {
-            throw new PieceAlreadyCollectedException('This mini game is already completed, try different game.', $practiceGameUser->completion_times);
-        }
+        // if ($practiceGameUser->piece_collected === true) {
+        //     throw new PieceAlreadyCollectedException('This mini game is already completed, try different game.', $practiceGameUser->completion_times);
+        // }
 
         // Throw an exception if cooldown period is active
-        if ($practiceGameUser->completed_at && $practiceGameUser->completed_at->diffInHours() < 24) {
+        // if ($practiceGameUser->completed_at && $practiceGameUser->completed_at->diffInHours() < 24) {
+        if ($practiceGameUser->completed_at && $practiceGameUser->completed_at->gte(today())) {
             throw new FreezeModeRunningException('This mini game is under the freeze mode.', $practiceGameUser->completion_times);
         }
 
-        // Mark the minigame as complete and peice as collected
+        // Mark the minigame as complete and piece as collected
         $this->markPracticeMiniGameAsComplete($practiceGameUser);
 
         // Allot a key to user's account if aligible
@@ -114,10 +117,14 @@ class MiniGameRepository
         // });
 
         // $piecesInfo = PracticeGameUser::whereIn('_id', $haveAllPieces->pluck('id'))->get();
-        $haveAllPieces = PracticeGameUser::where(['user_id'=> $userId, 'piece_collected'=> true])->get();
+        // $haveAllPieces = PracticeGameUser::where(['user_id'=> $userId, 'piece_collected'=> true])->get();
+        $pieceToBeUpdate = (($this->user->pieces_collected + 1) == 3)? -2: 1; 
+        $this->user->increment('pieces_collected', $pieceToBeUpdate);
+        // $this->user->pieces_collected = $pieceToBeUpdate;
+        // $this->user->save();
 
         /** Status of 1 & 2 & 3 Gateways **/
-        if ($haveAllPieces->count() >= 3) {
+        if ($pieceToBeUpdate < 0) {
             if ($keyToBeCredit) {
                 (new UserRepository($this->user))->addSkeletonKeys($keyToBeCredit);
                 // $piecesInfo->markAsIncomplete();
@@ -130,7 +137,7 @@ class MiniGameRepository
             //         (new UserRepository($this->user))->addSkeletonKeys(1, ['plan_purchase_id' => $planPurchaseData->id]);
             //     }
             // }
-            PracticeGameUser::whereIn('_id', $haveAllPieces->pluck('_id'))->update(['piece_collected'=> false]);
+            // PracticeGameUser::whereIn('_id', $haveAllPieces->pluck('_id'))->update(['piece_collected'=> false]);
         }
 
         return $this->user->available_skeleton_keys;
@@ -151,8 +158,13 @@ class MiniGameRepository
     public function markPracticeMiniGameAsComplete($practiceGameUser)
     {
         $practiceGameUser->completed_at = now();
-        $practiceGameUser->piece_collected = true;
+        // $practiceGameUser->piece_collected = true;
         $practiceGameUser->save();
         return $practiceGameUser;
+    }
+
+    public function unlockAMiniGame(string $gameId)
+    {
+        return $this->user->practice_games()->where('game_id', $gameId)->update(['unlocked_at'=> new UTCDateTime(now())]);
     }
 }
