@@ -271,7 +271,7 @@ class HuntController extends Controller
                 $query->with('complexity_target')->select('_id','name');
             }])
             ->with('game_variation:_id,variation_name,variation_complexity,target,no_of_balls,bubble_level_id,game_id,variation_size,row,column')
-            ->select('_id','finished_in','status','location','game_id','game_variation_id','hunt_user_id', 'radius')
+            ->select('_id','finished_in','status','location','game_id','game_variation_id','hunt_user_id', 'radius', 'started_at')
             ->get();
 
             $huntUser = $huntUserDetails->first()->hunt_user()->select('_id', 'user_id', 'hunt_id', 'status', 'hunt_complexity_id')->first();
