@@ -2,12 +2,13 @@
 
 namespace App\Http\Requests\v2;
 
-use App\Rules\v2\PlanPurchaseRule;
+use App\Repositories\WidgetItemRepository;
+use App\Rules\v2\UnlockWidgetItemRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class PlanRequest extends FormRequest
+class UnlockWidgetItemRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,10 +28,7 @@ class PlanRequest extends FormRequest
     public function rules()
     {
         return [
-            "plan_id"       => ["required", "string", "exists:plans,_id", new PlanPurchaseRule($this->ownableUser())],
-            "country_code"  => "required|string",
-            "transaction_id"=> "required|string",
-            "price"         => "required|numeric",
+            'widget_item_id'   => ["required", "string", "exists:widget_items,_id", new UnlockWidgetItemRule($this->ownableUser(), new WidgetItemRepository)],
         ];
     }
 

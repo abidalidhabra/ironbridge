@@ -57,7 +57,7 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 
 
 		Route::post('getPayloadData', 'UserController@getPayloadData');
-		Route::post('unlockWidgetItem', 'UserController@unlockWidgetItem');
+		
 		// Route::post('selectkWidgetItem', 'UserController@selectkWidgetItem');
 		Route::post('setMyAvatar', 'UserController@setMyAvatar');
 		// Route::post('minigameTutorialsCompleted', 'UserController@minigameTutorialsCompleted');
@@ -120,6 +120,11 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 
 
 
+Route::get('/v1/updatedWidgetData', 'Api\v2\WidgetItemController@updatedWidgetData');
+Route::group(['namespace' => 'Api\v2', 'prefix' => 'v1', 'middleware' => 'jwt-auth'], function ($router) {
+	Route::post('unlockWidgetItem', 'WidgetItemController@unlockWidgetItem');
+});
+
 Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
 	
 	Route::group(['middleware' => 'jwt-auth'], function ($router) {
@@ -148,7 +153,6 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
 		Route::post('setupMiniGamesForUser', 'MGController@setupMiniGamesForUser');
 		Route::post('unlockAMiniGame', 'MGController@unlockAMiniGame');
 		Route::post('markMiniGameTutorialAsComplete', 'MGController@markMiniGameTutorialAsComplete');
-		// Route::post('addSkeletonKey', 'MGController@addSkeletonKey');
 		
 		/** Event **/
 		Route::get('getEventsCities', 'EventController@getEventsCities');
@@ -160,6 +164,5 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
 		/** DISCOUNT COUPON */
 		//Route::get('getDiscountCoupon', 'DiscountCouponController@getDiscountCoupon');
 		Route::post('useTheGoldCoupon', 'DiscountCouponController@useTheGoldCoupon');
-		
 	});
 });

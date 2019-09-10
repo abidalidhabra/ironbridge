@@ -3,8 +3,10 @@
 namespace App\Repositories\User;
 
 use App\Models\v1\User;
+use App\Models\v1\WidgetItem;
 use App\Repositories\User\UserRepositoryInterface;
 use Exception;
+use Illuminate\Support\Collection;
 use MongoDB\BSON\ObjectId;
 use MongoDB\BSON\UTCDateTime;
 
@@ -20,7 +22,6 @@ class UserRepository implements UserRepositoryInterface
 	public function addSkeletonKeys(int $keysAmount, $additionalFields = null){
 
         for ($i=0; $i < $keysAmount; $i++) { 
-            // $skeletonKey[$i]['key'] = [ 'key'=> new ObjectId(), 'created_at'=> new UTCDateTime(), 'used_at'=> null ];
             if ($additionalFields) {
                 $skeletonKey[$i] = $additionalFields;
             }
@@ -63,11 +64,6 @@ class UserRepository implements UserRepositoryInterface
         $this->user->save();
         return $this->user->skeletons_bucket;
     }
-    // public function expandTheSkeletonBucket($keysAmount)
-    // {
-    //     $this->user->expnadable_skeleton_keys += $keysAmount;
-    //     $this->user->save();
-    // }
 
     public function deductSkeletonKeys(int $keysAmount){
 
@@ -85,5 +81,26 @@ class UserRepository implements UserRepositoryInterface
     {
         return User::where(['_id'=> $this->user->id, 'minigame_tutorials.game_id'=> $gameId])
                     ->update(['minigame_tutorials.$.completed_at'=> new UTCDateTime(now()) ]);
+    }
+
+    public function addWidgetItem(WidgetItem $widgetItem)
+    {
+        $status = User::where('_id',$this->user->id)
+                ->where('widgets.id', '!=', $widgetItem->id)
+                ->push(['widgets'=> ['id'=> $widgetItem->id, 'selected'=> false]]);
+        return $widgetItem->id;
+    }
+
+    public function addWidgetItems(WidgetItem $widgetItem)
+    {
+        $totalItems = $widgetItem->items;
+        array_push($totalItems, $widgetItem->id);
+
+        foreach ($totalItems as $item) {
+            User::where('_id',$this->user->id)
+            ->where('widgets.id', '!=', $item)
+            ->push(['widgets'=> ['id'=> $item, 'selected'=> false]]);
+        }
+        return $totalItems;
     }
 }

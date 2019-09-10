@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Factories\WidgetItemFactory;
 use App\Helpers\TransactionHelper;
 use App\Http\Controllers\Controller;
 use App\Models\v1\Avatar;
@@ -12,14 +13,14 @@ use App\Models\v1\UserBalancesheet;
 use App\Models\v1\WidgetItem;
 use Auth;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
-use MongoDB\BSON\UTCDateTime as MongoDBDate;
 use MongoDB\BSON\ObjectId as MongoDBId;
+use MongoDB\BSON\UTCDateTime as MongoDBDate;
 use Route;
 use UserHelper;
 use Validator;
 use stdClass;
-use Exception;
 
 class UserController extends Controller
 {
@@ -251,40 +252,6 @@ class UserController extends Controller
             'data'=> $user
         ]);
     }
-
-    public function unlockWidgetItem(Request $request)
-    {
-
-        /* Validate the parameters */
-        $validator = Validator::make($request->all(),[
-            'widget_item_id'   => "required|string|exists:widget_items,_id",
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()], 422);
-        }
-
-        $user = Auth::user();
-        $widgetItemId = $request->widget_item_id;
-        $widgetItem = WidgetItem::find($widgetItemId);
-
-        if($widgetItem->gold_price > 0 && $user->gold_balance < $widgetItem->gold_price){
-            return response()->json(['message' => 'You dont have enough gold balance to unlock this widget.'], 422);
-        }
-
-        if ($widgetItem->gold_price > 0 && $user->gold_balance >= $widgetItem->gold_price) {
-            $user->gold_balance -= $widgetItem->gold_price;
-            $user->save();
-        }
-
-        User::where('_id',$user->id)->where('widgets.id', '!=', $widgetItemId)->push(['widgets'=> ['id'=> $widgetItemId, 'selected'=> false]]);
-        return response()->json([
-            'message' => 'Your Widget has been unlocked successfully.',
-            'remaining_coins' => $user->gold_balance,
-            'widget_item_id' => $widgetItemId
-        ]);
-    }
-
 
     // public function checkMyBalance(Request $request)
     // {

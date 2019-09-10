@@ -13,6 +13,7 @@ class WidgetItem extends Eloquent
         'gold_price',
         'avatar_id',
         'widget_category',
+        'items',
     ];
 
     public function widget(){

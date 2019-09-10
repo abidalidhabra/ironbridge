@@ -10,10 +10,12 @@ use App\Repositories\Contracts\EventInterface;
 use App\Repositories\Contracts\EventsMiniGameInterface;
 use App\Repositories\Contracts\EventsUserInterface;
 use App\Repositories\Contracts\UserInterface;
+use App\Repositories\Contracts\WidgetItemInterface;
 use App\Repositories\EventRepository;
 use App\Repositories\EventsMiniGameRepository;
 use App\Repositories\EventsUserRepository;
 use App\Repositories\User\UserRepository;
+use App\Repositories\WidgetItemRepository;
 use Illuminate\Support\ServiceProvider;
 
 class IronBridgeServiceProvider extends ServiceProvider
@@ -45,5 +47,6 @@ class IronBridgeServiceProvider extends ServiceProvider
                 return new UserRepository($user);
             };
         });
+        $this->app->bind(WidgetItemInterface::class, WidgetItemRepository::class);
     }
 }

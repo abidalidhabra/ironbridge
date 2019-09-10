@@ -26,7 +26,7 @@ class GoldSkeletonPurchase implements Purchase
 		$planPurchase->plan_id 		  = $planData->plan_id;
 		$planPurchase->country_code   = $planData->country_code;
 		$planPurchase->gold_value 	  = (int)$this->plan->gold_value;
-		$planPurchase->skeleton_keys_amount = (int)$this->plan->skeleton_keys_amount;
+		$planPurchase->skeleton_keys  = (int)$this->plan->skeleton_keys;
 		$planPurchase->price 		  = (float)$planData->price;
 		$planPurchase->transaction_id = $planData->transaction_id;
 		$planPurchase->save();
@@ -34,7 +34,7 @@ class GoldSkeletonPurchase implements Purchase
     	/** Add gold value in user's table **/
     	$userRepository = new UserRepository($this->user);
     	$availableGoldBalance = $userRepository->addGold($this->plan->gold_value);
-    	$availableSkeletonLeys = $userRepository->addSkeletonKeys($this->plan->skeleton_keys_amount);
+    	$availableSkeletonLeys = $userRepository->addSkeletonKeys($this->plan->skeleton_keys);
     	
     	/** return the available gold balance **/
     	return ['available_gold_balance'=> $availableGoldBalance, 'available_skeleton_keys'=> $availableSkeletonLeys];

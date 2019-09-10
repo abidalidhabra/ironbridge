@@ -2,7 +2,7 @@
 
 namespace App\Factories;
 
-use App\Repositories\PlanPurchase\FivePlusSkeletonPurchase;
+use App\Repositories\PlanPurchase\SkeletonsBucketPurchase;
 use App\Repositories\PlanPurchase\GoldPurchase;
 use App\Repositories\PlanPurchase\GoldSkeletonPurchase;
 use App\Repositories\PlanPurchase\SkeletonPurchase;
@@ -17,14 +17,14 @@ class PlanPurchaseFactory
 		/** Get the plan info by id **/
 		$plan = (new PlanRepository)->findPlanById($planData->plan_id);
 
-		if ($plan->type == 'gold') {
-			return new GoldPurchase($plan, $user);
-		}else if ($plan->type == 'skeleton' && $plan->skeleton_keys_amount >= 5) {
-			return new FivePlusSkeletonPurchase($plan, $user);
-		}else if ($plan->type == 'skeleton') {
-			return new SkeletonPurchase($plan, $user);
-		}else if ($plan->type == 'both') {
+		if ($plan->gold_value && $plan->skeleton_keys) {
 			return new GoldSkeletonPurchase($plan, $user);
+		}else if ($plan->gold_value) {
+			return new GoldPurchase($plan, $user);
+		}else if ($plan->skeletons_bucket) {
+			return new SkeletonsBucketPurchase($plan, $user);
+		}else if ($plan->skeleton_keys) {
+			return new SkeletonPurchase($plan, $user);
 		}
 		
 		throw new Exception("Unsupported payment purchase");

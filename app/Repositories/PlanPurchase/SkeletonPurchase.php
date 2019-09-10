@@ -25,17 +25,15 @@ class SkeletonPurchase implements Purchase
 		$planPurchase->user_id 		  = $this->user->id;
 		$planPurchase->plan_id 		  = $planData->plan_id;
 		$planPurchase->country_code   = $planData->country_code;
-		$planPurchase->skeleton_keys_amount 	  = (int)$planData->skeleton_keys_amount;
+		$planPurchase->skeleton_keys  = (int)$planData->skeleton_keys;
 		$planPurchase->price 		  = (float)$this->plan->price;
 		$planPurchase->transaction_id = $planData->transaction_id;
 		$planPurchase->save();
 
     	/** Add skeleton keys in user's table **/
-    	// $userRepository = new UserRepository($this->user);
-    	// $availableSkeletonLeys = $userRepository->addSkeletonKeys($this->plan->skeleton_keys_amount);
-    	(new UserRepository($this->user))->addSkeletonsBucket($this->plan->skeleton_keys_amount);
+    	(new UserRepository($this->user))->addSkeletonKeys($this->plan->skeleton_keys);
     	
     	/** return the available skeleton keys **/
-    	return ['available_skeleton_keys'=> $this->user->skeletons_bucket];
+    	return ['available_skeleton_keys'=> $this->user->available_skeleton_keys];
     }
 }
