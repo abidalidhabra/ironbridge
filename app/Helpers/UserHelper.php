@@ -8,6 +8,7 @@ use App\Models\v1\WidgetItem;
 use App\Repositories\EventRepository;
 use Auth;
 use MongoDB\BSON\ObjectId as MongoID;
+use MongoDB\BSON\UTCDateTime;
 use Request;
 use Route;
 
@@ -206,7 +207,7 @@ class UserHelper {
 
             foreach ($games as $key => $game) {
             	if ($game->practice_default_active) {
-                	$minigameTutorial[] = [ 'game_id' => $game->id, 'completed_at' => now() ];
+                	$minigameTutorial[] = [ 'game_id' => $game->id, 'completed_at' => new UTCDateTime(now()) ];
                 }else{
                 	$minigameTutorial[] = [ 'game_id' => $game->id, 'completed_at' => null ];
                 }
