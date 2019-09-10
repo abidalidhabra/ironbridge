@@ -201,7 +201,8 @@ class UserHelper {
 
 
 	public static function minigameTutorials($user){
-        if (!$user->minigame_tutorials) {
+		
+        if (!$user->minigame_tutorials->count()) {
             $games = Game::where('status',true)->get();
             $minigameTutorial = []; 
 
