@@ -83,7 +83,7 @@ class UserController extends Controller
         $deviceType = $request->device_type;
         $firebaseId = $request->firebase_id;
         $refferedBy = $request->reffered_by;
-        $goldBalance = 5000;
+        $goldBalance = 500;
 
         /** Get the lcoation from coordinates **/
         // $address = UserHelper::getUserLocation($latitude, $longitude);
@@ -126,6 +126,36 @@ class UserController extends Controller
                 ['id'=> "5d246f230b6d7b1a0a232482", 'selected'=> true],
                 ['id'=> "5d246f230b6d7b1a0a232484", 'selected'=> false],
                 ['id'=> "5d246f230b6d7b1a0a232486", 'selected'=> false],
+                
+                ['id'=> "5d246f230b6d7b1a0a23246e", 'selected'=> false],
+                ['id'=> "5d246f230b6d7b1a0a23247a", 'selected'=> false],
+                ['id'=> "5d246f230b6d7b1a0a232456", 'selected'=> false],
+                ['id'=> "5d246f230b6d7b1a0a232462", 'selected'=> false],
+
+                ['id'=> "5d246f230b6d7b1a0a23246d", 'selected'=> false],
+                ['id'=> "5d246f230b6d7b1a0a232454", 'selected'=> false],
+                ['id'=> "5d246f230b6d7b1a0a232461", 'selected'=> false],
+                ['id'=> "5d246f230b6d7b1a0a232478", 'selected'=> false],
+
+                ['id'=> "5d246f230b6d7b1a0a23245e", 'selected'=> true],
+                ['id'=> "5d246f230b6d7b1a0a23246a", 'selected'=> true],
+                ['id'=> "5d246f230b6d7b1a0a232453", 'selected'=> true],
+                ['id'=> "5d246f230b6d7b1a0a232476", 'selected'=> true],
+
+                ['id'=> "5d246f0c0b6d7b19fb5ab57c", 'selected'=> false],
+                ['id'=> "5d246f0c0b6d7b19fb5ab566", 'selected'=> false],
+                ['id'=> "5d246f0c0b6d7b19fb5ab570", 'selected'=> false],
+                ['id'=> "5d246f0c0b6d7b19fb5ab589", 'selected'=> false],
+
+                ['id'=> "5d246f0c0b6d7b19fb5ab56f", 'selected'=> false],
+                ['id'=> "5d246f0c0b6d7b19fb5ab57b", 'selected'=> false],
+                ['id'=> "5d246f0c0b6d7b19fb5ab565", 'selected'=> false],
+                ['id'=> "5d246f0c0b6d7b19fb5ab587", 'selected'=> false],
+
+                ['id'=> "5d246f0c0b6d7b19fb5ab56d", 'selected'=> false],
+                ['id'=> "5d246f0c0b6d7b19fb5ab562", 'selected'=> false],
+                ['id'=> "5d246f0c0b6d7b19fb5ab578", 'selected'=> false],
+                ['id'=> "5d246f0c0b6d7b19fb5ab584", 'selected'=> false],
             ],
             // 'settings'   => [
             //     'sound_fx' => true,

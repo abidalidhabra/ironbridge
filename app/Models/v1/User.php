@@ -160,4 +160,12 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany('App\Models\v2\PlanPurchase');
     }
+
+    public function getMinigameTutorialsAttribute($miniGames)
+    {
+        return collect($miniGames)->map(function($miniGame){
+            $miniGame['completed_at'] = ($miniGame['completed_at'])? $miniGame['completed_at']->toDateTime()->format('Y-m-d H:i:s'): null;
+            return $miniGame;
+        });
+    }
 }
