@@ -201,19 +201,19 @@ class UserHelper {
 
 	public static function minigameTutorials($user){
         if (!$user->minigame_tutorials) {
-            $game = Game::where('status',true)->get();
+            $games = Game::where('status',true)->get();
             $minigameTutorial = []; 
 
-            foreach ($game as $key => $value) {
-                $minigameTutorial[] = [
-                                            'game_id'      => $value->id,
-                                            'completed_at' => null,
-                                        ];
+            foreach ($games as $key => $game) {
+            	if ($game->practice_default_active) {
+                	$minigameTutorial[] = [ 'game_id' => $game->id, 'completed_at' => now() ];
+                }else{
+                	$minigameTutorial[] = [ 'game_id' => $game->id, 'completed_at' => null ];
+                }
             }
 
             $user->minigame_tutorials = $minigameTutorial;
-
-           $user->save();
+            $user->save();
         }
     }
 }
