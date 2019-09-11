@@ -35,6 +35,7 @@ class ClueController extends Controller
         $huntUserDetail = $this->getHuntUserDetail($userId, $huntUserDetailId);
         
         $stillRemain;
+        $finishedIn = 0;
         switch ($status) {
             
             case 'reveal':
@@ -56,7 +57,7 @@ class ClueController extends Controller
                 break;
 
             case 'completed':
-                $this->calculateTheTimer($huntUserDetail,'completed');
+                $finishedIn = $this->calculateTheTimer($huntUserDetail,'completed');
                 $this->unlockeMiniGameIfLocked($huntUserDetail->game_id, $userId);
                 // $stillRemain = $huntUserDetail->hunt_user->hunt_user_details()->whereIn('status', ['tobestart','progress','pause'])->count();
                 $stillRemain = $huntUserDetail->hunt_user->hunt_user_details()->where('status', '!=', 'completed')->count();
@@ -72,7 +73,7 @@ class ClueController extends Controller
             $this->takeActionOnHuntUser($huntUserDetail, $huntAction);
         }
 
-        return response()->json(['message'=>'Action on clue has been taken successfully.', 'hunt_info'=> $gameData]);
+        return response()->json(['message'=>'Action on clue has been taken successfully.', 'hunt_info'=> $gameData, 'finished_in'=> $finishedIn]);
     }
 
     public function useTheSkeletonKey(Request $request){
@@ -144,6 +145,7 @@ class ClueController extends Controller
                 $clue->save();
                 return $clue;
             });
+            return true;
         }else{
 
             $startdate  = $huntUserDetails->started_at;
@@ -154,8 +156,8 @@ class ClueController extends Controller
             $huntUserDetails->ended_at    = null;
             $huntUserDetails->status      = $action;
             $huntUserDetails->save();
+            return $finishedIn;
         }
-        return true;
     }
 
     public function takeActionOnHuntUser($huntUserDetail, $action, $fields = [], $gameCompleted = false){
