@@ -271,7 +271,8 @@ class HuntController extends Controller
                 $query->with('complexity_target')->select('_id','name');
             }])
             ->with('game_variation:_id,variation_name,variation_complexity,target,no_of_balls,bubble_level_id,game_id,variation_size,row,column')
-            ->select('_id','finished_in','status','location','game_id','game_variation_id','hunt_user_id', 'radius', 'revealed_at', 'started_at')
+            ->with('hunt_clue:_id,title,description')
+            ->select('_id','finished_in','status','location','game_id','game_variation_id','hunt_user_id', 'radius', 'revealed_at', 'started_at', 'hunt_clue_id')
             ->get();
 
             $huntUser = $huntUserDetails->first()->hunt_user()->select('_id', 'user_id', 'hunt_id', 'status', 'hunt_complexity_id')->first();
@@ -352,6 +353,7 @@ class HuntController extends Controller
                 'game_id'           => $clue->game_id,
                 'game_variation_id' => $clue->game_variation_id,
                 'radius'            => $clue->radius,
+                'hunt_clue_id'      => $clue->id,
             ]);
         }
         $huntUser->hunt_user_details()->saveMany($huntUserDetails);

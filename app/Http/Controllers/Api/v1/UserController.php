@@ -11,6 +11,7 @@ use App\Models\v1\TreasureLocation;
 use App\Models\v1\User;
 use App\Models\v1\UserBalancesheet;
 use App\Models\v1\WidgetItem;
+use App\Repositories\MiniGameRepository;
 use Auth;
 use Carbon\Carbon;
 use Exception;
@@ -185,6 +186,10 @@ class UserController extends Controller
             // }
 
             // $user->delete();
+            if ($user->practice_games()->count() == 0) {
+                $miniGameRepository = new MiniGameRepository($user);
+                $miniGameRepository->createIfnotExist();
+            }
             UserHelper::minigameTutorials($user);
             return response()->json([
                 'token' => $token,

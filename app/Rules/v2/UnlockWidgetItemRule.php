@@ -45,7 +45,7 @@ class UnlockWidgetItemRule implements Rule
             $widgetItem = $this->widgetItemInterface->find($value);
 
             if($widgetItem->gold_price > 0 && $this->user->gold_balance < $widgetItem->gold_price){
-                $this->message = 'You dont have enough gold balance to unlock this widget.';
+                $this->message = 'You do not have the required gold to purchase this item.';
                 return false;
             }
         }

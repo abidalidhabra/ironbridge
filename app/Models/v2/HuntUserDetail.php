@@ -19,7 +19,8 @@ class HuntUserDetail extends Eloquent
         'status',
         'started_at',
         'ended_at',
-        'radius'
+        'radius',
+        'hunt_clue_id'
 	];
 
     protected $attributes = [
@@ -47,5 +48,10 @@ class HuntUserDetail extends Eloquent
 
     public function hunt_user(){
         return $this->belongsTo('App\Models\v2\HuntUser');     
+    }
+
+    public function hunt_clue()
+    {
+        return $this->belongsTo('App\Models\v1\HuntClue');
     }
 }
