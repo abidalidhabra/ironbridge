@@ -27,7 +27,8 @@ class PracticeGameFinishRequest extends FormRequest
     public function rules()
     {
         return [
-            'practice_game_user_id' => ['required', 'exists:practice_game_users,_id', new UserTitleOfMiniGame]
+            'practice_game_user_id' => ['required', 'exists:practice_game_users,_id', new UserTitleOfMiniGame],
+            'increase_completions_time' => ['required', 'string', 'in:true,false']
         ];
     }
 

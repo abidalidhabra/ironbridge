@@ -36,7 +36,9 @@ class MiniGameRepository implements MiniGameInterface
         $practiceGameUser = PracticeGameUser::where('_id', $request->practice_game_user_id)->first();
         
         // Just Increase the completion time of minigame
-        $this->addCompletionTimes($practiceGameUser);
+        if ($request->increase_completions_time == 'true') {
+            $this->addCompletionTimes($practiceGameUser);
+        }
         
         // Throw an exception if minigame's piece is already collected
         // if ($practiceGameUser->piece_collected === true) {
