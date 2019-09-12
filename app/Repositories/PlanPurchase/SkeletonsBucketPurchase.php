@@ -31,9 +31,12 @@ class SkeletonsBucketPurchase implements Purchase
 		$planPurchase->save();
     	
         /** Add User Bucket **/
-    	(new UserRepository($this->user))->addSkeletonsBucket($this->plan->skeletons_bucket);
+    	$availableSkeletonKeys = (new UserRepository($this->user))->addSkeletonsBucket($this->plan->skeletons_bucket);
+        
+        /** Deduct User Gold **/
+        $goldBalance = (new UserRepository($this->user))->deductGold($this->plan->gold_price);
     	
     	/** return the available skeleton keys **/
-    	return ['skeletons_bucket_size'=> $this->user->skeletons_bucket];
+    	return ['skeletons_bucket_size'=> $availableSkeletonKeys, 'available_gold_balance'=> $goldBalance];
     }
 }

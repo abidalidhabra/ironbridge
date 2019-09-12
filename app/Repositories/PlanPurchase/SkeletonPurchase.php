@@ -31,9 +31,12 @@ class SkeletonPurchase implements Purchase
 		$planPurchase->save();
 
     	/** Add skeleton keys in user's table **/
-    	(new UserRepository($this->user))->addSkeletonKeys($this->plan->skeleton_keys);
+    	$availableSkeletonKeys = (new UserRepository($this->user))->addSkeletonKeys($this->plan->skeleton_keys);
     	
+        /** Deduct User Gold **/
+        $goldBalance = (new UserRepository($this->user))->deductGold($this->plan->gold_price);
+
     	/** return the available skeleton keys **/
-    	return ['available_skeleton_keys'=> $this->user->available_skeleton_keys];
+    	return ['available_skeleton_keys'=> $availableSkeletonKeys, 'available_gold_balance'=> $goldBalance];
     }
 }

@@ -33,6 +33,9 @@ class PlanPurchaseRule implements Rule
         if ($plan->skeleton_keys && $this->user->available_skeleton_keys >= $this->user->skeletons_bucket) {
             $this->message = "Sorry, you have exceeded your skeleton inventory space.";
             return false;
+        }else if ($plan->gold_price && $plan->gold_price > $this->user->gold_balance) {
+            $this->message = "You do not have enough gold to buy this plan.";
+            return false;
         }else{
             return true;
         }
