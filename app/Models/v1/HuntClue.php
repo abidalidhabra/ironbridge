@@ -22,4 +22,9 @@ class HuntClue extends Eloquent
     /*protected $attributes = [
         'est_completion' => 0
     ];*/
+
+    public function getDescriptionAttribute($value)
+    {
+        return $value ?? "";
+    }
 }

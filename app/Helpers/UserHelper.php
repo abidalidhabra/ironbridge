@@ -53,7 +53,7 @@ class UserHelper {
 
 	public static function getWidgets($user)
 	{
-		$widgets = WidgetItem::select('_id','widget_name','item_name','gold_price', 'avatar_id')->orderBy('gold_price', 'asc')->get();
+		$widgets = WidgetItem::select('_id','widget_name','item_name','gold_price', 'avatar_id', 'free', 'default')->orderBy('gold_price', 'asc')->get();
 		$widgets = $widgets->groupBy('widget_name');
 		return $widgets;
 	}

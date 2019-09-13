@@ -14,6 +14,8 @@ class WidgetItem extends Eloquent
         'avatar_id',
         'widget_category',
         'items',
+        'free',
+        'default',
     ];
 
     public function widget(){

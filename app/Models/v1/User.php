@@ -82,6 +82,7 @@ class User extends Authenticatable implements JWTSubject
         'gold_balance'   => 0,
         'skeletons_bucket' => 5,
         'pieces_collected' => 0,
+        'widgets' => [],
         // 'expnadable_skeleton_keys'   => 0,
         // 'user_widgets' => [],
         // 'used_widgets' => [],
