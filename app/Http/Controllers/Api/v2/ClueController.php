@@ -43,11 +43,17 @@ class ClueController extends Controller
                 $huntUserDetail->revealed_at = now();
                 $huntUserDetail->started_at = now();
                 $huntUserDetail->status = 'running';
+
+                $huntUserDetails = $huntUserDetail->hunt_user->hunt_user_details()->get();
+                if ($huntUserDetails->count() == $huntUserDetails->where('revealed_at', null)->count()) {
+                    $this->takeActionOnHuntUser($huntUserDetail, '', [ 'started_at'=> now() ]);
+                }
                 break;
             
             case 'running':
                 $huntAction = 'running';
-                $huntUserDetail->started_at = new MongoDBDate();
+                // $huntUserDetail->started_at = new MongoDBDate();
+                $huntUserDetail->started_at = now();
                 $huntUserDetail->status = 'running';
                 break;
 
@@ -71,7 +77,7 @@ class ClueController extends Controller
         
         $gameData = null;
         if ($status == 'completed' && $stillRemain == 0) {
-            $fields = [ 'status'=>'completed', 'ended_at'=> new MongoDBDate(), 'finished_in'=> $finishedIn ];
+            $fields = [ 'status'=>'completed', 'ended_at'=> now(), 'finished_in'=> $finishedIn ];
             $gameData = $this->takeActionOnHuntUser($huntUserDetail, '', $fields, true);
         }else if($status != 'completed'){
             $this->takeActionOnHuntUser($huntUserDetail, $huntAction);
