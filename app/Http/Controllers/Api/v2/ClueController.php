@@ -57,17 +57,21 @@ class ClueController extends Controller
                 break;
 
             case 'completed':
-                $finishedIn = $this->calculateTheTimer($huntUserDetail,'completed');
+                // $finishedIn = $this->calculateTheTimer($huntUserDetail,'completed');
+                $this->calculateTheTimer($huntUserDetail,'completed');
                 $this->unlockeMiniGameIfLocked($huntUserDetail->game_id, $userId);
                 // $stillRemain = $huntUserDetail->hunt_user->hunt_user_details()->whereIn('status', ['tobestart','progress','pause'])->count();
-                $stillRemain = $huntUserDetail->hunt_user->hunt_user_details()->where('status', '!=', 'completed')->count();
+                // $stillRemain = $huntUserDetail->hunt_user->hunt_user_details()->where('status', '!=', 'completed')->count();
+                $huntUserDetails = $huntUserDetail->hunt_user->hunt_user_details()->get();
+                $stillRemain = $huntUserDetails->where('status', '!=', 'completed')->count();
+                $finishedIn = $huntUserDetails->sum('finished_in');
                 break;
         }
         $huntUserDetail->save();
         
         $gameData = null;
         if ($status == 'completed' && $stillRemain == 0) {
-            $fields = [ 'status'=>'completed', 'ended_at'=> new MongoDBDate(), 'finished_in'=> $huntUserDetail->sum('finished_in') ];
+            $fields = [ 'status'=>'completed', 'ended_at'=> new MongoDBDate(), 'finished_in'=> $finishedIn ];
             $gameData = $this->takeActionOnHuntUser($huntUserDetail, '', $fields, true);
         }else if($status != 'completed'){
             $this->takeActionOnHuntUser($huntUserDetail, $huntAction);
@@ -145,7 +149,6 @@ class ClueController extends Controller
                 $clue->save();
                 return $clue;
             });
-            return true;
         }else{
 
             $startdate  = $huntUserDetails->started_at;
@@ -156,8 +159,8 @@ class ClueController extends Controller
             $huntUserDetails->ended_at    = null;
             $huntUserDetails->status      = $action;
             $huntUserDetails->save();
-            return $finishedIn;
         }
+        return true;
     }
 
     public function takeActionOnHuntUser($huntUserDetail, $action, $fields = [], $gameCompleted = false){
