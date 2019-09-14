@@ -31,7 +31,8 @@ class WidgetItemController extends Controller
         $widgetItem = $this->widgetItemInterface->find($request->widget_item_id);
 
         $WidgetItemFactory = new WidgetItemFactory($this->user);
-        if (!$widgetItem->free || $this->user->free_outfit_taken) {
+
+        if (($widgetItem->free == null) || $this->user->free_outfit_taken) {
             $availableGold = $this->userInterface->deductGold($widgetItem->gold_price);
             $data = $WidgetItemFactory->initializeWidgetItem($widgetItem);
         }else {
