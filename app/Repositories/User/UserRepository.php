@@ -114,7 +114,7 @@ class UserRepository implements UserRepositoryInterface
                 User::where('_id', $this->user->id)->pull('widgets', ['id'=> "5d246f230b6d7b1a0a232482"]);
             }
             $this->addWidgetItems($widgetItem);
-            return $widgetItem->id;
+            return $widgetItem->items;
         }else if ($widgetItem->avatar->gender == 'male') {
             if ($widgetItem->id != "5d246f0c0b6d7b19fb5ab590") {
                 $widgetToRemove = WidgetItem::where('_id', "5d246f0c0b6d7b19fb5ab590")->first();
@@ -124,7 +124,7 @@ class UserRepository implements UserRepositoryInterface
                 User::where('_id', $this->user->id)->pull('widgets', ['id'=> "5d246f0c0b6d7b19fb5ab590"]);
             }
             $this->addWidgetItems($widgetItem);
-            return $widgetItem->id;
+            return $widgetItem->items;
         }
         throw new Exception("Invalid avatar type provided.");
     }
