@@ -30,10 +30,15 @@ class WidgetItemController extends Controller
 
         $widgetItem = $this->widgetItemInterface->find($request->widget_item_id);
 
-        $availableGold = $this->userInterface->deductGold($widgetItem->gold_price);
-
         $WidgetItemFactory = new WidgetItemFactory($this->user);
-        $data = $WidgetItemFactory->initializeWidgetItem($widgetItem);
+        if (!$widgetItem->free || $this->user->free_outfit_taken) {
+            $availableGold = $this->userInterface->deductGold($widgetItem->gold_price);
+            $data = $WidgetItemFactory->initializeWidgetItem($widgetItem);
+        }else {
+            $availableGold = $this->user->gold_balance;
+            $data = $WidgetItemFactory->resetWidgetItem($widgetItem);
+        }
+
 
         return response()->json([
             'message' => 'Your Widget has been unlocked successfully.',

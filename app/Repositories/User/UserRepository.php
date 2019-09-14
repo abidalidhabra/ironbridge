@@ -103,4 +103,11 @@ class UserRepository implements UserRepositoryInterface
         }
         return $totalItems;
     }
+
+    public function resetWidgets(WidgetItem $widgetItem)
+    {
+        User::where('_id',$this->user->id)->update(['widgets'=> []]);
+        $status = User::where('_id',$this->user->id)->push(['widgets'=> ['id'=> $widgetItem->id, 'selected'=> false]]);
+        return $widgetItem->id;
+    }
 }

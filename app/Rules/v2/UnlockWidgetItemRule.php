@@ -38,7 +38,7 @@ class UnlockWidgetItemRule implements Rule
                             ->first();
 
         if ($alreadyInAccount) {
-            $this->message = 'This widget is already purchased by you.';
+            $this->message = 'This widget is already available in your widget inventory.';
             return false;
         }else {
             

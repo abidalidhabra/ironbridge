@@ -22,4 +22,9 @@ class WidgetItemFactory
             return $this->userInterface->addWidgetItem($widgetItem);
         }
     }
+
+    public function resetWidgetItem(WidgetItem $widgetItem)
+    {
+        return $this->userInterface->resetWidgets($widgetItem);
+    }
 }

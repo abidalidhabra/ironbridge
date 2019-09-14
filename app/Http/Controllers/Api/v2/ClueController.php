@@ -10,6 +10,7 @@ use App\Models\v2\HuntReward;
 use App\Models\v2\HuntUser;
 use App\Models\v2\HuntUserDetail;
 use App\Models\v2\PracticeGameUser;
+use App\Repositories\Hunt\Factory\ClueFactory;
 use Exception;
 use Illuminate\Http\Request;
 use MongoDB\BSON\ObjectId as MongoDBId;
@@ -28,63 +29,72 @@ class ClueController extends Controller
 
     public function actionOnClue(ActionOnClueRequest $request){
 
-        $userId = auth()->user()->id;
-        $huntUserDetailId = $request->hunt_user_details_id;
-        $status = $request->status;
-        
-        $huntUserDetail = $this->getHuntUserDetail($userId, $huntUserDetailId);
-        
-        $stillRemain;
-        $finishedIn = 0;
-        switch ($status) {
-            
-            case 'reveal':
-                $huntAction = 'running';
-                $huntUserDetail->revealed_at = now();
-                $huntUserDetail->started_at = now();
-                $huntUserDetail->status = 'running';
-
-                $huntUserDetails = $huntUserDetail->hunt_user->hunt_user_details()->get();
-                if ($huntUserDetails->count() == $huntUserDetails->where('revealed_at', null)->count()) {
-                    $this->takeActionOnHuntUser($huntUserDetail, '', [ 'started_at'=> now() ]);
-                }
-                break;
-            
-            case 'running':
-                $huntAction = 'running';
-                // $huntUserDetail->started_at = new MongoDBDate();
-                $huntUserDetail->started_at = now();
-                $huntUserDetail->status = 'running';
-                break;
-
-            case 'paused':
-                $huntAction = 'paused';
-                $this->calculateTheTimer($huntUserDetail,'paused');
-                break;
-
-            case 'completed':
-                // $finishedIn = $this->calculateTheTimer($huntUserDetail,'completed');
-                $this->calculateTheTimer($huntUserDetail,'completed');
-                $this->unlockeMiniGameIfLocked($huntUserDetail->game_id, $userId);
-                // $stillRemain = $huntUserDetail->hunt_user->hunt_user_details()->whereIn('status', ['tobestart','progress','pause'])->count();
-                // $stillRemain = $huntUserDetail->hunt_user->hunt_user_details()->where('status', '!=', 'completed')->count();
-                $huntUserDetails = $huntUserDetail->hunt_user->hunt_user_details()->get();
-                $stillRemain = $huntUserDetails->where('status', '!=', 'completed')->count();
-                $finishedIn = $huntUserDetails->sum('finished_in');
-                break;
-        }
-        $huntUserDetail->save();
-        
-        $gameData = null;
-        if ($status == 'completed' && $stillRemain == 0) {
-            $fields = [ 'status'=>'completed', 'ended_at'=> now(), 'finished_in'=> $finishedIn ];
-            $gameData = $this->takeActionOnHuntUser($huntUserDetail, '', $fields, true);
-        }else if($status != 'completed'){
-            $this->takeActionOnHuntUser($huntUserDetail, $huntAction);
-        }
-
-        return response()->json(['message'=>'Action on clue has been taken successfully.', 'hunt_info'=> $gameData, 'finished_in'=> $finishedIn]);
+        $initializeAction = (new ClueFactory)->initializeAction($request->status);
+        $data = $initializeAction->action($request->hunt_user_details_id);
+        $rewardData = $data['rewardData'] ?? null;
+        $finishedIn = $data['finishedIn'] ?? 0;
+        return response()->json(['message'=>'Action on clue has been taken successfully.', 'hunt_info'=> $rewardData, 'finished_in'=> $finishedIn]);
     }
+
+    // public function actionOnClue(ActionOnClueRequest $request){
+
+    //     $userId = auth()->user()->id;
+    //     $huntUserDetailId = $request->hunt_user_details_id;
+    //     $status = $request->status;
+        
+    //     $huntUserDetail = $this->getHuntUserDetail($userId, $huntUserDetailId);
+        
+    //     $stillRemain;
+    //     $finishedIn = 0;
+    //     switch ($status) {
+            
+    //         case 'reveal':
+    //             $huntAction = 'running';
+    //             $huntUserDetail->revealed_at = now();
+    //             $huntUserDetail->started_at = now();
+    //             $huntUserDetail->status = 'running';
+
+    //             $huntUserDetails = $huntUserDetail->hunt_user->hunt_user_details()->get();
+    //             if ($huntUserDetails->count() == $huntUserDetails->where('revealed_at', null)->count()) {
+    //                 $this->takeActionOnHuntUser($huntUserDetail, '', [ 'started_at'=> now() ]);
+    //             }
+    //             break;
+            
+    //         case 'running':
+    //             $huntAction = 'running';
+    //             // $huntUserDetail->started_at = new MongoDBDate();
+    //             $huntUserDetail->started_at = now();
+    //             $huntUserDetail->status = 'running';
+    //             break;
+
+    //         case 'paused':
+    //             $huntAction = 'paused';
+    //             $this->calculateTheTimer($huntUserDetail,'paused');
+    //             break;
+
+    //         case 'completed':
+    //             // $finishedIn = $this->calculateTheTimer($huntUserDetail,'completed');
+    //             $this->calculateTheTimer($huntUserDetail,'completed');
+    //             $this->unlockeMiniGameIfLocked($huntUserDetail->game_id, $userId);
+    //             // $stillRemain = $huntUserDetail->hunt_user->hunt_user_details()->whereIn('status', ['tobestart','progress','pause'])->count();
+    //             // $stillRemain = $huntUserDetail->hunt_user->hunt_user_details()->where('status', '!=', 'completed')->count();
+    //             $huntUserDetails = $huntUserDetail->hunt_user->hunt_user_details()->get();
+    //             $stillRemain = $huntUserDetails->where('status', '!=', 'completed')->count();
+    //             $finishedIn = $huntUserDetails->sum('finished_in');
+    //             break;
+    //     }
+    //     $huntUserDetail->save();
+        
+    //     $gameData = null;
+    //     if ($status == 'completed' && $stillRemain == 0) {
+    //         $fields = [ 'status'=>'completed', 'ended_at'=> now(), 'finished_in'=> $finishedIn ];
+    //         $gameData = $this->takeActionOnHuntUser($huntUserDetail, '', $fields, true);
+    //     }else if($status != 'completed'){
+    //         $this->takeActionOnHuntUser($huntUserDetail, $huntAction);
+    //     }
+
+    //     return response()->json(['message'=>'Action on clue has been taken successfully.', 'hunt_info'=> $gameData, 'finished_in'=> $finishedIn]);
+    // }
 
     public function useTheSkeletonKey(Request $request){
         

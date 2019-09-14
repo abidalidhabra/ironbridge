@@ -15,4 +15,6 @@ interface UserInterface {
     public function addWidgetItem(WidgetItem $WidgetItem);
     
     public function addWidgetItems(WidgetItem $WidgetItem);
+    
+    public function resetWidgets(WidgetItem $WidgetItem);
 }

@@ -169,4 +169,24 @@ class User extends Authenticatable implements JWTSubject
             return $miniGame;
         });
     }
+
+    public function getFreeOutfitTakenAttribute()
+    {
+        $userWidgets = collect($this->widgets)->pluck('id');
+        $freeOutfeets = WidgetItem::where('free', true)->get()->pluck('_id');
+        $contains = false;
+        foreach ($freeOutfeets as $outfit) {
+            if ($userWidgets->contains($outfit)) {
+                $contains = true;
+                break;
+            }
+        }
+        // $freeOutfeets->map(function($outfit) use ($userWidgets, $contains) {
+        //     if ($userWidgets->contains($outfit)) {
+        //         $contains = true;
+        //         break;
+        //     }
+        // });
+        return $contains;
+    }
 }
