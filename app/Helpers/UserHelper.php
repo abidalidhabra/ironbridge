@@ -44,7 +44,7 @@ class UserHelper {
 			'user_avatar' => $user->avatar,
 			'user_widgets' => $user->widgets,
 			'events_cities' => $eventsCities,
-			'free_outfit_occupied' => auth()->user()->free_outfit_taken,
+			'free_outfit_occupied' => $user->free_outfit_taken,
 			// 'used_widgets' => $user->used_widgets,
 			// 'plans' => $plans,
 			// 'events_data' => $events,

@@ -72,6 +72,11 @@ class AuthController extends Controller
                     ];
                 }
 
+                if ($user->first_login == true) {
+                    $user->first_login = false;
+                    $user->save();
+                }
+
                 if ($wantToSave) {
                     $user->save();
                 }

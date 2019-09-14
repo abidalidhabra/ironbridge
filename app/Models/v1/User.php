@@ -41,6 +41,7 @@ class User extends Authenticatable implements JWTSubject
         'skeletons_bucket',
         'pieces_collected',
         'minigame_tutorials',
+        'first_login',
         // 'expnadable_skeleton_keys',
     ];
 
@@ -83,6 +84,7 @@ class User extends Authenticatable implements JWTSubject
         'skeletons_bucket' => 5,
         'pieces_collected' => 0,
         'widgets' => [],
+        'first_login' => true,
         // 'expnadable_skeleton_keys'   => 0,
         // 'user_widgets' => [],
         // 'used_widgets' => [],
@@ -172,21 +174,19 @@ class User extends Authenticatable implements JWTSubject
 
     public function getFreeOutfitTakenAttribute()
     {
-        $userWidgets = collect($this->widgets)->pluck('id');
-        $freeOutfeets = WidgetItem::where('free', true)->get()->pluck('_id');
-        $contains = false;
-        foreach ($freeOutfeets as $outfit) {
-            if ($userWidgets->contains($outfit)) {
-                $contains = true;
-                break;
+        if ($this->first_login == true) {
+            return false;
+        }else{
+            $userWidgets = collect($this->widgets)->pluck('id');
+            $freeOutfeets = WidgetItem::where('free', true)->get()->pluck('_id');
+            $contains = false;
+            foreach ($freeOutfeets as $outfit) {
+                if ($userWidgets->contains($outfit)) {
+                    $contains = true;
+                    break;
+                }
             }
+            return $contains;
         }
-        // $freeOutfeets->map(function($outfit) use ($userWidgets, $contains) {
-        //     if ($userWidgets->contains($outfit)) {
-        //         $contains = true;
-        //         break;
-        //     }
-        // });
-        return $contains;
     }
 }
