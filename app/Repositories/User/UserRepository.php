@@ -108,7 +108,8 @@ class UserRepository implements UserRepositoryInterface
     {
         if ($widgetItem->avatar->gender == 'female') {
             if ($widgetItem->id != "5d246f230b6d7b1a0a232482") {
-                foreach ($widgetItem->items as $item) {
+                $widgetToRemove = WidgetItem::where('_id', "5d246f230b6d7b1a0a232482")->first();
+                foreach ($widgetToRemove->items as $item) {
                     User::where('_id', $this->user->id)->pull(['widgets'=> ['id'=> $item]]);
                 }
                 User::where('_id', $this->user->id)->pull('widgets', ['id'=> "5d246f230b6d7b1a0a232482"]);
