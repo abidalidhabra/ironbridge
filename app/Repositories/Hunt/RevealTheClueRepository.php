@@ -27,7 +27,9 @@ class RevealTheClueRepository implements ClueInterface
 
         // reveal the clue
         $huntUserDetail->revealed_at = now();
-        $huntUserDetail->started_at = now();
+        if (!$huntUserDetail->started_at) {
+            $huntUserDetail->started_at = now();
+        }
         $huntUserDetail->status = 'running';
         $huntUserDetail->save();
         
