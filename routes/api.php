@@ -13,9 +13,9 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-	return $request->user();
-});
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+// 	return $request->user();
+// });
 
 Route::post('addComplexityWiseTarget', 'Api\v1\PrepareController@addComplexityWiseTarget');
 Route::post('addGames', 'Api\v1\PrepareController@addGames');
@@ -51,44 +51,44 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 	Route::group(['middleware' => 'jwt-auth'], function ($router) {
 
 
-		Route::post('changePassword', 'ProfileController@changePassword');
-		Route::post('updateProfile', 'ProfileController@updateProfile');
-		Route::post('updateSetting', 'ProfileController@updateSetting');
+		// Route::post('changePassword', 'ProfileController@changePassword');
+		// Route::post('updateProfile', 'ProfileController@updateProfile');
+		// Route::post('updateSetting', 'ProfileController@updateSetting');
 
 
-		Route::post('getPayloadData', 'UserController@getPayloadData');
+		// Route::post('getPayloadData', 'UserController@getPayloadData');
 		
 		// Route::post('selectkWidgetItem', 'UserController@selectkWidgetItem');
-		Route::post('setMyAvatar', 'UserController@setMyAvatar');
+		// Route::post('setMyAvatar', 'UserController@setMyAvatar');
 		// Route::post('minigameTutorialsCompleted', 'UserController@minigameTutorialsCompleted');
 		// Route::get('getWarehouseData', 'UserController@getWarehouseData');
 		
 		/** Plans related requets **/
-		Route::get('getThePlans', 'PlanController@getThePlans');
-		Route::post('purchaseTheGolds', 'PlanController@purchaseTheGolds');
+		// Route::get('getThePlans', 'PlanController@getThePlans');
+		// Route::post('purchaseTheGolds', 'PlanController@purchaseTheGolds');
 		
 		/** Events related requests **/
-		Route::post('addParticipation', 'EventController@addParticipation');
-		Route::get('getTheEvents', 'EventController@getTheEvents');
-		Route::get('getEventDetails', 'EventController@getEventDetails');
-		Route::post('hitAnEventAction', 'EventController@hitAnEventAction');
+		// Route::post('addParticipation', 'EventController@addParticipation');
+		// Route::get('getTheEvents', 'EventController@getTheEvents');
+		// Route::get('getEventDetails', 'EventController@getEventDetails');
+		// Route::post('hitAnEventAction', 'EventController@hitAnEventAction');
 		
 		/** News related requests **/
-		Route::resource('news', 'NewsController');
+		// Route::resource('news', 'NewsController');
 
-		Route::post('logout', 'AuthController@logout');
-		Route::post('refresh', 'AuthController@refresh');
-		Route::post('me', 'AuthController@me');
+		// Route::post('logout', 'AuthController@logout');
+		// Route::post('refresh', 'AuthController@refresh');
+		// Route::post('me', 'AuthController@me');
 
 		/** Hunt related requests **/
-		Route::get('getHuntsByDifficulty', 'HuntController@getHuntsByDifficulty');
-		Route::get('getHuntDetails', 'HuntController@getHuntDetails');
-		Route::post('participateInHunt', 'HuntController@participateInHunt');
-		Route::post('getHuntParticipationDetails', 'HuntController@getHuntParticipationDetails');
-		Route::get('getNearByHunts', 'HuntController@getNearByHunts');
-		Route::post('getHuntUser', 'HuntController@getHuntUser');
-		Route::get('getHuntsInProgress', 'HuntController@getHuntsInProgress');
-		Route::get('getPreviousHuntDetails', 'HuntController@getPreviousHuntDetails');
+		// Route::get('getHuntsByDifficulty', 'HuntController@getHuntsByDifficulty');
+		// Route::get('getHuntDetails', 'HuntController@getHuntDetails');
+		// Route::post('participateInHunt', 'HuntController@participateInHunt');
+		// Route::post('getHuntParticipationDetails', 'HuntController@getHuntParticipationDetails');
+		// Route::get('getNearByHunts', 'HuntController@getNearByHunts');
+		// Route::post('getHuntUser', 'HuntController@getHuntUser');
+		// Route::get('getHuntsInProgress', 'HuntController@getHuntsInProgress');
+		// Route::get('getPreviousHuntDetails', 'HuntController@getPreviousHuntDetails');
 
 		// Route::get('getHuntsByDifficultyV2', 'HuntController@getHuntsByDifficultyV2');
 		// Route::post('participateInHuntV2', 'HuntController@participateInHuntV2');
@@ -98,20 +98,20 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 		// Route::get('getHuntsInProgressV2', 'HuntController@getHuntsInProgressV2');
 
 		/** Clues related requests  **/
-		Route::post('revealTheClueV2', 'ClueController@revealTheClueV2');
-		Route::post('startTheClueV2', 'ClueController@startTheClueV2');
-		Route::post('pauseTheClueV2', 'ClueController@pauseTheClueV2');
-		Route::post('endTheClueV2', 'ClueController@endTheClueV2');
-		Route::post('useTheSkeletonKeyV2', 'ClueController@useTheSkeletonKeyV2');
+		// Route::post('revealTheClueV2', 'ClueController@revealTheClueV2');
+		// Route::post('startTheClueV2', 'ClueController@startTheClueV2');
+		// Route::post('pauseTheClueV2', 'ClueController@pauseTheClueV2');
+		// Route::post('endTheClueV2', 'ClueController@endTheClueV2');
+		// Route::post('useTheSkeletonKeyV2', 'ClueController@useTheSkeletonKeyV2');
 
-		Route::post('revealTheClue', 'ClueController@revealTheClue');
-		Route::get('quitTheHunt', 'ClueController@quitTheHunt');
-		Route::get('cluePause', 'ClueController@cluePause');
-		Route::post('skeleton', 'ClueController@skeleton');
-		Route::post('startTheClue', 'ClueController@startTheClue');
-		Route::post('endTheClue', 'ClueController@endTheClue');
-		Route::post('clueGame', 'ClueController@clueGame');
-		Route::get('userHuntInfo', 'ClueController@userHuntInfo');
+		// Route::post('revealTheClue', 'ClueController@revealTheClue');
+		// Route::get('quitTheHunt', 'ClueController@quitTheHunt');
+		// Route::get('cluePause', 'ClueController@cluePause');
+		// Route::post('skeleton', 'ClueController@skeleton');
+		// Route::post('startTheClue', 'ClueController@startTheClue');
+		// Route::post('endTheClue', 'ClueController@endTheClue');
+		// Route::post('clueGame', 'ClueController@clueGame');
+		// Route::get('userHuntInfo', 'ClueController@userHuntInfo');
 
 	});
 
@@ -120,8 +120,27 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 
 
 
-Route::get('/v1/updatedWidgetData', 'Api\v2\WidgetItemController@updatedWidgetData');
+// Route::get('/v1/updatedWidgetData', 'Api\v2\WidgetItemController@updatedWidgetData');
 Route::group(['namespace' => 'Api\v2', 'prefix' => 'v1', 'middleware' => 'jwt-auth'], function ($router) {
+
+	/** Profile requests **/
+	Route::post('changePassword', 'ProfileController@changePassword');
+	Route::post('updateProfile', 'ProfileController@updateProfile');
+	Route::post('updateSetting', 'ProfileController@updateSetting');
+	Route::post('logout', 'AuthController@logout');
+	Route::post('refresh', 'AuthController@refresh');
+	Route::post('me', 'AuthController@me');
+
+	/** News Requests **/
+	Route::resource('news', 'NewsController');
+
+	/** Avatar requests **/
+	Route::post('setMyAvatar', 'UserController@setMyAvatar');
+	
+	/** Payload requests **/
+	Route::post('getPayloadData', 'UserController@getPayloadData');
+	
+	/** Widget Items requests **/
 	Route::post('unlockWidgetItem', 'WidgetItemController@unlockWidgetItem');
 });
 
