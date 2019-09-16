@@ -121,7 +121,8 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 
 
 // Route::get('/v1/updatedWidgetData', 'Api\v2\WidgetItemController@updatedWidgetData');
-Route::group(['namespace' => 'Api\v2', 'prefix' => 'v1', 'middleware' => 'jwt-auth'], function ($router) {
+
+Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1', 'middleware' => 'jwt-auth'], function ($router) {
 
 	/** Profile requests **/
 	Route::post('changePassword', 'ProfileController@changePassword');
@@ -139,7 +140,10 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v1', 'middleware' => 'jwt-au
 	
 	/** Payload requests **/
 	Route::post('getPayloadData', 'UserController@getPayloadData');
-	
+});
+
+Route::group(['namespace' => 'Api\v2', 'prefix' => 'v1', 'middleware' => 'jwt-auth'], function ($router) {
+
 	/** Widget Items requests **/
 	Route::post('unlockWidgetItem', 'WidgetItemController@unlockWidgetItem');
 });
