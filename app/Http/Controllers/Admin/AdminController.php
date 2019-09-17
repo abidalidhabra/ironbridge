@@ -164,4 +164,21 @@ class AdminController extends Controller
             'message'=>'Invalid password generation link',
         ]);
     }
+
+
+    public function userData(Request $request){
+        $startAt = Carbon::now()->subDays(30);
+        $endAt = Carbon::now();
+
+        $user = User::get();
+        $planPurchase = PlanPurchase::whereBetween('created_at', [$startAt,$endAt])
+                                    ->get();
+        $data['total_purchase'] =  $planPurchase->count();
+        $data['total_amount_purchase'] =  $planPurchase->sum('price');
+        $data['average_amount_purchase'] =  $data['total_amount_purchase']/$data['total_purchase'];
+        $data['total_coins_purchase'] =  $planPurchase->sum('gold_value');
+        $data['average_revenue'] =  $planPurchase->count('user_id')/$user->count();
+
+        return $data;
+    }
 }

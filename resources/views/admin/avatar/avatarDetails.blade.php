@@ -44,7 +44,11 @@
                     </div>
                     <div class="swoped_detlisright">
                         @forelse($avatar->hairs_colors as $key => $hairsColor)
+                            @if($hairsColor)
                             <div class="px20_20 colors" data-colorcode="{{ $hairsColor }}" data-status="hairs_color" data-index="{{ $key }}" id="hairs_color{{$key}}" style="background: {{ $hairsColor }}"></div>
+                            @else
+                            <div class="px20_20 colors text-center" data-colorcode="{{ $hairsColor }}" data-status="hairs_color" data-index="{{ $key }}" id="hairs_color{{$key}}"><i class="fa fa-plus"></i></div>
+                            @endif
                         @empty
                         @endforelse
                     </div>
@@ -173,13 +177,17 @@
             });
 
             //$(document).on('focusout','.color_code',function(){
-            $(document).on('click','.color_code',function(){
+            $(document).on('click','.color_code',function(e){
+                e.preventDefault();
                 var status = $(this).attr('data-status');
                 var color_code = $(this).parents('.swoped_detlisright').find('.color_code1').val();
                 var index = $(this).attr('data-id');
                 var id = '{{ $avatar->id }}';
-
-                var valid_color_code  = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(color_code);
+                var valid_color_code = "1";
+                if (status != 'hairs_color') {
+                    valid_color_code  = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(color_code);
+                    console.log('success');
+                }
                 if (valid_color_code) {
                     $.ajax({
                         type: "POST",
@@ -196,7 +204,10 @@
                         {
                             if (response.status == true) {
                                 toastr.success(response.message);
-                                $('#'+status+index).css("background",color_code);
+                                $('#'+status+index).removeClass('text-center').css("background",color_code).html('');
+                                if (color_code == "") {
+                                    $('#'+status+index).addClass('text-center').html('<i class="fa fa-plus"></i>').css("background",'');
+                                }
                                 $('.color_code , .color_code1, .remove_color_code').remove();                          
                             } else {
                                 toastr.warning(response.message);
