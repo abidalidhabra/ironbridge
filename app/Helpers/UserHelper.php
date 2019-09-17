@@ -61,7 +61,12 @@ class UserHelper {
 
 	public static function getAvatars($user)
 	{
-		$avatars = Avatar::select('_id','name','gender','eyes_colors','hairs_colors','skin_colors')->get();
+		$avatars = Avatar::select('_id','name','gender','eyes_colors','hairs_colors','skin_colors')
+					->get()
+					->map(function($avatar) {
+						$avatar->hairs_colors = array_filter($avatar->hairs_colors,'strlen');
+						return $avatar;
+					});
 		return $avatars;
 	}
 
