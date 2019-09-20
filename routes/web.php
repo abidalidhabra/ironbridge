@@ -37,7 +37,14 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	//dashboards
 	Route::get('/', [ 'middleware' => ['permission:Dashboard'], 'uses' => 'AdminController@index' ])->name('dashboards');
 	Route::get('signedUpDateFilter', [ 'middleware' => ['permission:Dashboard'], 'uses' => 'AdminController@signedUpDateFilter' ])->name('signedUpDateFilter');
-	Route::get('userData', 'AdminController@userData')->name('userData');
+
+	Route::get('analyticsMetrics', [ 'middleware' => ['permission:View Analytics Metrics'], 'uses' => 'AnalyticMetricController@analyticsMetrics' ])->name('analyticsMetrics');
+	Route::get('analyticsMetricsFilter', 'AnalyticMetricController@analyticsMetricsFilter')->name('analyticsMetricsFilter');
+	Route::get('getStoreDateFilter', 'AnalyticMetricController@getStoreDateFilter')->name('getStoreDateFilter');
+	Route::get('getUserDateFilter', 'AnalyticMetricController@getUserDateFilter')->name('getUserDateFilter');
+	Route::get('getHuntDateFilter', 'AnalyticMetricController@getHuntDateFilter')->name('getHuntDateFilter');
+	Route::get('getEventDateFilter', 'AnalyticMetricController@getEventDateFilter')->name('getEventDateFilter');
+	Route::get('getAnalytic', 'AnalyticMetricController@getAnalytic')->name('getAnalytic');
 	
 	//User List
 	Route::get('/userList', [ 'middleware' => ['permission:View Users'], 'uses' => 'UserController@index' ])->name('userList');

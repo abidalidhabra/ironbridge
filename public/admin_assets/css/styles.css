@@ -2188,6 +2188,159 @@ table i.iconsetaddbox{
     display: none;
 }
 
+.analytmetri_coverbox{
+    width: 100%;
+}
+
+.analytmetri_coverbox .signeup_innerborderbox{
+    border: 0px solid #F1F1F1;
+    padding: 0;
+    -webkit-box-shadow: inherit;
+    -moz-box-shadow: inherit;
+    box-shadow: inherit;
+}
+.analytmetri_coverbox .total_usersdetlis{
+    border: 1px solid #F1F1F1;
+    -webkit-box-shadow: -1px 0px 11px -6px rgba(158,158,158,0.88);
+    -moz-box-shadow: -1px 0px 11px -6px rgba(158,158,158,0.88);
+    box-shadow: -1px 0px 11px -6px rgba(158,158,158,0.88);
+}
+.analytmetri_coverbox .total_usersdetlis ul li{
+    margin-bottom: 24px;
+}
+.analytmetri_coverbox .total_usersdetlis ul{
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.analytmetri_coverbox .total_usersdetlis ul li h3{
+    margin-bottom: 4px;
+    display: inline-block;
+    width: 100%;
+}
+.analytmetri_coverbox .total_usersdetlis ul li p{
+    display: inline-block;
+    width: 100%;
+}
+/*.analytmetri_coverbox .date_textboxpart input{
+    padding-left: 52px;
+    width: 100%;
+    float: left;
+    letter-spacing: 2px;
+}
+.analytmetri_coverbox .date_textboxpart img{
+    left: 21px;
+    top: 9px;
+}*/
+
+
+
+.avt_itembox{
+    display: inline-block;
+    width: 100%;
+    height: 500px;
+    overflow-x: auto;
+}
+.avt_itembox ul{
+    display: inline-block;
+    width: 100%;
+    padding-left: 0;
+}
+.avt_itembox ul li{
+    display: inline-block;
+    width: 25%;
+    float: left;
+    text-align: center;
+}
+.avt_itembox ul li img{
+    height: 150px !important;
+    width: auto !important;
+    float: none !important;
+    margin: 0px !important;
+}
+.avt_itembox ul li h5{
+    display: inline-block;
+    width: 100%;
+    margin: 0px;
+    font-size: 20px;
+    color: #4D4F5C;
+    padding-bottom: 3px;
+    font-family: 'Montserrat-SemiBold';
+    margin-top: 8px;
+}
+
+.titleaddatep{
+    display: inline-block;
+    width: 100%;
+}
+.titleboxleft{
+    display: inline-block;
+    width: 50%;
+    float: left;
+}
+.titleboxleft h4{
+    margin-bottom: 20px;
+    display: inline-block;
+    font-size: 26px;
+    color: #A5853B;
+    padding-bottom: 3px;
+    font-family: 'Montserrat-SemiBold';
+    width: 100%;
+    margin-top: 20px;
+}
+
+.daterightbox{
+    display: inline-block;
+    width: 375px;
+    float: right;
+    position: relative;
+    margin-top: 19px;
+    padding-right: 18px;
+    margin-right: 80px;
+}
+
+.daterightbox input {
+    padding-left: 52px;
+    width: 100%;
+    float: left;
+    letter-spacing: 2px;
+}
+
+.daterightbox img {
+    width: 14px;
+    position: absolute;
+    left: 21px;
+    top: 9px;
+}
+.daterightbox input {
+    margin: 0px;
+    font-size: 15px;
+    color: #4D4F5C;
+    border: 1px solid #DEE2EC;
+    border-radius: 17px;
+    padding: 5px 13px 5px 5px;
+    width: 100%;
+    float: right;
+    padding-left: 48px;
+    padding-right: 24px;
+    font-size: 14px;
+    text-align: left;
+    padding-top: 6px;
+    font-family: 'Montserrat-Regular';
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
