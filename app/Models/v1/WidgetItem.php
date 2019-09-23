@@ -16,6 +16,7 @@ class WidgetItem extends Eloquent
         'items',
         'free',
         'default',
+        'similar_outfit',
     ];
 
     public function widget(){
