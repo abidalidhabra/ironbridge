@@ -106,24 +106,43 @@ class UserRepository implements UserRepositoryInterface
 
     public function resetWidgets(WidgetItem $widgetItem)
     {
-        if ($widgetItem->avatar->gender == 'female') {
-            if ($widgetItem->id != "5d246f230b6d7b1a0a232482") {
-                $widgetToRemove = WidgetItem::where('_id', "5d246f230b6d7b1a0a232482")->first();
-                foreach ($widgetToRemove->items as $item) {
-                    User::where('_id', $this->user->id)->pull(['widgets'=> ['id'=> $item]]);
-                }
-                User::where('_id', $this->user->id)->pull('widgets', ['id'=> "5d246f230b6d7b1a0a232482"]);
+        // if ($widgetItem->avatar->gender == 'female') {
+        //     if ($widgetItem->id != "5d246f230b6d7b1a0a232482") {
+        //         $widgetToRemove = WidgetItem::where('_id', "5d246f230b6d7b1a0a232482")->first();
+        //         foreach ($widgetToRemove->items as $item) {
+        //             User::where('_id', $this->user->id)->pull(['widgets'=> ['id'=> $item]]);
+        //         }
+        //         User::where('_id', $this->user->id)->pull('widgets', ['id'=> "5d246f230b6d7b1a0a232482"]);
+        //     }
+        // }else if ($widgetItem->avatar->gender == 'male') {
+        //     if ($widgetItem->id != "5d246f0c0b6d7b19fb5ab590") {
+        //         $widgetToRemove = WidgetItem::where('_id', "5d246f0c0b6d7b19fb5ab590")->first();
+        //         foreach ($widgetToRemove->items as $item) {
+        //             User::where('_id', $this->user->id)->pull('widgets', ['id'=> $item]);
+        //         }
+        //         User::where('_id', $this->user->id)->pull('widgets', ['id'=> "5d246f0c0b6d7b19fb5ab590"]);
+        //     }
+        // }
+
+        // remove female outfit from user's account
+        if ($widgetItem->id != "5d246f230b6d7b1a0a232482") {
+            $widgetToRemove = WidgetItem::where('_id', "5d246f230b6d7b1a0a232482")->first();
+            foreach ($widgetToRemove->items as $item) {
+                User::where('_id', $this->user->id)->pull(['widgets'=> ['id'=> $item]]);
             }
-        }else if ($widgetItem->avatar->gender == 'male') {
-            if ($widgetItem->id != "5d246f0c0b6d7b19fb5ab590") {
-                $widgetToRemove = WidgetItem::where('_id', "5d246f0c0b6d7b19fb5ab590")->first();
-                foreach ($widgetToRemove->items as $item) {
-                    User::where('_id', $this->user->id)->pull('widgets', ['id'=> $item]);
-                }
-                User::where('_id', $this->user->id)->pull('widgets', ['id'=> "5d246f0c0b6d7b19fb5ab590"]);
-            }
+            User::where('_id', $this->user->id)->pull('widgets', ['id'=> "5d246f230b6d7b1a0a232482"]);
         }
 
+        // remove male outfit from user's account
+        if ($widgetItem->id != "5d246f0c0b6d7b19fb5ab590") {
+            $widgetToRemove = WidgetItem::where('_id', "5d246f0c0b6d7b19fb5ab590")->first();
+            foreach ($widgetToRemove->items as $item) {
+                User::where('_id', $this->user->id)->pull('widgets', ['id'=> $item]);
+            }
+            User::where('_id', $this->user->id)->pull('widgets', ['id'=> "5d246f0c0b6d7b19fb5ab590"]);
+        }
+
+        // add the selected widget
         $totalItems = $widgetItem->items;
         array_push($totalItems, $widgetItem->id);
         foreach ($totalItems as $item) {
@@ -131,7 +150,13 @@ class UserRepository implements UserRepositoryInterface
             ->where('widgets.id', '!=', $item)
             ->push(['widgets'=> ['id'=> $item, 'selected'=> true]]);
         }
-        return $totalItems;
+
+        // add the equivalent widget of selected widget
+        $equivalentOutfit = WidgetItem::where('_id', $widgetItem->similar_outfit)->first();
+        $equivalentItems = $this->addWidgetItems($equivalentOutfit);
+
+        // return outfits
+        return array_merge($totalItems, $equivalentItems);
         // throw new Exception("Invalid avatar type provided.");
     }
 }
