@@ -73,7 +73,7 @@ class AnalyticMetricController extends Controller
         $data['average_skeleton_keys_purchased'] =  round($planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->count()/$totalPlanPurchase);
         $data['total_amount_skeleton_keys_purchased'] =  '$'.number_format($planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->sum('price'),2);
         $data['total_revenue_google_fees'] =  '$'.number_format((30/100)*$planPurchase->sum('price'),2);
-        $data['total_revenue_apple_fees'] = '$'.number_format((30/100)*$planPurchase->sum('price'),2);
+        $data['total_revenue_apple_fees'] = '-';
         
         /* END STORE */
 
@@ -237,7 +237,7 @@ class AnalyticMetricController extends Controller
         $data['average_skeleton_keys_purchased'] =  round($planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->count()/$totalPlanPurchase);
         $data['total_amount_skeleton_keys_purchased'] =  '$'.number_format($planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->sum('price'),2);
         $data['total_revenue_google_fees'] =  '$'.number_format((30/100)*$planPurchase->sum('price'),2);
-        $data['total_revenue_apple_fees'] = '$'.number_format((30/100)*$planPurchase->sum('price'),2);
+        $data['total_revenue_apple_fees'] = '-';
         
         /* END STORE */
 
@@ -388,7 +388,7 @@ class AnalyticMetricController extends Controller
         $data['average_skeleton_keys_purchased'] =  round($planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->count()/$totalPlanPurchase);
         $data['total_amount_skeleton_keys_purchased'] =  '$'.number_format($planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->sum('price'),2);
         $data['total_revenue_google_fees'] =  '$'.number_format((30/100)*$planPurchase->sum('price'),2);
-        $data['total_revenue_apple_fees'] = '$'.number_format((30/100)*$planPurchase->sum('price'),2);
+        $data['total_revenue_apple_fees'] = '-';
         
         /* END STORE */
 
@@ -402,6 +402,33 @@ class AnalyticMetricController extends Controller
     public function getUserDateFilter(Request $request){
 
         $date = explode('-', $request->get('user_date'));
+        $startAt = new \DateTime(date('Y-m-d',strtotime(str_replace(' ', '-', trim($date[0])))));
+        $endAt= new \DateTime((date('Y-m-d',strtotime(str_replace(' ', '-', trim($date[1]))))));
+        $endAt->modify('+1 day');
+
+        $user = User::whereBetween('created_at', [$startAt,$endAt])
+                        ->get();
+
+        $widgetItem = WidgetItem::get();
+
+        /* USER */
+        $data['total_male'] = $user->where('gender','male')->count();
+        $data['total_female'] = $user->where('gender','female')->count();
+        $data['total_avtar_user'] = $data['total_male']+$data['total_female'];
+        $data['per_male'] = number_format(($data['total_male']/$data['total_avtar_user'])*100,2).'%';
+        $data['per_female'] = number_format(($data['total_female']/$data['total_avtar_user'])*100,2).'%';
+        /* END USER */
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'get data successfully',
+            'data'    => $data,
+        ]);
+
+    }
+
+    public function getAvtarDateFilter(Request $request){
+        $date = explode('-', $request->get('avtar_date'));
         $startAt = new \DateTime(date('Y-m-d',strtotime(str_replace(' ', '-', trim($date[0])))));
         $endAt= new \DateTime((date('Y-m-d',strtotime(str_replace(' ', '-', trim($date[1]))))));
         $endAt->modify('+1 day');
@@ -440,20 +467,11 @@ class AnalyticMetricController extends Controller
         }
         /* END Avatar */
 
-        /* USER */
-        $data['total_male'] = $user->where('gender','male')->count();
-        $data['total_female'] = $user->where('gender','female')->count();
-        $data['total_avtar_user'] = $data['total_male']+$data['total_female'];
-        $data['per_male'] = number_format(($data['total_male']/$data['total_avtar_user'])*100,2).'%';
-        $data['per_female'] = number_format(($data['total_female']/$data['total_avtar_user'])*100,2).'%';
-        /* END USER */
-
         return response()->json([
             'status'  => true,
             'message' => 'get data successfully',
             'data'    => $data,
         ]);
-
     }
 
     public function getHuntDateFilter(Request $request){

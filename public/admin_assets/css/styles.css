@@ -2219,7 +2219,7 @@ table i.iconsetaddbox{
 }
 .analytmetri_coverbox .total_usersdetlis ul li p{
     display: inline-block;
-    width: 100%;
+    width: auto;
 }
 /*.analytmetri_coverbox .date_textboxpart input{
     padding-left: 52px;
@@ -2336,6 +2336,21 @@ table i.iconsetaddbox{
 .refreshbox i{
     color: #a5853b;
 }
+
+.red-tooltip + .tooltip > .tooltip-inner {width: 100%;}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

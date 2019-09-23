@@ -116,9 +116,9 @@
 						<a href="{{ route('admin.event.index') }}">Events</a>
 					</li> -->
 					
-					@if($admin->hasPermissionTo('View Analytics Metrics'))
+					@if($admin->hasPermissionTo('View Analytics'))
 					<li  class="@if(Route::currentRouteName() == 'admin.analyticsMetrics') {{ 'activelist' }} @endif">
-						<a href="{{ route('admin.analyticsMetrics') }}">Analytics Metrics</a>
+						<a href="{{ route('admin.analyticsMetrics') }}">Analytics</a>
 					</li>
 					@endif
 

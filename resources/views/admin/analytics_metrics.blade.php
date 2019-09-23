@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | Analytics Metrics')
+@section('title','Ironbridge1779 | Analytics')
 @extends('admin.layouts.admin-app')
 @section('styles')
 
@@ -11,15 +11,8 @@
     <div class="centr_paretboxpart analytmetri_coverbox">
         <div class="signeup_topbox">
             <div class="signeup_lefttextbox">
-                <p>Analytics Metrics</p>
+                <p>Analytics</p>
             </div>
-            <!-- <div class="date_textboxpart">
-                <form method="post" id="storeDaterangepickerForm">
-                    @csrf
-                    <img src="{{ asset('admin_assets/images/datepicker.png') }}">
-                    <input type="text" name="store_date" value="" />
-                </form>
-            </div> -->
         </div>
         <div class="signeup_innerborderbox">
             <div class="total_usersdetlis">
@@ -34,7 +27,6 @@
                                 <img src="{{ asset('admin_assets/images/datepicker.png') }}">
                                 <input type="text" name="store_date" value="" />
                             </form>
-                            <!-- <a href="javascript:void(0)" id="refresh_store" data-action="refresh" data-date="{{ $data['plan_purchase_start_date']->format('d M Y').' - '.$data['plan_purchase_end_date']->format('d M Y') }}"><i class="fa fa-refresh"></i></a> -->
                         </div>
                         <div class="refreshbox">
                             <a href="javascript:void(0)" id="refresh_store" data-action="refresh" data-date="{{ $data['plan_purchase_start_date']->format('d M Y').' - '.$data['plan_purchase_end_date']->format('d M Y') }}"><i class="fa fa-refresh"></i></a>
@@ -43,27 +35,43 @@
                     
                     <li>
                         <h3 id="total_coins_purchase">{{ $data['total_coins_purchase'] }}</h3>
-                        <p>Total coins purchased</p>
+                        <p>Total golds purchased <span data-toggle="tooltip" title="Total number of golds purchased">?</a></span>
                     </li>
                     <li>
                         <h3 id="average_revenue">{{ $data['average_revenue'] }}</h3>
-                        <p>Average revenue</p>
+                        <p>Average revenue <span data-toggle="tooltip" title="Average revenue per unique user">?</span></p>
                     </li>
                     <li>
                         <h3 id="average_skeleton_keys_purchased">{{ $data['average_skeleton_keys_purchased'] }}</h3>
-                        <p>Average skeleton keys purchased</p>
+                        <p>Average skeleton keys purchased <span data-toggle="tooltip" title="Average number of skeleton keys purchased">?</span></p>
                     </li>
                     <li>
                         <h3 id="total_amount_skeleton_keys_purchased">{{ $data['total_amount_skeleton_keys_purchased'] }}</h3>
-                        <p>Total amount skeleton keys purchased</p>
+                        <p>Total amount skeleton keys paid <span data-toggle="tooltip" title="Total amount paid for skeleton keys">?</span></p>
                     </li>
                     <li>
                         <h3 id="total_revenue_google_fees">{{ $data['total_revenue_google_fees'] }}</h3>
-                        <p>Total revenue google fees</p>
+                        <p>Total revenue google fees <span data-toggle="tooltip" title="Total revenue from the store (and total minus any fees/commissions to Google)">?</span></p>
                     </li>
                     <li>
                         <h3 id="total_revenue_apple_fees">{{ $data['total_revenue_apple_fees'] }}</h3>
-                        <p>Total revenue apple fees</p>
+                        <p>Total revenue apple fees <span data-toggle="tooltip" title="Total revenue from the store (and total minus any fees/commissions to Apple)">?</span></p>
+                    </li>
+                    <li>
+                        <h3>Pending</h3>
+                        <p>Total amount of gold earned<span data-toggle="tooltip" title="Total amount of gold earned">?</span></p>
+                    </li>
+                    <li>
+                        <h3>Pending</h3>
+                        <p>Average amount of gold earned <span data-toggle="tooltip" title="Average amount of gold earned">?</span></p>
+                    </li>
+                    <li>
+                        <h3>Pending</h3>
+                        <p>Percentage of earned <span data-toggle="tooltip" title="Percentage of earned vs purchased coins">?</span></p>
+                    </li>
+                    <li>
+                        <h3>Pending</h3>
+                        <p>Amount of revenue event paid coins <span data-toggle="tooltip" title="Amount of revenue for each event paid coins">?</span></p>
                     </li>
                 </ul>
             </div>
@@ -87,24 +95,55 @@
                     </div>
                     <li>
                         <h3 id="per_male">{{ $data['per_male'] }}</h3>
-                        <p>Total percentage of total male</p>
+                        <p>Total percentage of total male <span data-toggle="tooltip" title="Total number of male avatars">?</span></p>
                     </li>
                     <li>
                         <h3 id="per_female">{{ $data['per_female'] }}</h3>
-                        <p>Total percentage of total female</p>
+                        <p>Total users who have used random mode <span data-toggle="tooltip" title="Total number of female avatars">?</span></p>
                     </li>
+                    <li>
+                        <h3>Pending</h3>
+                        <p>Total used random mode<span data-toggle="tooltip" title="Total number of users who have used random mode">?</span></p>
+                    </li>
+                    <li>
+                        <h3>Pending</h3>
+                        <p>Percentage use random mode<span data-toggle="tooltip" title="Percentage of users that use the random mode">?</span></p>
+                    </li>
+                    <li>
+                        <h3>Pending</h3>
+                        <p>Number of users collectable<span data-toggle="tooltip" title="Number of users that have found each collectable">?</span></p>
+                    </li>
+                    <li>
+                        <h3>Pending</h3>
+                        <p>Total number of collectibles<span data-toggle="tooltip" title="Total number of collectibles for each unique user ie collected/total available (with percentage as well) – will want to know which user collected all 9/10 first in each country/province/city">?</span></p>
+                    </li>
+                </ul>
+            </div>
+            <div class="total_usersdetlis">
+                <ul>
                     <div class="titleaddatep">
                         <div class="titleboxleft">
                             <h4>Avatar Item</h4>
                         </div>
+                        <div class="daterightbox">
+                            <form method="post" id="avtarDaterangepickerForm">
+                                @csrf
+                                <img src="{{ asset('admin_assets/images/datepicker.png') }}">
+                                <input type="text" name="avtar_date" value="" />
+                            </form>
+                            <!-- <a href="javascript:void(0)" id="refresh_user" data-action="refresh" data-date="{{ $data['user_start_date']->format('d M Y').' - '.$data['user_end_date']->format('d M Y') }}"><i class="fa fa-refresh"></i></a> -->
+                        </div>
+                        <div class="refreshbox">
+                            <a href="javascript:void(0)" id="refresh_avtar" data-action="refresh" data-date="{{ $data['user_start_date']->format('d M Y').' - '.$data['user_end_date']->format('d M Y') }}"><i class="fa fa-refresh"></i></a>
+                        </div>
                     </div>
                     <li>
                         <h3 id="average_avatar_items_purchased">{{ $data['average_avatar_items_purchased'] }}</h3>
-                        <p>Average avatar items purchased</p>
+                        <p>Average avatar items purchased <span data-toggle="tooltip" title="Average number of avatar items purchased">?</span></p>
                     </li>
                     <li>
                         <h3 id="total_paid_avatar">{{ round($data['total_paid_avatar']) }}</h3>
-                        <p>Total paid avatar</p>
+                        <p>Total paid avatar <span data-toggle="tooltip" title="Total amount paid for avatars items">?</span></p>
                     </li>
 
                     <br/>
@@ -124,19 +163,6 @@
                     </ul>
                 </div>
             </div>
-            <!-- <div class="total_usersdetlis">
-                <ul>
-                    <h4>Users</h4>
-                    <li>
-                        <h3 id="per_male">{{ $data['per_male'] }}</h3>
-                        <p>Total percentage of total male</p>
-                    </li>
-                    <li>
-                        <h3 id="per_female">{{ $data['per_female'] }}</h3>
-                        <p>Total percentage of total female</p>
-                    </li>
-                </ul>
-            </div> -->
             <div class="total_usersdetlis">
                 <ul>
                     <!-- <h4>Hunts</h4> -->
@@ -150,7 +176,6 @@
                                 <img src="{{ asset('admin_assets/images/datepicker.png') }}">
                                 <input type="text" name="hunt_date" value="" />
                             </form>
-                            <!-- <a href="javascript:void(0)" id="refresh_hunt" data-action="refresh" data-date="{{ $data['hunt_user_start_date']->format('d M Y').' - '.$data['hunt_user_end_date']->format('d M Y') }}"><i class="fa fa-refresh"></i></a> -->
                         </div>
                         <div class="refreshbox">
                             <a href="javascript:void(0)" id="refresh_hunt" data-action="refresh" data-date="{{ $data['hunt_user_start_date']->format('d M Y').' - '.$data['hunt_user_end_date']->format('d M Y') }}"><i class="fa fa-refresh"></i></a>
@@ -158,43 +183,43 @@
                     </div>
                     <li>
                         <h3 id="per_completed_hunt">{{ $data['per_completed_hunt'] }}</h3>
-                        <p>Percentage completed hunts</p>
+                        <p>Percentage completed hunts <span data-toggle="tooltip" title="Number of unique users that have completed hunts (with percentage of total users)">?</span></p>
                     </li>
                     <li>
                         <h3 id="per_completed_hunt_user">{{ $data['per_completed_hunt_user'] }}</h3>
-                        <p>Percentage of users complete a hunt</p>
+                        <p>Percentage of users complete a hunt <span data-toggle="tooltip" title="Percentage of users that complete a hunt after starting clue #1">?</span></p>
                     </li>
                     <li>
                         <h3 id="average_hunts_completed">{{ $data['average_hunts_completed'] }}</h3>
-                        <p>Average hunts completed</p>
+                        <p>Average hunts completed <span data-toggle="tooltip" title="Average number of hunts completed (per unique user)">?</span></p>
                     </li>
                 </ul>
                 <ul>
                     <li>
                         <h3 id="user_clue_1">{{ $data['user_clue_1'] }}</h3>
-                        <p>User of Clue #1 in a hunt</p>
+                        <p>User of Clue #1 in a hunt <span data-toggle="tooltip" title="Number of users on Clue #1 in a hunt">?</span></p>
                     </li>
                     <li>
                         <h3 id="user_clue_2">{{ $data['user_clue_2'] }}</h3>
-                        <p>User of Clue #2 in a hunt</p>
+                        <p>User of Clue #2 in a hunt <span data-toggle="tooltip" title="Number of users on Clue #2 in a hunt">?</span></p>
                     </li>
                     <li>
                         <h3 id="user_clue_3">{{ $data['user_clue_3'] }}</h3>
-                        <p>User of Clue #3 in a hunt</p>
+                        <p>User of Clue #3 in a hunt <span data-toggle="tooltip" title="Number of users on Clue #3 in a hunt">?</span></p>
                     </li>
                 </ul>
                 <ul>
                     <li>
                         <h3 id="user_clue_today_1">{{ $data['user_clue_today_1'] }}</h3>
-                        <p>Clue 1 Not complete at least 24 hours later</p>
+                        <p>Clue 1 Not complete at least 24 hours <span data-toggle="tooltip" title="Number of users that have abandoned Clue #1 in a hunt (started but did not complete at least 24 hours later)">?</span></p>
                     </li>
                     <li>
                         <h3 id="user_clue_today_2">{{ $data['user_clue_today_2'] }}</h3>
-                        <p>Clue 2 Not complete at least 24 hours later</p>
+                        <p>Clue 2 Not complete at least 24 hours <span data-toggle="tooltip" title="Number of users that have abandoned Clue #2 in a hunt (started but did not complete at least 24 hours later)">?</span></p>
                     </li>
                     <li>
                         <h3 id="user_clue_today_3">{{ $data['user_clue_today_3'] }}</h3>
-                        <p>Clue 3 Not complete at least 24 hours later</p>
+                        <p>Clue 3 Not complete at least 24 hours <span data-toggle="tooltip" title="Number of users that have abandoned Clue #3 in a hunt (started but did not complete at least 24 hours later)">?</span></p>
                     </li>
                 </ul>
                 <ul id="complated_clue_day">
@@ -208,7 +233,6 @@
             </div>
             <div class="total_usersdetlis">
                 <ul>
-                    <!-- <h4>Event</h4> -->
                     <div class="titleaddatep">
                         <div class="titleboxleft">
                             <h4>Events</h4>
@@ -219,7 +243,6 @@
                                 <img src="{{ asset('admin_assets/images/datepicker.png') }}">
                                 <input type="text" name="event_date" value="" />
                             </form>
-                            <!-- <a href="javascript:void(0)" id="refresh_event" data-action="refresh" data-date="{{ $data['event_user_start_date']->format('d M Y').' - '.$data['event_user_end_date']->format('d M Y') }}"><i class="fa fa-refresh"></i></a> -->
                         </div>
                         <div class="refreshbox">
                             <a href="javascript:void(0)" id="refresh_event" data-action="refresh" data-date="{{ $data['event_user_start_date']->format('d M Y').' - '.$data['event_user_end_date']->format('d M Y') }}"><i class="fa fa-refresh"></i></a>
@@ -227,15 +250,50 @@
                     </div>
                     <li>
                         <h3 id="user_event_city">{{ round($data['user_event_city']) }}</h3>
-                        <p>User event city</p>
+                        <p>User event city <span data-toggle="tooltip" title="Number of users signed up for each event by city">?</span></p>
                     </li>
                     <li>
                         <h3 id="user_event_country">{{ round($data['user_event_country']) }}</h3>
-                        <p>User event country</p>
+                        <p>User event country <span data-toggle="tooltip" title="Number of users signed up for each event by country">?</span></p>
                     </li>
                     <li>
                         <h3 id="amount_revenue_event_paid_coins">{{ $data['amount_revenue_event_paid_coins'] }}</h3>
-                        <p>Amount revenue event paid coins</p>
+                        <p>Amount revenue event paid golds <span data-toggle="tooltip" title="Amount of revenue for each event paid golds">?<span></p>
+                    </li>
+                </ul>
+            </div>
+            <div class="total_usersdetlis">
+                <ul>
+                    <div class="titleaddatep">
+                        <div class="titleboxleft">
+                            <h4>Mini Games</h4>
+                        </div>
+                        <div class="daterightbox">
+                            <form method="post" id="eventsDaterangepickerForm">
+                                @csrf
+                                <img src="{{ asset('admin_assets/images/datepicker.png') }}">
+                                <input type="text" name="event_date" value="" />
+                            </form>
+                        </div>
+                        <div class="refreshbox">
+                            <a href="javascript:void(0)" id="refresh_event" data-action="refresh" data-date="{{ $data['event_user_start_date']->format('d M Y').' - '.$data['event_user_end_date']->format('d M Y') }}"><i class="fa fa-refresh"></i></a>
+                        </div>
+                    </div>
+                    <li>
+                        <h3>Pending</h3>
+                        <p>Total  favourites mini game <span data-toggle="tooltip" title="Total number of favourites for each mini game (when the favourite feature is implemented)">?<span></p>
+                    </li>
+                    <li>
+                        <h3>Pending</h3>
+                        <p>Average number of skips Random mode <span data-toggle="tooltip" title="Total and average number of skips in Random mode (for each mini game)">?<span></p>
+                    </li>
+                    <li>
+                        <h3>Pending</h3>
+                        <p>Average played random mode <span data-toggle="tooltip" title="Average number of mini games played in random mode (how many games played in each session on average)">?<span></p>
+                    </li>
+                    <li>
+                        <h3>Pending</h3>
+                        <p>Average games played random mode <span data-toggle="tooltip" title="Total and average number of games played in random mode">?<span></p>
                     </li>
                 </ul>
             </div>
@@ -249,7 +307,8 @@
    
     <script type="text/javascript">
         $(document).ready(function() {
-            
+            $('[data-toggle="tooltip"]').tooltip(); 
+
             /* STORE */
             var planPurchaseStartDate =  "{{ $data['plan_purchase_start_date']->format('d M Y') }}";
             var planPurchaseEndDate = "{{ $data['plan_purchase_end_date']->format('d M Y') }}";
@@ -327,8 +386,6 @@
                 });
             }
 
-            userDateFilter('refresh_user');
-
             $('#refresh_user').click(function(){
                 var value = 'refresh_user';
                 userDateFilter(value);                
@@ -365,23 +422,72 @@
                             $.each(response.data,function(index , value){
                                 $('#'+index).text(value);
                             });
+                        }
+                    }
+                });
+            }
+            /* END USER DTAE RANGE FILETR */
+
+            /* AVTAR DTATE RANGE FILTER */
+            avtarDaterangepicker();
+            function avtarDaterangepicker(){
+                $('input[name="avtar_date"]').daterangepicker({ 
+                    maxDate: new Date(),
+                    startDate: userStartDate,
+                    endDate: userEndDate,
+                    locale: {
+                        format: 'DD MMM YYYY',
+                    }
+                });
+            }
+
+            avtarDateFilter('refresh_avtar');
+
+            $('#refresh_avtar').click(function(){
+                var value = 'refresh_avtar';
+                avtarDateFilter(value);                
+            });
+
+            $('input[name="avtar_date"]').change(function(e) {
+                e.preventDefault();
+                var value = 'daterangepicker';
+                avtarDateFilter(value);   
+            });
+
+            function avtarDateFilter(value){
+                if (value == 'refresh_avtar') {
+                    var data = {"avtar_date":$('#refresh_avtar').attr('data-date')};
+                } else {
+                    data = $('#avtarDaterangepickerForm').serialize();
+                }
+                $.ajax({
+                    type: "GET",
+                    url: '{{ route("admin.getAvtarDateFilter") }}',
+                    data: data,
+                    beforeSend: function() {
+                        if (value == 'refresh_avtar') {
+                            $('#refresh_avtar i').addClass('fa-spin');    
+                            avtarDaterangepicker();
+                        }
+                        $('#refresh_avtar').parents('.total_usersdetlis').css('opacity','0.5');    
+                    },
+                    success: function(response)
+                    {
+                        $('#refresh_avtar i').removeClass('fa-spin');    
+                        $('#refresh_avtar').parents('.total_usersdetlis').css('opacity','1');    
+                        if (response.status == true) {
+                            $.each(response.data,function(index , value){
+                                $('#'+index).text(value);
+                            });
                             $('#avatar_image ul').html('');
                             $.each(response.data.total_items_purchased,function(index , value){
-                                /*var image = index+'.png';
-                                var image_url = '{{ asset("admin_assets/widgets/") }}'+'/'+image;    
-                                var responseData = jQuery.ajax({
-                                    url: image_url,
-                                    type: 'HEAD',
-                                    async: false
-                                }).status;*/
-
                                 $('#avatar_image ul').append(`<li><img src="`+value['image']+`"><h5>Total Used : `+value['total_use']+`</h5></li>`);
                             });
                         }
                     }
                 });
             }
-            /* END USER DTAE RANGE FILETR */
+            /* END AVTAR DTATE RANGE FILTER */
 
 
             /* HUNT DATE RANGE FILTER */
