@@ -415,8 +415,12 @@ class AnalyticMetricController extends Controller
         $data['total_male'] = $user->where('gender','male')->count();
         $data['total_female'] = $user->where('gender','female')->count();
         $data['total_avtar_user'] = $data['total_male']+$data['total_female'];
-        $data['per_male'] = number_format(($data['total_male']/$data['total_avtar_user'])*100,2).'%';
-        $data['per_female'] = number_format(($data['total_female']/$data['total_avtar_user'])*100,2).'%';
+        $totalAvtarUser = $data['total_avtar_user'];
+        if ($data['total_avtar_user'] == 0) {
+            $totalAvtarUser = 1;
+        }
+        $data['per_male'] = number_format(($data['total_male']/$totalAvtarUser)*100,2).'%';
+        $data['per_female'] = number_format(($data['total_female']/$totalAvtarUser)*100,2).'%';
         /* END USER */
 
         return response()->json([
