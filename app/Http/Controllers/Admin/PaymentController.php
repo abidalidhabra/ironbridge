@@ -67,8 +67,10 @@ class PaymentController extends Controller
             return $plans->user->first_name.' '.$plans->user->last_name;
         })
         ->addColumn('total_amount', function($plans){
-
-            return (($plans->plan)?$plans->plan->price.' '.$plans->country->currency:'-');
+            return (($plans->plan)?number_format($plans->plan->price,2).' '.$plans->country->currency:'-');
+        })
+        ->editColumn('gold_value',function($plans){
+            return ($plans->gold_value)?$plans->gold_value:'-';
         })
         ->addColumn('purchased_plan', function($plans){
             return (($plans->plan)?$plans->plan->name:'-');

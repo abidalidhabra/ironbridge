@@ -164,4 +164,5 @@ class AdminController extends Controller
             'message'=>'Invalid password generation link',
         ]);
     }
+
 }

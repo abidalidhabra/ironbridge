@@ -91,7 +91,7 @@ class ComplexityTargetController extends Controller
 
         if ($gameId == '5c188ab5719a1408746c473b') {
             $rules = [
-                        'target' => 'required|in:512,1024,2048,4096',
+                        'target' => 'required|in:256,512,1024,2048,4096',
                     ];
         } elseif ($gameId == '5b0e304b51b2010ec820fb4e') {
             $rules = [
