@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | Dashboard')
+@section('title','Ironbridge1779 | Analytics Metrics')
 @extends('admin.layouts.admin-app')
 @section('styles')
 
@@ -34,6 +34,9 @@
                                 <img src="{{ asset('admin_assets/images/datepicker.png') }}">
                                 <input type="text" name="store_date" value="" />
                             </form>
+                            <!-- <a href="javascript:void(0)" id="refresh_store" data-action="refresh" data-date="{{ $data['plan_purchase_start_date']->format('d M Y').' - '.$data['plan_purchase_end_date']->format('d M Y') }}"><i class="fa fa-refresh"></i></a> -->
+                        </div>
+                        <div class="refreshbox">
                             <a href="javascript:void(0)" id="refresh_store" data-action="refresh" data-date="{{ $data['plan_purchase_start_date']->format('d M Y').' - '.$data['plan_purchase_end_date']->format('d M Y') }}"><i class="fa fa-refresh"></i></a>
                         </div>
                     </div>
@@ -76,6 +79,9 @@
                                 <img src="{{ asset('admin_assets/images/datepicker.png') }}">
                                 <input type="text" name="user_date" value="" />
                             </form>
+                            <!-- <a href="javascript:void(0)" id="refresh_user" data-action="refresh" data-date="{{ $data['user_start_date']->format('d M Y').' - '.$data['user_end_date']->format('d M Y') }}"><i class="fa fa-refresh"></i></a> -->
+                        </div>
+                        <div class="refreshbox">
                             <a href="javascript:void(0)" id="refresh_user" data-action="refresh" data-date="{{ $data['user_start_date']->format('d M Y').' - '.$data['user_end_date']->format('d M Y') }}"><i class="fa fa-refresh"></i></a>
                         </div>
                     </div>
@@ -105,7 +111,7 @@
                 </ul>
                 <div class="avt_itembox" id="avatar_image">
                     <ul>
-                    @foreach($data['total_items_purchased'] as $key => $item)
+                    <!-- @foreach($data['total_items_purchased'] as $key => $item)
                         @if (file_exists(public_path('admin_assets/widgets/'.$key.'.png')))
                             
                         <li>                            
@@ -114,7 +120,7 @@
                         </li>                            
                             
                         @endif
-                    @endforeach
+                    @endforeach -->
                     </ul>
                 </div>
             </div>
@@ -144,6 +150,9 @@
                                 <img src="{{ asset('admin_assets/images/datepicker.png') }}">
                                 <input type="text" name="hunt_date" value="" />
                             </form>
+                            <!-- <a href="javascript:void(0)" id="refresh_hunt" data-action="refresh" data-date="{{ $data['hunt_user_start_date']->format('d M Y').' - '.$data['hunt_user_end_date']->format('d M Y') }}"><i class="fa fa-refresh"></i></a> -->
+                        </div>
+                        <div class="refreshbox">
                             <a href="javascript:void(0)" id="refresh_hunt" data-action="refresh" data-date="{{ $data['hunt_user_start_date']->format('d M Y').' - '.$data['hunt_user_end_date']->format('d M Y') }}"><i class="fa fa-refresh"></i></a>
                         </div>
                     </div>
@@ -210,6 +219,9 @@
                                 <img src="{{ asset('admin_assets/images/datepicker.png') }}">
                                 <input type="text" name="event_date" value="" />
                             </form>
+                            <!-- <a href="javascript:void(0)" id="refresh_event" data-action="refresh" data-date="{{ $data['event_user_start_date']->format('d M Y').' - '.$data['event_user_end_date']->format('d M Y') }}"><i class="fa fa-refresh"></i></a> -->
+                        </div>
+                        <div class="refreshbox">
                             <a href="javascript:void(0)" id="refresh_event" data-action="refresh" data-date="{{ $data['event_user_start_date']->format('d M Y').' - '.$data['event_user_end_date']->format('d M Y') }}"><i class="fa fa-refresh"></i></a>
                         </div>
                     </div>
@@ -241,14 +253,19 @@
             /* STORE */
             var planPurchaseStartDate =  "{{ $data['plan_purchase_start_date']->format('d M Y') }}";
             var planPurchaseEndDate = "{{ $data['plan_purchase_end_date']->format('d M Y') }}";
-            $('input[name="store_date"]').daterangepicker({ 
-                maxDate: new Date(),
-                startDate: planPurchaseStartDate,
-                endDate: planPurchaseEndDate,
-                locale: {
-                    format: 'DD MMM YYYY',
-                }
-            });
+            
+            storeDaterangepicker();
+
+            function storeDaterangepicker(){
+                $('input[name="store_date"]').daterangepicker({ 
+                    maxDate: new Date(),
+                    startDate: planPurchaseStartDate,
+                    endDate: planPurchaseEndDate,
+                    locale: {
+                        format: 'DD MMM YYYY',
+                    }
+                });
+            }
 
             $('#refresh_store').click(function(){
                 var value = 'refresh_store';
@@ -274,11 +291,15 @@
                     data: data,
                     beforeSend: function() { 
                         if (value == 'refresh_store') {
-                            $('#refresh_store i').addClass('fa-spin');    
-                        }   
+                            $('#refresh_store i').addClass('fa-spin');
+                            storeDaterangepicker();    
+                        }
+                        $('#refresh_store').parents('.total_usersdetlis').css('opacity','0.5');    
+
                     },
                     success: function(response)
                     {
+                        $('#refresh_store').parents('.total_usersdetlis').css('opacity','1');
                         $('#refresh_store i').removeClass('fa-spin');    
                         if (response.status == true) {
                             $.each(response.data,function(index , value){
@@ -293,14 +314,20 @@
             /* USER DTAE RANGE FILETR */
             var userStartDate =  "{{ $data['user_start_date']->format('d M Y') }}";
             var userEndDate = "{{ $data['user_end_date']->format('d M Y') }}";
-            $('input[name="user_date"]').daterangepicker({ 
-                maxDate: new Date(),
-                startDate: userStartDate,
-                endDate: userEndDate,
-                locale: {
-                    format: 'DD MMM YYYY',
-                }
-            });
+
+            userDaterangepicker();
+            function userDaterangepicker(){
+                $('input[name="user_date"]').daterangepicker({ 
+                    maxDate: new Date(),
+                    startDate: userStartDate,
+                    endDate: userEndDate,
+                    locale: {
+                        format: 'DD MMM YYYY',
+                    }
+                });
+            }
+
+            userDateFilter('refresh_user');
 
             $('#refresh_user').click(function(){
                 var value = 'refresh_user';
@@ -326,31 +353,29 @@
                     beforeSend: function() {
                         if (value == 'refresh_user') {
                             $('#refresh_user i').addClass('fa-spin');    
-                        }    
+                            userDaterangepicker();
+                        }
+                        $('#refresh_user').parents('.total_usersdetlis').css('opacity','0.5');    
                     },
                     success: function(response)
                     {
                         $('#refresh_user i').removeClass('fa-spin');    
+                        $('#refresh_user').parents('.total_usersdetlis').css('opacity','1');    
                         if (response.status == true) {
                             $.each(response.data,function(index , value){
                                 $('#'+index).text(value);
                             });
                             $('#avatar_image ul').html('');
                             $.each(response.data.total_items_purchased,function(index , value){
-                                var image = index+'.png';
-                                var image_url = '{{ asset("admin_assets/widgets/") }}'+'/'+image;
-                                
+                                /*var image = index+'.png';
+                                var image_url = '{{ asset("admin_assets/widgets/") }}'+'/'+image;    
                                 var responseData = jQuery.ajax({
                                     url: image_url,
                                     type: 'HEAD',
                                     async: false
-                                }).status;    
-                            
-                            // return (response != "200") ? false : true;
-                                if(responseData == "200"){
-                                    $('#avatar_image ul').append(`<li><img src="{{ asset('admin_assets/widgets/`+index+`.png') }}">
-                                        <h5>Total Used : `+value+`</h5></li>`);
-                                }
+                                }).status;*/
+
+                                $('#avatar_image ul').append(`<li><img src="`+value['image']+`"><h5>Total Used : `+value['total_use']+`</h5></li>`);
                             });
                         }
                     }
@@ -362,14 +387,18 @@
             /* HUNT DATE RANGE FILTER */
             var huntUserStartDate =  "{{ $data['hunt_user_start_date']->format('d M Y') }}";
             var huntUserEndDate = "{{ $data['hunt_user_end_date']->format('d M Y') }}";
-            $('input[name="hunt_date"]').daterangepicker({ 
-                maxDate: new Date(),
-                startDate: huntUserStartDate,
-                endDate: huntUserEndDate,
-                locale: {
-                    format: 'DD MMM YYYY',
-                }
-            });
+            
+            huntDaterangepicker();
+            function huntDaterangepicker(){
+                $('input[name="hunt_date"]').daterangepicker({ 
+                    maxDate: new Date(),
+                    startDate: huntUserStartDate,
+                    endDate: huntUserEndDate,
+                    locale: {
+                        format: 'DD MMM YYYY',
+                    }
+                });
+            }
 
             $('#refresh_hunt').click(function(){
                 var value = 'refresh_hunt';
@@ -394,11 +423,14 @@
                     data: data,
                     beforeSend: function() {
                         if (value == 'refresh_hunt') {
-                            $('#refresh_hunt i').addClass('fa-spin');    
-                        }     
+                            $('#refresh_hunt i').addClass('fa-spin');
+                            huntDaterangepicker();    
+                        }
+                        $('#refresh_hunt').parents('.total_usersdetlis').css('opacity','0.5');
                     },
                     success: function(response)
                     {
+                        $('#refresh_hunt').parents('.total_usersdetlis').css('opacity','1');
                         $('#refresh_hunt i').removeClass('fa-spin');    
                         if (response.status == true) {
                             $.each(response.data,function(index , value){
@@ -409,7 +441,7 @@
                             $.each(response.data.hunt_complted_clue,function(index , value){
                                 $('#complated_clue_day').append(`<li>
                                                                     <h3>`+((value/response.data.total_hunt_complated)*100).toFixed(2)+`%</h3>
-                                                                    <p>Per clue complete day `+(index+1)+`</p>
+                                                                    <p>Per clue complete day `+(parseInt(index)+1)+`</p>
                                                                 </li>`);
                             });
                             
@@ -422,14 +454,17 @@
             /* EVENT DATE RANGE FILTER */
             var eventStartDate =  "{{ $data['event_user_start_date']->format('d M Y') }}";
             var eventEndDate = "{{ $data['event_user_end_date']->format('d M Y') }}";
-            $('input[name="event_date"]').daterangepicker({ 
-                maxDate: new Date(),
-                startDate: eventStartDate,
-                endDate: eventEndDate,
-                locale: {
-                    format: 'DD MMM YYYY',
-                }
-            });
+            eventDaterangepicker();
+            function eventDaterangepicker(){
+                $('input[name="event_date"]').daterangepicker({ 
+                    maxDate: new Date(),
+                    startDate: eventStartDate,
+                    endDate: eventEndDate,
+                    locale: {
+                        format: 'DD MMM YYYY',
+                    }
+                });
+            }
 
             $('#refresh_event').click(function(){
                 var value = 'refresh_event';
@@ -455,10 +490,13 @@
                     beforeSend: function() {
                         if (value == 'refresh_event') {
                             $('#refresh_event i').addClass('fa-spin');    
-                        }    
+                            eventDaterangepicker();
+                        }
+                        $('#refresh_event').parents('.total_usersdetlis').css('opacity','0.5');
                     },
                     success: function(response)
                     {
+                        $('#refresh_event').parents('.total_usersdetlis').css('opacity','1');
                         $('#refresh_event i').removeClass('fa-spin');    
                         if (response.status == true) {
                             $.each(response.data,function(index , value){

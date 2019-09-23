@@ -71,9 +71,9 @@ class AnalyticMetricController extends Controller
             $totalPlanPurchase = 1;
         }
         $data['average_skeleton_keys_purchased'] =  round($planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->count()/$totalPlanPurchase);
-        $data['total_amount_skeleton_keys_purchased'] =  number_format($planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->sum('price'),2);
-        $data['total_revenue_google_fees'] =  number_format((30/100)*$planPurchase->sum('price'),2);
-        $data['total_revenue_apple_fees'] = number_format((30/100)*$planPurchase->sum('price'),2);
+        $data['total_amount_skeleton_keys_purchased'] =  '$'.number_format($planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->sum('price'),2);
+        $data['total_revenue_google_fees'] =  '$'.number_format((30/100)*$planPurchase->sum('price'),2);
+        $data['total_revenue_apple_fees'] = '$'.number_format((30/100)*$planPurchase->sum('price'),2);
         
         /* END STORE */
 
@@ -87,7 +87,16 @@ class AnalyticMetricController extends Controller
 
         $totalWidgetsId = array_count_values($widgetsId);
         arsort($totalWidgetsId);
-        $data['total_items_purchased'] = $totalWidgetsId;
+        //$data['total_items_purchased'] = $totalWidgetsId;
+        $data['total_items_purchased'] = [];
+        /*foreach ($totalWidgetsId as $key => $value) {
+            if (file_exists(public_path('admin_assets/widgets/'.$key.'.png'))){
+                $data['total_items_purchased'][] = [
+                                                        'image' => asset('admin_assets/widgets/'.$key.'.png'),
+                                                        'total_use'=>$value,
+                                                    ];
+            }
+        }*/
         $data['average_avatar_items_purchased'] = round(count($widgetsId)/$widgetItem->count());
 
         $data['total_paid_avatar'] = 0;
@@ -169,7 +178,7 @@ class AnalyticMetricController extends Controller
         $data['user_event_city'] = count(array_unique($eventUser->pluck('event.city.name')->toArray())); 
         $data['user_event_country'] = count(array_unique($eventUser->pluck('event.city.country.name')->toArray()));
 
-        $data['amount_revenue_event_paid_coins'] = number_format($eventUser->pluck('event.fees')->sum(),2);
+        $data['amount_revenue_event_paid_coins'] = '$'.number_format($eventUser->pluck('event.fees')->sum(),2);
 
         /* END EVENT */
 
@@ -226,9 +235,9 @@ class AnalyticMetricController extends Controller
             $totalPlanPurchase = 1;
         }
         $data['average_skeleton_keys_purchased'] =  round($planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->count()/$totalPlanPurchase);
-        $data['total_amount_skeleton_keys_purchased'] =  number_format($planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->sum('price'),2);
-        $data['total_revenue_google_fees'] =  number_format((30/100)*$planPurchase->sum('price'),2);
-        $data['total_revenue_apple_fees'] = number_format((30/100)*$planPurchase->sum('price'),2);
+        $data['total_amount_skeleton_keys_purchased'] =  '$'.number_format($planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->sum('price'),2);
+        $data['total_revenue_google_fees'] =  '$'.number_format((30/100)*$planPurchase->sum('price'),2);
+        $data['total_revenue_apple_fees'] = '$'.number_format((30/100)*$planPurchase->sum('price'),2);
         
         /* END STORE */
 
@@ -242,7 +251,16 @@ class AnalyticMetricController extends Controller
 
         $totalWidgetsId = array_count_values($widgetsId);
         arsort($totalWidgetsId);
-        $data['total_items_purchased'] = $totalWidgetsId;
+        //$data['total_items_purchased'] = $totalWidgetsId;
+        $data['total_items_purchased'] = [];
+        foreach ($totalWidgetsId as $key => $value) {
+            if (file_exists(public_path('admin_assets/widgets/'.$key.'.png'))){
+                $data['total_items_purchased'][] = [
+                                                        'image' => asset('admin_assets/widgets/'.$key.'.png'),
+                                                        'total_use'=>$value,
+                                                    ];
+            }
+        }
         $data['average_avatar_items_purchased'] = round(count($widgetsId)/$widgetItem->count());
 
         $data['total_paid_avatar'] = 0;
@@ -326,7 +344,7 @@ class AnalyticMetricController extends Controller
         $data['user_event_city'] = count(array_unique($eventUser->pluck('event.city.name')->toArray())); 
         $data['user_event_country'] = count(array_unique($eventUser->pluck('event.city.country.name')->toArray())); 
 
-        $data['amount_revenue_event_paid_coins'] = number_format($eventUser->pluck('event.fees')->sum(),2);
+        $data['amount_revenue_event_paid_coins'] = '$'.number_format($eventUser->pluck('event.fees')->sum(),2);
         /* END EVENT */
 
         // return $data;
@@ -368,9 +386,9 @@ class AnalyticMetricController extends Controller
             $totalPlanPurchase = 1;
         }
         $data['average_skeleton_keys_purchased'] =  round($planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->count()/$totalPlanPurchase);
-        $data['total_amount_skeleton_keys_purchased'] =  number_format($planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->sum('price'),2);
-        $data['total_revenue_google_fees'] =  number_format((30/100)*$planPurchase->sum('price'),2);
-        $data['total_revenue_apple_fees'] = number_format((30/100)*$planPurchase->sum('price'),2);
+        $data['total_amount_skeleton_keys_purchased'] =  '$'.number_format($planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->sum('price'),2);
+        $data['total_revenue_google_fees'] =  '$'.number_format((30/100)*$planPurchase->sum('price'),2);
+        $data['total_revenue_apple_fees'] = '$'.number_format((30/100)*$planPurchase->sum('price'),2);
         
         /* END STORE */
 
@@ -402,7 +420,16 @@ class AnalyticMetricController extends Controller
 
         $totalWidgetsId = array_count_values($widgetsId);
         arsort($totalWidgetsId);
-        $data['total_items_purchased'] = $totalWidgetsId;
+        //$data['total_items_purchased'] = $totalWidgetsId;
+        $data['total_items_purchased'] = [];
+        foreach ($totalWidgetsId as $key => $value) {
+            if (file_exists(public_path('admin_assets/widgets/'.$key.'.png'))){
+                $data['total_items_purchased'][] = [
+                                                        'image' => asset('admin_assets/widgets/'.$key.'.png'),
+                                                        'total_use'=>$value,
+                                                    ];
+            }
+        }
         $data['average_avatar_items_purchased'] = round(count($widgetsId)/$widgetItem->count());
 
         $data['total_paid_avatar'] = 0;
@@ -526,7 +553,7 @@ class AnalyticMetricController extends Controller
         $data['user_event_city'] = count(array_unique($eventUser->pluck('event.city.name')->toArray())); 
         $data['user_event_country'] = count(array_unique($eventUser->pluck('event.city.country.name')->toArray()));
 
-        $data['amount_revenue_event_paid_coins'] = number_format($eventUser->pluck('event.fees')->sum(),2);
+        $data['amount_revenue_event_paid_coins'] = '$'.number_format($eventUser->pluck('event.fees')->sum(),2);
         /* END EVENT */
 
         return response()->json([
@@ -574,7 +601,16 @@ class AnalyticMetricController extends Controller
 
         $totalWidgetsId = array_count_values($widgetsId);
         arsort($totalWidgetsId);
-        $data['total_items_purchased'] = $totalWidgetsId;
+        // $data['total_items_purchased'] = $totalWidgetsId;
+        $data['total_items_purchased'] = [];
+        foreach ($totalWidgetsId as $key => $value) {
+            if (file_exists(public_path('admin_assets/widgets/'.$key.'.png'))){
+                $data['total_items_purchased'][] = [
+                                                        'image' => asset('admin_assets/widgets/'.$key.'.png'),
+                                                        'total_use'=>$value,
+                                                    ];
+            }
+        }
         $data['average_avatar_items_purchased'] = count($widgetsId)/$widgetItem->count();
 
         $data['total_paid_avatar'] = 0;

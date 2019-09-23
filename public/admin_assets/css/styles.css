@@ -2237,7 +2237,8 @@ table i.iconsetaddbox{
 .avt_itembox{
     display: inline-block;
     width: 100%;
-    height: 500px;
+    max-height: 500px;
+    height: auto;
     overflow-x: auto;
 }
 .avt_itembox ul{
@@ -2290,12 +2291,14 @@ table i.iconsetaddbox{
 
 .daterightbox{
     display: inline-block;
-    width: 375px;
-    float: right;
+    /*width: 375px;*/
+    width: 339px;
     position: relative;
     margin-top: 19px;
+    float: left;
     padding-right: 18px;
-    margin-right: 80px;
+    /*margin-right: 80px;*/
+    margin-right: 8px;
 }
 
 .daterightbox input {
@@ -2326,6 +2329,12 @@ table i.iconsetaddbox{
     text-align: left;
     padding-top: 6px;
     font-family: 'Montserrat-Regular';
+}
+.refreshbox{
+    margin-top: 23px;
+}
+.refreshbox i{
+    color: #a5853b;
 }
 
 
