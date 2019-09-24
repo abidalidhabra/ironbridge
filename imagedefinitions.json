@@ -1,0 +1,17 @@
+{ 
+    "taskDefinition": { 
+        "family": "Irinbridge-Task", 
+        "containerDefinitions": [{ 
+            "name": "Irinbridge", 
+            "image": "905666888987.dkr.ecr.us-east-1.amazonaws.com/laravel:latest", 
+            "cpu": 100, 
+            "portMappings": [{ 
+                "protocol": "tcp", 
+                "containerPort": 80, 
+                "hostPort": 80 
+            }], 
+            "memory": 128, 
+            "essential": true 
+        }] 
+    } 
+}
