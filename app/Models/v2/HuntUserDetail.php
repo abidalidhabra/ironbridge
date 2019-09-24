@@ -31,8 +31,8 @@ class HuntUserDetail extends Eloquent
         'ended_at'    => null,
         'finished_in' => 0,
         'status'      => 'tobestart',
-        'skipped_at'  => null,
-        'failures_at' => [],
+        // 'skipped_at'  => null,
+        // 'failures_at' => [],
     ];
 
 	protected $dates = [
