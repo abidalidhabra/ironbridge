@@ -71,6 +71,15 @@ class ClueController extends Controller
     public function markTheMiniGameAsFail(Request $request)
     {
         try {
+
+            $validator = \Validator::make($request->all(),[
+                'hunt_user_details_id'=> "required|exists:hunt_user_details,_id",
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['message'=>$validator->messages()->first()],422);
+            }
+
             (new HuntUserDetailRepository)->push(['_id'=> $request->hunt_user_details_id], 'failures_at', [ new MongoDBDate() ]);
             return response()->json(['message'=> 'MiniGame marked as fail.']);
         } catch (Exception $e) {

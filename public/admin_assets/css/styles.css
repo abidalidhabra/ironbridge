@@ -2221,6 +2221,16 @@ table i.iconsetaddbox{
     display: inline-block;
     width: auto;
 }
+.analytmetri_coverbox .total_usersdetlis ul li span{
+    background: #000000;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    text-align: center;
+    color: #A5853B;
+    font-size: 11px;
+}
 /*.analytmetri_coverbox .date_textboxpart input{
     padding-left: 52px;
     width: 100%;
