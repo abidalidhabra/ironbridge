@@ -17,7 +17,7 @@ class PauseTheClueRepository implements ClueInterface
         $huntUserDetail = (new HuntUserDetailRepository)->find($huntUserDetailId);
 
         // update the hunt user
-        (new HuntUserRepository)->update(['status'=> 'paused'], ['_id'=> $huntUserDetail->hunt_user_id], false);
+        (new HuntUserRepository)->update(['status'=> 'paused'], ['_id'=> $huntUserDetail->hunt_user_id]);
 
         //reset the timer
         (new HuntUserDetailRepository)->calculateTheTimer($huntUserDetail, 'paused');

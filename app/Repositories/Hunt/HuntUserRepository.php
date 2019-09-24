@@ -12,7 +12,7 @@ class HuntUserRepository
         return HuntUser::find($id, $fields);
     }
     
-    public function update(array $fields, array $cond, bool $onObject)
+    public function update(array $fields, array $cond)
     {
         return HuntUser::where($cond)->update($fields);
     }

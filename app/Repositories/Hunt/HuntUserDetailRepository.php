@@ -12,7 +12,7 @@ class HuntUserDetailRepository
         return HuntUserDetail::find($id, $fields);
     }
     
-    public function update(array $fields, array $cond, boolean $onObject)
+    public function update(array $fields, array $cond)
     {
         return HuntUserDetail::where($cond)->update($fields);
     }
@@ -27,5 +27,10 @@ class HuntUserDetailRepository
         $huntUserDetail->status = $action;
         $huntUserDetail->save();
         return $huntUserDetail;
+    }
+
+    public function push(array $cond, String $column, array $dataToBePush)
+    {
+        return HuntUserDetail::where($cond)->push($column, $dataToBePush);
     }
 }

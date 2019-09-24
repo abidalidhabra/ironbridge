@@ -15,7 +15,7 @@ class StartTheClueRepository implements ClueInterface
         $huntUserDetail = (new HuntUserDetailRepository)->find($huntUserDetailId);
 
         // update the hunt user
-        (new HuntUserRepository)->update(['status'=> 'running'], ['_id'=> $huntUserDetail->hunt_user_id], false);
+        (new HuntUserRepository)->update(['status'=> 'running'], ['_id'=> $huntUserDetail->hunt_user_id]);
 
         // start the clue
         $huntUserDetail->started_at = now();

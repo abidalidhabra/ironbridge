@@ -20,7 +20,9 @@ class HuntUserDetail extends Eloquent
         'started_at',
         'ended_at',
         'radius',
-        'hunt_clue_id'
+        'hunt_clue_id',
+        'skipped_at',
+        'failures_at',
 	];
 
     protected $attributes = [
@@ -28,13 +30,16 @@ class HuntUserDetail extends Eloquent
         'started_at'  => null,
         'ended_at'    => null,
         'finished_in' => 0,
-        'status'      => 'tobestart'
+        'status'      => 'tobestart',
+        'skipped_at'  => null,
+        'failures_at' => [],
     ];
 
 	protected $dates = [
         'revealed_at',
         'started_at',
         'ended_at',
+        'skipped_at',
     ];
 
     public function game()

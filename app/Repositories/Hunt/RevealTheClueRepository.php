@@ -23,7 +23,7 @@ class RevealTheClueRepository implements ClueInterface
         if ($huntUserDetails->count() == $huntUserDetails->where('revealed_at', null)->count() && $huntUserDetails->where('status', 'completed')->count() == 0) {
             $dataToBeUpdate['started_at'] = new UTCDateTime(now());
         }
-        (new HuntUserRepository)->update($dataToBeUpdate, ['_id'=> $huntUserDetail->hunt_user_id], false);
+        (new HuntUserRepository)->update($dataToBeUpdate, ['_id'=> $huntUserDetail->hunt_user_id]);
 
         // reveal the clue
         $huntUserDetail->revealed_at = now();

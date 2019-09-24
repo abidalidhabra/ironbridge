@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v2;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Hunt\UseTheSkeletonKeyRequest;
 use App\Http\Requests\v1\ActionOnClueRequest;
 use App\Models\v1\User;
 use App\Models\v1\WidgetItem;
@@ -11,6 +12,7 @@ use App\Models\v2\HuntUser;
 use App\Models\v2\HuntUserDetail;
 use App\Models\v2\PracticeGameUser;
 use App\Repositories\Hunt\Factory\ClueFactory;
+use App\Repositories\Hunt\HuntUserDetailRepository;
 use Exception;
 use Illuminate\Http\Request;
 use MongoDB\BSON\ObjectId as MongoDBId;
@@ -36,6 +38,45 @@ class ClueController extends Controller
         return response()->json(['message'=>'Action on clue has been taken successfully.', 'hunt_info'=> $rewardData, 'finished_in'=> $finishedIn]);
     }
 
+     public function useTheSkeletonKey(UseTheSkeletonKeyRequest $request){
+
+        try {
+
+            // get parameters
+            $huntUserDetailId = $request->hunt_user_details_id;
+            $userId = auth()->user()->id;
+
+            // reduce the skeleton key by one and get back the fresh user data
+            // User::where(['skeleton_keys.used_at' => null, '_id'=> $userId])->update(['skeleton_keys.$.used_at'=> new MongoDBDate()]);
+            $freshUser = User::where('_id', $userId)->select('_id', 'skeleton_keys')->first();
+
+            // mark the clue as complete
+            $actionOnClueRequest = new ActionOnClueRequest();
+            $actionOnClueRequest->setMethod('POST');
+            $actionOnClueRequest->request->add(['hunt_user_details_id'=> $huntUserDetailId, 'status'=> 'completed']);
+            $huntFinished = (new ClueController)->actionOnClue($actionOnClueRequest);
+
+            // get hunt user detail and set the skip flag
+            $huntUserDetail = (new HuntUserDetailRepository)->find($huntUserDetailId);
+            $huntUserDetail->skipped_at = now();
+            $huntUserDetail->save();
+
+            // return the response to client
+            return response()->json(['message'=> 'Clue Timer has been ended successfully.', 'hunt_action'=> $huntFinished->original, 'available_skeleton_keys'=> $freshUser->available_skeleton_keys]);
+        } catch (Exception $e) {
+            return response()->json(['message'=> $e->getMessage()], 500);
+        }
+    }
+
+    public function markTheMiniGameAsFail(Request $request)
+    {
+        try {
+            (new HuntUserDetailRepository)->push(['_id'=> $request->hunt_user_details_id], 'failures_at', [ new MongoDBDate() ]);
+            return response()->json(['message'=> 'MiniGame marked as fail.']);
+        } catch (Exception $e) {
+            return response()->json(['message'=> $e->getMessage()], 500);
+        }
+    }
     // public function actionOnClue(ActionOnClueRequest $request){
 
     //     $userId = auth()->user()->id;
@@ -96,47 +137,47 @@ class ClueController extends Controller
     //     return response()->json(['message'=>'Action on clue has been taken successfully.', 'hunt_info'=> $gameData, 'finished_in'=> $finishedIn]);
     // }
 
-    public function useTheSkeletonKey(Request $request){
+    // public function useTheSkeletonKey(Request $request){
         
-        try {
+    //     try {
             
-            $huntUserDetailId = $request->hunt_user_details_id;
-            $user   = auth()->User();
-            $userId = $user->id;
+    //         $huntUserDetailId = $request->hunt_user_details_id;
+    //         $user   = auth()->User();
+    //         $userId = $user->id;
             
-            // for ($i=0; $i < 1000; $i++) { 
-            //     $user->push('skeleton_keys',['key'=> new MongoDBId(), 'created_at'=> new MongoDBDate()]);
-            // }
-            // exit;
-            $huntUserDetail = $this->getHuntUserDetail($userId, $huntUserDetailId);
+    //         // for ($i=0; $i < 1000; $i++) { 
+    //         //     $user->push('skeleton_keys',['key'=> new MongoDBId(), 'created_at'=> new MongoDBDate()]);
+    //         // }
+    //         // exit;
+    //         $huntUserDetail = $this->getHuntUserDetail($userId, $huntUserDetailId);
 
-            if (!$huntUserDetail) {
-                return response()->json(['message'=>'Invalid hunt user detail id provided.'], 500);
-            }
+    //         if (!$huntUserDetail) {
+    //             return response()->json(['message'=>'Invalid hunt user detail id provided.'], 500);
+    //         }
 
-            if ($huntUserDetail->status == 'completed') {
-                return response()->json(['message'=>'You cannot use skeleton key in this clue, as it already ended.'], 422);
-            }
+    //         if ($huntUserDetail->status == 'completed') {
+    //             return response()->json(['message'=>'You cannot use skeleton key in this clue, as it already ended.'], 422);
+    //         }
 
-            // $skeletonExists = User::where(['skeleton_keys.used_at' => null, '_id'=> $userId])->project(['_id'=> true, 'skeleton_keys.$'=>true])->first();
-            $skeletonExists = User::where(['skeleton_keys.used_at' => null, '_id'=> $userId])->update(['skeleton_keys.$.used_at'=> new MongoDBDate()]);
-            $freshUser = User::where('_id', $userId)->first();
-            if (!$skeletonExists) {
-                return response()->json(['message'=>'You do not have sufficient skeleton keys.'], 422);
-            }
+    //         // $skeletonExists = User::where(['skeleton_keys.used_at' => null, '_id'=> $userId])->project(['_id'=> true, 'skeleton_keys.$'=>true])->first();
+    //         $skeletonExists = User::where(['skeleton_keys.used_at' => null, '_id'=> $userId])->update(['skeleton_keys.$.used_at'=> new MongoDBDate()]);
+    //         $freshUser = User::where('_id', $userId)->first();
+    //         if (!$skeletonExists) {
+    //             return response()->json(['message'=>'You do not have sufficient skeleton keys.'], 422);
+    //         }
 
-            // $huntFinished = $this->actionOnClue($huntUserDetail, 'completed');
-            $actionOnClueRequest = new ActionOnClueRequest();
-            $actionOnClueRequest->setMethod('POST');
-            $actionOnClueRequest->request->add(['hunt_user_details_id'=> $huntUserDetailId, 'status'=> 'completed']);
-            $huntFinished = (new ClueController)->actionOnClue($actionOnClueRequest);
+    //         // $huntFinished = $this->actionOnClue($huntUserDetail, 'completed');
+    //         $actionOnClueRequest = new ActionOnClueRequest();
+    //         $actionOnClueRequest->setMethod('POST');
+    //         $actionOnClueRequest->request->add(['hunt_user_details_id'=> $huntUserDetailId, 'status'=> 'completed']);
+    //         $huntFinished = (new ClueController)->actionOnClue($actionOnClueRequest);
 
-            return response()->json(['message'=> 'Clue Timer has been ended successfully.', 'hunt_action'=> $huntFinished->original, 'available_skeleton_keys'=> $freshUser->available_skeleton_keys]);
+    //         return response()->json(['message'=> 'Clue Timer has been ended successfully.', 'hunt_action'=> $huntFinished->original, 'available_skeleton_keys'=> $freshUser->available_skeleton_keys]);
            
-        } catch (Exception $e) {
-            return response()->json(['message'=> $e->getMessage()]);
-        }
-    }
+    //     } catch (Exception $e) {
+    //         return response()->json(['message'=> $e->getMessage()]);
+    //     }
+    // }
 
     public function getHuntUserDetail($userId, $huntUserDetailId){
 

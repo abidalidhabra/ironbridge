@@ -165,6 +165,7 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
 		/** Clues related requests  **/
 		Route::post('actionOnClue', 'ClueController@actionOnClue');
 		Route::post('useTheSkeletonKey', 'ClueController@useTheSkeletonKey');
+		Route::post('markTheMiniGameAsFail', 'ClueController@markTheMiniGameAsFail');
 		
 		/** Store requests **/
 		Route::post('createAPurchase', 'PlanController@createAPurchase');

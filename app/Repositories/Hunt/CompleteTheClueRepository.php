@@ -38,7 +38,7 @@ class CompleteTheClueRepository implements ClueInterface
             
             // mark hunt_user as running and set the start_at of hunt_user 
             $dataToBeUpdate = ['status'=> 'running', 'started_at'=> new UTCDateTime(now())];
-            (new HuntUserRepository)->update($dataToBeUpdate, ['_id'=> $huntUserDetail->hunt_user_id], false);
+            (new HuntUserRepository)->update($dataToBeUpdate, ['_id'=> $huntUserDetail->hunt_user_id]);
         }
 
         // calculate the time & mark the clue as complete
@@ -53,7 +53,7 @@ class CompleteTheClueRepository implements ClueInterface
 
             // mark hunt_user as completed and set the ended_at of hunt_user 
             $dataToBeUpdate = ['status'=> 'completed', 'ended_at'=> new UTCDateTime(now()), 'finished_in'=> $totalFinishedIn];
-            (new HuntUserRepository)->update($dataToBeUpdate, ['_id'=> $huntUserDetail->hunt_user_id], false);
+            (new HuntUserRepository)->update($dataToBeUpdate, ['_id'=> $huntUserDetail->hunt_user_id]);
             
             // generate the reward
             $rewardData = $this->generateReward($huntUserDetail);
