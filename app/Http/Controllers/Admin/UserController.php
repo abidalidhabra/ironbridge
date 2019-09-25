@@ -177,7 +177,7 @@ class UserController extends Controller
 
     //USER HUNT DETAILS
     public function userHuntDetails($id){
-        $huntUserDetail = HuntUserDetail::select('hunt_user_id','game_id','game_variation_id','revealed_at','finished_in','status')      
+        $huntUserDetail = HuntUserDetail::select('hunt_user_id','game_id','game_variation_id','revealed_at','finished_in','status','skipped_at','failures_at')      
                                         ->with('hunt_user:id,user_id')
                                         ->with(['game:_id,name','game_variation:_id,variation_name'])
                                         ->where('hunt_user_id',$id)
