@@ -68,39 +68,57 @@
         </div>
         <div class="avtardetailbox">
             @forelse($widgetItem as $key => $widgetlist)
-                <h4>{{ $key }}</h4>
+                    <h4>{{ $key }}</h4>
                 @forelse($widgetlist as $widget)
-                <div class="avtarimgtextiner">
-                    <img class="card-img-top" src="{{ asset('admin_assets/widgets/'.$widget->id.'.png') }}">
-                    <div class="card-body">
-                        <div class="col-md-8">
+                    @if (file_exists(public_path('admin_assets/widgets/'.$widget->id.'.png')))
+                    <div class="avtarimgtextiner">
+                        <img class="card-img-top" src="{{ asset('admin_assets/widgets/'.$widget->id.'.png') }}">
+                        <div class="card-body">
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <h5 class="card-title">{{ $widget->gold_price }} Gold</h5>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-right">
+                                <div class="row">
+                                    <a href="javascript:void(0)" class="widget_edit" id="widget_edit{{ $widget->id}}" data-action="price" data-gold="{{ $widget->gold_price }}" data-value="{{ $widget->gold_price }}" data-id="{{ $widget->id}}"><i class="fa fa-pencil iconsetaddbox"></i>
+                                    </a>    
+                                    <a href="javascript:void(0)" class="widget_save hidden text-left" id="widget_save{{ $widget->id}}" data-action="gold_price" data-id="{{ $widget->id}}"><i class="fa fa-save iconsetaddbox"></i></a>
+                                    <a href="javascript:void(0)" class="widget_close hidden text-right" id="widget_close{{ $widget->id}}"><i class="fa fa-times iconsetaddbox"></i></a>
+                                </div>
+                            </div>
+                            <!-- ITEM NAME -->
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <h5 class="card-name">{{ $widget->item_name }}</h5>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-right">
+                                <div class="row">
+                                    <a href="javascript:void(0)" class="widget_edit" id="widget_edit1{{ $widget->id}}" data-action="item_name" data-value="{{ $widget->item_name }}" data-id="{{ $widget->id}}"><i class="fa fa-pencil iconsetaddbox"></i>
+                                    </a>    
+                                    <a href="javascript:void(0)" class="widget_save hidden text-left" id="widget_save1{{ $widget->id}}" data-action="item_name" data-id="{{ $widget->id}}"><i class="fa fa-save iconsetaddbox"></i></a>
+                                    <a href="javascript:void(0)" class="widget_close hidden text-right" id="widget_close1{{ $widget->id}}"><i class="fa fa-times iconsetaddbox"></i></a>
+                                </div>
+                            </div>
+                            <!-- END ITEM NAME -->
+                            
                             <div class="row">
-                                <h5 class="card-title">{{ $widget->gold_price }} Gold</h5>
+                                <div class="radiobtnbox">
+                                    <label class="radio-inline">
+                                        <input type="radio" class="widget_category" name="widget_category{{ $widget->id}}" data-id="{{ $widget->id}}" value="basic" {{ (($widget->widget_category == 'basic')?'checked':'') }}>Basic
+                                    </label>
+                                </div>
+                                <div class="radiobtnbox">
+                                    <label class="radio-inline">
+                                        <input type="radio" class="widget_category" name="widget_category{{ $widget->id}}" data-id="{{ $widget->id}}" value="delux" {{ (($widget->widget_category == 'delux')?'checked':'') }}>Delux
+                                    </label>
+                                </div>
                             </div>
+                            <!-- <p class="card-text">{{ $widget->id}}</p> -->
                         </div>
-                        <div class="col-md-4 text-right">
-                            <div class="row">
-                                <a href="javascript:void(0)" class="widget_edit" id="widget_edit{{ $widget->id}}" data-gold="{{ $widget->gold_price }}" data-id="{{ $widget->id}}"><i class="fa fa-pencil iconsetaddbox"></i>
-                                </a>    
-                                <a href="javascript:void(0)" class="widget_save hidden text-left" id="widget_save{{ $widget->id}}" data-id="{{ $widget->id}}"><i class="fa fa-save iconsetaddbox"></i></a>
-                                <a href="javascript:void(0)" class="widget_close hidden text-right" id="widget_close{{ $widget->id}}"><i class="fa fa-times iconsetaddbox"></i></a>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="radiobtnbox">
-                                <label class="radio-inline">
-                                    <input type="radio" class="widget_category" name="widget_category{{ $widget->id}}" data-id="{{ $widget->id}}" value="basic" {{ (($widget->widget_category == 'basic')?'checked':'') }}>Basic
-                                </label>
-                            </div>
-                            <div class="radiobtnbox">
-                                <label class="radio-inline">
-                                    <input type="radio" class="widget_category" name="widget_category{{ $widget->id}}" data-id="{{ $widget->id}}" value="delux" {{ (($widget->widget_category == 'delux')?'checked':'') }}>Delux
-                                </label>
-                            </div>
-                        </div>
-                        <!-- <p class="card-text">{{ $widget->id}}</p> -->
                     </div>
-                </div>
+                    @endif
                 @empty
                 @endforelse
             @empty
@@ -117,12 +135,17 @@
         $(document).ready(function () {
             $(document).on('click','.widget_edit',function(){
                 var id = $(this).data('id');
-                var gold = $(this).attr('data-gold');
+                var value = $(this).attr('data-value');
                 $(this).addClass('hidden');
                 $(this).parents('.text-right').find('.widget_save').removeClass('hidden');
                 $(this).parents('.text-right').find('.widget_close').removeClass('hidden');
-
-                $(this).parents('.card-body').find('.card-title').addClass('hidden').after('<input type="number" class="gold_price width-100"  value="'+gold+'">');
+                if ($(this).attr('data-action') == 'price') {
+                    var gold = $(this).attr('data-gold');
+                    $(this).parents('.card-body').find('.card-title').addClass('hidden').after('<input type="number" class="gold_price width-100"  value="'+value+'">');
+                } else if($(this).attr('data-action') == 'item_name'){
+                    $(this).parents('.card-body').find('.card-name').addClass('hidden').after('<input type="text" class="item_name width-100"  value="'+value+'">');
+                }
+                console.log();
             })
 
             /** CLOSE BUTTON **/
@@ -130,7 +153,7 @@
                 $(this).addClass('hidden');
                 $(this).parents('.text-right').find('.widget_save').addClass('hidden');
                 $(this).parents('.text-right').find('.widget_edit').removeClass('hidden');
-                $(this).parents('.card-body').find('.card-title').removeClass('hidden');
+                $(this).parents('.card-body').find('.card-title , .card-name').removeClass('hidden');
                 $(this).parents('.card-body').find('.gold_price').remove();
             
             });
@@ -138,28 +161,52 @@
             /** save widget in price **/
             $(document).on('click','.widget_save',function(){
                 var id = $(this).data('id');
-                var gold = $(this).parents('.card-body').find('.gold_price').val();
+                var action = $(this).attr('data-action');
+                if (action == 'gold_price') {
+                    var value = $(this).parents('.card-body').find('.gold_price').val();
+                    var data = { id : id,value:value,status:action};
+                } else {
+                    var value = $(this).parents('.card-body').find('.item_name').val();
+                    var data = { id : id,value:value,status:action };
+                }
+
                 $.ajax({
                     type: "POST",
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     url: '{{ route("admin.widgetPriceUpdate") }}',
-                    data: {id : id,gold_price:gold},
+                    data: data,
                     beforeSend: function() {
-                        $('#widget_save'+id).find('i').addClass('fa-spinner').removeClass('fa-save');
-                        $('#widget_close'+id).addClass('hidden');
+                        if (action == 'gold_price') {
+                            $('#widget_save'+id).find('i').addClass('fa-spinner').removeClass('fa-save');
+                            $('#widget_close'+id).addClass('hidden');
+                        } else {
+                            $('#widget_save1'+id).find('i').addClass('fa-spinner').removeClass('fa-save');
+                            $('#widget_close1'+id).addClass('hidden');
+                        }
                     },
                     success: function(response)
                     {
                         if (response.status == true) {
                             toastr.success(response.message);
-                            $('#widget_save'+id).addClass('hidden');
-                            $('#widget_save'+id).find('i').removeClass('fa-spinner').addClass('fa-save');
-                            $('#widget_close'+id).addClass('hidden');
-                            $('#widget_edit'+id).removeClass('hidden').attr('data-gold',gold);
-                            $('#widget_edit'+id).parents('.card-body').find('.card-title').removeClass('hidden').text(gold+' Gold');
-                            $('#widget_edit'+id).parents('.card-body').find('.gold_price').remove();
+                            // $('#widget_save'+id+',#widget_save1'+id).addClass('hidden');
+                            
+                            
+                            if (action == 'gold_price') {
+                                $('#widget_save'+id).addClass('hidden').find('i').removeClass('fa-spinner').addClass('fa-save');
+                                $('#widget_close'+id).addClass('hidden');
+                                $("#widget_edit"+id).removeClass('hidden').attr('data-value',value);
+                                $('#widget_edit'+id).parents('.card-body').find('.card-title').removeClass('hidden').text(value+' Gold');
+                                $('#widget_edit'+id).parents('.card-body').find('.gold_price').remove();
+                            } else {
+                                $('#widget_save1'+id).addClass('hidden').find('i').removeClass('fa-spinner').addClass('fa-save');
+                                $('#widget_close1'+id).addClass('hidden');
+                                $("#widget_edit1"+id).removeClass('hidden').attr('data-value',value);
+                                $('#widget_edit1'+id).parents('.card-body').find('.card-name').removeClass('hidden').text(value);
+                                $('#widget_edit1'+id).parents('.card-body').find('.item_name').remove();
+                            }
+
 
                         } else {
                             toastr.warning(response.message);

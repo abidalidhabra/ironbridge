@@ -122,6 +122,7 @@
                         <p>Clue 3 Not complete at least 24 hours <span data-toggle="tooltip" title="Number of users that have abandoned Clue #3 in a hunt (started but did not complete at least 24 hours later)">?</span></p>
                     </li>
                 </ul>
+                
                 <ul id="complated_clue_day">
                     @foreach ($data['hunt_complted_clue'] as $key => $value)
                         <li>
@@ -130,6 +131,34 @@
                         </li>
                     @endforeach
                 </ul>
+                <div class="hunt_game_box">
+                    <div class="col-md-6">
+                        <h4>Games get skipped by skeleton key</h4>
+                        <div class="row" id="skip_skeleton_box">
+                        @foreach($data['games_skip_skeleton'] as $key => $value)
+                            <div class="col-md-8">
+                                <p class="text-left">{{ $key }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="text-right">{{ $value }}</p>
+                            </div>
+                        @endforeach
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Games people fail at in Treasure Hunts</h4>
+                        <div class="row" id="fail_hunts_box">
+                            @foreach($data['games_fail_hunts'] as $key => $value)
+                                <div class="col-md-8">
+                                    <p class="text-left">{{ $key }}</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="text-right">{{ $value }}</p>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
             </div>
             <!-- END HUNTS -->
 
@@ -594,7 +623,25 @@
                                 $('#'+index).text(value);
                             });
 
-                             $('#complated_clue_day').html('');
+                            $('#skip_skeleton_box').html('');
+                            $.each(response.data.games_skip_skeleton,function(index , value){
+                                $('#skip_skeleton_box').append(`<div class="col-md-8">
+                                                                <p class="text-left">`+index+`</p>
+                                                            </div><div class="col-md-4">
+                                                                <p class="text-right">`+value+`</p>
+                                                            </div>`);
+                            });
+
+                            $('#fail_hunts_box').html('');
+                            $.each(response.data.games_fail_hunts,function(index , value){
+                                $('#fail_hunts_box').append(`<div class="col-md-8">
+                                                                <p class="text-left">`+index+`</p>
+                                                            </div><div class="col-md-4">
+                                                                <p class="text-right">`+value+`</p>
+                                                            </div>`);
+                            });
+
+                            $('#complated_clue_day').html('');
                             $.each(response.data.hunt_complted_clue,function(index , value){
                                 $('#complated_clue_day').append(`<li>
                                                                     <h3>`+((value/response.data.total_hunt_complated)*100).toFixed(2)+`%</h3>

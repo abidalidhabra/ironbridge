@@ -2357,6 +2357,42 @@ table i.iconsetaddbox{
 
 .red-tooltip + .tooltip > .tooltip-inner {width: 100%;}
 
+.hunt_game_box h4{
+    font-family: 'Montserrat-SemiBold';
+    color: #4D4F5C;
+    font-size: 22px;
+}
+
+.hunt_game_box .row{
+    max-height: 141px;
+    height: auto;
+    overflow-x: auto;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

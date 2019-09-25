@@ -95,11 +95,16 @@ class AvatarController extends Controller
     /** widget item update **/
     public function widgetPriceUpdate(Request $request){
         $id = $request->get('id');
-        $gold_price = $request->get('gold_price');
+        
+        $value = $request->get('value');
+        if ($request->get('status') == 'item_name') {
+            $data['item_name'] = $value;
+        } else {
+            $data['gold_price'] = (float)$value;
+        }
+
         WidgetItem::where('_id',$id)
-                    ->update([
-                        'gold_price'=>(float)$gold_price
-                    ]);
+                    ->update($data);
 
         return response()->json([
                                 'status'  => true,

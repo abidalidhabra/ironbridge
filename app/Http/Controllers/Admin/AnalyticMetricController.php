@@ -18,6 +18,7 @@ use Hash;
 use App\Models\v1\WidgetItem;
 use App\Models\v2\PlanPurchase;
 use App\Models\v2\HuntComplexity;
+use App\Models\v2\HuntUserDetail;
 
 class AnalyticMetricController extends Controller
 {
@@ -167,10 +168,38 @@ class AnalyticMetricController extends Controller
             $end_date = Carbon::parse($value->ended_at);
             $huntCompltedClue[] = $start_date->diffInDays($end_date);
         }
-        // /echo "<pre>";
         asort($huntCompltedClue);
         $data['hunt_complted_clue'] = array_count_values($huntCompltedClue);
 
+        $huntUserDetail = HuntUserDetail::select('id','hunt_user_id','failures_at','skipped_at','game_id')
+                                        ->where(function($query){
+                                            $query->orWhereNotNull('skipped_at');
+                                            $query->orWhere('failures_at','!=',[]);
+                                        })
+                                        ->whereHas('hunt_user')
+                                        ->with('game:id,name')
+                                        ->get();
+
+        $gamesSkipSkeleton = $huntUserDetail->where('skipped_at','!=','')->groupBy('game_id'); 
+        $gamesFailHunts = $huntUserDetail->where('failures_at','!=',[])->groupBy('game_id'); 
+        $data['games_skip_skeleton'] = [];
+        $data['games_fail_hunts'] = [];
+       
+        foreach ($gamesSkipSkeleton as $key => $value) {
+            $data['games_skip_skeleton'][$value[0]->game->name] = $value->count();
+        }
+
+        foreach ($gamesFailHunts as $key => $value) {
+            $failHunt = 0;
+            foreach($value as $fail){
+                $failHunt += count($fail->failures_at);
+            }
+
+            $data['games_fail_hunts'][$value[0]->game->name] = $failHunt;
+        
+        }
+        arsort($data['games_skip_skeleton']);
+        arsort($data['games_fail_hunts']);
         /* END HUNT CLUE */
 
         /* EVENT */
@@ -546,9 +575,41 @@ class AnalyticMetricController extends Controller
             $end_date = Carbon::parse($value->ended_at);
             $huntCompltedClue[] = $start_date->diffInDays($end_date);
         }
-        // /echo "<pre>";
         asort($huntCompltedClue);
         $data['hunt_complted_clue'] = array_count_values($huntCompltedClue);
+
+        $huntUserDetail = HuntUserDetail::select('id','hunt_user_id','failures_at','skipped_at','game_id')
+                                        ->whereHas('hunt_user',function($query) use ($startAt,$endAt){
+                                            $query->whereBetween('created_at', [$startAt,$endAt]);
+                                        })
+                                        ->where(function($query){
+                                            $query->orWhereNotNull('skipped_at');
+                                            $query->orWhere('failures_at','!=',[]);
+                                        })
+                                        ->with('game:id,name')
+                                        ->get();
+        $gamesSkipSkeleton = $huntUserDetail->where('skipped_at','!=','')->groupBy('game_id'); 
+        $gamesFailHunts = $huntUserDetail->where('failures_at','!=',[])->groupBy('game_id'); 
+        $data['games_skip_skeleton'] = [];
+        $data['games_fail_hunts'] = [];
+       
+        foreach ($gamesSkipSkeleton as $key => $value) {
+            $data['games_skip_skeleton'][$value[0]->game->name] = $value->count();
+        }
+
+        foreach ($gamesFailHunts as $key => $value) {
+            $failHunt = 0;
+            foreach($value as $fail){
+                $failHunt += count($fail->failures_at);
+            }
+
+            $data['games_fail_hunts'][$value[0]->game->name] = $failHunt;
+        
+        }
+        /*print_r($data['games_skip_skeleton']);
+        exit();*/
+        arsort($data['games_skip_skeleton']);
+        arsort($data['games_fail_hunts']);
         /* END HUNT CLUE */
 
         return response()->json([
