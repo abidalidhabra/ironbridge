@@ -25,7 +25,9 @@
                         <th>Status</th>
                         <th>Game Name</th>
                         <th>Variation Name</th>
-                        <th>Revealed at</th>
+                        <!-- <th>Revealed at</th> -->
+                        <th>Skipped at</th>
+                        <th>Failures</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,14 +45,15 @@
                                 } elseif ($user->status == 'completed') {
                                     $status = 'Completed';
                                 }
-
                             ?>
                             <td>{{ $i }}</td>
                             <td>{{ $user->finished_in }}</td>
                             <td>{{ $status }}</td>
                             <td>{{ $user->game->name }}</td>
                             <td>{{ $user->game_variation->variation_name }}</td>
-                            <td>{{ ($user->revealed_at)?$user->revealed_at->format('d-M-Y @ h:i A'):'-' }}</td>
+                            <!-- <td>{{ ($user->revealed_at)?$user->revealed_at->format('d-M-Y @ h:i A'):'-' }}</td> -->
+                            <td>{{ ($user->skipped_at)?$user->skipped_at->format('d-M-Y @ h:i A'):'-' }}</td>
+                            <td>{{ ($user->failures_at)?count($user->failures_at):'0' }}</td>
                         </tr>
                         @php $i++ @endphp 
                     @empty

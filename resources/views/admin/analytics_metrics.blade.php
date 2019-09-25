@@ -11,7 +11,7 @@
     <div class="centr_paretboxpart analytmetri_coverbox">
         <div class="signeup_topbox">
             <div class="signeup_lefttextbox">
-                <p>Analytics</p>
+                <h3>Analytics</h3>
             </div>
         </div>
         <div class="signeup_innerborderbox">
