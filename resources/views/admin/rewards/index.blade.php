@@ -35,8 +35,10 @@
                             @if($key == 'gold')
                                 <div class="col-md-3">
                                     <div class="smallrewardbox">
-                                        <p>Gold @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</p>
-                                        <h4>{{ $rewards['gold_value'] }}</h4>
+                                        <p>Gold</p>
+                                        <h4>{{ $rewards['gold_value'] }} @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</h4>
+                                        <hr>
+                                        <h4>{{ (($rewards->max_range-$rewards->min_range)+1)/10 }} %</h4>
                                     </div>
                                 </div>
                             @endif
@@ -44,14 +46,17 @@
                             @if($key == 'skeleton_key')
                                 <div class="col-md-3">
                                     <div class="smallrewardbox">
-                                        <p>Skeletons @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</p>
-                                        <h4>{{ $rewards['skeletons'] }}</h4>
+                                        <p>Skeletons</p>
+                                        <h4>{{ $rewards['skeletons'] }} @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</h4>
+                                        <hr>
+                                        <h4>{{ (($rewards->max_range-$rewards->min_range)+1)/10 }} %</h4>
                                     </div>
                                 </div>
                             @endif
 
                             @if($key == 'avatar_item')
                                 <h5>Widgets order @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</h5>
+                                <h4>{{ (($rewards->max_range-$rewards->min_range)+1)/10 }} %</h4>
                                 @foreach($rewards['widgets_order'] as $widgets)
                                     <div class="col-md-3">
                                         <div class="smallrewardbox">
@@ -71,6 +76,8 @@
                                         <hr>
                                         <p>Skeletons</p>
                                         <h4>{{ $rewards['skeletons'] }}</h4>
+                                        <hr>
+                                        <h4>{{ (($rewards->max_range-$rewards->min_range)+1)/10 }} %</h4>
                                     </div>
                                 </div>
                             @endif
@@ -111,8 +118,10 @@
                             @if($key == 'gold')
                                 <div class="col-md-3">
                                     <div class="smallrewardbox">
-                                        <p>Gold @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</p>
-                                        <h4>{{ $rewards['gold_value'] }}</h4>
+                                        <p>Gold</p>
+                                        <h4>{{ $rewards['gold_value'] }} @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</h4>
+                                        <hr>
+                                        <h4>{{ (($rewards->max_range-$rewards->min_range)+1)/10 }} %</h4>
                                     </div>
                                 </div>
                             @endif
@@ -120,14 +129,17 @@
                             @if($key == 'skeleton_key')
                                 <div class="col-md-3">
                                     <div class="smallrewardbox">
-                                        <p>Skeletons @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</p>
-                                        <h4>{{ $rewards['skeletons'] }}</h4>
+                                        <p>Skeletons</p>
+                                        <h4>{{ $rewards['skeletons'] }} @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</h4>
+                                        <hr>
+                                        <h4>{{ (($rewards->max_range-$rewards->min_range)+1)/10 }} %</h4>
                                     </div>
                                 </div>
                             @endif
 
                             @if($key == 'avatar_item')
                                 <h5>Widgets order @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</h5>
+                                <h4>{{ (($rewards->max_range-$rewards->min_range)+1)/10 }} %</h4>
                                 @foreach($rewards['widgets_order'] as $widgets)
                                     <div class="col-md-3">
                                         <div class="smallrewardbox">
@@ -147,6 +159,8 @@
                                         <hr>
                                         <p>Skeletons</p>
                                         <h4>{{ $rewards['skeletons'] }}</h4>
+                                        <hr>
+                                        <h4>{{ (($rewards->max_range-$rewards->min_range)+1)/10 }} %</h4>
                                     </div>
                                 </div>
                             @endif
@@ -187,8 +201,10 @@
                             @if($key == 'gold')
                                 <div class="col-md-3">
                                     <div class="smallrewardbox">
-                                        <p>Gold @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</p>
-                                        <h4>{{ $rewards['gold_value'] }}</h4>
+                                        <p>Gold</p>
+                                        <h4>{{ $rewards['gold_value'] }} @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</h4>
+                                        <hr>
+                                        <h4>{{ (($rewards->max_range-$rewards->min_range)+1)/10 }} %</h4>
                                     </div>
                                 </div>
                             @endif
@@ -196,14 +212,17 @@
                             @if($key == 'skeleton_key')
                                 <div class="col-md-3">
                                     <div class="smallrewardbox">
-                                        <p>Skeletons @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</p>
-                                        <h4>{{ $rewards['skeletons'] }}</h4>
+                                        <p>Skeletons</p>
+                                        <h4>{{ $rewards['skeletons'] }} @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</h4>
+                                        <hr>
+                                        <h4>{{ (($rewards->max_range-$rewards->min_range)+1)/10 }} %</h4>
                                     </div>
                                 </div>
                             @endif
 
                             @if($key == 'avatar_item')
                                 <h5>Widgets order @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</h5>
+                                <h4>{{ (($rewards->max_range-$rewards->min_range)+1)/10 }} %</h4>
                                 @foreach($rewards['widgets_order'] as $widgets)
                                     <div class="col-md-3">
                                         <div class="smallrewardbox">
@@ -223,6 +242,8 @@
                                         <hr>
                                         <p>Skeletons</p>
                                         <h4>{{ $rewards['skeletons'] }}</h4>
+                                        <hr>
+                                        <h4>{{ (($rewards->max_range-$rewards->min_range)+1)/10 }} %</h4>
                                     </div>
                                 </div>
                             @endif
@@ -263,8 +284,10 @@
                             @if($key == 'gold')
                                 <div class="col-md-3">
                                     <div class="smallrewardbox">
-                                        <p>Gold @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</p>
-                                        <h4>{{ $rewards['gold_value'] }}</h4>
+                                        <p>Gold</p>
+                                        <h4>{{ $rewards['gold_value'] }} @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</h4>
+                                        <hr>
+                                        <h4>{{ (($rewards->max_range-$rewards->min_range)+1)/10 }} %</h4>
                                     </div>
                                 </div>
                             @endif
@@ -272,14 +295,17 @@
                             @if($key == 'skeleton_key')
                                 <div class="col-md-3">
                                     <div class="smallrewardbox">
-                                        <p>Skeletons @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</p>
-                                        <h4>{{ $rewards['skeletons'] }}</h4>
+                                        <p>Skeletons</p>
+                                        <h4>{{ $rewards['skeletons'] }} @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</h4>
+                                        <hr>
+                                        <h4>{{ (($rewards->max_range-$rewards->min_range)+1)/10 }} %</h4>
                                     </div>
                                 </div>
                             @endif
 
                             @if($key == 'avatar_item')
                                 <h5>Widgets order @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</h5>
+                                <h4>{{ (($rewards->max_range-$rewards->min_range)+1)/10 }} %</h4>
                                 @foreach($rewards['widgets_order'] as $widgets)
                                     <div class="col-md-3">
                                         <div class="smallrewardbox">
@@ -299,6 +325,8 @@
                                         <hr>
                                         <p>Skeletons</p>
                                         <h4>{{ $rewards['skeletons'] }}</h4>
+                                        <hr>
+                                        <h4>{{ (($rewards->max_range-$rewards->min_range)+1)/10 }} %</h4>
                                     </div>
                                 </div>
                             @endif
@@ -339,8 +367,10 @@
                             @if($key == 'gold')
                                 <div class="col-md-3">
                                     <div class="smallrewardbox">
-                                        <p>Gold @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</p>
-                                        <h4>{{ $rewards['gold_value'] }}</h4>
+                                        <p>Gold</p>
+                                        <h4>{{ $rewards['gold_value'] }} @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</h4>
+                                        <hr>
+                                        <h4>{{ (($rewards->max_range-$rewards->min_range)+1)/10 }} %</h4>
                                     </div>
                                 </div>
                             @endif
@@ -348,14 +378,17 @@
                             @if($key == 'skeleton_key')
                                 <div class="col-md-3">
                                     <div class="smallrewardbox">
-                                        <p>Skeletons @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</p>
-                                        <h4>{{ $rewards['skeletons'] }}</h4>
+                                        <p>Skeletons</p>
+                                        <h4>{{ $rewards['skeletons'] }} @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</h4>
+                                        <hr>
+                                        <h4>{{ (($rewards->max_range-$rewards->min_range)+1)/10 }} %</h4>
                                     </div>
                                 </div>
                             @endif
 
                             @if($key == 'avatar_item')
                                 <h5>Widgets order @if(auth()->user()->hasPermissionTo('Edit Hunt Rewards'))<a href="javascript:void(0)" class="edit_reward" data-id="{{ $rewards->id }}"><i class="fa fa-pencil"></i></a>@endif</h5>
+                                <h4>{{ (($rewards->max_range-$rewards->min_range)+1)/10 }} %</h4>
                                 @foreach($rewards['widgets_order'] as $widgets)
                                     <div class="col-md-3">
                                         <div class="smallrewardbox">
@@ -375,6 +408,8 @@
                                         <hr>
                                         <p>Skeletons</p>
                                         <h4>{{ $rewards['skeletons'] }}</h4>
+                                        <hr>
+                                        <h4>{{ (($rewards->max_range-$rewards->min_range)+1)/10 }} %</h4>
                                     </div>
                                 </div>
                             @endif
