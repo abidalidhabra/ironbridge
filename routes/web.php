@@ -167,6 +167,10 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 		Route::get('getDiscountsList', 'DiscountCouponController@getDiscountsList')->name('getDiscountsList');
 	});
 	
+	/* hunt rewards */
+	Route::group(['middleware' => ['permission:View Hunt Rewards']], function () {
+		Route::resource('rewards', 'RewardController');
+	});
 });
 
 Auth::routes();

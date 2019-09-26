@@ -2376,10 +2376,69 @@ table i.iconsetaddbox{
     font-family: 'Montserrat-Medium';
 }
 
+.smallrewardbox p{
+    margin: 0px;
+    font-size: 16px;
+    color: #6D717D;
+    padding-bottom: 5px;
+    font-family: 'Montserrat-Regular';
+}
+.smallrewardbox h4{
+    margin: 0px;
+    font-family: 'Montserrat-Medium';
+    font-size: 16px;
+    color: #000;
+    margin-bottom: 7px;
+}
+.rewardsbox{
+    width: 100%;
+    display: inline-block;
+}
+.rewardsbox .smallrewardbox{
+    display: inline-block;
+     width: 100%; 
+    float: left;
+    border: 1px solid #EAEAEA;
+    padding-top: 8px;
+    /* padding-bottom: 90px; */
+    padding-left: 11px;
+    padding-right: 11px;
+    margin-right: 12px;
+    margin-bottom: 6px;
+}
+.rewardsbox .smallrewardbox i , .rewardsbox i{
+    color: #A5853B;
+    font-size: 15px;
+}
+.rewardsmainbox h3{
+    font-size: 20px;
+    color: #A5853B;
+    padding-top: 0px;
+    letter-spacing: 0.5px;
+    font-family: 'Montserrat-SemiBold';
+    margin-bottom: 6px
+}
 
+.rewardsmainbox .rewardsbox h4{
+    font-size: 20px;
+    padding-top: 0px;
+    letter-spacing: 0.5px;
+    font-family: 'Montserrat-SemiBold';
+    color: #4D4F5C;
+}
+.rewardsmainbox li a{
+    letter-spacing: 0.5px;
+    font-family: 'Montserrat-SemiBold';
+    color: #4D4F5C;
+}
 
-
-
+.rewardsbox .smallrewardbox h4{
+    font-size: 18px;
+    padding-top: 0px;
+    letter-spacing: 0.5px;
+    font-family: 'Montserrat-SemiBold';
+    color: #4D4F5C;
+}
 
 
 
