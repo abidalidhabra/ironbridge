@@ -2393,6 +2393,7 @@ table i.iconsetaddbox{
 .rewardsbox{
     width: 100%;
     display: inline-block;
+    margin-bottom: 9px;
 }
 .rewardsbox .smallrewardbox{
     display: inline-block;
@@ -2416,7 +2417,8 @@ table i.iconsetaddbox{
     padding-top: 0px;
     letter-spacing: 0.5px;
     font-family: 'Montserrat-SemiBold';
-    margin-bottom: 6px
+    margin-bottom: 6px;
+    margin-top: 30px;
 }
 
 .rewardsmainbox .rewardsbox h4{

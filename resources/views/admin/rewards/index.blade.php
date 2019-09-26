@@ -10,7 +10,7 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Hunt Rewards</h3>
+                <h3>Hunt Loot Tables</h3>
             </div>
         </div>
     </div>
@@ -25,8 +25,9 @@
 
         <div class="tab-content">
             <div id="complexity_1" class="tab-pane fade in active">
-                <h3>Difficulty 1</h3>
-                
+                <!-- <h3>Difficulty 1</h3> -->
+                <br>
+
                 @foreach($complexity1 as $key => $value)
                     <div class="rewardsbox">
                     <h4>{{ ucwords(str_replace('_',' ',$key)) }}</h4>
@@ -100,7 +101,8 @@
                 @endforeach
             </div>
             <div id="complexity_2" class="tab-pane fade">
-                <h3>Difficulty 2</h3>
+                <!-- <h3>Difficulty 2</h3> -->
+                <br>
                 <br/>
                 @foreach($complexity2 as $key => $value)
                     <div class="rewardsbox">
@@ -175,7 +177,8 @@
                 @endforeach
             </div>
             <div id="complexity_3" class="tab-pane fade">
-                <h3>Difficulty 3</h3>
+                <!-- <h3>Difficulty 3</h3> -->
+                <br>
                 <br/>
                 @foreach($complexity3 as $key => $value)
                     <div class="rewardsbox">
@@ -250,7 +253,8 @@
                 @endforeach
             </div>
             <div id="complexity_4" class="tab-pane fade">
-                <h3>Difficulty 4</h3>
+                <!-- <h3>Difficulty 4</h3> -->
+                <br>
                 <br/>
                 @foreach($complexity4 as $key => $value)
                     <div class="rewardsbox">
@@ -326,7 +330,8 @@
 
             </div>
             <div id="complexity_5" class="tab-pane fade">
-                <h3>Difficulty 5</h3>
+                <!-- <h3>Difficulty 5</h3> -->
+                <br>
                 @foreach($complexity5 as $key => $value)
                     <div class="rewardsbox">
                     <h4>{{ ucwords(str_replace('_',' ',$key)) }}</h4>
