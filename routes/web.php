@@ -168,7 +168,7 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	});
 	
 	/* hunt rewards */
-	Route::group(['middleware' => ['permission:View Hunt Rewards']], function () {
+	Route::group(['middleware' => ['permission:View Hunt Loot Tables']], function () {
 		Route::resource('rewards', 'RewardController');
 	});
 });
