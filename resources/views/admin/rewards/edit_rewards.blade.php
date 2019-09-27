@@ -30,7 +30,9 @@
             @foreach($huntReward->widgets_order as $widgetsOrder)
             <div class="row">
                 <div class="col-md-6">
-                    <label>Widget name:</label>
+                    <label>Widget name: ({{ (($widgetsOrder['max']-$widgetsOrder['min'])+1)/10 }} %)</label>
+                    <input type="hidden" name="min[]" value="{{ $widgetsOrder['min'] }}">
+                    <input type="hidden" name="max[]" value="{{ $widgetsOrder['max'] }}">
                     <select name="widget_name[]" class="form-control">
                         @foreach($widgetItem as $key => $widget)
                             <option value="{{ $widget['widget_name'].'__'.$widget['widget_category'] }}" @if($widget['widget_name']==$widgetsOrder['widget_name'] && $widget['widget_category']==$widgetsOrder['type']){{ 'selected' }}@endif>{{ $widget['widget_name'].' ('.$widget['widget_category'].')' }}</option>

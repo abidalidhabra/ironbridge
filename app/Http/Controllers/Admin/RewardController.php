@@ -113,7 +113,9 @@ class RewardController extends Controller
                 $widgetsOrder = explode(',',str_replace('__', ',', $allData['widget_name'][$i]));
                 $data['widgets_order'][] = [
                                             'type'        => $widgetsOrder[1],
-                                            'widget_name' => $widgetsOrder[0]
+                                            'widget_name' => $widgetsOrder[0],
+                                            'min'   => (int)$allData['min'][$i],
+                                            'max'   => (int)$allData['max'][$i]
                                             ];
             } 
         }
