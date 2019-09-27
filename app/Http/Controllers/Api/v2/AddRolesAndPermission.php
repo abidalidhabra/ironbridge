@@ -66,6 +66,10 @@ class AddRolesAndPermission extends Controller
 		Permission::create(['name' => 'Delete Discount Coupons','guard_name' => 'admin', 'module'=>'Discount Coupons']);
 
 		Permission::create(['name' => 'View Analytics','guard_name' => 'admin', 'module'=>'Analytics']);
+
+
+		Permission::create(['name' => 'View Hunt Loot Tables','guard_name' => 'admin', 'module'=>'Manage Hunts / Hunt Loot Tables']);
+		Permission::create(['name' => 'Edit Hunt Loot Tables','guard_name' => 'admin', 'module'=>'Manage Hunts / Hunt Loot Tables']);
 		/*$data = [
 					['name' => 'Practice Games Targets','guard_name' => 'admin', 'module'=>'practiceGamesTargets'],
 					
