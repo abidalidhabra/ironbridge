@@ -108,12 +108,12 @@ class RewardController extends Controller
         
         $possibility = $request->get('possibility');
         if (array_sum($possibility) != 100) {
-            return response()->json(['status' => false,'message' => 'Please manage possibility']);
+            return response()->json(['status' => false,'message' => 'A total sum of possibilities needs equal to 100']);
         }
         $widgetsPossibility = array_values($request->get('widgets_possibility')); 
         
         if (array_sum($widgetsPossibility[0]) != 100) {
-            return response()->json(['status' => false,'message' => 'Please manage widgets order possibility']);
+            return response()->json(['status' => false,'message' => 'A total sum of possibilities needs equal to 100']);
         }
 
         $allData = $request->all();

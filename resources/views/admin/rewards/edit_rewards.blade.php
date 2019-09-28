@@ -10,7 +10,7 @@
                     <label>Possibility</label>
                 </div>
                 <div class="col-md-6">
-                    @if($key == 'gold')
+                    @if($key == 'gold' || $key == 'avatar_item_and_gold')
                         <label>Gold</label>
                     @elseif($key == 'skeleton_key')
                         <label>skeleton key</label>
@@ -35,8 +35,11 @@
             @if($rewardvalue['reward_type'] == 'gold')
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="form-group">
+                        <div class="input-group">
                             <input type="text" class="form-control" placeholder="Enter possibility" value="{{ $rewardvalue['possibility'] }}" name="possibility[{{ $rewardvalue->id }}]">
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit">%</button>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -50,8 +53,11 @@
             @if($rewardvalue['reward_type'] == 'skeleton_key')
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="form-group">
+                        <div class="input-group">
                             <input type="text" class="form-control" placeholder="Enter possibility" value="{{ $rewardvalue['possibility'] }}" name="possibility[{{ $rewardvalue->id }}]">
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit">%</button>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -64,8 +70,11 @@
             @if($rewardvalue['reward_type'] == 'skeleton_key_and_gold')
                 <div class="row">
                     <div class="col-md-4">
-                        <div class="form-group">
+                        <div class="input-group">
                             <input type="text" class="form-control" placeholder="Enter possibility" value="{{ $rewardvalue['possibility'] }}" name="possibility[{{ $rewardvalue->id }}]">
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit">%</button>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -83,8 +92,11 @@
             @if($rewardvalue['reward_type'] == 'avatar_item')
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="form-group">
+                        <div class="input-group">
                             <input type="text" class="form-control" placeholder="Enter possibility" value="{{ $rewardvalue['possibility'] }}" name="possibility[{{ $rewardvalue->id }}]">
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit">%</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -100,8 +112,11 @@
                 @foreach($rewardvalue['widgets_order'] as $widgetsOrder)
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="form-group">
+                        <div class="input-group">
                             <input type="text" class="form-control" placeholder="Enter possibility" value="{{ $widgetsOrder['possibility'] }}" name="widgets_possibility[{{ $rewardvalue->id }}][]">
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit">%</button>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -119,8 +134,11 @@
             @if($rewardvalue['reward_type'] == 'avatar_item_and_gold')
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="form-group">
+                        <div class="input-group">
                             <input type="text" class="form-control" placeholder="Enter possibility" value="{{ $rewardvalue['possibility'] }}" name="possibility[{{ $rewardvalue->id }}]">
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit">%</button>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -141,8 +159,11 @@
                 @foreach($rewardvalue['widgets_order'] as $widgetsOrder)
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="form-group">
+                        <div class="input-group">
                             <input type="text" class="form-control" placeholder="Enter possibility" value="{{ $widgetsOrder['possibility'] }}" name="widgets_possibility[{{ $rewardvalue->id }}][]">
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit">%</button>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-6">
