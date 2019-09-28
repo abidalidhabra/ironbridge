@@ -2442,7 +2442,13 @@ table i.iconsetaddbox{
     color: #4D4F5C;
 }
 
-
+.default-btn{
+    background: #A5853B;
+    border: 0px;
+    font-size: 15px;
+    font-family: 'Montserrat-Regular';
+    color: #ffffff;
+}
 
 
 

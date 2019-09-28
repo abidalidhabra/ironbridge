@@ -14,6 +14,7 @@ class HuntReward extends Eloquent
         'max_range',
         'widget_value',
         'widgets_order',
-        'skeletons'
+        'skeletons',
+        'possibility'
     ];
 }
