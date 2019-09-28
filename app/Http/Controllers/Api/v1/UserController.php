@@ -139,6 +139,7 @@ class UserController extends Controller
                 ['id'=> "5d246f230b6d7b1a0a23246a", 'selected'=> true],
                 ['id'=> "5d246f230b6d7b1a0a232453", 'selected'=> true],
                 ['id'=> "5d246f230b6d7b1a0a232476", 'selected'=> true],
+                ['id'=> "5d4424455c60e6147cf181b4", 'selected'=> true],
 
                 // ['id'=> "5d246f0c0b6d7b19fb5ab594", 'selected'=> false],
                 // ['id'=> "5d246f0c0b6d7b19fb5ab57c", 'selected'=> false],
@@ -157,6 +158,7 @@ class UserController extends Controller
                 ['id'=> "5d246f0c0b6d7b19fb5ab562", 'selected'=> false],
                 ['id'=> "5d246f0c0b6d7b19fb5ab578", 'selected'=> false],
                 ['id'=> "5d246f0c0b6d7b19fb5ab584", 'selected'=> false],
+                ['id'=> "5d4423d65c60e6147cf181a6", 'selected'=> false],
             ],
             // 'settings'   => [
             //     'sound_fx' => true,
@@ -274,6 +276,11 @@ class UserController extends Controller
             ->where('widgets.selected', true)
             ->update(['widgets.$[].selected'=> false]);
 
+        if ($user->gender == 'female') {
+            $widgets[] = '5d4424455c60e6147cf181b4';
+        }else{
+            $widgets[] = '5d4423d65c60e6147cf181a6';
+        }
         User::where('_id',$user->id)
             ->update(['widgets.$[identifier].selected'=> true],[
                 'arrayFilters'=> [ 

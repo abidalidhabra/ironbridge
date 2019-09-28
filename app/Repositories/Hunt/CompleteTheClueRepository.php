@@ -64,6 +64,7 @@ class CompleteTheClueRepository implements ClueInterface
 
         //send the response
         return ['huntUserDetail'=> $huntUserDetail, 'rewardData'=> $rewardData, 'finishedIn'=> $totalFinishedIn];
+        // return ['huntUserDetail'=> $huntUserDetail, 'rewardData'=> $rewardData];
     }
 
     public function unlockeMiniGameIfLocked($completedGameId, $userId)
@@ -76,6 +77,7 @@ class CompleteTheClueRepository implements ClueInterface
 
         /** Generate Reward **/
         $randNumber  = rand(1, 1000);
+        $randNumber = 950;
         $huntUser    = $huntUserDetail->hunt_user()->select('complexity','user_id')->first();
         $complexity  = $huntUser->complexity;
         $user        = auth()->user();
@@ -92,10 +94,15 @@ class CompleteTheClueRepository implements ClueInterface
         
         if ($selectedReward->widgets_order && is_array($selectedReward->widgets_order)) {
             
-            $widgetOrder     = $selectedReward->widgets_order;
+            $widgetRandNumber    = rand(1, 1000);
+            // $widgetRandNumber    = 301;
+            $widgetOrder         = collect($selectedReward->widgets_order);
+            $gotchaDesiredWidget = true;
+            $countableWidget     = $widgetOrder->where('min', '<=', $widgetRandNumber)->where('max','>=',$widgetRandNumber)->first();
+            // $widgetOrder     = $selectedReward->widgets_order;
             
             findWidget:
-            $countableWidget = $widgetOrder[0];
+            // $countableWidget = $widgetOrder[0];
             $widgetCategory  = $countableWidget['type'];
             $widgetName      = $countableWidget['widget_name'];
 
@@ -112,8 +119,12 @@ class CompleteTheClueRepository implements ClueInterface
                             ->first();
 
             if (!$widgetItems) {
-                $widgetOrder = array_splice($widgetOrder, 1);
-                if (count($widgetOrder) == 0) { goto distSkeleton; }
+                // $widgetOrder = array_splice($widgetOrder, 1);
+                // if (count($widgetOrder) == 0) { goto distSkeleton; }
+
+                $widgetOrder = $widgetOrder->where('widget_category', '!=', $widgetCategory)->where('widget_name', '!=' ,$widgetName);
+                $countableWidget = $widgetOrder->first();
+                if ($widgetOrder->count() == 0) { goto distSkeleton; }
                 goto findWidget; 
             }
 
