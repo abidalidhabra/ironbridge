@@ -276,6 +276,11 @@ class UserController extends Controller
             ->where('widgets.selected', true)
             ->update(['widgets.$[].selected'=> false]);
 
+        if ($user->gender == 'female') {
+            $widgets[] = '5d4424455c60e6147cf181b4';
+        }else{
+            $widgets[] = '5d4423d65c60e6147cf181a6';
+        }
         User::where('_id',$user->id)
             ->update(['widgets.$[identifier].selected'=> true],[
                 'arrayFilters'=> [ 
