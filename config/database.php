@@ -109,7 +109,7 @@ return [
             'password' => 'WvshoaanimlBoWMM',
             'options' => [
                 'ssl' => 'true',
-                'authSource' => 'admin
+                'authSource' => 'admin'
             ]
         ],
     ],
