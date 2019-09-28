@@ -71,11 +71,11 @@ class RewardController extends Controller
      */
     public function edit($id)
     {
-        $huntReward = HuntReward::where('_id',$id)->first();
+        //$huntReward = HuntReward::where('_id',$id)->first();
+        $huntReward = HuntReward::where('complexity',(int)$id)->get()->groupBy('reward_type');
         $widgetItem = WidgetItem::groupBy('widget_name')->groupBy('widget_category')->get();
         
-        
-        return view('admin.rewards.edit_rewards',compact('huntReward','widgetItem'));
+        return view('admin.rewards.edit_rewards',compact('huntReward','widgetItem','id'));
     }
 
     /**
@@ -86,6 +86,108 @@ class RewardController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
+    {
+        
+
+        $validator = Validator::make($request->all(),[
+            'gold_value.*' => 'required_if:reward_type,avatar_item_and_gold,gold,skeleton_key_and_gold|numeric',
+            //'min_range'  => 'required|integer',
+            //'max_range'  => 'required|integer',
+            // 'type.*'        => 'required_if:reward_type,avatar_item,avatar_item_and_gold',
+            'widget_name.*'  => 'required_if:reward_type,avatar_item,avatar_item_and_gold',
+            'skeletons.*'  => 'required_if:reward_type,skeleton_key,skeleton_key_and_gold|numeric',
+            'possibility.*'  => 'required|numeric',
+            'widgets_possibility.*.*'  => 'required|numeric',
+        ]);
+        
+        if ($validator->fails())
+        {
+            $message = $validator->messages()->first();
+            return response()->json(['status' => false,'message' => $message]);
+        }
+        
+        $possibility = $request->get('possibility');
+        if (array_sum($possibility) != 100) {
+            return response()->json(['status' => false,'message' => 'A total sum of possibilities needs equal to 100']);
+        }
+        $widgetsPossibility = array_values($request->get('widgets_possibility')); 
+        
+        if (array_sum($widgetsPossibility[0]) != 100) {
+            return response()->json(['status' => false,'message' => 'A total sum of possibilities needs equal to 100']);
+        }
+
+        $allData = $request->all();
+        $i = 0;
+        
+        $huntReward = HuntReward::where('complexity',(int)$id)->get();
+        
+        foreach ($huntReward as $key => $value) {
+            $data = [];
+            $huntRewardId = $value->id;
+            $value->possibility = (float)$possibility[$huntRewardId];
+            $value->min_range = (int)1+$i;
+            $i += $possibility[$huntRewardId]*10;
+            $value->max_range = (int)$i;
+
+            if ($value->reward_type == 'gold') {
+                $value->gold_value = (float)$allData['gold_value'][$huntRewardId];
+            }
+            if ($value->reward_type == 'avatar_item') {
+                $data['widgets_order'] = [];
+                
+                $m = 0;
+                for ($k=0; $k < count($allData['widget_name'][$huntRewardId]) ; $k++) {
+                    $widgetsOrder = explode(',',str_replace('__', ',', $allData['widget_name'][$huntRewardId][$k]));
+                    $max = $allData['widgets_possibility'][$huntRewardId][$k]*10; 
+                    $data['widgets_order'][] = [
+                                                'type'        => $widgetsOrder[1],
+                                                'widget_name' => $widgetsOrder[0],
+                                                'min'         => (int)1+$m,
+                                                'max'         => (int)$max+$m,
+                                                'possibility' => (float)$allData['widgets_possibility'][$huntRewardId][$k],
+                                                ];
+                    $m += $max;
+
+                }
+                $value->widgets_order = $data['widgets_order'];
+            }
+            if ($value->reward_type == 'avatar_item_and_gold') {
+                $value->gold_value = (float)$allData['gold_value'][$huntRewardId];
+
+                $data['widgets_order'] = [];
+                $m = 0;
+                for ($k=0; $k < count($allData['widget_name'][$huntRewardId]) ; $k++) {
+                    $widgetsOrder = explode(',',str_replace('__', ',', $allData['widget_name'][$huntRewardId][$k]));
+                    $max = $allData['widgets_possibility'][$huntRewardId][$k]*10; 
+                    $data['widgets_order'][] = [
+                                                'type'        => $widgetsOrder[1],
+                                                'widget_name' => $widgetsOrder[0],
+                                                'min'         => (int)1+$m,
+                                                'max'         => (int)$max+$m,
+                                                'possibility' => (float)$allData['widgets_possibility'][$huntRewardId][$k],
+                                                ];
+                    $m += $max;
+
+                }
+                $value->widgets_order = $data['widgets_order'];
+            }
+            if ($value->reward_type == 'skeleton_key') {
+                $value->skeletons = (int)$allData['skeletons'][$huntRewardId];
+            }
+            if ($value->reward_type == 'skeleton_key_and_gold') {
+                $value->gold_value = (float)$allData['gold_value'][$huntRewardId];
+                $value->skeletons = (int)$allData['skeletons'][$huntRewardId];
+            }
+            $value->save();
+        }
+
+        return response()->json([
+            'status' => true,
+            'message'=>'Hunt reward has been updated successfully.',
+        ]);
+    }
+
+    public function update_old(Request $request, $id)
     {
         $validator = Validator::make($request->all(),[
             'gold_value' => 'required_if:reward_type,avatar_item_and_gold,gold,skeleton_key_and_gold',

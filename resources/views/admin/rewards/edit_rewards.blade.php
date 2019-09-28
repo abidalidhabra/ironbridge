@@ -1,48 +1,186 @@
 @csrf
 
 <div class="modal-body">
-    @if($huntReward->reward_type == 'gold' || $huntReward->reward_type == 'skeleton_key_and_gold' || $huntReward->reward_type == 'avatar_item_and_gold')
-        <div class="form-group">
-            <label>Gold:</label>
-            <input type="number" class="form-control" placeholder="Enter gold" value="{{ $huntReward->gold_value }}" name="gold_value">
-        </div>
-    @endif
-    <input type="hidden" name="id" id="reward_id" value="{{ $huntReward->id }}">
-    <input type="hidden" name="reward_type" value="{{ $huntReward->reward_type }}">
-    <!-- <div class="form-group">
-        <label>Min range:</label>
-        <input type="number" class="form-control" placeholder="Enter min range" value="{{ $huntReward->min_range }}" name="min_range">
-    </div>
-    <div class="form-group">
-        <label>Max range:</label>
-        <input type="number" class="form-control" placeholder="Enter max range" value="{{ $huntReward->max_range }}" name="max_range">
-    </div> -->
-    @if($huntReward->reward_type == 'skeleton_key' || $huntReward->reward_type == 'skeleton_key_and_gold')
-    <div class="form-group">
-        <label>Skeleton Key:</label>
-        <input type="number" class="form-control" placeholder="Enter skeletons keys" value="{{ $huntReward->skeletons }}" name="skeletons">
-    </div>
-    @endif
-
-    @if($huntReward->reward_type == 'avatar_item' || $huntReward->reward_type == 'avatar_item_and_gold')
-        <h5>Widgets Order</h5>
-        <div class="form-group">
-            @foreach($huntReward->widgets_order as $widgetsOrder)
+    <input type="hidden" name="complexity" id="complexity" value="{{ $id }}">
+    @forelse($huntReward as $key => $reward)
+        <h4>{{ ucwords(str_replace('_',' ',$key)) }}</h4>
+        @if($key == 'gold' || $key == 'skeleton_key' || $key == 'avatar_item' || $key == 'avatar_item_and_gold')
             <div class="row">
                 <div class="col-md-6">
-                    <label>Widget name: ({{ (($widgetsOrder['max']-$widgetsOrder['min'])+1)/10 }} %)</label>
-                    <input type="hidden" name="min[]" value="{{ $widgetsOrder['min'] }}">
-                    <input type="hidden" name="max[]" value="{{ $widgetsOrder['max'] }}">
-                    <select name="widget_name[]" class="form-control">
-                        @foreach($widgetItem as $key => $widget)
-                            <option value="{{ $widget['widget_name'].'__'.$widget['widget_category'] }}" @if($widget['widget_name']==$widgetsOrder['widget_name'] && $widget['widget_category']==$widgetsOrder['type']){{ 'selected' }}@endif>{{ $widget['widget_name'].' ('.$widget['widget_category'].')' }}</option>
-                        @endforeach
-                    </select>  
+                    <label>Possibility</label>
+                </div>
+                <div class="col-md-6">
+                    @if($key == 'gold' || $key == 'avatar_item_and_gold')
+                        <label>Gold</label>
+                    @elseif($key == 'skeleton_key')
+                        <label>skeleton key</label>
+                    @endif
                 </div>
             </div>
-            @endforeach
-        </div>
-    @endif
+        @endif
+        @if($key == 'skeleton_key_and_gold')
+            <div class="row">
+                <div class="col-md-4">
+                    <label>Possibility</label>
+                </div>
+                <div class="col-md-4">
+                    <label>Gold</label>
+                </div>
+                <div class="col-md-4">
+                    <label>skeleton key</label>
+                </div>
+            </div>
+        @endif
+        @foreach($reward as $rewardvalue)
+            @if($rewardvalue['reward_type'] == 'gold')
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Enter possibility" value="{{ $rewardvalue['possibility'] }}" name="possibility[{{ $rewardvalue->id }}]">
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit">%</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <input type="number" class="form-control" placeholder="Enter gold" value="{{ $rewardvalue['gold_value'] }}" name="gold_value[{{ $rewardvalue->id }}]">
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            @if($rewardvalue['reward_type'] == 'skeleton_key')
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Enter possibility" value="{{ $rewardvalue['possibility'] }}" name="possibility[{{ $rewardvalue->id }}]">
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit">%</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <input type="number" class="form-control" placeholder="Enter skeletons" value="{{ $rewardvalue['skeletons'] }}" name="skeletons[{{ $rewardvalue->id }}]">
+                        </div>
+                    </div>
+                </div>
+            @endif
+            @if($rewardvalue['reward_type'] == 'skeleton_key_and_gold')
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Enter possibility" value="{{ $rewardvalue['possibility'] }}" name="possibility[{{ $rewardvalue->id }}]">
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit">%</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <input type="number" class="form-control" placeholder="Enter gold" value="{{ $rewardvalue['gold_value'] }}" name="gold_value[{{ $rewardvalue->id }}]">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <input type="number" class="form-control" placeholder="Enter skeletons" value="{{ $rewardvalue['skeletons'] }}" name="skeletons[{{ $rewardvalue->id }}]">
+                        </div>
+                    </div>
+                </div>
+            @endif
+            @if($rewardvalue['reward_type'] == 'avatar_item')
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Enter possibility" value="{{ $rewardvalue['possibility'] }}" name="possibility[{{ $rewardvalue->id }}]">
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit">%</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <label>Widgets Order</label>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Possibility</label>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Widgets</label>
+                    </div>
+                </div>
+                @foreach($rewardvalue['widgets_order'] as $widgetsOrder)
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Enter possibility" value="{{ $widgetsOrder['possibility'] }}" name="widgets_possibility[{{ $rewardvalue->id }}][]">
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit">%</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <select name="widget_name[{{ $rewardvalue->id }}][]" class="form-control">
+                                @foreach($widgetItem as $key => $widget)
+                                    <option value="{{ $widget['widget_name'].'__'.$widget['widget_category'] }}" @if($widget['widget_name']==$widgetsOrder['widget_name'] && $widget['widget_category']==$widgetsOrder['type']){{ 'selected' }}@endif>{{ $widget['widget_name'].' ('.$widget['widget_category'].')' }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            @endif
+            @if($rewardvalue['reward_type'] == 'avatar_item_and_gold')
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Enter possibility" value="{{ $rewardvalue['possibility'] }}" name="possibility[{{ $rewardvalue->id }}]">
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit">%</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <input type="number" class="form-control" placeholder="Enter gold" value="{{ $rewardvalue['gold_value'] }}" name="gold_value[{{ $rewardvalue->id }}]">
+                        </div>
+                    </div>
+                </div>
+                <label>Widgets Order</label>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Possibility</label>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Widgets</label>
+                    </div>
+                </div>
+                @foreach($rewardvalue['widgets_order'] as $widgetsOrder)
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Enter possibility" value="{{ $widgetsOrder['possibility'] }}" name="widgets_possibility[{{ $rewardvalue->id }}][]">
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" type="submit">%</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <select name="widget_name[{{ $rewardvalue->id }}][]" class="form-control">
+                                @foreach($widgetItem as $key => $widget)
+                                    <option value="{{ $widget['widget_name'].'__'.$widget['widget_category'] }}" @if($widget['widget_name']==$widgetsOrder['widget_name'] && $widget['widget_category']==$widgetsOrder['type']){{ 'selected' }}@endif>{{ $widget['widget_name'].' ('.$widget['widget_category'].')' }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            @endif
+        @endforeach
+    @empty
+    @endforelse
     <div class="clearfix"></div>
 </div>
 <div class="modal-footer">
