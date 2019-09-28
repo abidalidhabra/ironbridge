@@ -153,12 +153,12 @@ class UserController extends Controller
                 // ['id'=> "5d246f0c0b6d7b19fb5ab565", 'selected'=> false],
                 // ['id'=> "5d246f0c0b6d7b19fb5ab587", 'selected'=> false],
                 
-                ['id'=> "5d246f0c0b6d7b19fb5ab590", 'selected'=> false],
-                ['id'=> "5d246f0c0b6d7b19fb5ab56d", 'selected'=> false],
-                ['id'=> "5d246f0c0b6d7b19fb5ab562", 'selected'=> false],
-                ['id'=> "5d246f0c0b6d7b19fb5ab578", 'selected'=> false],
-                ['id'=> "5d246f0c0b6d7b19fb5ab584", 'selected'=> false],
-                ['id'=> "5d4423d65c60e6147cf181a6", 'selected'=> false],
+                ['id'=> "5d246f0c0b6d7b19fb5ab590", 'selected'=> true],
+                ['id'=> "5d246f0c0b6d7b19fb5ab56d", 'selected'=> true],
+                ['id'=> "5d246f0c0b6d7b19fb5ab562", 'selected'=> true],
+                ['id'=> "5d246f0c0b6d7b19fb5ab578", 'selected'=> true],
+                ['id'=> "5d246f0c0b6d7b19fb5ab584", 'selected'=> true],
+                ['id'=> "5d4423d65c60e6147cf181a6", 'selected'=> true],
             ],
             // 'settings'   => [
             //     'sound_fx' => true,
