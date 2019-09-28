@@ -272,6 +272,10 @@ class UserController extends Controller
         ];
         $user->save();
 
+        /** Extra ordinary setup **/
+        // $newBee = User::where('_id', $userId)->first();
+        /** Extra ordinary setup **/
+
         User::where('_id',$user->id)
             ->where('widgets.selected', true)
             ->update(['widgets.$[].selected'=> false]);
