@@ -276,9 +276,68 @@ class UserController extends Controller
         // $newBee = User::where('_id', $userId)->first();
         /** Extra ordinary setup **/
 
+        // User::where('_id',$user->id)
+        //     ->where('widgets.selected', true)
+        //     ->update(['widgets.$[].selected'=> false]);
+
+        // if ($primaryAvatar->gender == 'female') {
+        //     $newUser = User::where('_id', $userId)->select('_id', 'widgets')->get();
+        //     $maleIdsGlobal = WidgetItem::whereHas('avatar', function($query) {
+        //                         $query->where('gender', 'male');
+        //                     })
+        //                     ->get()
+        //                     ->map(function($item) {
+        //                         return $item->id;
+        //                     });
+        //     $maleIdsUser = collect($newUser->widgets)->filter(function($value, $key) use ($maleIdsGlobal){ 
+        //                             return $maleIdsGlobal->contains($value->id);
+        //                         });
+        //     dump($maleIdsUser);
+        //     dd("male", $maleIdsGlobal);
+        //     // $maleItems = collect($newUser->widgets)->where()
+        // }else {
+        //     $newUser = User::where('_id', $userId)->select('_id', 'widgets')->first();
+        //     $femaleIdsGlobal = WidgetItem::whereHas('avatar', function($query) {
+        //                         $query->where('gender', 'male');
+        //                     })
+        //                     ->get()
+        //                     ->map(function($item) {
+        //                         return $item->id;
+        //                     });
+        //     $femaleIdsUser = collect($newUser->widgets)->filter(function($value, $key) use ($femaleIdsGlobal){ 
+        //                             return $femaleIdsGlobal->contains($value['id']);
+        //                         })->map(function($item) {
+        //                             return $item['id'];
+        //                         });
+        //     dump($femaleIdsUser);
+        //     dd("male", $femaleIdsGlobal);
+        // }
+
+
+        /*********************************************************************************************************/
+        $newUser = User::where('_id', $userId)->select('_id', 'widgets')->first();
+        $globalIds = WidgetItem::whereHas('avatar', function($query) use ($primaryAvatar){
+                                $query->where('gender', $primaryAvatar->gender);
+                            })
+                            ->get()
+                            ->map(function($item) {
+                                return $item->id;
+                            });
+        $userWidgetIds = collect($newUser->widgets)->filter(function($value, $key) use ($globalIds){ 
+                            return $globalIds->contains($value['id']);
+                        })->map(function($item) {
+                            return $item['id'];
+                        })->values()->toArray();
+
         User::where('_id',$user->id)
-            ->where('widgets.selected', true)
-            ->update(['widgets.$[].selected'=> false]);
+        ->update(['widgets.$[identifier].selected'=> false],[
+            'arrayFilters'=> [ 
+                [ "identifier.id"=> ['$in'=> $userWidgetIds] ] 
+            ]
+        ]);
+        // dump($primaryAvatar->gender, $userWidgetIds);
+        // dd($primaryAvatar->gender, $widgets);
+        /*********************************************************************************************************/
 
         if ($user->gender == 'female') {
             $widgets[] = '5d4424455c60e6147cf181b4';
