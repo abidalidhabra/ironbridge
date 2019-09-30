@@ -153,7 +153,14 @@ class UserRepository implements UserRepositoryInterface
 
         // add the equivalent widget of selected widget
         $equivalentOutfit = WidgetItem::where('_id', $widgetItem->similar_outfit)->first();
-        $equivalentItems = $this->addWidgetItems($equivalentOutfit);
+        // $equivalentItems = $this->addWidgetItems($equivalentOutfit);
+        $equivalentItems = $equivalentOutfit->items;
+        array_push($equivalentItems, $equivalentOutfit->id);
+        foreach ($equivalentItems as $item) {
+            User::where('_id',$this->user->id)
+            ->where('widgets.id', '!=', $item)
+            ->push(['widgets'=> ['id'=> $item, 'selected'=> true]]);
+        }
 
         // return outfits
         return array_merge($totalItems, $equivalentItems);

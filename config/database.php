@@ -96,6 +96,22 @@ return [
                 'database' => env('DB_DATABASE')
             ]
         ],
+
+        'atlas' => [
+            'driver' => 'mongodb',
+            'host' => [
+                'cluster0-shard-00-00-txl6r.mongodb.net:27017',
+                'cluster0-shard-00-01-txl6r.mongodb.net:27017',
+                'cluster0-shard-00-02-txl6r.mongodb.net:27017'
+            ],
+            'database' => 'ironbridge1779',
+            'username' => 'ironbridge1779user',
+            'password' => 'WvshoaanimlBoWMM',
+            'options' => [
+                'ssl' => 'true',
+                'authSource' => 'admin'
+            ]
+        ],
     ],
 
     /*
