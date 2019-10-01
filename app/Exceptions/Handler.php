@@ -47,7 +47,7 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         $class = get_class($exception);
-        if($exception instanceof AuthenticationException)
+        if($exception instanceof AuthenticationException){
             switch($class) {
                 case 'Illuminate\Auth\AuthenticationException':
                     $guard = array_get($exception->guards(), 0);

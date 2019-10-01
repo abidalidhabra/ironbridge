@@ -173,4 +173,4 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	});
 });
 
-Auth::routes();
+// Auth::routes();
