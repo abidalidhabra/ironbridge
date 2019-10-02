@@ -22,3 +22,59 @@
 [29-Jul-2019 10:32:12 UTC] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 32768 bytes) in /home/fddev/public_html/ironbridge1779/vendor/symfony/debug/Exception/FatalErrorException.php on line 1
 [29-Jul-2019 10:32:46 UTC] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 8192 bytes) in /home/fddev/public_html/ironbridge1779/vendor/intervention/image/src/Intervention/Image/Gd/Decoder.php on line 138
 [29-Jul-2019 10:32:46 UTC] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 32768 bytes) in /home/fddev/public_html/ironbridge1779/vendor/symfony/debug/Exception/FatalErrorException.php on line 1
+[01-Oct-2019 06:35:08 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[01-Oct-2019 06:35:08 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[01-Oct-2019 06:35:08 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[01-Oct-2019 06:35:08 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[01-Oct-2019 06:52:57 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[01-Oct-2019 06:52:57 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[01-Oct-2019 06:52:57 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[01-Oct-2019 06:52:57 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[01-Oct-2019 07:00:18 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[01-Oct-2019 07:00:18 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[01-Oct-2019 07:00:18 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[01-Oct-2019 07:00:18 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[01-Oct-2019 07:38:56 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[01-Oct-2019 07:38:56 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[01-Oct-2019 07:38:56 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[01-Oct-2019 07:38:56 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[01-Oct-2019 07:39:52 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[01-Oct-2019 07:39:52 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[01-Oct-2019 07:39:52 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[01-Oct-2019 07:39:52 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[01-Oct-2019 07:40:33 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[01-Oct-2019 07:40:33 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[01-Oct-2019 07:40:33 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[01-Oct-2019 07:40:33 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[01-Oct-2019 16:51:12 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[01-Oct-2019 16:51:12 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[01-Oct-2019 16:51:12 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[01-Oct-2019 16:51:12 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[01-Oct-2019 17:01:40 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[01-Oct-2019 17:01:40 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[01-Oct-2019 17:01:40 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[01-Oct-2019 17:01:40 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[01-Oct-2019 17:01:55 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[01-Oct-2019 17:01:55 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[01-Oct-2019 17:01:55 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[01-Oct-2019 17:01:55 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[02-Oct-2019 02:40:01 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[02-Oct-2019 02:40:01 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[02-Oct-2019 02:40:01 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[02-Oct-2019 02:40:01 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[02-Oct-2019 02:42:24 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[02-Oct-2019 02:42:24 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[02-Oct-2019 02:42:24 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[02-Oct-2019 02:42:24 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[02-Oct-2019 02:42:49 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[02-Oct-2019 02:42:49 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[02-Oct-2019 02:42:49 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[02-Oct-2019 02:42:49 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[02-Oct-2019 03:29:16 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[02-Oct-2019 03:29:16 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[02-Oct-2019 03:29:16 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[02-Oct-2019 03:29:16 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[02-Oct-2019 03:30:10 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[02-Oct-2019 03:30:10 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[02-Oct-2019 03:30:10 UTC] PHP Parse error:  syntax error, unexpected 'if' (T_IF), expecting function (T_FUNCTION) or const (T_CONST) in /home/fdcloud/public_html/ironbridge1779/app/Exceptions/Handler.php on line 62
+[02-Oct-2019 03:30:10 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0

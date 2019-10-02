@@ -162,8 +162,13 @@ class UserRepository implements UserRepositoryInterface
             ->push(['widgets'=> ['id'=> $item, 'selected'=> true]]);
         }
 
+        if ($this->user->gender == 'female') {
+            $widgets[] = '5d4424455c60e6147cf181b4';
+        }else{
+            $widgets[] = '5d4423d65c60e6147cf181a6';
+        }
         // return outfits
-        return array_merge($totalItems, $equivalentItems);
+        return array_merge($totalItems, $equivalentItems, $widgets);
         // throw new Exception("Invalid avatar type provided.");
     }
 }

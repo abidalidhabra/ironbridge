@@ -316,6 +316,15 @@ class UserController extends Controller
 
         /*********************************************************************************************************/
         $newUser = User::where('_id', $userId)->select('_id', 'widgets')->first();
+
+        $hairsProvided = false;
+        foreach ($widgets as $index => $widget) {
+            $hairsProvided = WidgetItem::where(['_id'=> $widget, 'widget_name'=> 'Hairs'])->count();
+            if ($hairsProvided) {
+                break;
+            }
+        }
+
         $globalIds = WidgetItem::whereHas('avatar', function($query) use ($primaryAvatar){
                                 $query->where('gender', $primaryAvatar->gender);
                             })
@@ -339,10 +348,12 @@ class UserController extends Controller
         // dd($primaryAvatar->gender, $widgets);
         /*********************************************************************************************************/
 
-        if ($user->gender == 'female') {
-            $widgets[] = '5d4424455c60e6147cf181b4';
-        }else{
-            $widgets[] = '5d4423d65c60e6147cf181a6';
+        if (!$hairsProvided) {
+            if ($user->gender == 'female') {
+                $widgets[] = '5d4424455c60e6147cf181b4';
+            }else{
+                $widgets[] = '5d4423d65c60e6147cf181a6';
+            }
         }
         User::where('_id',$user->id)
             ->update(['widgets.$[identifier].selected'=> true],[
