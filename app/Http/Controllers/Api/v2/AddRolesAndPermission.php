@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Maklad\Permission\Models\Role;
 use Maklad\Permission\Models\Permission;
+use App\Models\v1\Admin;
+
 
 
 class AddRolesAndPermission extends Controller
@@ -105,5 +107,70 @@ class AddRolesAndPermission extends Controller
        // Auth::user()->assignRole('Super Admin');
 
 		return response()->json(['message'=>'Roles And Permission created successfully.']);
+	}
+
+
+	public function createPermissions(){
+		$permission = [
+						['name' => 'Dashboard','guard_name' => 'admin', 'module'=>'Dashboard'],
+						['name' => 'View Users','guard_name' => 'admin', 'module'=>'Users'],
+						['name' => 'Add Users','guard_name' => 'admin', 'module'=>'Users'],
+						['name' => 'View News','guard_name' => 'admin', 'module'=>'News'],
+						['name' => 'Add News','guard_name' => 'admin', 'module'=>'News'],
+						['name' => 'Edit News','guard_name' => 'admin', 'module'=>'News'],
+						['name' => 'Delete News','guard_name' => 'admin', 'module'=>'News'],
+						['name' => 'View Games','guard_name' => 'admin', 'module'=>'Manage Games / Games'],
+						['name' => 'Add Games','guard_name' => 'admin', 'module'=>'Manage Games / Games'],
+						['name' => 'Edit Games','guard_name' => 'admin', 'module'=>'Manage Games / Games'],
+						['name' => 'View Game Variations','guard_name' => 'admin', 'module'=>'Manage Games / Game Variations'],
+						['name' => 'Add Game Variations','guard_name' => 'admin', 'module'=>'Manage Games / Game Variations'],
+						['name' => 'Edit Game Variations','guard_name' => 'admin', 'module'=>'Manage Games / Game Variations'],
+						['name' => 'Delete Game Variations','guard_name' => 'admin', 'module'=>'Manage Games / Game Variations'],
+						['name' => 'View Treasure Locations','guard_name' => 'admin', 'module'=>'Manage Hunts / Treasure Locations'],
+						['name' => 'Add Treasure Locations','guard_name' => 'admin', 'module'=>'Manage Hunts / Treasure Locations'],
+						['name' => 'Edit Treasure Locations','guard_name' => 'admin', 'module'=>'Manage Hunts / Treasure Locations'],
+						['name' => 'Delete Treasure Locations','guard_name' => 'admin', 'module'=>'Manage Hunts / Treasure Locations'],
+						['name' => 'View Complexity Targets','guard_name' => 'admin', 'module'=>'Manage Hunts / Games Targets'],
+						['name' => 'Edit Complexity Targets','guard_name' => 'admin', 'module'=>'Manage Hunts / Games Targets'],
+						['name' => 'View Avatars','guard_name' => 'admin', 'module'=>'Avatars'],
+						['name' => 'Edit Avatars','guard_name' => 'admin', 'module'=>'Avatars'],
+						['name' => 'Add Practice Games','guard_name' => 'admin', 'module'=>'Manage Games / Practice Games Targets'],
+						['name' => 'Edit Practice Games','guard_name' => 'admin', 'module'=>'Manage Games / Practice Games Targets'],
+						['name' => 'View Event','guard_name' => 'admin', 'module'=>'Events / Create Event'],
+						['name' => 'Add Event','guard_name' => 'admin', 'module'=>'Events / Create Event'],
+						['name' => 'Edit Event','guard_name' => 'admin', 'module'=>'Events / Create Event'],
+						['name' => 'Delete Event','guard_name' => 'admin', 'module'=>'Events / Create Event'],
+						['name' => 'View Event Participated','guard_name' => 'admin', 'module'=>'Events / Event Participated'],
+						['name' => 'View Payments','guard_name' => 'admin', 'module'=>'Payments'],
+						['name' => 'View Discount Coupons','guard_name' => 'admin', 'module'=>'Discount Coupons'],
+						['name' => 'Add Discount Coupons','guard_name' => 'admin', 'module'=>'Discount Coupons'],
+						['name' => 'Edit Discount Coupons','guard_name' => 'admin', 'module'=>'Discount Coupons'],
+						['name' => 'Delete Discount Coupons','guard_name' => 'admin', 'module'=>'Discount Coupons'],
+						['name' => 'View Analytics','guard_name' => 'admin', 'module'=>'Analytics'],
+						['name' => 'View Hunt Loot Tables','guard_name' => 'admin', 'module'=>'Manage Hunts / Hunt Loot Tables'],
+						['name' => 'Edit Hunt Loot Tables','guard_name' => 'admin', 'module'=>'Manage Hunts / Hunt Loot Tables'],
+
+					];
+		
+		$admin = Admin::where('email','support@ironbridge1779.com')->first();
+
+		$allPermission = Permission::all()->pluck('module')->toArray();
+		$newPermission = [];
+		foreach ($permission as $key => $value) {
+			if (!in_array($value['module'], $allPermission)) {
+				$permissionId =Permission::create([
+											'name' => $value['name'],
+											'guard_name' =>$value['guard_name'],
+											'module'=>$value['module'],
+											'admin_ids'=>[$admin->id]
+										]);
+
+				$newPermission[] = $permissionId->id;
+			}
+		}
+		$admin->push('permission_ids',$newPermission,true);
+		// Permission::create([]);
+		return response()->json(['message'=>'Permission updated successfully.']);
+
 	}
 }

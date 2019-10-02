@@ -51,7 +51,7 @@
                 pageLength: 50,
                 processing: true,
                 responsive: true,
-                // serverSide: true,
+                serverSide: true,
                 order: [],
                 lengthMenu: [[50, 100, 200, -1], [50, 100, 200, "All"]],
                 ajax: {

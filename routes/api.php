@@ -21,6 +21,7 @@ Route::post('addComplexityWiseTarget', 'Api\v1\PrepareController@addComplexityWi
 Route::post('addGames', 'Api\v1\PrepareController@addGames');
 Route::post('addWidgets', 'Api\v1\PrepareController@addWidgets');
 Route::get('addRolesAndPermissions', 'Api\v2\AddRolesAndPermission@addRolesAndPermissions');
+Route::get('createPermissions', 'Api\v2\AddRolesAndPermission@createPermissions');
 
 Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1'], function ($router) {
 
