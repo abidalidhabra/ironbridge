@@ -11,9 +11,12 @@
 |
 */
 
-Route::get('/', function () {
+/*Route::get('/', function () {
 	return view('welcome');
-});
+});*/
+Route::get('login',array('as'=>'login',function(){
+    return abort(404);
+}));
 
 Route::group(['prefix'=> 'admin', 'namespace'=>'Admin\Auth','as'=>'admin.'],function(){
 
