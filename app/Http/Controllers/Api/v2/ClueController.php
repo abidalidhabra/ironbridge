@@ -47,7 +47,7 @@ class ClueController extends Controller
             $userId = auth()->user()->id;
 
             // reduce the skeleton key by one and get back the fresh user data
-            // User::where(['skeleton_keys.used_at' => null, '_id'=> $userId])->update(['skeleton_keys.$.used_at'=> new MongoDBDate()]);
+            User::where(['skeleton_keys.used_at' => null, '_id'=> $userId])->update(['skeleton_keys.$.used_at'=> new MongoDBDate()]);
             $freshUser = User::where('_id', $userId)->select('_id', 'skeleton_keys')->first();
 
             // mark the clue as complete
