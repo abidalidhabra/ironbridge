@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v2;
 use App\Exceptions\PracticeMiniGame\FreezeModeRunningException;
 use App\Exceptions\PracticeMiniGame\PieceAlreadyCollectedException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\MiniGame\MarkMiniGameAsFavouriteRequest;
 use App\Http\Requests\MiniGame\MarkMiniGameTutorialAsCompleteRequest;
 use App\Http\Requests\MiniGame\UnlockAMiniGameRequest;
 use App\Http\Requests\v2\PracticeGameFinishRequest;
@@ -39,7 +40,7 @@ class MGController extends Controller
     	try {
     		
             $response = [];
-            $userMiniGames = auth()->user()->practice_games()->select('_id', 'game_id', /*'piece', 'key',*/ 'completed_at', 'piece_collected', 'completion_times', 'unlocked_at')->get();
+            $userMiniGames = auth()->user()->practice_games()->select('_id', 'game_id', /*'piece', 'key',*/ 'completed_at', 'piece_collected', 'completion_times', 'unlocked_at', 'favourite')->get();
             $userMiniGames->map(function($miniGame, $index) use (&$response){
                 $response[] = $miniGame;
                 $response[$index]['freeze_mode'] = ($miniGame->completed_at && $miniGame->completed_at->gte(today()))?true:false;
@@ -119,5 +120,15 @@ class MGController extends Controller
             'message'=> 'Minigame tutorial has been marked as complete.',
             // 'game_id'=> $request->game_id
         ]);
+    }
+
+    public function markMiniGameAsFavourite(MarkMiniGameAsFavouriteRequest $request)
+    {
+        // mark the minigame as favourite
+        $practiceGameUser = $this->miniGameRepository->find($request->practice_game_user_id);
+        $favouriteStatus = $this->miniGameRepository->markMiniGameAsFavourite($practiceGameUser);
+
+        // give response to client
+        return response()->json([ 'message'=> 'Minigame favourite status updated.', 'favourite'=> $favouriteStatus]);
     }
 }

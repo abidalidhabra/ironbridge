@@ -169,4 +169,16 @@ class MiniGameRepository implements MiniGameInterface
     {
         return $this->user->practice_games()->where('game_id', $gameId)->update(['unlocked_at'=> new UTCDateTime(now())]);
     }
+
+    public function find($id, $fields = ['*'])
+    {
+        return PracticeGameUser::find($id, $fields);
+    }
+
+    public function markMiniGameAsFavourite($practiceGameUser)
+    {
+        $practiceGameUser->favourite = ($practiceGameUser->favourite)? false: true;
+        $practiceGameUser->save();
+        return $practiceGameUser->favourite;
+    }
 }
