@@ -144,7 +144,7 @@ header{
     background-size: cover;*/
 }
 .activelist a {
-    color: #A5853B !important;
+    color: #ffffff !important;
 }
 .right_paddingboxpart{
     display: inline-block;
@@ -195,7 +195,7 @@ header{
 .customdatatable_box td.details-control::after {
     content: 'view';
     cursor: pointer;
-    color: #A20871;
+    color: #A5853B !important;
 }
 .customdatatable_box tr.shown td.details-control::after {
     content: 'close';
@@ -820,7 +820,7 @@ header{
 
 i.iconsetaddbox{
     font-size: 17px;
-    color: #A5853B;
+    color: #ffffff;
     margin-right: 0px;
     margin-top: 2px;
     float: right;
@@ -1223,7 +1223,7 @@ table i.iconsetaddbox{
     width: 95% !important;
     border-radius: 0px 26px 26px 0px;
     background: #000;
-    color: #A5853B !important;
+    color: #ffffff !important;
 }
 
 
@@ -1346,7 +1346,7 @@ table i.iconsetaddbox{
     display: inline-block;
     font-family: 'Montserrat-Medium';
     background: #000;
-    color: #A5853B;
+    color: #ffffff;
     font-size: 16px;
     padding: 6px 14px 6px;
 }
@@ -1460,14 +1460,14 @@ table i.iconsetaddbox{
 }
 .custredbtn .selection label:hover {
   background-color: #000000;
-  color: #A5853B !important;
+  color: #ffffff !important;
 }
 .custredbtn .selection input[type=radio] {
   display: none;
 }
 .custredbtn .selection input[type=radio]:checked ~ label {
   background-color: #000000;
-  color: #A5853B !important;
+  color: #ffffff !important;
 }
 .custredbtn{
     display: inline-block;
@@ -1583,7 +1583,7 @@ table i.iconsetaddbox{
     display: inline-block;
     width: 100%;
     font-family: 'Montserrat-SemiBold';
-    color: #A5853B;
+    color: #ffffff;
     margin: 0;
     font-size: 16px;
     margin-bottom: 5px;
@@ -1690,7 +1690,7 @@ table i.iconsetaddbox{
     display: inline-block;
     width: 100%;
     font-family: 'Montserrat-Medium';
-    color: #A5853B;
+    color: #ffffff;
     margin: 0;
     font-size: 16px;
 }
@@ -1790,7 +1790,7 @@ table i.iconsetaddbox{
     float: left;
     background-color: #000000;
     border: 0;
-    color: #A5853B !important;
+    color: #ffffff !important;
 }
 
 .view_td_set a{
@@ -1798,15 +1798,15 @@ table i.iconsetaddbox{
     float: left;
     background-color: #000000;
     border: 0;
-    color: #A5853B !important;
+    color: #ffffff !important;
 }
 .view_td_set a:hover , .view_td_set a:focus{
     background-color: #000000 !important;
-    color: #A5853B !important;
+    color: #ffffff !important;
 }
 .view_td_set button:hover , .view_td_set button:focus{
     background-color: #000000 !important;
-    color: #A5853B !important;
+    color: #ffffff !important;
 }
 
 .separate_mini_game_box{
@@ -2026,7 +2026,7 @@ table i.iconsetaddbox{
         height: 15px;
         display: inline-block;
         text-align: center;
-        color: #A5853B;
+        color: #ffffff;
         line-height: 1;
         font-size: 14px;
     }
@@ -2037,7 +2037,7 @@ table i.iconsetaddbox{
         height: 15px;
         display: inline-block;
         text-align: center;
-        color: #A5853B;
+        color: #ffffff;
         line-height: 1;
         font-size: 14px;
     }
@@ -2236,7 +2236,7 @@ table i.iconsetaddbox{
     height: 15px;
     display: inline-block;
     text-align: center;
-    color: #A5853B;
+    color: #ffffff;
     font-size: 11px;
 }
 /*.analytmetri_coverbox .date_textboxpart input{
@@ -2449,11 +2449,16 @@ table i.iconsetaddbox{
     font-family: 'Montserrat-Regular';
     color: #ffffff;
 }
+.default-btn:hover{
+    color: #ffffff;
+}
 
 
 
 
-
+.customdatatable_box .tooltip.top{
+    margin-left: 15px;
+}
 
 
 
