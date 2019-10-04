@@ -42,6 +42,7 @@ class User extends Authenticatable implements JWTSubject
         'pieces_collected',
         'minigame_tutorials',
         'first_login',
+        'additional',
         // 'expnadable_skeleton_keys',
     ];
 

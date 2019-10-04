@@ -3,15 +3,18 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
+use App\Models\v1\Game;
 use App\Repositories\MiniGameRepository;
 use App\Rules\CheckThePassword;
-// use UserHelper;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use Validator;
 use stdClass;
-use App\Models\v1\Game;
 
 class AuthController extends Controller
 {
@@ -72,14 +75,16 @@ class AuthController extends Controller
                     ];
                 }
 
+                if ($user->additional && isset($user->additional['token']) && !empty($user->additional['token'])) {
+                    $this->invalidateTheToken($user->additional['token']);
+                }
+                $user->additional = ['token'=> $token];
+
                 if ($user->first_login == true) {
                     $user->first_login = false;
                     $user->save();
                 }
-
-                if ($wantToSave) {
-                    $user->save();
-                }
+                $user->save();
 
                 if ($user->practice_games()->count() == 0) {
                     $miniGameRepository = new MiniGameRepository($user);
@@ -87,7 +92,6 @@ class AuthController extends Controller
                 }
                     
                 // UserHelper::minigameTutorials($user);
-
                 return response()->json([
                     'message'=>'You logged-in successfully.', 
                     'token' => $token, 
@@ -197,5 +201,19 @@ class AuthController extends Controller
     public function guard()
     {
         return Auth::guard('api');
+    }
+
+    public function invalidateTheToken($token)
+    {
+        try {
+            JWTAuth::setToken($token)->invalidate();
+            return ['message'=> 'Token invalidated successfully.'];
+        } catch ( TokenExpiredException $exception ) {
+            throw new Exception('Token already expired.');
+        } catch ( TokenInvalidException $exception ) {
+            throw new Exception('Invalid token provided.');
+        } catch ( JWTException $exception ) {
+            throw new Exception('Token is missing.');
+        }
     }
 }
