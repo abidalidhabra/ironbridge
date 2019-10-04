@@ -124,6 +124,9 @@ class AdminController extends Controller
     }
 
     public function setPassword($token){
+        if (Auth::guard('admin')->check()) {
+            Auth::guard('admin')->logout();
+        }
 
         $data = AdminPasswordSetLink::where('token',$token)->first();
         if(!$data){
