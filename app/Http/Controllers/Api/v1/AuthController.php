@@ -209,7 +209,7 @@ class AuthController extends Controller
             JWTAuth::setToken($token)->invalidate();
             return ['message'=> 'Token invalidated successfully.'];
         } catch ( TokenExpiredException $exception ) {
-            throw new Exception('Token already expired.');
+            // throw new Exception('Token already expired.');
         } catch ( TokenInvalidException $exception ) {
             throw new Exception('Invalid token provided.');
         } catch ( JWTException $exception ) {
