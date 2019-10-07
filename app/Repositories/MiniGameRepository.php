@@ -46,8 +46,8 @@ class MiniGameRepository implements MiniGameInterface
         // }
 
         // Throw an exception if cooldown period is active
-        // if ($practiceGameUser->completed_at && $practiceGameUser->completed_at->diffInHours() < 24) {
-        if ($practiceGameUser->completed_at && $practiceGameUser->completed_at->gte(today())) {
+        if ($practiceGameUser->completed_at && $practiceGameUser->completed_at->diffInHours() <= 24) {
+        // if ($practiceGameUser->completed_at && $practiceGameUser->completed_at->gte(today())) {
             throw new FreezeModeRunningException('This mini game is under the freeze mode.', $practiceGameUser->completion_times);
         }
 

@@ -43,7 +43,7 @@ class MGController extends Controller
             $userMiniGames = auth()->user()->practice_games()->select('_id', 'game_id', /*'piece', 'key',*/ 'completed_at', 'piece_collected', 'completion_times', 'unlocked_at', 'favourite')->get();
             $userMiniGames->map(function($miniGame, $index) use (&$response){
                 $response[] = $miniGame;
-                $response[$index]['freeze_mode'] = ($miniGame->completed_at && $miniGame->completed_at->gte(today()))?true:false;
+                $response[$index]['freeze_mode'] = ($miniGame->completed_at && $miniGame->completed_at->diffInHours() <= 24)? true: false;
                 $game = $miniGame->game()->first();
                 $gamePracticeTargets = $game->practice_games_targets()->first();
                 $response[$index]['game_identifier'] = $game->identifier;
