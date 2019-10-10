@@ -38,6 +38,7 @@ class RandomHuntController extends Controller
             return response()->json([
                 'message' => 'Last Hunt\'s information has been retrieved.', 
                 'last_running_hunt'=> [
+                    'hunt_user'=> $data['hunt_user'], 
                     'running_hunt_found'=> $data['running_hunt_found'], 
                     'remaining_clues'=> $data['remaining_clues'],
                     'total_remaining_clues'=> $data['total_remaining_clues'],
@@ -52,7 +53,7 @@ class RandomHuntController extends Controller
     public function terminate($hunt_user)
     {
         $hunt_user = (new HuntUserRepository)->find($hunt_user);
-        if ($hunt_user) {
+        if (!$hunt_user) {
             return response()->json(['message'=> 'You have provided invalid hunt user id provided.'], 500);
         }
         $hunt_user->status = 'terminated';
