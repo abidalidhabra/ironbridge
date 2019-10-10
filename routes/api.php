@@ -192,3 +192,11 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
 		Route::post('useTheGoldCoupon', 'DiscountCouponController@useTheGoldCoupon');
 	});
 });
+
+Route::group(['namespace' => 'Api\Hunt', 'prefix' => 'hunts', 'middleware' => 'jwt-auth'], function ($router) {
+
+	/** Hunt requests **/
+	Route::post('random/participate', 'RandomHuntController@participate');
+	Route::get('random/hunts', 'RandomHuntController@initiateTheHunts');
+	Route::put('random/{hunt_user}/terminate', 'RandomHuntController@terminate');
+});

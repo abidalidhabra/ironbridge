@@ -10,11 +10,11 @@ use App\Repositories\Hunt\HuntUserRepository;
 class PauseTheClueRepository implements ClueInterface
 {
     
-    public function action($huntUserDetailId)
+    public function action($request)
     {
 
         // get the hunt user detail
-        $huntUserDetail = (new HuntUserDetailRepository)->find($huntUserDetailId);
+        $huntUserDetail = (new HuntUserDetailRepository)->find($request->hunt_user_details_id);
 
         // update the hunt user
         (new HuntUserRepository)->update(['status'=> 'paused'], ['_id'=> $huntUserDetail->hunt_user_id]);

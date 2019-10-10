@@ -26,9 +26,10 @@ class ParticipateRequest extends FormRequest
     public function rules()
     {
         return [
-            'hunt_id'=> "required|string|exists:hunts,_id",
+            'random'=> "required_without_all:hunt_id,hunt_mode",
+            'hunt_id'=> "string|exists:hunts,_id|required_without:random",
             'complexity'=> "required|integer|between:1,5",
-            'hunt_mode'=>'required|string|in:challenge,normal'
+            'hunt_mode'=>'string|in:challenge,normal|required_with:hunt_id'
         ];
     }
 

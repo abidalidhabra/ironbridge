@@ -301,7 +301,7 @@ class HuntController extends Controller
 
     public function participateInHunt(ParticipateRequest $request){
 
-        $user       = auth()->User();
+        $user       = auth()->user();
         $complexity = (int)$request->complexity;
         $huntId     = $request->hunt_id;
         $huntMode   = $request->hunt_mode;

@@ -32,7 +32,7 @@ class ClueController extends Controller
     public function actionOnClue(ActionOnClueRequest $request){
 
         $initializeAction = (new ClueFactory)->initializeAction($request->status);
-        $data = $initializeAction->action($request->hunt_user_details_id);
+        $data = $initializeAction->action($request);
         $rewardData = $data['rewardData'] ?? null;
         $finishedIn = $data['finishedIn'] ?? 0;
         return response()->json(['message'=>'Action on clue has been taken successfully.', 'hunt_info'=> $rewardData, 'finished_in'=> $finishedIn]);

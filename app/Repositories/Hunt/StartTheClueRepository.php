@@ -9,10 +9,10 @@ use App\Repositories\Hunt\HuntUserRepository;
 class StartTheClueRepository implements ClueInterface
 {
     
-    public function action($huntUserDetailId)
+    public function action($request)
     {
         // get the hunt user detail
-        $huntUserDetail = (new HuntUserDetailRepository)->find($huntUserDetailId);
+        $huntUserDetail = (new HuntUserDetailRepository)->find($request->hunt_user_details_id);
 
         // update the hunt user
         (new HuntUserRepository)->update(['status'=> 'running'], ['_id'=> $huntUserDetail->hunt_user_id]);

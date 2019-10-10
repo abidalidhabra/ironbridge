@@ -6,5 +6,5 @@ use App\Models\v2\HuntUserDetail;
 
 interface ClueInterface
 {
-    public function action($huntUserDetailId);
+    public function action($request);
 }

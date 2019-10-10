@@ -11,11 +11,11 @@ use MongoDB\BSON\UTCDateTime;
 class RevealTheClueRepository implements ClueInterface
 {
     
-    public function action($huntUserDetailId)
+    public function action($request)
     {
         
         // get the hunt user detail
-        $huntUserDetail = (new HuntUserDetailRepository)->find($huntUserDetailId);
+        $huntUserDetail = (new HuntUserDetailRepository)->find($request->hunt_user_details_id);
 
         // mark the hunt_user as running and start the hunt_user if its first clue
         $huntUserDetails = $huntUserDetail->hunt_user->hunt_user_details()->get();
@@ -29,6 +29,9 @@ class RevealTheClueRepository implements ClueInterface
         $huntUserDetail->revealed_at = now();
         if (!$huntUserDetail->started_at) {
             $huntUserDetail->started_at = now();
+        }
+        if ($request->filled('latitude') && $request->filled('latitude')) {
+            $huntUserDetail->location = ['type'=> 'Point', 'coordinates'=> [$request->longitude, $request->latitude]];
         }
         $huntUserDetail->status = 'running';
         $huntUserDetail->save();

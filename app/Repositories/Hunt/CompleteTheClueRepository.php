@@ -16,11 +16,11 @@ use stdClass;
 class CompleteTheClueRepository implements ClueInterface
 {
     
-    public function action($huntUserDetailId)
+    public function action($request)
     {
 
         // get single hunt user detail
-        $huntUserDetail = (new HuntUserDetailRepository)->find($huntUserDetailId);
+        $huntUserDetail = (new HuntUserDetailRepository)->find($request->hunt_user_details_id);
 
         // get all hunt user details
         $huntUserDetails = $huntUserDetail->hunt_user->hunt_user_details()->get();
