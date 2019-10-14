@@ -3,13 +3,15 @@
 namespace App\Http\Controllers\Api\Hunt;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Hunt\RevokeTheRevealRequest;
 use App\Http\Requests\v1\ParticipateRequest;
 use App\Repositories\Hunt\Factory\HuntFactory;
 use App\Repositories\Hunt\GetLastParticipatedRandomHuntRepository;
 use App\Repositories\Hunt\GetLastRunningRandomHuntRepository;
+use App\Repositories\Hunt\HuntUserDetailRepository;
 use App\Repositories\Hunt\HuntUserRepository;
-use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Http\Request;
 
 class RandomHuntController extends Controller
 {
@@ -61,5 +63,13 @@ class RandomHuntController extends Controller
         $hunt_user->save();
         $hunt_user->hunt_user_details()->where('status', '!=', 'completed')->update(['status'=> 'terminated']);
         return response()->json(['message' => 'Hunt is successfully terminated.']);
+    }
+
+    public function revokeTheReveal(RevokeTheRevealRequest $request)
+    {
+        $huntUserDetail = (new HuntUserDetailRepository)->find($request->hunt_user_details_id);
+        $huntUserDetail->revealed_at = null;
+        $huntUserDetail->save();
+        return response()->json(['message' => 'Hunt reveal is successfully revoked.']);
     }
 }
