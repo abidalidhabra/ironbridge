@@ -8,8 +8,8 @@ use App\Factories\MinigameEventFactory;
 use App\Helpers\ResponseHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MiniGame\MarkMiniGameAsFavouriteRequest;
+use App\Http\Requests\MiniGame\MarkMiniGameAsUnfinish;
 use App\Http\Requests\MiniGame\MarkMiniGameTutorialAsCompleteRequest;
-use App\Http\Requests\MiniGame\PracticeGameUnfinishRequest;
 use App\Http\Requests\MiniGame\UnlockAMiniGameRequest;
 use App\Http\Requests\v2\PracticeGameFinishRequest;
 use App\Models\v1\Game;
@@ -17,6 +17,7 @@ use App\Models\v1\User;
 use App\Repositories\Contracts\UserInterface;
 use App\Repositories\MiniGameRepository;
 use Exception;
+use Throwable;
 use Illuminate\Http\Request;
 use MongoDB\BSON\ObjectId as MongoDBId;
 use MongoDB\BSON\UTCDateTime as MongoDBDate;
@@ -135,15 +136,10 @@ class MGController extends Controller
         return response()->json([ 'message'=> 'Minigame favourite status updated.', 'favourite'=> $favouriteStatus]);
     }
 
-     public function markMiniGameAsUncomplete(PracticeGameUnfinishRequest $request)
+     public function markMiniGameAsUncomplete(MarkMiniGameAsUnfinish $request)
     {
         try {
-            
-            $practiceGameUser = (new MiniGameRepository(auth()->user()))->find($request->practice_game_user_id);
-            
-            $request->request->add(['game_id'=> $practiceGameUser->game_id]);
-            $minigameHistoryRequest = $request->except('practice_game_user_id');
-            (new MinigameEventFactory('practice', $request->status, $minigameHistoryRequest))->add();
+            (new MinigameEventFactory($request->type, $request->status, $request->all()))->add();
             return response()->json([ 'message'=> 'This mini game is marked as uncompleted.']);
         } catch (Throwable $e) {
             return ResponseHelpers::errorResponse($e);

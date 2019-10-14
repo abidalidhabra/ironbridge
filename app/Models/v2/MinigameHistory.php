@@ -7,7 +7,7 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class MinigameHistory extends Eloquent
 {
-    protected $fillable = ['game_id', 'time', 'score', 'action', 'from', 'random_mode', 'complexity'];
+    protected $fillable = ['game_id', 'time', 'score', 'action', 'from', 'random_mode', 'complexity', 'hunt_user_detail_id', 'practice_game_user_id'];
 
     /**
      * The attributes that should be cast to native types.

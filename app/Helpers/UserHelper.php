@@ -4,6 +4,7 @@ namespace App\Helpers;
 use App\Models\v1\Avatar;
 use App\Models\v1\City;
 use App\Models\v1\Game;
+use App\Models\v1\News;
 use App\Models\v1\WidgetItem;
 use App\Repositories\EventRepository;
 use Auth;
@@ -45,6 +46,7 @@ class UserHelper {
 			'user_widgets' => $user->widgets,
 			'events_cities' => $eventsCities,
 			'free_outfit_occupied' => $user->free_outfit_taken,
+			'latest_news' => News::latest()->limit(1)->get()->map(function($news) { return $news->setHidden(['valid_till', 'updated_at', 'created_at']); }),
 			// 'used_widgets' => $user->used_widgets,
 			// 'plans' => $plans,
 			// 'events_data' => $events,

@@ -7,7 +7,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class PracticeGameUnfinishRequest extends FormRequest
+class MarkMiniGameAsUnfinish extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,7 +27,9 @@ class PracticeGameUnfinishRequest extends FormRequest
     public function rules()
     {
         return [
-            'practice_game_user_id' => ['required', 'exists:practice_game_users,_id', new UserTitleOfMiniGame],
+            'type' => ['required', 'in:hunt,practice,event'],
+            'hunt_user_details_id' => ["exists:hunt_user_details,_id",'required_if:type,hunt'],
+            'practice_game_user_id' => ['exists:practice_game_users,_id', new UserTitleOfMiniGame, 'required_if:type,practice'],
             'random_mode' => ['required', 'string', 'in:true,false'],
             'status' => ['required', 'string', 'in:exited,failed'],
             'score' => ['required', 'numeric', 'integer', 'min:0'],

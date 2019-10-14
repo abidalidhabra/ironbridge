@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Hunt;
 
+use App\Factories\MinigameEventFactory;
 use App\Models\v1\WidgetItem;
 use App\Models\v2\HuntReward;
 use App\Models\v2\HuntUserDetail;
@@ -49,7 +50,7 @@ class CompleteTheClueRepository implements ClueInterface
         if ($stillRemain == 1) {
             
             // get the total completion except current clue
-            $totalFinishedIn += $huntUserDetails->where('_id', '!=', $huntUserDetailId)->sum('finished_in');
+            $totalFinishedIn += $huntUserDetails->where('_id', '!=', $huntUserDetail->id)->sum('finished_in');
 
             // mark hunt_user as completed and set the ended_at of hunt_user 
             $dataToBeUpdate = ['status'=> 'completed', 'ended_at'=> new UTCDateTime(now()), 'finished_in'=> $totalFinishedIn];
@@ -61,6 +62,9 @@ class CompleteTheClueRepository implements ClueInterface
 
         // unlock the minigame if it is locked in minigame module
         $this->unlockeMiniGameIfLocked($huntUserDetail->game_id, auth()->user()->id);
+
+        // log the minigame statistic
+        $this->logTheMinigmeHistory($huntUserDetail);
 
         //send the response
         return ['huntUserDetail'=> $huntUserDetail, 'rewardData'=> $rewardData, 'finishedIn'=> $totalFinishedIn];
@@ -160,5 +164,14 @@ class CompleteTheClueRepository implements ClueInterface
         unset($selectedReward->min_range, $selectedReward->max_range);
         Log::info([ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData]);
         return [ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData];
+    }
+
+    public function logTheMinigmeHistory($huntUserDetail)
+    {
+        $data['hunt_user_detail_id'] = $huntUserDetail->id;
+        $data['game_id'] = $huntUserDetail->game_id;
+        $data['time'] = $huntUserDetail->finished_in;
+        $data['complexity'] = $huntUserDetail->hunt_user->complexity;
+        (new MinigameEventFactory('hunt', 'completed', $data))->add();
     }
 }
