@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Events\MiniGames\Factory\MinigamesEventFactory;
 use App\Exceptions\PracticeMiniGame\FreezeModeRunningException;
 use App\Exceptions\PracticeMiniGame\PieceAlreadyCollectedException;
 use App\Models\v1\Game;
@@ -56,6 +57,8 @@ class MiniGameRepository implements MiniGameInterface
 
         // Allot a key to user's account if aligible
         $availableSkeletonKeys = $this->allotKeyIfEligible();
+
+        (new MinigamesEventFactory('practice', 'completed', $request->all()))->handle();
 
         return ['available_skeleton_keys'=> $availableSkeletonKeys, 'completion_times'=> $practiceGameUser->completion_times];
     }
