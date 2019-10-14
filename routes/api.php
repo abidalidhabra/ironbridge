@@ -197,7 +197,7 @@ Route::group(['namespace' => 'Api\Hunt', 'prefix' => 'hunts', 'middleware' => 'j
 
 	/** Hunt requests **/
 	Route::post('random/participate', 'RandomHuntController@participate');
-	Route::get('random/getHuntsOnStartup', 'RandomHuntController@initiateTheHunts');
+	Route::get('getHuntsOnStartup', 'RandomHuntController@initiateTheHunts');
 	Route::put('random/{hunt_user}/terminate', 'RandomHuntController@terminate');
 	Route::post('random/revokeTheReveal', 'RandomHuntController@revokeTheReveal');
 });
