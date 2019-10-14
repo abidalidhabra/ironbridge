@@ -179,6 +179,7 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
 		Route::post('unlockAMiniGame', 'MGController@unlockAMiniGame');
 		Route::post('markMiniGameTutorialAsComplete', 'MGController@markMiniGameTutorialAsComplete');
         Route::post('markMiniGameAsFavourite', 'MGController@markMiniGameAsFavourite');
+		Route::post('markMiniGameAsUncomplete', 'MGController@markMiniGameAsUncomplete');
 		
 		/** Event **/
 		Route::get('getEventsCities', 'EventController@getEventsCities');
