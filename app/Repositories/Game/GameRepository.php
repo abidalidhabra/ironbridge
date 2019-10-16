@@ -26,4 +26,9 @@ class GameRepository
     {
         return $this->model->whereHas($relation, $callback);
     }
+
+    public function getModel()
+    {
+        return $this->model;
+    }
 }
