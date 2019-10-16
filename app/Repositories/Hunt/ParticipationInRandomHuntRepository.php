@@ -64,7 +64,13 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
 
     public function randomizeGames(int $noOfClues, int $complexity) :Collection
     {
-        return (new GameRepository)->all(['_id'])->shuffle()->take($noOfClues);
+        return (new GameRepository)
+                ->getModel()
+                ->where('status', true)
+                ->whereIn('identifier', ['bubble_shooter', 'block', 'snake', 'domino', 'slices', 'hexa', 'sudoku'])
+                ->get(['_id'])
+                ->shuffle()
+                ->take($noOfClues);
     }
 
     public function bypassPreviousHunt()
