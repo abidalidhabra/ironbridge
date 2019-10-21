@@ -206,5 +206,5 @@ Route::group(['namespace' => 'Api\Hunt', 'prefix' => 'hunts', 'middleware' => 'j
 Route::group(['namespace' => 'Api\Profile', 'prefix' => 'profile', 'middleware' => 'jwt-auth'], function ($router) {
 
 	/** Hunt requests **/
-	Route::get('getRelics', 'ProfileController@getRelics');
+	Route::get('getRelicsData', 'ProfileController@getRelics');
 });
