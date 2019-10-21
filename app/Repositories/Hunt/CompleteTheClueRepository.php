@@ -83,7 +83,7 @@ class CompleteTheClueRepository implements ClueInterface
         /** Generate Reward **/
         $randNumber  = rand(1, 1000);
         // $randNumber = 950;
-        $randNumber = 755;
+        // $randNumber = 755;
         // $randNumber = 5;
         $huntUser    = $huntUserDetail->hunt_user()->select('complexity','user_id')->first();
         $complexity  = $huntUser->complexity;
