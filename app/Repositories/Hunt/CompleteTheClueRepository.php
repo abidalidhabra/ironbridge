@@ -83,6 +83,7 @@ class CompleteTheClueRepository implements ClueInterface
         /** Generate Reward **/
         $randNumber  = rand(1, 1000);
         // $randNumber = 950;
+        $randNumber = 755;
         // $randNumber = 5;
         $huntUser    = $huntUserDetail->hunt_user()->select('complexity','user_id')->first();
         $complexity  = $huntUser->complexity;
@@ -103,7 +104,7 @@ class CompleteTheClueRepository implements ClueInterface
         if ($selectedReward->widgets_order && is_array($selectedReward->widgets_order)) {
             
             $widgetRandNumber    = rand(1, 1000);
-            // $widgetRandNumber    = 301;
+            $widgetRandNumber    = 301;
             $widgetOrder         = collect($selectedReward->widgets_order);
             $gotchaDesiredWidget = true;
             $countableWidget     = $widgetOrder->where('min', '<=', $widgetRandNumber)->where('max','>=',$widgetRandNumber)->first();
@@ -172,7 +173,7 @@ class CompleteTheClueRepository implements ClueInterface
         $rewardData['user_id'] = $userId;
         (new LogTheHuntRewardService)->add($rewardData);
         unset($selectedReward->min_range, $selectedReward->max_range);
-        unset($rewardData['hunt_user_id'], $rewardData['user_id']);
+        unset($rewardData['hunt_user_id'], $rewardData['user_id'], $rewardData['type']);
         Log::info([ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData]);
         return [ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData];
     }

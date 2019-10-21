@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
 use App\Models\v1\Game;
+use App\Repositories\AppStatisticRepository;
 use App\Repositories\MiniGameRepository;
 use App\Rules\CheckThePassword;
 use Exception;
@@ -49,7 +50,12 @@ class AuthController extends Controller
         // });
         // exit;
        try {
-           
+
+            $maintenanceMode = (new AppStatisticRepository)->where('_id', 'maintenance')->where('value', true)->first();
+            if ($maintenanceMode) {
+                return response()->json([ 'message'=>'Sorry! app is under maintenance.' ],503);
+            }
+
             $request['username'] = strtolower($request->get('username'));
             $validator = Validator::make($request->all(),[
                             'username' => "required|exists:users,username",
