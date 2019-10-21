@@ -29,7 +29,10 @@ class ActionOnClueRequest extends FormRequest
         $status = $this->status;
         return [
             'status' => ["required", "in:reveal,running,paused,completed"],
-            'hunt_user_details_id' => ["required", "exists:hunt_user_details,_id", new CheckParticipationFromClue(auth()->user()->id, $status)]
+            'hunt_user_details_id' => ["required", "exists:hunt_user_details,_id", new CheckParticipationFromClue(auth()->user()->id, $status)],
+            'latitude' => ["numeric", "required_if:status,running"],
+            'longitude' => ["numeric", "required_if:status,running"],
+            'km_walked' => ["numeric", "required_if:status,running"],
         ];
     }
 

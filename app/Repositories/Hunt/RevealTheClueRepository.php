@@ -30,12 +30,12 @@ class RevealTheClueRepository implements ClueInterface
         if (!$huntUserDetail->started_at) {
             $huntUserDetail->started_at = now();
         }
-        if ($request->filled('latitude') && $request->filled('latitude')) {
-            $huntUserDetail->location = ['type'=> 'Point', 'coordinates'=> [$request->longitude, $request->latitude]];
-        }
-        if ($request->filled('km_walked')) {
-            $huntUserDetail->km_walked = (float)$request->km_walked;
-        }
+        // if ($request->filled('latitude') && $request->filled('latitude')) {
+        //     $huntUserDetail->location = ['type'=> 'Point', 'coordinates'=> [$request->longitude, $request->latitude]];
+        // }
+        // if ($request->filled('km_walked')) {
+        //     $huntUserDetail->km_walked = (float)$request->km_walked;
+        // }
         $huntUserDetail->status = 'running';
         $huntUserDetail->save();
         
