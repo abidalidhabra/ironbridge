@@ -3,6 +3,7 @@
 namespace App\Models\v2;
 
 //use Illuminate\Database\Eloquent\Model;
+use App\Collections\HuntUserCollection;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class HuntUser extends Eloquent
@@ -56,5 +57,16 @@ class HuntUser extends Eloquent
     public function hunt_complexity()
     {
         return $this->belongsTo('App\Models\v2\HuntComplexity','hunt_complexity_id');
+    }
+
+    /**
+     * Create a new Eloquent Collection instance.
+     *
+     * @param  array  $models
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function newCollection(array $models = [])
+    {
+        return new HuntUserCollection($models);
     }
 }

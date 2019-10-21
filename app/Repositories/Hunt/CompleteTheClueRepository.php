@@ -10,6 +10,7 @@ use App\Models\v2\PracticeGameUser;
 use App\Repositories\Hunt\Contracts\ClueInterface;
 use App\Repositories\Hunt\HuntUserDetailRepository;
 use App\Repositories\Hunt\HuntUserRepository;
+use App\Services\HuntReward\LogTheHuntRewardService;
 use Illuminate\Support\Facades\Log;
 use MongoDB\BSON\UTCDateTime;
 use stdClass;
@@ -81,7 +82,8 @@ class CompleteTheClueRepository implements ClueInterface
 
         /** Generate Reward **/
         $randNumber  = rand(1, 1000);
-        $randNumber = 950;
+        // $randNumber = 950;
+        // $randNumber = 5;
         $huntUser    = $huntUserDetail->hunt_user()->select('complexity','user_id')->first();
         $complexity  = $huntUser->complexity;
         $user        = auth()->user();
@@ -93,6 +95,8 @@ class CompleteTheClueRepository implements ClueInterface
         if (!$selectedReward) {
             return [ 'reward_messages' => 'No reward found.', 'reward_data' => new stdClass()];
         }
+        $rewardData['type'] = $selectedReward->reward_type;
+        $rewardData['hunt_user_id'] = $huntUser->id;
 
         $rewardData['random_number'] = $randNumber;
         
@@ -128,7 +132,11 @@ class CompleteTheClueRepository implements ClueInterface
 
                 $widgetOrder = $widgetOrder->where('widget_category', '!=', $widgetCategory)->where('widget_name', '!=' ,$widgetName);
                 $countableWidget = $widgetOrder->first();
-                if ($widgetOrder->count() == 0) { goto distSkeleton; }
+                if ($widgetOrder->count() == 0) {
+                    $rewardData['type'] = 'skeleton_key';
+                    $selectedReward->skeletons = 1;
+                    goto distSkeleton; 
+                }
                 goto findWidget; 
             }
 
@@ -161,7 +169,10 @@ class CompleteTheClueRepository implements ClueInterface
             $rewardData['golds'] = $selectedReward->gold_value;
         }
 
+        $rewardData['user_id'] = $userId;
+        (new LogTheHuntRewardService)->add($rewardData);
         unset($selectedReward->min_range, $selectedReward->max_range);
+        unset($rewardData['hunt_user_id'], $rewardData['user_id']);
         Log::info([ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData]);
         return [ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData];
     }

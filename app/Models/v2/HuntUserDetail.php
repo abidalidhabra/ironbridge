@@ -23,6 +23,7 @@ class HuntUserDetail extends Eloquent
         'hunt_clue_id',
         'skipped_at',
         'failures_at',
+        'km_walked',
 	];
 
     protected $attributes = [
@@ -31,6 +32,7 @@ class HuntUserDetail extends Eloquent
         'ended_at'    => null,
         'finished_in' => 0,
         'status'      => 'tobestart',
+        'km_walked' => 0,
         // 'skipped_at'  => null,
         // 'failures_at' => [],
     ];

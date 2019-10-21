@@ -33,6 +33,9 @@ class RevealTheClueRepository implements ClueInterface
         if ($request->filled('latitude') && $request->filled('latitude')) {
             $huntUserDetail->location = ['type'=> 'Point', 'coordinates'=> [$request->longitude, $request->latitude]];
         }
+        if ($request->filled('km_walked')) {
+            $huntUserDetail->km_walked = (float)$request->km_walked;
+        }
         $huntUserDetail->status = 'running';
         $huntUserDetail->save();
         
