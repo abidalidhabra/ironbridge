@@ -17,12 +17,12 @@ class StartTheClueRepository implements ClueInterface
         // update the hunt user
         (new HuntUserRepository)->update(['status'=> 'running'], ['_id'=> $huntUserDetail->hunt_user_id]);
 
-        // if ($request->filled('km_walked')) {
-        //     $huntUserDetail->km_walked = (float)$request->km_walked;
+        // if ($request->filled('walked')) {
+        //     $huntUserDetail->walked = (float)$request->walked;
         // }
         // start the clue
         $huntUserDetail->location = ['type'=> 'Point', 'coordinates'=> [$request->longitude, $request->latitude]];
-        $huntUserDetail->km_walked = (float)$request->km_walked;
+        $huntUserDetail->walked = (float)$request->walked;
         $huntUserDetail->started_at = now();
         $huntUserDetail->status = 'running';
         $huntUserDetail->save();

@@ -15,7 +15,7 @@ class HuntUserCollection extends Collection
     {
         $kmWalked = 0;
         $this->each(function ($hutUser) use (&$kmWalked) {
-            $kmWalked += $hutUser->hunt_user_details()->sum('km_walked');
+            $kmWalked += ($hutUser->hunt_user_details()->sum('walked') / 1000);
             return $hutUser;
         });
         return $kmWalked;

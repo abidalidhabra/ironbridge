@@ -32,7 +32,7 @@ class ActionOnClueRequest extends FormRequest
             'hunt_user_details_id' => ["required", "exists:hunt_user_details,_id", new CheckParticipationFromClue(auth()->user()->id, $status)],
             'latitude' => ["numeric", "required_if:status,running"],
             'longitude' => ["numeric", "required_if:status,running"],
-            'km_walked' => ["numeric", "required_if:status,running"],
+            'walked' => ["numeric", "required_if:status,running"],
         ];
     }
 
