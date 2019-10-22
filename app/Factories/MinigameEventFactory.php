@@ -35,6 +35,12 @@ class MinigameEventFactory
         }
     }
 
+    public function override()
+    {
+        $minigameHistory = MinigameHistory::where('practice_game_user_id', $this->rawData['practice_game_user_id'])->latest()->first()->delete();
+        $this->add();
+    }
+
     public function prepareData()
     {
         $modelData = new MinigameHistory();

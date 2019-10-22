@@ -37,32 +37,42 @@ class MiniGameRepository implements MiniGameInterface
         $practiceGameUser = PracticeGameUser::where('_id', $request->practice_game_user_id)->first();
         
         // Just Increase the completion time of minigame
-        if ($request->increase_completions_time == 'true') {
-            $this->addCompletionTimes($practiceGameUser);
-        }
+        // if ($request->increase_completions_time == 'true') {
+        //     $this->addCompletionTimes($practiceGameUser);
+        // }
         
         // Throw an exception if minigame's piece is already collected
         // if ($practiceGameUser->piece_collected === true) {
         //     throw new PieceAlreadyCollectedException('This mini game is already completed, try different game.', $practiceGameUser->completion_times);
         // }
 
-        // Throw an exception if cooldown period is active
-        if ($practiceGameUser->completed_at && $practiceGameUser->completed_at->diffInHours() <= 24) {
-        // if ($practiceGameUser->completed_at && $practiceGameUser->completed_at->gte(today())) {
-            throw new FreezeModeRunningException('This mini game is under the freeze mode.', $practiceGameUser->completion_times);
-        }
-
-        // Mark the minigame as complete and piece as collected
-        $this->markPracticeMiniGameAsComplete($practiceGameUser);
-
-        // Allot a key to user's account if aligible
-        $availableSkeletonKeys = $this->allotKeyIfEligible();
 
         $request->request->add(['game_id'=> $practiceGameUser->game_id]);
         $minigameHistoryRequest = $request->except('increase_completions_time');
-        (new MinigameEventFactory('practice', 'completed', $minigameHistoryRequest))->add();
 
-        return ['available_skeleton_keys'=> $availableSkeletonKeys, 'completion_times'=> $practiceGameUser->completion_times];
+        if ($request->type == 'finished') {
+            
+            // Mark the minigame as finish
+            (new MinigameEventFactory('practice', 'completed', $minigameHistoryRequest))->override();
+        }else{
+            
+            $this->addCompletionTimes($practiceGameUser);
+
+            // Throw an exception if cooldown period is active
+            if ($practiceGameUser->completed_at && $practiceGameUser->completed_at->diffInHours() <= 24) {
+            // if ($practiceGameUser->completed_at && $practiceGameUser->completed_at->gte(today())) {
+                throw new FreezeModeRunningException('This mini game is under the freeze mode.', $practiceGameUser->completion_times);
+            }
+
+            // Mark the minigame as complete and piece as collected
+            $this->markPracticeMiniGameAsComplete($practiceGameUser);
+    
+            // Allot a key to user's account if aligible
+            $availableSkeletonKeys = $this->allotKeyIfEligible();
+            (new MinigameEventFactory('practice', 'completed', $minigameHistoryRequest))->add();
+        }
+
+        return ['available_skeleton_keys'=> $availableSkeletonKeys ?? $this->user->available_skeleton_keys, 'completion_times'=> $practiceGameUser->completion_times];
     }
 
     public function createIfnotExist()

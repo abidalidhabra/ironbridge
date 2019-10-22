@@ -174,6 +174,10 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::group(['middleware' => ['permission:View Hunt Loot Tables']], function () {
 		Route::resource('rewards', 'RewardController');
 	});
+	Route::get('sponser-hunts/list', 'SponserHuntController@list')->name('sponser-hunts.list');
+	Route::get('sponser-hunts/hunt-html', 'SponserHuntController@huntHTML')->name('sponser-hunts.hunt-html');
+	Route::get('sponser-hunts/clue-html', 'SponserHuntController@clueHTML')->name('sponser-hunts.clue-html');
+	Route::resource('sponser-hunts', 'SponserHuntController');
 });
 
 // Auth::routes();
