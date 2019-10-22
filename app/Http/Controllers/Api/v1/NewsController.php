@@ -32,7 +32,9 @@ class NewsController extends Controller
         $skip = $page * $take;
 
         //$news = News::where('valid_till','>',now())->paginate();
-        $news = News::select('_id','subject','description','created_at','image')->paginate();
+        $news = News::select('_id','subject','description','created_at','image')
+                    ->orderBy('created_at','desc')
+                    ->paginate();
         
         return response()->json(["message"=> "News has been retrieved successfully.", 'news' => $news->all(), 'last_page' => $news->lastPage()]);
     }
