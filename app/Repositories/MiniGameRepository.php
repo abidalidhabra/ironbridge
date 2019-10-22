@@ -57,6 +57,7 @@ class MiniGameRepository implements MiniGameInterface
         }else{
             
             $this->addCompletionTimes($practiceGameUser);
+            (new MinigameEventFactory('practice', 'completed', $minigameHistoryRequest))->add();
 
             // Throw an exception if cooldown period is active
             if ($practiceGameUser->completed_at && $practiceGameUser->completed_at->diffInHours() <= 24) {
@@ -69,7 +70,6 @@ class MiniGameRepository implements MiniGameInterface
     
             // Allot a key to user's account if aligible
             $availableSkeletonKeys = $this->allotKeyIfEligible();
-            (new MinigameEventFactory('practice', 'completed', $minigameHistoryRequest))->add();
         }
 
         return ['available_skeleton_keys'=> $availableSkeletonKeys ?? $this->user->available_skeleton_keys, 'completion_times'=> $practiceGameUser->completion_times];

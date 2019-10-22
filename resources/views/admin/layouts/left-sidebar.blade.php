@@ -78,6 +78,7 @@
 								Route::currentRouteName() == 'admin.complexityTarget.index' || 
 								Route::currentRouteName() == 'admin.sponser-hunts.index' || 
 								Route::currentRouteName() == 'admin.sponser-hunts.create' || 
+								Route::currentRouteName() == 'admin.sponser-hunts.edit' || 
 								Route::currentRouteName() == 'admin.rewards.index' ) {{ 'show' }} @endif">
 								@if($admin->hasPermissionTo('View Treasure Locations'))
 								<a href="{{ route('admin.mapsList') }}" class="@if(Route::currentRouteName() == 'admin.mapsList' ||Route::currentRouteName() == 'admin.add_location' || Route::currentRouteName() == 'admin.boundary_map' || Route::currentRouteName() == 'admin.starComplexityMap' || Route::currentRouteName() == 'admin.edit_location') {{ 'activelistsub' }} @endif">Treasure Locations</a>
@@ -88,10 +89,11 @@
 								@if($admin->hasPermissionTo('View Hunt Loot Tables'))
 									<a href="{{ route('admin.rewards.index') }}" class="@if(Route::currentRouteName() == 'admin.rewards.index') {{ 'activelistsub' }} @endif">Hunt Loot Tables</a>
 								@endif
-							{{-- 	<a 
+								{{-- <a 
 									href="{{ route('admin.sponser-hunts.index') }}" 
 									class="@if(
 									Route::currentRouteName() == 'admin.sponser-hunts.create' || 
+									Route::currentRouteName() == 'admin.sponser-hunts.edit' || 
 									Route::currentRouteName() == 'admin.sponser-hunts.index') {{ 'activelistsub' }} @endif">
 								Sponser Hunts</a> --}}
 							</div>
