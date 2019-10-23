@@ -8,11 +8,13 @@
             <div class="col-md-12 text-right">
                 <a href="{{ route('admin.sponser-hunts.index') }}" class="btn back-btn">Back</a>
             </div>
+            @if(auth()->user()->hasPermissionTo('Add Treasure Locations'))
             <div class="col-md-12">
                 <div class="row">
                     <h3>Add Sponser Hunt</h3>
                 </div>
             </div>
+            @endif
         </div>
     </div>
     <br/>

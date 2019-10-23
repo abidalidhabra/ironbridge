@@ -52,7 +52,7 @@
                             d._token = "{{ csrf_token() }}";
                         },
                         complete:function(){
-                            // afterfunction();
+                            initializeDeletePopup();
                             if( $('[data-toggle="tooltip"]').length > 0 )
                                 $('[data-toggle="tooltip"]').tooltip();
                         }
@@ -69,5 +69,28 @@
                         targets: [0,3,4],
                     }],
                 });
+
+    function initializeDeletePopup() {
+        $("a[data-action='delete']").confirmation({
+            container:"body",
+            btnOkClass:"btn btn-sm btn-success",
+            btnCancelClass:"btn btn-sm btn-danger",
+            onConfirm:function(event, element) {
+                event.preventDefault();
+                $.ajax({
+                    type: "DELETE",
+                    url: element.attr('href'),
+                    success: function(response){
+                        if (response.status == true) {
+                            toastr.success(response.message);
+                            table.ajax.reload();
+                        } else {
+                            toastr.warning(response.message);
+                        }
+                    }
+                });
+            }
+        }); 
+    }
 </script>
 @endsection

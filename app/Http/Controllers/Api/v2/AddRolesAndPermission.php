@@ -149,6 +149,10 @@ class AddRolesAndPermission extends Controller
 						['name' => 'View Analytics','guard_name' => 'admin', 'module'=>'Analytics'],
 						['name' => 'View Hunt Loot Tables','guard_name' => 'admin', 'module'=>'Manage Hunts / Hunt Loot Tables'],
 						['name' => 'Edit Hunt Loot Tables','guard_name' => 'admin', 'module'=>'Manage Hunts / Hunt Loot Tables'],
+						['name' => 'View Seasonal Hunt','guard_name' => 'admin', 'module'=>'Seasonal Hunt'],
+						['name' => 'Add Seasonal Hunt','guard_name' => 'admin', 'module'=>'Seasonal Hunt'],
+						['name' => 'Edit Seasonal Hunt','guard_name' => 'admin', 'module'=>'Seasonal Hunt'],
+						['name' => 'Delete Seasonal Hunt','guard_name' => 'admin', 'module'=>'Seasonal Hunt'],
 
 					];
 		
@@ -168,7 +172,9 @@ class AddRolesAndPermission extends Controller
 				$newPermission[] = $permissionId->id;
 			}
 		}
-		$admin->push('permission_ids',$newPermission,true);
+		if (count($newPermission)) {
+			$admin->push('permission_ids',$newPermission,true);
+		}
 		// Permission::create([]);
 		return response()->json(['message'=>'Permission updated successfully.']);
 

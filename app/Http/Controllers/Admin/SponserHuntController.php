@@ -94,6 +94,14 @@ class SponserHuntController extends Controller
     public function update(Request $request, $id)
     {
 
+        $validatedData = $request->validate([
+            'season_name'=> 'required|min:5',
+            'hunts.*.name'=> 'required|string|min:5',
+            'hunts.*.clues.*.complexity'=> 'required|numeric|integer|min:1',
+            'hunts.*.clues.*.name'=> 'required|string|min:5',
+            'hunts.*.clues.*.description'=> 'required|string|min:5'
+        ]);
+
         $season = Season::find($id);
         $season->name = $request->season_name;
         $season->active = $request->has('active')? true: false;
@@ -111,7 +119,14 @@ class SponserHuntController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $season = Season::find($id);
+        if ($season) {
+            $season->hunts()->delete();
+            $season->delete();
+            return response()->json(['status'=> true, 'message'=> 'Seasonal hunts deleted!']);
+        }else {
+            return response()->json(['status'=> false, 'message'=> 'Season hunts cannot delete']);
+        }
     }
 
     public function huntHTML(Request $request)
@@ -160,14 +175,21 @@ class SponserHuntController extends Controller
 
         return DataTables::of($seasons)
         ->addIndexColumn()
-        ->editColumn('created_at', function($event){
-            return $event->created_at->format('d-M-Y @ h:i A');
+        ->editColumn('created_at', function($season){
+            return $season->created_at->format('d-M-Y @ h:i A');
         })
-        ->editColumn('active', function($event){
-            return ($event->active)? "Active": "Inactive";
+        ->editColumn('active', function($season){
+            return ($season->active)? "Active": "Inactive";
         })
-        ->addColumn('action', function($event){
-            return '<a href="'.route('admin.sponser-hunts.edit',$event->id).'" data-toggle="tooltip" title="Edit" >Edit</a>';
+        ->addColumn('action', function($season){
+            if(auth()->user()->hasPermissionTo('Edit Seasonal Hunt')){
+                $html = '<a href="'.route('admin.sponser-hunts.edit',$season->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+            }
+
+            if(auth()->user()->hasPermissionTo('Delete Seasonal Hunt')){
+                $html .= ' <a href="'.route('admin.sponser-hunts.destroy',$season->id).'" data-action="delete" data-toggle="tooltip" title="Delete" ><i class="fa fa-trash iconsetaddbox"></i></a>';
+            }
+            return $html;
         })
         ->rawColumns(['action'])
         ->setTotalRecords(Season::count())
