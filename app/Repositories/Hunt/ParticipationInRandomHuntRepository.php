@@ -47,7 +47,7 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
     {
 
         // Get the games in random orders
-        $miniGames = $this->randomizeGames($request->total_clues, $request->complexity);
+        $miniGames = $this->randomizeGames($request->total_clues);
         
         // Reface the games in random orders
         $huntUserDetails = collect();
@@ -62,7 +62,7 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
         return $huntUser->hunt_user_details()->saveMany($huntUserDetails);
     }
 
-    public function randomizeGames(int $noOfClues, int $complexity) :Collection
+    public function randomizeGames(int $noOfClues) :Collection
     {
         return (new GameRepository)
                 ->getModel()

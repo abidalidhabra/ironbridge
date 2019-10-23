@@ -89,13 +89,13 @@
 								@if($admin->hasPermissionTo('View Hunt Loot Tables'))
 									<a href="{{ route('admin.rewards.index') }}" class="@if(Route::currentRouteName() == 'admin.rewards.index') {{ 'activelistsub' }} @endif">Hunt Loot Tables</a>
 								@endif
-								{{-- <a 
+								<a 
 									href="{{ route('admin.sponser-hunts.index') }}" 
 									class="@if(
 									Route::currentRouteName() == 'admin.sponser-hunts.create' || 
 									Route::currentRouteName() == 'admin.sponser-hunts.edit' || 
 									Route::currentRouteName() == 'admin.sponser-hunts.index') {{ 'activelistsub' }} @endif">
-								Sponser Hunts</a> --}}
+								Sponser Hunts</a>
 							</div>
 						</div>
 					</li>

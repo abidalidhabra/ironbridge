@@ -8,48 +8,22 @@
                 class="form-control" 
                 placeholder="Enter custom name"
                 value="{{ $hunt->name }}" 
-                name="hunts[{{$index}}][name]" >
+                name="hunts[{{$index}}][name]" 
+                alias-name="Hunt name"
+                minlength="5" >
             </div>
         </div>
-        <button type="button" class="btn btn-success add-hunt">+</button>
+        @if($last)
+            <button type="button" class="btn btn-success add-hunt">+</button>
+        @else
+            <button type="button" class="btn btn-danger remove-hunt">-</button>
+        @endif
     </div>
     <div class="clue-container">
-        {{-- <div class="single-clue-container" index="1">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label class="control-label">Clue Name:</label>
-                    <input 
-                    type="text" 
-                    class="form-control" 
-                    placeholder="Enter clue name"
-                    value="{{ old('clue_name.'.$index) }}" 
-                    name="hunts[{{$index}}][clues][0][name]">
-                    @error('clue_name.'.$index)
-                    <div class="text-muted text-danger"> {{ $errors->first('clue_name.'.$index) }} </div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-md-5">
-                <div class="form-group">
-                    <label class="control-label">Clue Description:</label>
-                    <textarea 
-                    rows="5" 
-                    class="form-control" 
-                    placeholder="Enter clue description" 
-                    name="hunts[{{$index}}][clues][0][description]">{{ old('clue_name.'.$index) }}</textarea>
-                    @error('clue_description.'.$index)
-                    <div class="text-muted text-danger"> {{ $errors->first('clue_description.'.$index) }} </div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-md-1">
-                <button type="button" class="btn btn-success add-clue">+</button>
-            </div>
-        </div> --}}
         @forelse($hunt->clues as $clueIndex=> $clue)
-        @include('admin.sponser-hunts.partials.clue-edit', ['index'=> $clueIndex, 'clue'=> $clue, 'huntIndex'=> $index])
+            @include('admin.sponser-hunts.partials.clue-edit', ['index'=> $clueIndex, 'clue'=> $clue, 'parentIndex'=> $index, 'last'=> $loop->last])
         @empty
-        <h4 class="text-danger">No Clue Found.</h4>
+            <h4 class="text-danger">No Clue Found.</h4>
         @endforelse
     </div>
 </div>

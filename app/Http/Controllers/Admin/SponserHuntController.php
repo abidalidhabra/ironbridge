@@ -4,11 +4,18 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\v2\Season;
+use App\Services\Hunt\SponserHunt\AllotGameToClueService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class SponserHuntController extends Controller
 {
+    private $allotGameToClueService;
+
+    public function __construct() {
+        $this->allotGameToClueService = new AllotGameToClueService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -37,13 +44,20 @@ class SponserHuntController extends Controller
      */
     public function store(Request $request)
     {
+        $validatedData = $request->validate([
+            'season_name'=> 'required|min:5',
+            'hunts.*.name'=> 'required|string|min:5',
+            'hunts.*.clues.*.complexity'=> 'required|numeric|integer|min:1',
+            'hunts.*.clues.*.name'=> 'required|string|min:5',
+            'hunts.*.clues.*.description'=> 'required|string|min:5'
+        ]);
+
         $season = Season::create([ 
             'name'=> $request->season_name,
-            'complexity'=> (int)$request->complexity,
             'active'=> $request->has('active')? true: false
         ]);
-        $season->hunts()->createMany($request->hunts);
-        return redirect()->route('admin.sponser-hunts.index');
+        $season->hunts()->createMany($this->allotGameToClueService->allot($request));
+        return response()->json(['status'=> true, 'message'=> 'Season added! Please wait we are redirecting you.']);
     }
 
     /**
@@ -82,12 +96,11 @@ class SponserHuntController extends Controller
 
         $season = Season::find($id);
         $season->name = $request->season_name;
-        $season->complexity = (int)$request->complexity;
         $season->active = $request->has('active')? true: false;
         $season->save();
         $season->hunts()->delete();
-        $season->hunts()->createMany($request->hunts);
-        return redirect()->back();
+        $season->hunts()->createMany($this->allotGameToClueService->allot($request));
+        return response()->json(['status'=> true, 'message'=> 'Season updated! Please wait we are redirecting you.']);
     }
 
     /**
@@ -112,7 +125,7 @@ class SponserHuntController extends Controller
     public function clueHTML(Request $request)
     {
         if($request->ajax()) {
-            return view('admin.sponser-hunts.partials.clue-creation')->with(['index'=> $request->index, 'huntIndex'=> $request->huntIndex]);
+            return view('admin.sponser-hunts.partials.clue-creation')->with(['index'=> $request->index, 'parentIndex'=> $request->parentIndex]);
         }
         throw new Exception("You are not allow make this request");
     }

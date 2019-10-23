@@ -7,10 +7,18 @@
             class="form-control" 
             placeholder="Enter clue name"
             value="{{ $clue['name'] }}" 
-            name="hunts[{{$huntIndex}}][clues][{{$index}}][name]">
-            @error('clue_name.'.$index)
-            <div class="text-muted text-danger"> {{ $errors->first('clue_name.'.$index) }} </div>
-            @enderror
+            name="hunts[{{$parentIndex}}][clues][{{$index}}][name]"
+            alias-name="Clue name"
+            minlength="5" >
+        </div>
+        <div class="form-group">
+            <label>Complexity:</label>
+            <select name="hunts[{{$parentIndex}}][clues][{{$index}}][complexity]" class="form-control" alias-name="Hunt complexity" required>
+                <option value="">Select Complexity</option>
+                @for($i = 1; $i<=5; $i++)
+                <option value="{{ $i }}" {{ ($i == $clue['complexity'])?'selected': '' }}>{{ $i }}</option>
+                @endfor
+            </select>
         </div>
     </div>
     <div class="col-md-5">
@@ -20,13 +28,16 @@
             rows="5" 
             class="form-control" 
             placeholder="Enter clue description" 
-            name="hunts[{{$huntIndex}}][clues][{{$index}}][description]">{{ $clue['description'] }}</textarea>
-            @error('clue_description.'.$index)
-            <div class="text-muted text-danger"> {{ $errors->first('clue_description.'.$index) }} </div>
-            @enderror
+            name="hunts[{{$parentIndex}}][clues][{{$index}}][description]"
+            alias-name="Clue description"
+            minlength="5">{{ $clue['description'] }}</textarea>
         </div>
     </div>
     <div class="col-md-1">
-        <button type="button" class="btn btn-success add-clue">+</button>
+        @if($last)
+            <button type="button" class="btn btn-success add-clue">+</button>
+        @else
+            <button type="button" class="btn btn-danger remove-clue">-</button>
+        @endif
     </div>
 </div>

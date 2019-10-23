@@ -7,7 +7,9 @@
                 type="text" 
                 class="form-control" 
                 placeholder="Enter custom name" 
-                name="hunts[{{$index}}][name]" >
+                name="hunts[{{$index}}][name]"
+                alias-name="Hunt name"
+                minlength="5" >
             </div>
         </div>
         <button type="button" class="btn btn-success add-hunt">+</button>
@@ -21,11 +23,18 @@
                     type="text" 
                     class="form-control" 
                     placeholder="Enter clue name"
-                    value="{{ old('clue_name.'.$index) }}" 
-                    name="hunts[{{$index}}][clues][0][name]">
-                    @error('clue_name.'.$index)
-                    <div class="text-muted text-danger"> {{ $errors->first('clue_name.'.$index) }} </div>
-                    @enderror
+                    name="hunts[{{$index}}][clues][0][name]"
+                    alias-name="Clue name"
+                    minlength="5" >
+                </div>
+                <div class="form-group">
+                    <label>Complexity:</label>
+                    <select name="hunts[{{$index}}][clues][0][complexity]" class="form-control" alias-name="Hunt complexity" required>
+                        <option value="">Select Complexity</option>
+                        @for($i = 1; $i<=5; $i++)
+                        <option value="{{ $i }}">{{ $i }}</option>
+                        @endfor
+                    </select>
                 </div>
             </div>
             <div class="col-md-5">
@@ -35,10 +44,9 @@
                     rows="5" 
                     class="form-control" 
                     placeholder="Enter clue description" 
-                    name="hunts[{{$index}}][clues][0][description]">{{ old('clue_name.'.$index) }}</textarea>
-                    @error('clue_description.'.$index)
-                    <div class="text-muted text-danger"> {{ $errors->first('clue_description.'.$index) }} </div>
-                    @enderror
+                    name="hunts[{{$index}}][clues][0][description]"
+                    alias-name="Clue description"
+                    minlength="5"></textarea>
                 </div>
             </div>
             <div class="col-md-1">

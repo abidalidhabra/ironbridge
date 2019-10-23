@@ -7,7 +7,7 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class Season extends Eloquent
 {
-    protected $fillable = ['name', 'active', 'complexity'];
+    protected $fillable = ['name', 'active'];
 
     public function hunts()
     {
