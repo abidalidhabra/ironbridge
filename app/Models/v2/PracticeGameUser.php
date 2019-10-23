@@ -4,6 +4,7 @@ namespace App\Models\v2;
 
 // use Illuminate\Database\Eloquent\Model;
 use App\Collections\MiniGameCollection;
+use App\Models\v2\MinigameHistory;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 use MongoDB\BSON\UTCDateTime;
 
@@ -48,5 +49,15 @@ class PracticeGameUser extends Eloquent
     public function newCollection(array $models = [])
     {
         return new MiniGameCollection($models);
+    }
+
+    public function histories()
+    {
+        return $this->hasMany(MinigameHistory::class)->where(['user_id'=> $this->user_id, 'from'=> 'practice']);
+    }
+
+    public function highestScore()
+    {
+        return $this->histories()->where(['action'=> 'completed'])->orderBy('score', 'desc')->select('_id', 'practice_game_user_id', 'score')->limit(1);
     }
 }
