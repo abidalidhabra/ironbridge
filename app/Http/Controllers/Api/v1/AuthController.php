@@ -56,9 +56,15 @@ class AuthController extends Controller
                 return response()->json([ 'message'=>'Sorry! app is under maintenance.' ],503);
             }
 
-            $request['username'] = strtolower($request->get('username'));
+            if ($request->has('username')) {
+                $request['username'] = strtolower($request->username);
+            }
+            if ($request->has('email')) {
+                $request['email'] = strtolower($request->email);
+            }
             $validator = Validator::make($request->all(),[
-                            'username' => "required|exists:users,username",
+                            'username' => "required_without:email|exists:users,username",
+                            'email' => "required_without:username|exists:users,email",
                             //'password' => ['required', new IsPasswordValid],
                             'password' => ['required', new CheckThePassword($request->username)],
                         ]);
@@ -66,8 +72,16 @@ class AuthController extends Controller
             if ($validator->fails()) {
                 return response()->json(['message'=>$validator->messages()], 422);
             }
+            
+            if ($request->has('email') && $request->has('username')) {
+                return response()->json(['message'=> ['username'=> ['username will not come with email.'] ] ], 422);
+            }
 
-            $credentials = $request->only('username', 'password');
+            if ($request->has('username')) {
+                $credentials = $request->only('username', 'password');
+            }else if ($request->has('email')) {
+                $credentials = $request->only('email', 'password');
+            }
 
             if ($token = $this->guard()->attempt($credentials)) {
                 

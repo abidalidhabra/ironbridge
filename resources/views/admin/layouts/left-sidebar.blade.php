@@ -62,7 +62,7 @@
 							</div>
 						</li>
 					@endif
-					@if($admin->hasPermissionTo('View Treasure Locations') || $admin->hasPermissionTo('View Complexity Targets') || $admin->hasPermissionTo('View Hunt Loot Tables'))
+					@if($admin->hasPermissionTo('View Treasure Locations') || $admin->hasPermissionTo('View Complexity Targets') || $admin->hasPermissionTo('View Hunt Loot Tables') || $admin->hasPermissionTo('View Seasonal Hunt'))
 					<li >
 						<a href="javascript:void(0)" class="plusbttnbox myBtn" >Manage Hunts <i class="fa @if(Route::currentRouteName() == 'admin.mapsList' ||Route::currentRouteName() == 'admin.add_location' || Route::currentRouteName() == 'admin.boundary_map' || Route::currentRouteName() == 'admin.starComplexityMap' || Route::currentRouteName() == 'admin.edit_location' || Route::currentRouteName() == 'admin.complexityTarget.index' || Route::currentRouteName() == 'admin.rewards.index' ) {{ 'fa-minus' }} @else {{ 'fa-plus' }} @endif" aria-hidden="true"></i></a>
 						<div class="dropdown custmenbox">

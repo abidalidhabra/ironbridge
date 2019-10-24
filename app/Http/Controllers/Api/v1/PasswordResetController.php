@@ -22,7 +22,7 @@ class PasswordResetController extends Controller
 			return response()->json(['message'=>$validator->messages()->first()],422);            
 		}
 
-		$user = User::where('email', $request->get('email'))->first();
+		$user = User::where('email', strtolower($request->email))->first();
 
 		$otp = rand(100000,999999);
 		$user->otp = $otp;
