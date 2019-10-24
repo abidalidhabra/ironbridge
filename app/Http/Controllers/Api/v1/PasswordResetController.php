@@ -14,6 +14,7 @@ class PasswordResetController extends Controller
 	public function forgotPassword(Request $request)
 	{
 
+		$request->email = strtolower($request->email);
 		$validator = Validator::make($request->all(),[
 			'email' => "required|email|exists:users,email",
 		]);
@@ -22,7 +23,7 @@ class PasswordResetController extends Controller
 			return response()->json(['message'=>$validator->messages()->first()],422);            
 		}
 
-		$user = User::where('email', strtolower($request->email))->first();
+		$user = User::where('email', $request->email)->first();
 
 		$otp = rand(100000,999999);
 		$user->otp = $otp;
@@ -54,6 +55,7 @@ class PasswordResetController extends Controller
 	public function resetpasswordByEmail(Request $request)
 	{   
 
+		$request->email = strtolower($request->email);
 		$validator = Validator::make($request->all(),[
 			'password'  => 'required',
 			'email'     => 'required|email|exists:users,email',
@@ -62,7 +64,7 @@ class PasswordResetController extends Controller
 			return response()->json(['message'=>$validator->messages()->first()],422);            
 		}
 
-		$user = User::where('email', $request->get('email'))->first();
+		$user = User::where('email', $request->email)->first();
 		
 		$user->password = bcrypt($request->password);
 		$user->otp 		= null;
