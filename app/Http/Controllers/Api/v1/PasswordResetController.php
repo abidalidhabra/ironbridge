@@ -14,7 +14,7 @@ class PasswordResetController extends Controller
 	public function forgotPassword(Request $request)
 	{
 
-		$request->email = strtolower($request->email);
+		$request['email'] = strtolower($request->email);
 		$validator = Validator::make($request->all(),[
 			'email' => "required|email|exists:users,email",
 		]);
@@ -55,7 +55,7 @@ class PasswordResetController extends Controller
 	public function resetpasswordByEmail(Request $request)
 	{   
 
-		$request->email = strtolower($request->email);
+		$request['email'] = strtolower($request->email);
 		$validator = Validator::make($request->all(),[
 			'password'  => 'required',
 			'email'     => 'required|email|exists:users,email',
