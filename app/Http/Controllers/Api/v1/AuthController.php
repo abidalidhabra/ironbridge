@@ -51,8 +51,8 @@ class AuthController extends Controller
         // exit;
        try {
 
-            $maintenanceMode = (new AppStatisticRepository)->where('_id', 'maintenance')->where('value', true)->first();
-            if ($maintenanceMode) {
+            $maintenanceMode = (new AppStatisticRepository)->first();
+            if ($maintenanceMode->maintenance) {
                 return response()->json([ 'message'=>'Sorry! app is under maintenance.' ],503);
             }
 

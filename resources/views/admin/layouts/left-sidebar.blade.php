@@ -62,7 +62,7 @@
 							</div>
 						</li>
 					@endif
-					@if($admin->hasPermissionTo('View Treasure Locations') || $admin->hasPermissionTo('View Complexity Targets') || $admin->hasPermissionTo('View Hunt Loot Tables') || $admin->hasPermissionTo('View Seasonal Hunt'))
+					@if($admin->hasPermissionTo('View Treasure Locations') || $admin->hasPermissionTo('View Complexity Targets') || $admin->hasPermissionTo('View Hunt Loot Tables'))
 					<li >
 						<a href="javascript:void(0)" class="plusbttnbox myBtn" >Manage Hunts <i class="fa @if(Route::currentRouteName() == 'admin.mapsList' ||Route::currentRouteName() == 'admin.add_location' || Route::currentRouteName() == 'admin.boundary_map' || Route::currentRouteName() == 'admin.starComplexityMap' || Route::currentRouteName() == 'admin.edit_location' || Route::currentRouteName() == 'admin.complexityTarget.index' || Route::currentRouteName() == 'admin.rewards.index' ) {{ 'fa-minus' }} @else {{ 'fa-plus' }} @endif" aria-hidden="true"></i></a>
 						<div class="dropdown custmenbox">
@@ -76,9 +76,6 @@
 								Route::currentRouteName() == 'admin.starComplexityMap' || 
 								Route::currentRouteName() == 'admin.edit_location' || 
 								Route::currentRouteName() == 'admin.complexityTarget.index' || 
-								Route::currentRouteName() == 'admin.sponser-hunts.index' || 
-								Route::currentRouteName() == 'admin.sponser-hunts.create' || 
-								Route::currentRouteName() == 'admin.sponser-hunts.edit' || 
 								Route::currentRouteName() == 'admin.rewards.index' ) {{ 'show' }} @endif">
 								@if($admin->hasPermissionTo('View Treasure Locations'))
 								<a href="{{ route('admin.mapsList') }}" class="@if(Route::currentRouteName() == 'admin.mapsList' ||Route::currentRouteName() == 'admin.add_location' || Route::currentRouteName() == 'admin.boundary_map' || Route::currentRouteName() == 'admin.starComplexityMap' || Route::currentRouteName() == 'admin.edit_location') {{ 'activelistsub' }} @endif">Treasure Locations</a>
@@ -89,17 +86,18 @@
 								@if($admin->hasPermissionTo('View Hunt Loot Tables'))
 									<a href="{{ route('admin.rewards.index') }}" class="@if(Route::currentRouteName() == 'admin.rewards.index') {{ 'activelistsub' }} @endif">Hunt Loot Tables</a>
 								@endif
-								@if($admin->hasPermissionTo('View Seasonal Hunt'))
-								<a 
-									href="{{ route('admin.sponser-hunts.index') }}" 
-									class="@if(
-									Route::currentRouteName() == 'admin.sponser-hunts.create' || 
-									Route::currentRouteName() == 'admin.sponser-hunts.edit' || 
-									Route::currentRouteName() == 'admin.sponser-hunts.index') {{ 'activelistsub' }} @endif">
-								Sponser Hunts</a>
-								@endif
+								
 							</div>
 						</div>
+					</li>
+					@endif
+
+					@if($admin->hasPermissionTo('View Seasonal Hunt'))
+					<li  class="@if(
+						Route::currentRouteName() == 'admin.sponser-hunts.create' || 
+						Route::currentRouteName() == 'admin.sponser-hunts.edit' || 
+						Route::currentRouteName() == 'admin.sponser-hunts.index') {{ 'activelist' }} @endif">
+						<a href="{{ route('admin.sponser-hunts.index') }}">Relic Hunts</a>
 					</li>
 					@endif
 
@@ -136,6 +134,7 @@
 						<a href="{{ route('admin.discounts.index') }}">Discount Coupons</a>
 					</li>
 					@endif
+
 					<!-- <li  class="@if(Route::currentRouteName() == 'admin.event.index' || Route::currentRouteName() == 'admin.event.miniGame' || Route::currentRouteName() == 'admin.event.basicDetails' || Route::currentRouteName() == 'admin.event.show' || Route::currentRouteName() == 'admin.event.huntDetails') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.event.index') }}">Events</a>
 					</li> -->
@@ -150,6 +149,12 @@
 					@if($admin->hasRole('Super Admin'))
 					<li  class="@if(Route::currentRouteName() == 'admin.adminManagement.index') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.adminManagement.index') }}">User Access</a>
+					</li>
+					@endif
+
+					@if($admin->hasPermissionTo('View App Settings'))
+					<li  class="@if(Route::currentRouteName() == 'admin.payment.index'	) {{ 'activelist' }} @endif">
+						<a href="{{ route('admin.app.settings.index') }}">App Settings</a>
 					</li>
 					@endif
 					

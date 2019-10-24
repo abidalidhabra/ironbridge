@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | Sponser Hunt Creation')
+@section('title','Ironbridge1779 | Relic Hunt Creation')
 @extends('admin.layouts.admin-app')
 
 @section('content')
@@ -10,7 +10,7 @@
             </div>
             <div class="col-md-12">
                 <div class="row">
-                    <h3>Add Sponser Hunt</h3>
+                    <h3>Edit Session</h3>
                 </div>
             </div>
         </div>
@@ -23,36 +23,38 @@
             @method('PUT')
             <div class="modal-body padboxset">
                 <div class="modalbodysetbox">
-                    <div class="form-group @error('season_name') has-error @enderror">
-                        <label class="control-label">Season Name:</label>
-                        <input 
-                        type="text" 
-                        class="form-control" 
-                        placeholder="Enter custom name",
-                        value="{{ $season->name }}" 
-                        name="season_name" 
-                        id="season_name"
-                        minlength="5"
-                        required>
-                        @error('season_name')
-                        <div class="text-muted text-danger"> {{ $errors->first('season_name') }} </div>
-                        @enderror
-                    </div>
+                    <div class="addrehcover">
+                        <div class="form-group @error('season_name') has-error @enderror">
+                            <label class="control-label">Season Name:</label>
+                            <input 
+                            type="text" 
+                            class="form-control" 
+                            placeholder="Enter custom name",
+                            value="{{ $season->name }}" 
+                            name="season_name" 
+                            id="season_name"
+                            minlength="5"
+                            required>
+                            @error('season_name')
+                            <div class="text-muted text-danger"> {{ $errors->first('season_name') }} </div>
+                            @enderror
+                        </div>
 
-                    <div class="form-group checkbox @error('active') has-error @enderror">
-                        <label><input type="checkbox" name="active" id="active" value="true" {{ ($season->active)? "checked": "" }}>Active</label>
-                        @error('active')
-                        <div class="text-muted text-danger"> {{ $errors->first('active') }} </div>
-                        @enderror
-                    </div>
-                    <div class="col-md-12" id="hunts-container">
-                        <h4>Hunts</h4>
-                        <div class="hunt-container">
-                            @forelse($season->hunts as $index=> $hunt)
-                                @include('admin.sponser-hunts.partials.hunt-edit', ['index'=> $index, 'hunt'=> $hunt, 'last'=> $loop->last])
-                            @empty
-                                <h4 class="text-danger">No Hunt Found.</h4>
-                            @endforelse
+                        <div class="form-group checkbox @error('active') has-error @enderror">
+                            <label><input type="checkbox" name="active" id="active" value="true" {{ ($season->active)? "checked": "" }}>Active</label>
+                            @error('active')
+                            <div class="text-muted text-danger"> {{ $errors->first('active') }} </div>
+                            @enderror
+                        </div>
+                        <div class="maindivcoverhut" id="hunts-container">
+                            <h4>Relic Hunts</h4>
+                            <div class="hunt-container">
+                                @forelse($season->hunts as $index=> $hunt)
+                                    @include('admin.sponser-hunts.partials.hunt-edit', ['index'=> $index, 'hunt'=> $hunt, 'last'=> $loop->last])
+                                @empty
+                                    <h4 class="text-danger">No Hunt Found.</h4>
+                                @endforelse
+                            </div>
                         </div>
                     </div>
                 </div>

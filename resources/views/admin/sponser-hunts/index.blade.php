@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | Sponser Hunts')
+@section('title','Ironbridge1779 | Relic Hunts')
 @extends('admin.layouts.admin-app')
 
 @section('content')
@@ -6,13 +6,13 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Sponser Hunts</h3>
+                <h3>Relic Hunts</h3>
             </div>
-            {{-- @if(auth()->user()->hasPermissionTo('Add Treasure Locations')) --}}
+            @if(auth()->user()->hasPermissionTo('Add Seasonal Hunt'))
             <div class="col-md-6 text-right modalbuttonadd">
                 <a href="{{ route('admin.sponser-hunts.create') }}" class="btn btn-info btn-md">Add Hunt</a>
             </div>
-            {{-- @endif --}}
+            @endif
         </div>
     </div>
     <br/>

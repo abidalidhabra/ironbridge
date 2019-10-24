@@ -2461,30 +2461,165 @@ table i.iconsetaddbox{
 }
 
 
+.addrehcover{
+    display: inline-block;
+    width: 100%;
+    padding: 15px;
+}
+.maindivcoverhut{
+    width: 100%;
+    border-radius: 4px;
+    float: left;
+    -webkit-box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
+    -moz-box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
+    box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
+
+    /*padding-left: 22px;
+    padding-right: 22px;*/
+    padding-top: 10px;
+    padding-bottom: 0;
+}
+.maindivcoverhut h4{
+    margin: 0px;
+    font-size: 22px;
+    color: #484848;
+    padding-top: 11px;
+    letter-spacing: 0.5px;
+    font-family: 'Montserrat-Bold';
+    margin-bottom: 16px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.inerboxallgnhut{
+    display: inline-block;
+    width: 100%;
+    border-bottom: 1px solid #A5853B;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.inerboxallgnhut:last-child{
+    border-bottom: 0;
+}
+.huntnameboxlr{
+    display: inline-block;
+    width: 100%;
+    position: relative;
+}
+
+.huntnamelr_left{
+    display: inline-block;
+    width: 100%;
+    padding-right: 102px;
+}
+
+.huntnameboxlr button.btn{
+    position: absolute;
+    right: 0;
+    top: 25px;
+}
+
+.cluecontainer{
+    display: inline-block;
+    width: 100%;
+    position: relative;
+    padding-right: 138px;
+    padding-left: 0;
+}
+/*.cluecontainer button.btn{
+    position: absolute;
+    right: 36px;
+    top: 25px;
+}*/
+
+.colmd6box{
+    width: 60%;
+    float: left;
+}
+.colmd5box{
+    width: 40%;
+    float: left;
+}
+
+.cluecontainer .colmd6box{
+    padding-right: 42px;
+}
+
+
+/*.single-clue-container{
+    display: inline-block;
+    width: 100%;
+    position: relative;
+}*/
+.appstbboxcover{
+    display: inline-block;
+    width: 100%;
+    padding: 12px;
+}
+.appstbboxin{
+    display: inline-block;
+    width: 100%;
+    border-radius: 4px;
+    float: left;
+    -webkit-box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
+    -moz-box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
+    box-shadow: 0px 0px 8px 0px rgba(210, 210, 210, 0.88);
+    padding-top: 10px;
+    padding-bottom: 0;
+    padding: 20px;
+}
+
+.appstbboxin h4{
+    margin: 0px;
+    font-size: 20px;
+    color: #A5853B;
+    padding-top: 4px;
+    letter-spacing: 0.5px;
+    font-family: 'Montserrat-Bold';
+    margin-bottom: 20px;
+}
+
+.cluecontainer button.remove-hunt {
+    position: absolute;
+    right: 36px;
+    top: 25px;
+}
+.cluecontainer button.add-hunt {
+    position: absolute;
+    right: 36px;
+    top: 25px;
+}
 
 
 
+.cluecontainer button.remove-clue {
+    position: absolute;
+    right: 84px;
+    top: 25px;
+    background-color: #d9534f;
+    border-color: #d43f3a;
+    color: #ffffff;
+}
+.cluecontainer button.add-clue {
+    position: absolute;
+    right: 36px;
+    top: 25px;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+.huntnameboxlr button.remove-hunt {
+    position: absolute;
+    right: 46px;
+    top: 25px;
+    background-color: #d9534f;
+    border-color: #d43f3a;
+    color: #ffffff;
+}
+.huntnameboxlr button.add-hunt {
+    position: absolute;
+    right: 0;
+    top: 25px;
+}
 
 
 

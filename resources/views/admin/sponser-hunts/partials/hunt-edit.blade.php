@@ -1,6 +1,6 @@
-<div class="single-hunt-container col-md-12" index="{{ $index+1 }}">
-    <div>
-        <div class="col-md-11">
+<div class="single-hunt-container inerboxallgnhut" index="{{ $index+1 }}">
+    <div class="huntnameboxlr">
+        <div class="huntnamelr_left">
             <div class="form-group">
                 <label class="control-label">Hunt Name:</label>
                 <input 

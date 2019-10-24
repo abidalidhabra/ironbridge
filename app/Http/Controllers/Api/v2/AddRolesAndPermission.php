@@ -153,6 +153,7 @@ class AddRolesAndPermission extends Controller
 						['name' => 'Add Seasonal Hunt','guard_name' => 'admin', 'module'=>'Seasonal Hunt'],
 						['name' => 'Edit Seasonal Hunt','guard_name' => 'admin', 'module'=>'Seasonal Hunt'],
 						['name' => 'Delete Seasonal Hunt','guard_name' => 'admin', 'module'=>'Seasonal Hunt'],
+						['name' => 'View App Settings','guard_name' => 'admin', 'module'=>'App Settings'],
 
 					];
 		

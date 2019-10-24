@@ -25,6 +25,11 @@ class AppStatisticRepository
         return $this->model->where($field, $value);
     }
 
+    public function first($fields = ['*'])
+    {
+        return $this->model->first($fields);
+    }
+
     public function getModel()
     {
         return $this->model;

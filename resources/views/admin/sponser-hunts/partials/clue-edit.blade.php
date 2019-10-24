@@ -1,5 +1,5 @@
-<div class="single-clue-container" index="{{ $index+1 }}">
-    <div class="col-md-6">
+<div class="single-clue-container cluecontainer" index="{{ $index+1 }}">
+    <div class="colmd6box">
         <div class="form-group">
             <label class="control-label">Clue Name:</label>
             <input 
@@ -21,7 +21,7 @@
             </select>
         </div>
     </div>
-    <div class="col-md-5">
+    <div class="colmd5box">
         <div class="form-group">
             <label class="control-label">Clue Description:</label>
             <textarea 
@@ -33,11 +33,10 @@
             minlength="5">{{ $clue['description'] }}</textarea>
         </div>
     </div>
-    <div class="col-md-1">
-        @if($last)
-            <button type="button" class="btn btn-success add-clue">+</button>
-        @else
-            <button type="button" class="btn btn-danger remove-clue">-</button>
-        @endif
-    </div>
+
+    @if($last)
+        <button type="button" class="btn btn-success add-clue">+</button>
+    @else
+        <button type="button" class="btn btn-danger remove-clue">-</button>
+    @endif
 </div>

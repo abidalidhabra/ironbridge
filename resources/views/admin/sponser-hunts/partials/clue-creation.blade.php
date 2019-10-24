@@ -1,6 +1,6 @@
-<div class="single-clue-container" index="{{ $index+1 }}">
+<div class="single-clue-container cluecontainer" index="{{ $index+1 }}">
     
-    <div class="col-md-6">
+    <div class="colmd6box">
         <div class="form-group">
             <label class="control-label">Clue Name:</label>
             <input 
@@ -23,7 +23,7 @@
         </div>
     </div>
     
-    <div class="col-md-5">
+    <div class="colmd5box">
         <div class="form-group">
             <label class="control-label">Clue Description:</label>
             <textarea 
@@ -35,8 +35,5 @@
             minlength="5"></textarea>
         </div>
     </div>
-
-    <div class="col-md-1">
-        <button type="button" class="btn btn-success add-clue">+</button>
-    </div>
+    <button type="button" class="btn btn-success add-clue">+</button>
 </div>
