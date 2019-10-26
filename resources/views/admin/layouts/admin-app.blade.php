@@ -52,7 +52,9 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.js"></script>
 
 
-    @yield('styles')
+    <style>
+        @yield('styles')
+    </style>
 </head>
 
 <body>  
