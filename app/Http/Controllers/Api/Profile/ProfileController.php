@@ -49,7 +49,7 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function markTutorialAsUncomplete(MarkTutorialAsCompleteRequest $request)
+    public function markTutorialAsComplete(MarkTutorialAsCompleteRequest $request)
     {
         $data = (new UserRepository(auth()->user()))->markTutorialAsComplete($request->module);
         return response()->json(['message' => 'Tutorial has been marked as complete.']); 
