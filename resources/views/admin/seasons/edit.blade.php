@@ -56,31 +56,31 @@
                             @enderror
                         </div>
 
-                        <div class="form-group @error('active_icon') has-error @enderror">
-                            <label class="control-label">Active icon for season:</label>
+                        <div class="form-group @error('icon') has-error @enderror">
+                            <label class="control-label">Icon for season:</label>
                             <input 
                             type="file" 
                             class="form-control" 
-                            name="active_icon" 
-                            alias-name="Active icon for season">
-                            <b><a href="{{ asset('storage/seasons/'.$season->id.'/'.$season->active_icon) }}" target="_blank">VIEW</a></b>
-                            @error('active_icon')
-                            <div class="text-muted text-danger"> {{ $errors->first('active_icon') }} </div>
+                            name="icon" 
+                            alias-name="Icon for season">
+                            <b><a href="{{ $season->icon }}" target="_blank">VIEW</a></b>
+                            @error('icon')
+                            <div class="text-muted text-danger"> {{ $errors->first('icon') }} </div>
                             @enderror
                         </div>
 
-                        <div class="form-group @error('inactive_icon') has-error @enderror">
+                       {{--  <div class="form-group @error('inactive_icon') has-error @enderror">
                             <label class="control-label">Inactive icon for season:</label>
                             <input 
                             type="file" 
                             class="form-control" 
                             name="inactive_icon" 
                             alias-name="Active icon for season">
-                            <b><a href="{{ asset('storage/seasons/'.$season->id.'/'.$season->inactive_icon) }}" target="_blank">VIEW</a></b>
+                            <b><a href="{{ $season->icon }}" target="_blank">VIEW</a></b>
                             @error('inactive_icon')
                             <div class="text-muted text-danger"> {{ $errors->first('inactive_icon') }} </div>
                             @enderror
-                        </div>
+                        </div> --}}
 
                         <div class="form-group checkbox @error('active') has-error @enderror">
                             <label>
@@ -105,6 +105,7 @@
 @endsection
 
 @section('scripts')
+@include('admin.seasons.scripts.relic-script')
 
 <script>
     $(document).on('submit', '#addSeasonForm', function(e) {

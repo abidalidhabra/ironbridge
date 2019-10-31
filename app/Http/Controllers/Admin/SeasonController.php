@@ -48,8 +48,9 @@ class SeasonController extends Controller
             'season_name'=> 'required|min:5',
             'season_slug'=> 'required|min:5|unique:seasons,slug',
             'active'=> 'nullable|in:true',
-            'active_icon'=> 'required|image',
-            'inactive_icon'=> 'required|image',
+            'icon'=> 'required|image',
+            // 'active_icon'=> 'required|image',
+            // 'inactive_icon'=> 'required|image',
         ]);
 
         if ($validator->fails()) {
@@ -60,12 +61,14 @@ class SeasonController extends Controller
             'name'=> $request->season_name,
             'slug'=> $request->season_slug,
             'active'=> $request->has('active')? true: false,
-            'active_icon'=> $request->active_icon->hashName(),
-            'inactive_icon'=> $request->inactive_icon->hashName(),
+            'icon'=> $request->icon->hashName(),
+            // 'active_icon'=> $request->active_icon->hashName(),
+            // 'inactive_icon'=> $request->inactive_icon->hashName(),
         ]);
 
-        $request->active_icon->store('seasons/'.$season->id, $this->disk);
-        $request->inactive_icon->store('seasons/'.$season->id, $this->disk);
+        $request->icon->store('seasons/'.$season->id, $this->disk);
+        // $request->active_icon->store('seasons/'.$season->id, $this->disk);
+        // $request->inactive_icon->store('seasons/'.$season->id, $this->disk);
 
         return response()->json(['status'=> true, 'message'=> 'Season added! Please wait we are redirecting you.']);
     }
@@ -106,8 +109,9 @@ class SeasonController extends Controller
             'season_name'=> 'required|min:5',
             'season_slug'=> ['required', 'min:5', Rule::unique('seasons', 'slug')->ignore($id, '_id') ],
             'active'=> 'nullable|in:true',
-            'active_icon'=> 'nullable|image',
-            'inactive_icon'=> 'nullable|image',
+            'icon'=> 'nullable|image',
+            // 'active_icon'=> 'nullable|image',
+            // 'inactive_icon'=> 'nullable|image',
         ]);
 
         if ($validator->fails()) {
@@ -116,17 +120,23 @@ class SeasonController extends Controller
 
         $season = Season::find($id);
 
-        if ($request->hasFile('active_icon')) {
-            Storage::disk($this->disk)->delete('seasons/'.$season->id.'/'.$season->active_icon);
-            $request->active_icon->store('seasons/'.$season->id, $this->disk);
-            $season->active_icon = $request->active_icon->hashName();
+        if ($request->hasFile('icon')) {
+            Storage::disk($this->disk)->delete('seasons/'.$season->id.'/'.$season->icon);
+            $request->icon->store('seasons/'.$season->id, $this->disk);
+            $season->icon = $request->icon->hashName();
         }
 
-        if ($request->hasFile('inactive_icon')) {
-            Storage::disk($this->disk)->delete('seasons/'.$season->id.'/'.$season->inactive_icon);
-            $request->inactive_icon->store('seasons/'.$season->id, $this->disk);
-            $season->inactive_icon = $request->inactive_icon->hashName();
-        }
+        // if ($request->hasFile('active_icon')) {
+        //     Storage::disk($this->disk)->delete('seasons/'.$season->id.'/'.$season->active_icon);
+        //     $request->active_icon->store('seasons/'.$season->id, $this->disk);
+        //     $season->active_icon = $request->active_icon->hashName();
+        // }
+
+        // if ($request->hasFile('inactive_icon')) {
+        //     Storage::disk($this->disk)->delete('seasons/'.$season->id.'/'.$season->inactive_icon);
+        //     $request->inactive_icon->store('seasons/'.$season->id, $this->disk);
+        //     $season->inactive_icon = $request->inactive_icon->hashName();
+        // }
 
         $season->name = $request->season_name;
         $season->desc = $request->season_desc;

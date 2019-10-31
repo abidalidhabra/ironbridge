@@ -27,13 +27,14 @@ class ProfileController extends Controller
                                 return $practiceUserGame;
                             });
 
+        
         $seasons = (new SeasonRepository)->getModel()
                     ->active()
                     ->with('relics:id,name,desc,icon,season_id')
                     ->get(['id', 'name', 'desc', 'icon'])
                     ->map(function($season) {
                         $season->relics->map(function($relic) {
-                            $relic->occupied = true;
+                            $relic->occupied = rand(0,1) < 0.5;
                             return $relic;
                         });
                         return $season;

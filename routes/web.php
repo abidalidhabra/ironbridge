@@ -182,6 +182,16 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 		Route::resource('sponser-hunts', 'SponserHuntController');
 	});
 	
+	Route::get('seasons/list', 'SeasonController@list')->name('seasons.list');
+	// Route::get('seasons/hunt-html', 'SeasonController@huntHTML')->name('seasons.hunt-html');
+	// Route::get('seasons/clue-html', 'SeasonController@clueHTML')->name('seasons.clue-html');
+	Route::resource('seasons', 'SeasonController');
+	Route::get('relics/{season_slug}/create', 'RelicController@create')->name('relics.create');
+	Route::post('relics/{season_slug}/store', 'RelicController@store')->name('relics.store');
+	Route::get('relics/clues/html', 'RelicController@clueHTML')->name('relics.clue.html');
+	// Route::get('relics/{season_slug}/edit/{id}', 'RelicController@edit')->name('relics.edit');
+	Route::resource('relics', 'RelicController')->except(['create', 'store']);;
+
 	Route::group(['middleware' => ['permission:View App Settings']], function () {
 		Route::get('app/settings', 'AppSettingController@index')->name('app.settings.index');
 		Route::put('app/settings', 'AppSettingController@update')->name('app.settings.update');

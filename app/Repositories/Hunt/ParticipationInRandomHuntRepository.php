@@ -65,14 +65,17 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
     public function randomizeGames(int $noOfClues) :Collection
     {
         $userMiniGames = collect();
-        $userMiniGames['locked'] = $this->user->practice_games()
-                                    ->with('game:id')
-                                    ->whereNull('unlocked_at')
-                                    ->limit($noOfClues)
-                                    ->select('_id', 'game_id', 'unlocked_at')
-                                    ->get()
-                                    ->shuffle()
-                                    ->pluck('game');
+        $userMiniGames['locked'] = collect();
+        if ($this->user) {
+            $userMiniGames['locked'] = $this->user->practice_games()
+                                        ->with('game:id')
+                                        ->whereNull('unlocked_at')
+                                        ->limit($noOfClues)
+                                        ->select('_id', 'game_id', 'unlocked_at')
+                                        ->get()
+                                        ->shuffle()
+                                        ->pluck('game');
+        }
                                     
         $minigamesNeeded = $noOfClues - $userMiniGames['locked']->count();
         if ($minigamesNeeded > 0) {

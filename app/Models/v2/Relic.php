@@ -8,6 +8,7 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class Relic extends Eloquent
 {
+
     protected $fillable = ['season_id', 'name', 'desc', 'active', 'icon', 'complexity', 'clues', 'game_id', 'game_variation_id'];
     
     public function season()

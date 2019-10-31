@@ -54,8 +54,9 @@ class RelicController extends Controller
             'relic_name'=> 'required',
             'relic_desc'=> 'required|unique:seasons,slug',
             'active'=> 'nullable|in:true',
-            'active_icon'=> 'required|image',
-            'inactive_icon'=> 'required|image',
+            'icon'=> 'required|image',
+            // 'active_icon'=> 'required|image',
+            // 'inactive_icon'=> 'required|image',
             'complexity'=> 'required|numeric|integer:min:1',
             'clues.*.name'=> 'required|string',
             'clues.*.desc'=> 'required|string',
@@ -67,15 +68,17 @@ class RelicController extends Controller
 
         $season = Season::where('slug', $season_slug)->select('_id', 'name')->first();
         
-        $request->active_icon->store('seasons/'.$season->id, $this->disk);
-        $request->inactive_icon->store('seasons/'.$season->id, $this->disk);
+        $request->icon->store('seasons/'.$season->id, $this->disk);
+        // $request->active_icon->store('seasons/'.$season->id, $this->disk);
+        // $request->inactive_icon->store('seasons/'.$season->id, $this->disk);
         
         $season->relics()->create([
             'name'=> $request->relic_name,
             'desc'=> $request->relic_desc,
             'active'=> $request->has('active')? true: false,
-            'active_icon'=> $request->active_icon->hashName(),
-            'inactive_icon'=> $request->inactive_icon->hashName(),
+            'icon'=> $request->icon->hashName(),
+            // 'active_icon'=> $request->active_icon->hashName(),
+            // 'inactive_icon'=> $request->inactive_icon->hashName(),
             'complexity'=> (int)$request->complexity,
             'clues'=> $this->allotGameToClueService->allot($request),
         ]);
@@ -119,8 +122,9 @@ class RelicController extends Controller
             'relic_name'=> 'required',
             'relic_desc'=> 'required|unique:seasons,slug',
             'active'=> 'nullable|in:true',
-            'active_icon'=> 'nullable|image',
-            'inactive_icon'=> 'nullable|image',
+            // 'icon'=> 'nullable|image',
+            // 'active_icon'=> 'nullable|image',
+            // 'inactive_icon'=> 'nullable|image',
             'complexity'=> 'required|numeric|integer:min:1',
             'clues.*.name'=> 'required|string',
             'clues.*.desc'=> 'required|string',
@@ -132,17 +136,23 @@ class RelicController extends Controller
 
         $relic = Relic::find($id);
 
-        if ($request->hasFile('active_icon')) {
-            Storage::disk($this->disk)->delete('seasons/'.$relic->season_id.'/'.$relic->active_icon);
-            $request->active_icon->store('seasons/'.$relic->season_id, $this->disk);
-            $relic->active_icon = $request->active_icon->hashName();
+        if ($request->hasFile('icon')) {
+            Storage::disk($this->disk)->delete('seasons/'.$relic->season_id.'/'.$relic->icon);
+            $request->icon->store('seasons/'.$relic->season_id, $this->disk);
+            $relic->icon = $request->icon->hashName();
         }
 
-        if ($request->hasFile('inactive_icon')) {
-            Storage::disk($this->disk)->delete('seasons/'.$relic->season_id.'/'.$relic->inactive_icon);
-            $request->inactive_icon->store('seasons/'.$relic->season_id, $this->disk);
-            $relic->inactive_icon = $request->inactive_icon->hashName();
-        }
+        // if ($request->hasFile('active_icon')) {
+        //     Storage::disk($this->disk)->delete('seasons/'.$relic->season_id.'/'.$relic->active_icon);
+        //     $request->active_icon->store('seasons/'.$relic->season_id, $this->disk);
+        //     $relic->active_icon = $request->active_icon->hashName();
+        // }
+
+        // if ($request->hasFile('inactive_icon')) {
+        //     Storage::disk($this->disk)->delete('seasons/'.$relic->season_id.'/'.$relic->inactive_icon);
+        //     $request->inactive_icon->store('seasons/'.$relic->season_id, $this->disk);
+        //     $relic->inactive_icon = $request->inactive_icon->hashName();
+        // }
 
         $relic->name = $request->relic_name;
         $relic->desc = $request->relic_desc;
