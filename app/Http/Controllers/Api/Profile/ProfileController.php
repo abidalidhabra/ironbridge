@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Api\Profile;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Profile\MarkTutorialAsCompleteRequest;
 use App\Repositories\HuntRewardDistributionHistoryRepository;
+use App\Repositories\SeasonRepository;
+use App\Repositories\User\UserRepository;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
@@ -23,6 +26,31 @@ class ProfileController extends Controller
                                 $practiceUserGame['highest_score'] = $practiceUserGame['highest_score'][0]['score'] ?? 0;
                                 return $practiceUserGame;
                             });
-        return response()->json(['message'=> 'OK', 'gold_earned'=> $goldEarned, 'km_walked'=> $kmWalked, 'game_statistics'=> $gameStatistics]);
+
+        $seasons = (new SeasonRepository)->getModel()
+                    ->active()
+                    ->with('relics:id,name,desc,icon,season_id')
+                    ->get(['id', 'name', 'desc', 'icon'])
+                    ->map(function($season) {
+                        $season->relics->map(function($relic) {
+                            $relic->occupied = true;
+                            return $relic;
+                        });
+                        return $season;
+                    });
+
+        return response()->json([
+            'message'=> 'OK', 
+            'gold_earned'=> $goldEarned, 
+            'km_walked'=> $kmWalked, 
+            'game_statistics'=> $gameStatistics,
+            'seasons'=> $seasons
+        ]);
+    }
+
+    public function markTutorialAsUncomplete(MarkTutorialAsCompleteRequest $request)
+    {
+        $data = (new UserRepository(auth()->user()))->markTutorialAsComplete($request->module);
+        return response()->json(['message' => 'Tutorial has been marked as complete.']); 
     }
 }

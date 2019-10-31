@@ -12,6 +12,7 @@ use App\Models\v1\User;
 use App\Models\v1\UserBalancesheet;
 use App\Models\v1\WidgetItem;
 use App\Repositories\MiniGameRepository;
+// use App\Repositories\User\UserRepository;
 use Auth;
 use Carbon\Carbon;
 use Exception;
@@ -475,5 +476,11 @@ class UserController extends Controller
         
     //     return response()->json(['message' => 'Mini game updated successfully']); 
          
+    // }
+
+    // public function markTutorialAsUncomplete(Request $request)
+    // {
+    //     $data = (new UserRepository(auth()->user()))->markTutorialAsComplete($request->module);
+    //     return response()->json(['message' => 'Tutorial has been marked as complete.']); 
     // }
 }

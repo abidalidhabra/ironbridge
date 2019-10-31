@@ -112,7 +112,7 @@ class AuthController extends Controller
                 return response()->json([
                     'message'=>'You logged-in successfully.', 
                     'token' => $token, 
-                    'data' => $user->makeHidden(['reffered_by','updated_at','created_at', 'widgets', 'skeleton_keys', 'avatar'])
+                    'data' => $user->makeHidden(['reffered_by','updated_at','created_at', 'widgets', 'skeleton_keys', 'avatar', 'tutorials'])
                 ],200);
             }
 

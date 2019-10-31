@@ -1,20 +1,32 @@
 <?php
 
-namespace App\Repositories\Game;
+namespace App\Repositories;
 
-use App\Models\v1\Game;
+use App\Models\v2\Season;
 
-class GameRepository
+class SeasonRepository
 {
 
     protected $model;
-    public function __construct(){
-        $this->model = new Game;
+
+    public function __construct()
+    {
+        $this->model = new Season;
+    }
+
+    public function create($data)
+    {
+        return $this->model->create($data);
     }
 
     public function all($fields = ['*'])
     {
         return $this->model->all($fields);
+    }
+
+    public function getModel()
+    {
+        return $this->model;
     }
 
     public function with($ralation = null, \Closure $callback = null)
@@ -24,15 +36,5 @@ class GameRepository
         }else{
             return $this->model->with($ralation);
         }
-    }
-
-    public function whereHas($relation, \Closure $callback = null)
-    {
-        return $this->model->whereHas($relation, $callback);
-    }
-
-    public function getModel()
-    {
-        return $this->model;
     }
 }

@@ -48,7 +48,7 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
 
         // Get the games in random orders
         $miniGames = $this->randomizeGames($request->total_clues);
-        
+
         // Reface the games in random orders
         $huntUserDetails = collect();
         for ($i=0; $i < $request->total_clues; $i++) { 
@@ -64,13 +64,29 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
 
     public function randomizeGames(int $noOfClues) :Collection
     {
-        return (new GameRepository)
-                ->getModel()
-                ->where('status', true)
-                ->whereIn('identifier', ['bubble_shooter', 'block', 'snake', 'domino', 'slices', 'hexa', 'sudoku'])
-                ->get(['_id'])
-                ->shuffle()
-                ->take($noOfClues);
+        $userMiniGames = collect();
+        $userMiniGames['locked'] = $this->user->practice_games()
+                                    ->with('game:id')
+                                    ->whereNull('unlocked_at')
+                                    ->limit($noOfClues)
+                                    ->select('_id', 'game_id', 'unlocked_at')
+                                    ->get()
+                                    ->shuffle()
+                                    ->pluck('game');
+                                    
+        $minigamesNeeded = $noOfClues - $userMiniGames['locked']->count();
+        if ($minigamesNeeded > 0) {
+            $userMiniGames['random'] =  (new GameRepository)
+                                        ->getModel()
+                                        ->where('status', true)
+                                        ->whereNotIn('id', $userMiniGames['locked']->pluck('id'))
+                                        ->whereIn('identifier', ['bubble_shooter', 'block', 'snake', 'domino', 'slices', 'hexa', 'sudoku'])
+                                        ->get(['id'])
+                                        ->shuffle()
+                                        ->take($minigamesNeeded);
+        }
+        
+        return $userMiniGames->flatten();
     }
 
     public function bypassPreviousHunt()

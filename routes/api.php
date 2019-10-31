@@ -207,4 +207,5 @@ Route::group(['namespace' => 'Api\Profile', 'prefix' => 'profile', 'middleware' 
 
 	/** Hunt requests **/
 	Route::get('getRelicsData', 'ProfileController@getRelics');
+	Route::post('markTutorialAsUncomplete', 'ProfileController@markTutorialAsUncomplete');
 });

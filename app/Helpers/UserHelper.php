@@ -44,6 +44,7 @@ class UserHelper {
 			'widgets' => $widgets,
 			'user_avatar' => $user->avatar,
 			'user_widgets' => $user->widgets,
+			'tutorials' => $user->tutorials,
 			'events_cities' => $eventsCities,
 			'free_outfit_occupied' => $user->free_outfit_taken,
 			'latest_news' => News::latest()->limit(1)->get()->map(function($news) { return $news->setHidden(['valid_till', 'updated_at']); }),

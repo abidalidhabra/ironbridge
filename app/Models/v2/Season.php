@@ -8,7 +8,7 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class Season extends Eloquent
 {
-    protected $fillable = ['name', 'slug', 'active', 'active_icon', 'inactive_icon'];
+    protected $fillable = ['name', 'slug', 'active', 'icon'];
 
     public function path()
     {
@@ -23,5 +23,15 @@ class Season extends Eloquent
     public function relics()
     {
         return $this->hasMany(Relic::class);
+    }
+
+    public function getIconAttribute($value)
+    {
+        return asset('storage/seasons/'.$this->id.'/'.$value);
+    }
+
+    public function scopeActive($query)
+    {
+        $query->where('active', true);
     }
 }

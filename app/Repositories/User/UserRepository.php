@@ -14,9 +14,11 @@ class UserRepository implements UserRepositoryInterface
 {
 	
     protected $user;
+    protected $model;
     public function __construct($user)
     {
         $this->user = $user;
+        $this->model = new User;
     }
 
 	public function addSkeletonKeys(int $keysAmount, $additionalFields = null){
@@ -170,5 +172,15 @@ class UserRepository implements UserRepositoryInterface
         // return outfits
         return array_merge($totalItems, $equivalentItems, $widgets);
         // throw new Exception("Invalid avatar type provided.");
+    }
+
+    public function markTutorialAsComplete(string $identifier)
+    {
+        return User::where(['_id'=> $this->user->id])->update(['tutorials.'.$identifier=> new UTCDateTime(now()) ]);
+    }
+
+    public function getModel()
+    {
+        return $this->model;
     }
 }

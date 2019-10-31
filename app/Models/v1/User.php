@@ -43,6 +43,7 @@ class User extends Authenticatable implements JWTSubject
         'minigame_tutorials',
         'first_login',
         'additional',
+        'tutorials',
         // 'expnadable_skeleton_keys',
     ];
 
@@ -86,6 +87,13 @@ class User extends Authenticatable implements JWTSubject
         'pieces_collected' => 0,
         'widgets' => [],
         'first_login' => true,
+        'tutorials'=> [
+            'avatar'=> null,
+            'store'=> null,
+            'profile'=> null,
+            'home'=> null,
+            'minigames'=> null,
+        ],
         // 'expnadable_skeleton_keys'   => 0,
         // 'user_widgets' => [],
         // 'used_widgets' => [],
@@ -170,6 +178,13 @@ class User extends Authenticatable implements JWTSubject
         return collect($miniGames)->map(function($miniGame){
             $miniGame['completed_at'] = ($miniGame['completed_at'])? $miniGame['completed_at']->toDateTime()->format('Y-m-d H:i:s'): null;
             return $miniGame;
+        });
+    }
+
+    public function getTutorialsAttribute($miniGames)
+    {
+        return collect($miniGames)->map(function($ts){
+            return ($ts)? $ts->toDateTime()->format('Y-m-d H:i:s'): null;
         });
     }
 
