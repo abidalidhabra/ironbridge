@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | Relic Hunts')
+@section('title','Ironbridge1779 | Seasons')
 @extends('admin.layouts.admin-app')
 
 @section('content')
@@ -6,12 +6,12 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Relic Hunts</h3>
+                <h3>Seasons</h3>
             </div>
             @if(auth()->user()->hasPermissionTo('Add Seasonal Hunt'))
-            <div class="col-md-6 text-right modalbuttonadd">
-                <a href="{{ route('admin.sponser-hunts.create') }}" class="btn btn-info btn-md">Add Hunt</a>
-            </div>
+                <div class="col-md-6 text-right modalbuttonadd">
+                    <a href="{{ route('admin.seasons.create') }}" class="btn btn-info btn-md">Add Season</a>
+                </div>
             @endif
         </div>
     </div>
@@ -23,8 +23,9 @@
                 <tr>
                     <th>Sr.</th>
                     <th>Season</th>
-                    <th>Hunt Name</th>
+                    <th>Slug</th>
                     <th>Active</th>
+                    <th>Created at (UTC)</th>
                     {{-- @if(auth()->user()->hasPermissionTo('Edit Treasure Locations') || auth()->user()->hasPermissionTo('Delete Treasure Locations')) --}}
                     <th>Action</th>
                     {{-- @endif --}}
@@ -47,7 +48,7 @@
                     lengthMenu: [[10, 50, 100, -1], [10, 50, 100, "All"]],
                     ajax: {
                         type: "get",
-                        url: "{{ route('admin.sponser-hunts.list') }}",
+                        url: "{{ route('admin.seasons.list') }}",
                         data: function ( d ) {
                             d._token = "{{ csrf_token() }}";
                         },
@@ -60,6 +61,7 @@
                     columns:[
                         { data:'DT_RowIndex',name:'_id' },
                         { data:'name',name:'name'},
+                        { data:'slug',name:'slug'},
                         { data:'active',name:'active' },
                         { data:'created_at',name:'created_at' },
                         { data:'action',name:'action' },

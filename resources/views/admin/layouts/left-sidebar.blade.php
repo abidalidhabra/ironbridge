@@ -94,12 +94,78 @@
 
 					@if($admin->hasPermissionTo('View Seasonal Hunt'))
 					<li  class="@if(
-						Route::currentRouteName() == 'admin.sponser-hunts.create' || 
-						Route::currentRouteName() == 'admin.sponser-hunts.edit' || 
-						Route::currentRouteName() == 'admin.sponser-hunts.index') {{ 'activelist' }} @endif">
-						<a href="{{ route('admin.sponser-hunts.index') }}">Relic Hunts</a>
+						Route::currentRouteName() == 'admin.seasons.create' || 
+						Route::currentRouteName() == 'admin.seasons.edit' || 
+						Route::currentRouteName() == 'admin.seasons.show' || 
+						Route::currentRouteName() == 'admin.seasons.index' ||
+						Route::currentRouteName() == 'admin.relics.create' || 
+						Route::currentRouteName() == 'admin.relics.edit' || 
+						Route::currentRouteName() == 'admin.relics.index'
+						) {{ 'activelist' }} @endif">
+						<a href="{{ route('admin.seasons.index') }}">Relic Hunts</a>
 					</li>
 					@endif
+
+					{{-- @if($admin->hasPermissionTo('View Treasure Locations') || $admin->hasPermissionTo('View Complexity Targets') || $admin->hasPermissionTo('View Hunt Loot Tables')) --}}
+	{{-- 				<li >
+						<a 
+							href="javascript:void(0)" 
+							class="plusbttnbox myBtn" >Relics Maps
+							<i class="fa 
+								@if(Route::currentRouteName() == 'admin.mapsList' || 
+									Route::currentRouteName() == 'admin.add_location' || 
+									Route::currentRouteName() == 'admin.boundary_map' || 
+									Route::currentRouteName() == 'admin.starComplexityMap' || 
+									Route::currentRouteName() == 'admin.edit_location' || 
+									Route::currentRouteName() == 'admin.complexityTarget.index' || 
+									Route::currentRouteName() == 'admin.rewards.index' ) {{ 'fa-minus' }} 
+								@else {{ 'fa-plus' }} 
+								@endif" 
+								aria-hidden="true"></i></a>
+						<div class="dropdown custmenbox">
+							<!-- <button id="myBtn" class="dropbtn">Dropdown</button> -->
+							<div  
+								class="dropdown-content myDropdown 
+								@if(
+								Route::currentRouteName() == 'admin.mapsList' ||
+								Route::currentRouteName() == 'admin.add_location' || 
+								Route::currentRouteName() == 'admin.boundary_map' || 
+								Route::currentRouteName() == 'admin.starComplexityMap' || 
+								Route::currentRouteName() == 'admin.edit_location' || 
+								Route::currentRouteName() == 'admin.complexityTarget.index' || 
+								Route::currentRouteName() == 'admin.rewards.index' ) {{ 'show' }} 
+								@endif">
+								@if($admin->hasPermissionTo('View Treasure Locations'))
+									<a 
+									href="{{ route('admin.mapsList') }}" 
+									class="@if(
+										Route::currentRouteName() == 'admin.mapsList' ||
+										Route::currentRouteName() == 'admin.add_location' || 
+										Route::currentRouteName() == 'admin.boundary_map' || 
+										Route::currentRouteName() == 'admin.starComplexityMap' || 
+										Route::currentRouteName() == 'admin.edit_location') {{ 'activelistsub' }} 
+										@endif">Seasons</a>
+								@endif
+								
+								@if($admin->hasPermissionTo('View Complexity Targets'))
+								<a 
+								href="{{ route('admin.complexityTarget.index') }}" 
+								class="@if(
+									Route::currentRouteName() == 'admin.complexityTarget.index') {{ 'activelistsub' }} 
+									@endif">Relics</a>
+								@endif
+								
+								@if($admin->hasPermissionTo('View Hunt Loot Tables'))
+									<a 
+									href="{{ route('admin.rewards.index') }}" 
+									class="@if(
+										Route::currentRouteName() == 'admin.rewards.index') {{ 'activelistsub' }} 
+										@endif">Hunt Loot Tables</a>
+								@endif
+							</div>
+						</div>
+					</li> --}}
+					{{-- @endif --}}
 
 					@if($admin->hasPermissionTo('View Payments'))
 					<li  class="@if(Route::currentRouteName() == 'admin.payment.index'	) {{ 'activelist' }} @endif">
