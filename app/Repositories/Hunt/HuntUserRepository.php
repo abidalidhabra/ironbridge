@@ -27,4 +27,9 @@ class HuntUserRepository
     {
         return $this->model->whereHas($relation, $closure);
     }
+
+    public function where($column, $value)
+    {
+        return $this->model->where($column, $value);
+    }
 }

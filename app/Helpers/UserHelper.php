@@ -7,6 +7,7 @@ use App\Models\v1\Game;
 use App\Models\v1\News;
 use App\Models\v1\WidgetItem;
 use App\Repositories\EventRepository;
+use App\Repositories\RelicRepository;
 use Auth;
 use MongoDB\BSON\ObjectId as MongoID;
 use MongoDB\BSON\UTCDateTime;
@@ -39,15 +40,27 @@ class UserHelper {
 
 		// $eventsCities = (new EventRepository($user))->cities();
 		$eventsCities = City::select('_id','name')->havingActiveEvents()->get();
+		$relics = (new RelicRepository)->getModel()
+					->active()
+					->whereHas('season', function($query) {
+						$query->active();
+					})
+					->with(['participations'=> function($query) use ($user) {
+						$query->where('user_id', $user->id)->select('id', 'hunt_id', 'user_id');
+					}])
+					->with('season:_id,name')
+					->select('_id', 'name', 'desc', 'active', 'icon', 'complexity','season_id')
+					->get();
 		return [
-			'avatars' => $avatars,
-			'widgets' => $widgets,
-			'user_avatar' => $user->avatar,
-			'user_widgets' => $user->widgets,
-			'tutorials' => $user->tutorials,
-			'events_cities' => $eventsCities,
-			'free_outfit_occupied' => $user->free_outfit_taken,
-			'latest_news' => News::latest()->limit(1)->get()->map(function($news) { return $news->setHidden(['valid_till', 'updated_at']); }),
+			// 'avatars' => $avatars,
+			// 'widgets' => $widgets,
+			// 'user_avatar' => $user->avatar,
+			// 'user_widgets' => $user->widgets,
+			// 'tutorials' => $user->tutorials,
+			// 'events_cities' => $eventsCities,
+			// 'free_outfit_occupied' => $user->free_outfit_taken,
+			// 'latest_news' => News::latest()->limit(1)->get()->map(function($news) { return $news->setHidden(['valid_till', 'updated_at']); }),
+			'relics' => $relics,
 			// 'used_widgets' => $user->used_widgets,
 			// 'plans' => $plans,
 			// 'events_data' => $events,

@@ -201,6 +201,7 @@ Route::group(['namespace' => 'Api\Hunt', 'prefix' => 'hunts', 'middleware' => 'j
 	Route::get('getHuntsOnStartup', 'RandomHuntController@initiateTheHunts');
 	Route::put('random/{hunt_user}/terminate', 'RandomHuntController@terminate');
 	Route::post('random/revokeTheReveal', 'RandomHuntController@revokeTheReveal');
+	Route::get('random/getRelicDetails', 'RandomHuntController@getRelicDetails');
 });
 
 Route::group(['namespace' => 'Api\Profile', 'prefix' => 'profile', 'middleware' => 'jwt-auth'], function ($router) {

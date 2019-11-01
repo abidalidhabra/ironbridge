@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Hunt\RevokeTheRevealRequest;
 use App\Http\Requests\v1\ParticipateRequest;
 use App\Repositories\Hunt\Factory\HuntFactory;
-use App\Repositories\Hunt\GetLastParticipatedRandomHuntRepository;
+use App\Repositories\Hunt\GetHuntParticipationDetailRepository;
 use App\Repositories\Hunt\GetLastRunningRandomHuntRepository;
 use App\Repositories\Hunt\HuntUserDetailRepository;
 use App\Repositories\Hunt\HuntUserRepository;
@@ -19,17 +19,18 @@ class RandomHuntController extends Controller
     public function participate(ParticipateRequest $request)
     {
         $huntFactory = (new HuntFactory)->init($request);
-        $participationDetails = $huntFactory->participate($request);
-        $data = (new GetLastParticipatedRandomHuntRepository)->get();
-        return response()->json([
-            'message' => 'user has been successfully participated.', 
-            'bypass_previous_hunt'=> $participationDetails['bypass_previous_hunt'], 
-            'participated_hunt_found'=> $data['participated_hunt_found'], 
-            'total_clues'=> $data['total_clues'],
-            'completed_clues'=> $data['completed_clues'],
-            'hunt_user'=> $data['hunt_user'],
-            'clues_data'=> $data['clues_data'],
-        ]);
+        $response = $huntFactory->participate($request);
+        // $data = (new GetLastParticipatedRandomHuntRepository)->get();
+        // return response()->json([
+        //     'message' => 'user has been successfully participated.', 
+        //     'bypass_previous_hunt'=> $participationDetails['bypass_previous_hunt'], 
+        //     'participated_hunt_found'=> $data['participated_hunt_found'], 
+        //     'total_clues'=> $data['total_clues'],
+        //     'completed_clues'=> $data['completed_clues'],
+        //     'hunt_user'=> $data['hunt_user'],
+        //     'clues_data'=> $data['clues_data'],
+        // ]);
+        return response()->json($response);
     }
 
     public function initiateTheHunts(Request $request)
@@ -45,6 +46,23 @@ class RandomHuntController extends Controller
                     'remaining_clues'=> $data['remaining_clues'],
                     'total_remaining_clues'=> $data['total_remaining_clues'],
                     'total_completed_clues'=> $data['total_completed_clues'],
+                ]
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['message'=> $e->getMessage()], 500);
+        }
+    }
+
+    public function getRelicDetails(Request $request)
+    {
+        try {
+
+            $data = (new GetHuntParticipationDetailRepository)->get($request->relic_id);
+            return response()->json([
+                'message' => 'Last Hunt\'s information has been retrieved.', 
+                'last_running_hunt'=> [
+                    'hunt_user'=> $data['hunt_user'], 
+                    'clues_data'=> $data['clues_data'], 
                 ]
             ]);
         } catch (Exception $e) {

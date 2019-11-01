@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\v1;
 
+use App\Rules\Hunt\HuntParticipationRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -15,7 +16,7 @@ class ParticipateRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return ($this->ownableUser())? true: false;
     }
 
     /**
@@ -26,10 +27,9 @@ class ParticipateRequest extends FormRequest
     public function rules()
     {
         return [
-            'random'=> "required_without_all:hunt_id,hunt_mode",
-            'hunt_id'=> "string|exists:hunts,_id|required_without:random",
-            'complexity'=> "required|integer|between:1,5",
-            'hunt_mode'=>'string|in:challenge,normal|required_with:hunt_id'
+            'random'=> "required_without_all:relic_id,hunt_mode",
+            'relic_id'=> ["string", "exists:relics,_id", "required_without:random", new HuntParticipationRule($this->ownableUser())],
+            'complexity'=> "required_with:random|integer|between:1,5"
         ];
     }
 
@@ -44,5 +44,10 @@ class ParticipateRequest extends FormRequest
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json(['message' => $validator->messages()->first()], 422));
+    }
+
+    public function ownableUser()
+    {
+        return auth()->user();
     }
 }

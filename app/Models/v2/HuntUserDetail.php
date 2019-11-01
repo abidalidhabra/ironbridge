@@ -11,6 +11,8 @@ class HuntUserDetail extends Eloquent
     protected $fillable = [
     	'hunt_user_id',
 		'location',
+        'name',
+        'desc',
 		'game_id',
 		'game_variation_id',
         'target',

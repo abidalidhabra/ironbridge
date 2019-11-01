@@ -9,6 +9,7 @@ use App\Models\v2\HuntUser;
 use App\Models\v2\HuntUserDetail;
 use App\Repositories\Game\GameRepository;
 use App\Repositories\Hunt\Contracts\HuntParticipationInterface;
+use App\Repositories\Hunt\GetLastParticipatedRandomHuntRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -23,12 +24,20 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
         $bypassStatus = $this->bypassPreviousHunt();
         $huntUser = $this->add($request);
         $clueDetails = $this->addClues($request, $huntUser);
+
+        $data = (new GetLastParticipatedRandomHuntRepository)->get();
+
         return [
             'bypass_previous_hunt'  => $bypassStatus,
-            'hunt'  => $huntUser->setVisible(['_id', 'user_id', 'complexity']),
-            'clues_data'  => $clueDetails->map(function($clue) {
-                return $clue->only(['_id', 'hunt_user_id', 'game_variation_id', 'game_id', 'radius', 'status']);
-            })
+            // 'hunt'  => $huntUser->setVisible(['_id', 'user_id', 'complexity']),
+            // 'clues_data'  => $clueDetails->map(function($clue) {
+            //     return $clue->only(['_id', 'hunt_user_id', 'game_variation_id', 'game_id', 'radius', 'status']);
+            // })
+            'participated_hunt_found'=> $data['participated_hunt_found'], 
+            'total_clues'=> $data['total_clues'],
+            'completed_clues'=> $data['completed_clues'],
+            'hunt_user'=> $data['hunt_user'],
+            'clues_data'=> $data['clues_data'],
         ];
     }
 
