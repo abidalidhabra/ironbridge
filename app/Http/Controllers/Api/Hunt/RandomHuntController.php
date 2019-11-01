@@ -20,16 +20,6 @@ class RandomHuntController extends Controller
     {
         $huntFactory = (new HuntFactory)->init($request);
         $response = $huntFactory->participate($request);
-        // $data = (new GetLastParticipatedRandomHuntRepository)->get();
-        // return response()->json([
-        //     'message' => 'user has been successfully participated.', 
-        //     'bypass_previous_hunt'=> $participationDetails['bypass_previous_hunt'], 
-        //     'participated_hunt_found'=> $data['participated_hunt_found'], 
-        //     'total_clues'=> $data['total_clues'],
-        //     'completed_clues'=> $data['completed_clues'],
-        //     'hunt_user'=> $data['hunt_user'],
-        //     'clues_data'=> $data['clues_data'],
-        // ]);
         $response['message'] = 'user has been successfully participated.';
         return response()->json($response);
     }
@@ -58,7 +48,7 @@ class RandomHuntController extends Controller
     {
         try {
 
-            $data = (new GetHuntParticipationDetailRepository)->get($request->relic_id);
+            $data = (new GetHuntParticipationDetailRepository)->get($request->hunt_user_id);
             return response()->json([
                 'message' => 'Last Hunt\'s information has been retrieved.', 
                 'last_running_hunt'=> [

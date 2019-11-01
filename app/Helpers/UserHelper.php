@@ -48,6 +48,9 @@ class UserHelper {
 					->with(['participations'=> function($query) use ($user) {
 						$query->where('user_id', $user->id)->select('id', 'hunt_id', 'user_id');
 					}])
+					->whereDoesntHave('participations', function($query) use ($user) {
+						$query->where(['user_id'=> $user->id, 'status'=> 'completed']);
+					})
 					->with('season:_id,name')
 					->select('_id', 'name', 'desc', 'active', 'icon', 'complexity','season_id')
 					->get();

@@ -11,6 +11,7 @@ use App\Repositories\Game\GameRepository;
 use App\Repositories\Hunt\Contracts\HuntParticipationInterface;
 use App\Repositories\Hunt\GetHuntParticipationDetailRepository;
 use App\Repositories\RelicRepository;
+use App\Repositories\User\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -23,15 +24,16 @@ class ParticipationInSeasonalHuntRepository implements HuntParticipationInterfac
     {
         $this->user = auth()->user();
         $this->relic = (new RelicRepository)->find($request->relic_id);
-
+        $availableGold = (new UserRepository($this->user))->deductGold($this->relic->fees);
         $huntUser = $this->add($request);
         $clueDetails = $this->addClues($request, $huntUser);
 
-        $data = (new GetHuntParticipationDetailRepository)->get($request->relic_id);
+        $data = (new GetHuntParticipationDetailRepository)->get($huntUser->id);
 
         return [
             'hunt_user'=> $data['hunt_user'],
             'clues_data'=> $data['clues_data'],
+            'available_gold'=> $availableGold,
         ];
     }
 

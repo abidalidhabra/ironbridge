@@ -1,19 +1,18 @@
 <?php
 
-namespace App\Rules\Hunt;
+namespace App\Rules\v2;
 
-use App\Repositories\Hunt\HuntUserRepository;
+use App\Models\v2\Relic;
 use Illuminate\Contracts\Validation\Rule;
 
-class HuntParticipationRule implements Rule
+class GoldAvailabilityForRelicRule implements Rule
 {
-    private $user;
-
     /**
      * Create a new rule instance.
      *
      * @return void
      */
+    private $user;
     public function __construct($user)
     {
         $this->user = $user;
@@ -28,8 +27,12 @@ class HuntParticipationRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        $huntUser = (new HuntUserRepository)->getModel()->where(['user_id'=> $this->user->id, 'hunt_id'=> $value])->count();
-        return ($huntUser)? false: true;
+        $relic = Relic::find($value);
+        if ($relic && $this->user->gold_balance >= $relic->fees) {
+            return true;
+        }else{
+            return false;
+        }
     }
 
     /**
@@ -39,6 +42,6 @@ class HuntParticipationRule implements Rule
      */
     public function message()
     {
-        return 'You are already participated in this hunt.';
+        return 'You don\'t have enough gold to join this relic.';
     }
 }

@@ -12,16 +12,13 @@ class GetHuntParticipationDetailRepository
     {
         // get hunt user info
         $huntUser = (new HuntUserRepository)
-                    ->where('hunt_id', $huntUserId)
-                    ->whereHas('user', function($query) {
-                        $query->where('_id', auth()->user()->id);
-                    })
+                    ->where('_id', $huntUserId)
                     ->select('_id', 'user_id', 'status')
                     ->first();
             
             // get clues info
             $huntUserDetails = $huntUser->hunt_user_details()
-                            ->with(['game'=> function($query){
+                            ->with(['game'=> function($query) use ($huntUser) {
                                 $query->with(['complexity_target'=> function($query) use ($huntUser) {
                                     $query->where('complexity', $huntUser->complexity);
                                 }])
@@ -32,8 +29,8 @@ class GetHuntParticipationDetailRepository
                             ->get();
 
             // get non-completion clues
-            $remainingClues = $huntUserDetails->where('status', '!=' ,'completed')->values();
-            $totalCompletedClues = $huntUserDetails->where('status', 'completed')->values();
+            // $remainingClues = $huntUserDetails->where('status', '!=' ,'completed')->values();
+            // $totalCompletedClues = $huntUserDetails->where('status', 'completed')->values();
             
             // pause the running clues of previous running hunt
             $initializeAction = (new ClueFactory)->initializeAction('paused');

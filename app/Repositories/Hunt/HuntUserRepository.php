@@ -32,4 +32,9 @@ class HuntUserRepository
     {
         return $this->model->where($column, $value);
     }
+
+    public function getModel()
+    {
+        return $this->model;
+    }
 }

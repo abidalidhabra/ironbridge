@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
+
     public function getRelics(Request $request)
     {
         $user = auth()->user();
@@ -30,11 +31,17 @@ class ProfileController extends Controller
         
         $seasons = (new SeasonRepository)->getModel()
                     ->active()
-                    ->with('relics:id,name,desc,icon,season_id')
+                    ->with(['relics'=> function($query) use ($user) {
+                        $query->with(['participations'=> function($query) use ($user){
+                            $query->where('user_id', $user->id)->select('_id', 'status', 'hunt_id', 'user_id');
+                        }])
+                        ->select('id','name','desc','icon','season_id', 'user_id');
+                    }])
                     ->get(['id', 'name', 'desc', 'icon'])
                     ->map(function($season) {
                         $season->relics->map(function($relic) {
-                            $relic->occupied = rand(0,1) < 0.5;
+                            $relic->occupied = ($relic->participations->count() && $relic->participations[0]->status == 'completed')? true: false;
+                            unset($relic->participations);
                             return $relic;
                         });
                         return $season;

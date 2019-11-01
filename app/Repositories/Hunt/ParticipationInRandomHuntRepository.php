@@ -29,10 +29,6 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
 
         return [
             'bypass_previous_hunt'  => $bypassStatus,
-            // 'hunt'  => $huntUser->setVisible(['_id', 'user_id', 'complexity']),
-            // 'clues_data'  => $clueDetails->map(function($clue) {
-            //     return $clue->only(['_id', 'hunt_user_id', 'game_variation_id', 'game_id', 'radius', 'status']);
-            // })
             'participated_hunt_found'=> $data['participated_hunt_found'], 
             'total_clues'=> $data['total_clues'],
             'completed_clues'=> $data['completed_clues'],
