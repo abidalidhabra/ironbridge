@@ -24,8 +24,11 @@ class GetLastRunningRandomHuntRepository
 
             // get clues info
             $clues = $huntUser->hunt_user_details()
-                    ->with(['game'=> function($query){
-                        $query->with('complexity_target')->select('_id','name');
+                    ->with(['game'=> function($query) use ($huntUser){
+                        $query->with(['complexity_target'=> function($query) use ($huntUser) {
+                            $query->where('complexity', $huntUser->complexity);
+                        }])
+                        ->select('_id','name');
                     }])
                     ->with('game_variation:_id,variation_name,variation_complexity,target,no_of_balls,bubble_level_id,game_id,variation_size,row,column')
                     ->select('_id', 'status', 'game_id', 'game_variation_id', 'hunt_user_id', 'radius')

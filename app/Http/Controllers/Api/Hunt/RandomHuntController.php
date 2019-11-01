@@ -30,6 +30,7 @@ class RandomHuntController extends Controller
         //     'hunt_user'=> $data['hunt_user'],
         //     'clues_data'=> $data['clues_data'],
         // ]);
+        $response['message'] = 'user has been successfully participated.';
         return response()->json($response);
     }
 
@@ -39,7 +40,7 @@ class RandomHuntController extends Controller
 
             $data = (new GetLastRunningRandomHuntRepository)->get();
             return response()->json([
-                'message' => 'Last Hunt\'s information has been retrieved.', 
+                'message' => 'Relic\'s information has been retrieved.', 
                 'last_running_hunt'=> [
                     'hunt_user'=> $data['hunt_user'], 
                     'running_hunt_found'=> $data['running_hunt_found'], 

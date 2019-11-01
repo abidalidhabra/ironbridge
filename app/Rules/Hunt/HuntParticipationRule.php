@@ -33,7 +33,7 @@ class HuntParticipationRule implements Rule
                         $query->where('_id', $this->user->id);
                     })
                     ->count();
-                    // dd($huntUser);
+
         return ($huntUser)? false: true;
     }
 

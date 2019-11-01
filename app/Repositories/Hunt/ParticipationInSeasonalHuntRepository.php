@@ -23,11 +23,11 @@ class ParticipationInSeasonalHuntRepository implements HuntParticipationInterfac
     {
         $this->user = auth()->user();
         $this->relic = (new RelicRepository)->find($request->relic_id);
-        
+
         $huntUser = $this->add($request);
         $clueDetails = $this->addClues($request, $huntUser);
 
-        $data = (new GetHuntParticipationDetailRepository)->get($huntUser->id);
+        $data = (new GetHuntParticipationDetailRepository)->get($request->relic_id);
 
         return [
             'hunt_user'=> $data['hunt_user'],

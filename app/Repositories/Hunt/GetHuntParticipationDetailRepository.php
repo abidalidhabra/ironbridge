@@ -18,15 +18,18 @@ class GetHuntParticipationDetailRepository
                     })
                     ->select('_id', 'user_id', 'status')
                     ->first();
-
+            
             // get clues info
             $huntUserDetails = $huntUser->hunt_user_details()
-            ->with(['game'=> function($query){
-                $query->with('complexity_target')->select('_id','name');
-            }])
-            ->with('game_variation:_id,variation_name,variation_complexity,target,no_of_balls,bubble_level_id,game_id,variation_size,row,column')
-            ->select('_id', 'status', 'game_id', 'game_variation_id', 'hunt_user_id', 'radius')
-            ->get();
+                            ->with(['game'=> function($query){
+                                $query->with(['complexity_target'=> function($query) use ($huntUser) {
+                                    $query->where('complexity', $huntUser->complexity);
+                                }])
+                                ->select('_id','name');
+                            }])
+                            ->with('game_variation:_id,variation_name,variation_complexity,target,no_of_balls,bubble_level_id,game_id,variation_size,row,column')
+                            ->select('_id', 'status', 'game_id', 'game_variation_id', 'hunt_user_id', 'radius')
+                            ->get();
 
             // get non-completion clues
             $remainingClues = $huntUserDetails->where('status', '!=' ,'completed')->values();
