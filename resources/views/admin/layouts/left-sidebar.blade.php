@@ -91,18 +91,81 @@
 						</div>
 					</li>
 					@endif
+					
 
-					@if($admin->hasPermissionTo('View Seasonal Hunt'))
-					<li  class="@if(
-						Route::currentRouteName() == 'admin.seasons.create' || 
-						Route::currentRouteName() == 'admin.seasons.edit' || 
-						Route::currentRouteName() == 'admin.seasons.show' || 
-						Route::currentRouteName() == 'admin.seasons.index' ||
-						Route::currentRouteName() == 'admin.relics.create' || 
-						Route::currentRouteName() == 'admin.relics.edit' || 
-						Route::currentRouteName() == 'admin.relics.index'
-						) {{ 'activelist' }} @endif">
-						<a href="{{ route('admin.seasons.index') }}">Relic Hunts</a>
+
+
+
+
+
+
+
+					@if($admin->hasPermissionTo('View Treasure Locations') || $admin->hasPermissionTo('View Complexity Targets') || $admin->hasPermissionTo('View Hunt Loot Tables'))
+					<li>
+						<a href="javascript:void(0)" class="plusbttnbox myBtn">Seasonal Hunts
+							<i 
+								class="fa 
+								@if(
+									Route::currentRouteName() == 'admin.seasons.index' ||
+									Route::currentRouteName() == 'admin.seasons.create' || 
+									Route::currentRouteName() == 'admin.seasons.edit' || 
+									Route::currentRouteName() == 'admin.seasons.show' || 
+									Route::currentRouteName() == 'admin.relics.index' || 
+									Route::currentRouteName() == 'admin.relics.create' || 
+									Route::currentRouteName() == 'admin.relics.edit' || 
+									Route::currentRouteName() == 'admin.relics.show') 
+									{{ 'fa-minus' }} 
+								@else 
+									{{ 'fa-plus' }} 
+								@endif" 
+								aria-hidden="true">
+							</i>
+						</a>
+
+						<div class="dropdown custmenbox">
+							<div  
+							class="dropdown-content myDropdown 
+							@if(
+								Route::currentRouteName() == 'admin.seasons.index' ||
+								Route::currentRouteName() == 'admin.seasons.create' || 
+								Route::currentRouteName() == 'admin.seasons.edit' || 
+								Route::currentRouteName() == 'admin.seasons.show' || 
+								Route::currentRouteName() == 'admin.relics.index' || 
+								Route::currentRouteName() == 'admin.relics.create' || 
+								Route::currentRouteName() == 'admin.relics.edit' || 
+								Route::currentRouteName() == 'admin.relics.show') 
+								{{ 'show' }} 
+							@endif">
+								
+								@if($admin->hasPermissionTo('View Treasure Locations'))
+									<a 
+									href="{{ route('admin.seasons.index') }}" 
+									class="
+									@if(
+										Route::currentRouteName() == 'admin.seasons.index' ||
+										Route::currentRouteName() == 'admin.seasons.create' || 
+										Route::currentRouteName() == 'admin.seasons.edit' || 
+										Route::currentRouteName() == 'admin.seasons.show') 
+										{{ 'activelistsub' }} 
+									@endif
+									">Seasons</a>
+								@endif
+
+								@if($admin->hasPermissionTo('View Treasure Locations'))
+									<a 
+									href="{{ route('admin.relics.index') }}" 
+									class="
+									@if(
+										Route::currentRouteName() == 'admin.relics.index' ||
+										Route::currentRouteName() == 'admin.relics.create' || 
+										Route::currentRouteName() == 'admin.relics.edit' || 
+										Route::currentRouteName() == 'admin.relics.show') 
+										{{ 'activelistsub' }} 
+									@endif
+									">Relics</a>
+								@endif
+							</div>
+						</div>
 					</li>
 					@endif
 

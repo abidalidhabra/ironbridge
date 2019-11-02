@@ -7,5 +7,5 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class HuntRewardDistributionHistory extends Eloquent
 {
-    protected $fillable = ['hunt_user_id', 'user_id', 'type', 'golds'];
+    protected $fillable = ['hunt_user_id', 'user_id', 'type', 'golds', 'relic_id'];
 }

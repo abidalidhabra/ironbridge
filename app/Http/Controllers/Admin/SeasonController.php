@@ -200,9 +200,6 @@ class SeasonController extends Controller
         ->editColumn('created_at', function($season){
             return $season->created_at->format('d-M-Y @ h:i A');
         })
-        ->editColumn('active', function($season){
-            return ($season->active)? "Active": "Inactive";
-        })
         ->addColumn('action', function($season){
             if(auth()->user()->hasPermissionTo('Edit Seasonal Hunt')){
                 $html = '<a href="'.route('admin.seasons.edit',$season->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';

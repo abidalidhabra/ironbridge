@@ -12,7 +12,15 @@
             minlength="5" 
             required>
         </div>
-        
+        <div class="form-group">
+            <label class="control-label">Clue Radius:</label>
+            <input 
+            type="text" 
+            class="form-control" 
+            placeholder="Enter clue radius"
+            name="clues[{{$index}}][radius]"
+            alias-name="Clue radius">
+        </div>
     </div>
     
     <div class="colmd5box">

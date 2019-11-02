@@ -6,7 +6,7 @@
     <div class="users_datatablebox">
         <div class="">               
             <div class="col-md-12 text-right">
-                <a href="{{ $relic->season->path() }}" class="btn back-btn">Back</a>
+                <a href="{{ route('admin.relics.index') }}" class="btn back-btn">Back</a>
             </div>
             <div class="col-md-12">
                 <div class="row">
@@ -27,11 +27,17 @@
 
                         <div class="form-group">
                             <label class="control-label">Season Name:</label>
-                            <input 
-                            type="text" 
-                            class="form-control" 
-                            value="{{ $relic->season->name }}"
-                            disabled>
+                            <select class="form-control" name="season_id">
+                                @forelse($seasons as $season)
+                                <option 
+                                type="text" 
+                                class="form-control" 
+                                value="{{ $season->id }}" 
+                                @if($season->id == $relic->season->id) selected @endif>{{ $season->name }}</option>
+                                @empty
+                                <option type="text" class="form-control" value="">No seasons</option>
+                                @endforelse
+                            </select>
                         </div>
 
                         <div class="form-group @error('relic_name') has-error @enderror">
@@ -62,17 +68,50 @@
                             <div class="text-muted text-danger"> {{ $errors->first('relic_desc') }} </div>
                             @enderror
                         </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group @error('icon') has-error @enderror">
+                                    <label class="control-label">Active icon for relic:</label>
+                                    <input 
+                                    type="file" 
+                                    class="form-control" 
+                                    name="icon" 
+                                    alias-name="Icon for relic">
+                                    @error('icon')
+                                    <div class="text-muted text-danger"> {{ $errors->first('icon') }} </div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="img-container imgiconboxsetiner">
+                                    <p>Icon</p>
+                                    <a data-fancybox="{{ $relic->name }}" href="{{ $relic->icon }}">
+                                        <img style="width: 80px;" src="{{ $relic->icon }}" alt="{{ $relic->name }} relic icon">
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group checkbox @error('active') has-error @enderror">
+                                    <label><input type="checkbox" name="active" value="true" {{ ($relic->active)? 'checked': '' }}>Active</label>
+                                    @error('active')
+                                    <div class="text-muted text-danger"> {{ $errors->first('active') }} </div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
 
-                        <div class="form-group @error('icon') has-error @enderror">
-                            <label class="control-label">Active icon for relic:</label>
+                        <div class="form-group @error('fees') has-error @enderror">
+                            <label class="control-label">Fees:</label>
                             <input 
-                            type="file" 
+                            type="text" 
                             class="form-control" 
-                            name="icon" 
-                            alias-name="Icon for relic">
-                            <b><a href="{{ $relic->icon }}" target="_blank">VIEW</a></b>
-                            @error('icon')
-                            <div class="text-muted text-danger"> {{ $errors->first('icon') }} </div>
+                            name="fees"
+                            value="{{ $relic->fees }}"
+                            alias-name="Fees for relic"
+                            required>
+                            @error('fees')
+                            <div class="text-muted text-danger"> {{ $errors->first('fees') }} </div>
                             @enderror
                         </div>
 
@@ -89,12 +128,7 @@
                             @enderror
                         </div> --}}
 
-                        <div class="form-group checkbox @error('active') has-error @enderror">
-                            <label><input type="checkbox" name="active" value="true" {{ ($relic->active)? 'checked': '' }}>Active</label>
-                            @error('active')
-                            <div class="text-muted text-danger"> {{ $errors->first('active') }} </div>
-                            @enderror
-                        </div>
+                       
 
                         <div class="form-group">
                             <label>Relic Complexity:</label>
@@ -146,7 +180,7 @@
                     if (response.status == true) {
                         toastr.success(response.message);
                         setTimeout(function() {
-                            window.location.href = '{{ $relic->season->path() }}';
+                            window.location.href = '{{ route('admin.relics.index') }}';
                         }, 2000)
                     } else {
                         toastr.warning('You are not authorized to access this page.');

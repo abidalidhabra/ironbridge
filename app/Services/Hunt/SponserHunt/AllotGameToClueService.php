@@ -12,6 +12,7 @@ class AllotGameToClueService
     {
         $miniGames = (new ParticipationInRandomHuntRepository)->randomizeGames(count($request->clues));
         return collect($request->clues)->values()->map(function($clue, $i) use ($miniGames) {
+            $clue['radius'] = (int)$clue['radius'];
             $clue['game_id'] = $miniGames[$i]->id;
             $clue['game_variation_id'] = $miniGames[$i]->game_variation()->limit(1)->first()->id;
             return $clue;

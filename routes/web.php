@@ -186,7 +186,8 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	// Route::get('seasons/hunt-html', 'SeasonController@huntHTML')->name('seasons.hunt-html');
 	// Route::get('seasons/clue-html', 'SeasonController@clueHTML')->name('seasons.clue-html');
 	Route::resource('seasons', 'SeasonController');
-	Route::get('relics/{season_slug}/create', 'RelicController@create')->name('relics.create');
+	Route::get('relics/list', 'RelicController@list')->name('relics.list');
+	Route::get('relics/create', 'RelicController@create')->name('relics.create');
 	Route::post('relics/{season_slug}/store', 'RelicController@store')->name('relics.store');
 	Route::get('relics/clues/html', 'RelicController@clueHTML')->name('relics.clue.html');
 	// Route::get('relics/{season_slug}/edit/{id}', 'RelicController@edit')->name('relics.edit');

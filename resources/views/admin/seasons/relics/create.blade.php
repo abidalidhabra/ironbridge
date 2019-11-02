@@ -6,7 +6,7 @@
     <div class="users_datatablebox">
         <div class="">               
             <div class="col-md-12 text-right">
-                <a href="{{ $season->path() }}" class="btn back-btn">Back</a>
+                <a href="{{ route('admin.relics.index') }}" class="btn back-btn">Back</a>
             </div>
             <div class="col-md-12">
                 <div class="row">
@@ -26,11 +26,13 @@
 
                         <div class="form-group">
                             <label class="control-label">Season Name:</label>
-                            <input 
-                            type="text" 
-                            class="form-control" 
-                            value="{{ $season->name }}"
-                            disabled>
+                            <select class="form-control" name="season_id">
+                                @forelse($seasons as $season)
+                                <option type="text" class="form-control" value="{{ $season->slug }}">{{ $season->name }}</option>
+                                @empty
+                                <option type="text" class="form-control" value="">No seasons</option>
+                                @endforelse
+                            </select>
                         </div>
 
                         <div class="form-group @error('relic_name') has-error @enderror">
@@ -71,6 +73,19 @@
                             required>
                             @error('icon')
                             <div class="text-muted text-danger"> {{ $errors->first('icon') }} </div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label">Fees:</label>
+                            <input 
+                            type="text" 
+                            class="form-control" 
+                            name="fees" 
+                            alias-name="Fees for relic"
+                            required>
+                            @error('fees')
+                            <div class="text-muted text-danger"> {{ $errors->first('fees') }} </div>
                             @enderror
                         </div>
 
@@ -125,11 +140,14 @@
 <script>
     
     $(document).on('submit', '#addRelicForm', function(e) {
+
+        let url = "{{ route('admin.relics.store', ':seasonID') }}";
+        url = url.replace(":seasonID", $('select[name=season_id]').val());
         e.preventDefault();
         if(validate()) {
             $.ajax({
                 type: "POST",
-                url: '{{ route('admin.relics.store', $season->slug) }}',
+                url: url,
                 data: new FormData(this),
                 contentType: false,
                 processData: false,
@@ -139,7 +157,7 @@
                     if (response.status == true) {
                         toastr.success(response.message);
                         setTimeout(function() {
-                            window.location.href = '{{ $season->path() }}';
+                            window.location.href = '{{ route('admin.relics.index') }}';
                         }, 2000)
                     } else {
                         toastr.warning('You are not authorized to access this page.');

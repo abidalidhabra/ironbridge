@@ -63,11 +63,13 @@
                             class="form-control" 
                             name="icon" 
                             alias-name="Icon for season">
-                            <b><a href="{{ $season->icon }}" target="_blank">VIEW</a></b>
                             @error('icon')
                             <div class="text-muted text-danger"> {{ $errors->first('icon') }} </div>
                             @enderror
                         </div>
+                        <a data-fancybox="{{ $season->name }}" href="{{ $season->icon }}">
+                            <img style="width: 80px;" src="{{ $season->icon }}" alt="{{ $season->name }} season icon">
+                        </a>
 
                        {{--  <div class="form-group @error('inactive_icon') has-error @enderror">
                             <label class="control-label">Inactive icon for season:</label>

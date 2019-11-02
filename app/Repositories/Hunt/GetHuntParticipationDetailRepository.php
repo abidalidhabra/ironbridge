@@ -4,6 +4,7 @@ namespace App\Repositories\Hunt;
 
 use App\Repositories\Hunt\Factory\ClueFactory;
 use App\Repositories\Hunt\HuntUserRepository;
+use Illuminate\Http\Request;
 
 class GetHuntParticipationDetailRepository
 {
@@ -13,7 +14,7 @@ class GetHuntParticipationDetailRepository
         // get hunt user info
         $huntUser = (new HuntUserRepository)
                     ->where('_id', $huntUserId)
-                    ->select('_id', 'user_id', 'status')
+                    ->select('_id', 'user_id', 'status', 'complexity')
                     ->first();
             
             // get clues info

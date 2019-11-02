@@ -10,6 +10,8 @@ use App\Models\v2\PracticeGameUser;
 use App\Repositories\Hunt\Contracts\ClueInterface;
 use App\Repositories\Hunt\HuntUserDetailRepository;
 use App\Repositories\Hunt\HuntUserRepository;
+use App\Repositories\RelicRepository;
+use App\Repositories\SeasonRepository;
 use App\Services\HuntReward\LogTheHuntRewardService;
 use Illuminate\Support\Facades\Log;
 use MongoDB\BSON\UTCDateTime;
@@ -82,11 +84,10 @@ class CompleteTheClueRepository implements ClueInterface
 
         /** Generate Reward **/
         $randNumber  = rand(1, 1000);
-        // $randNumber = 950;
-        // $randNumber = 755;
-        // $randNumber = 5;
+        // $randNumber = 986;
         $huntUser    = $huntUserDetail->hunt_user()->select('complexity','user_id')->first();
         $complexity  = $huntUser->complexity;
+        // $complexity  = 1;
         $user        = auth()->user();
         $userId      = $user->_id;
         $userGender  = ($user->avatar_detail)?$user->avatar_detail->gender:'male';
@@ -100,7 +101,7 @@ class CompleteTheClueRepository implements ClueInterface
         $rewardData['hunt_user_id'] = $huntUser->id;
 
         $rewardData['random_number'] = $randNumber;
-        
+
         if ($selectedReward->widgets_order && is_array($selectedReward->widgets_order)) {
             
             $widgetRandNumber    = rand(1, 1000);
@@ -145,6 +146,32 @@ class CompleteTheClueRepository implements ClueInterface
             $user->push('widgets', $widget);
             $message[] = 'Widget has been unlocked';
             $rewardData['widget'] = $widgetItems;
+        }
+
+        if ($selectedReward->relics) {
+            relic:
+            $relicsCount = (new RelicRepository)->getModel()->active()->notParticipated(auth()->user()->id)
+                            ->whereHas('season', function($query) { $query->active(); })->count();
+            
+            $relic = (new RelicRepository)->getModel()
+                        ->active()
+                        ->notParticipated(auth()->user()->id)
+                        ->whereHas('season', function($query) { $query->active(); })
+                        ->whereDoesntHave('rewards', function($query) { $query->where('user_id', auth()->user()->id); })
+                        ->select('_id', 'name', 'icon', 'season_id')
+                        ->skip(rand(0,$relicsCount-1))
+                        ->take(1)
+                        ->first();
+
+            if (!$relic) {
+                $rewardData['type'] = 'skeleton_key';
+                $selectedReward->skeletons = 1;
+                goto distSkeleton; 
+            }
+
+            $message[] = 'Relic provided.';
+            $rewardData['relic_id'] = $relic->id;
+            $rewardData['relic'] = ['id'=> $relic->id, 'icon'=> $relic->icon];
         }
 
         if ($selectedReward->skeletons){

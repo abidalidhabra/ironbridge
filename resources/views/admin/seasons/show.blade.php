@@ -11,7 +11,6 @@
         <div class="">               
             <div class="col-md-12 text-right">
                 <a href="{{ route('admin.seasons.index') }}" class="btn back-btn">Back</a>
-                <a href="{{ route('admin.relics.create', $season->slug) }}" class="btn btn-success">Add Relic</a>
             </div>
             <div class="col-md-12">
                 <div class="row">
@@ -22,57 +21,58 @@
     </div>
     <br/>
     <br/>
-    <div class="customdatatable_box" id="addSeasonContainer">
-        <div>
-            <p>Season Slug: {{ $season->slug }} </p>
-            <p>Status: {{ ($season->active)? 'Active': 'Inactive' }}</p>
-            <div>
-                <div class="img-container">
+    <div class="customdatatable_box allboxinercoversgm" id="addSeasonContainer">
+        <div class="seastaicoboxsettop">
+            <h2>Season Detail:</h2>
+            <p>Slug: <span>{{ $season->slug }}</span> </p>
+            <p>Status: <span>{{ ($season->active)? 'Active': 'Inactive' }}</span></p>
+            <div class="">
+                <div class="img-container imgiconboxsetiner">
                     <p>Icon</p>
-                    <img 
-                        style="width: 80px;" 
-                        src="{{ $season->icon }}" 
-                        alt="season active icon">
+                    <a data-fancybox="{{ $season->name }}" href="{{ $season->icon }}">
+                        <img src="{{ $season->icon }}" alt="season icon">
+                    </a>
                 </div>
-               {{--  <div class="img-container">
+               {{--  <div class="img-container imgiconboxsetiner">
                     <p>Inactive Icon</p>
                     <img 
-                        style="width: 80px;" 
+                        
                         src="{{ $season->icon }}" 
                         alt="season inactive icon">
                 </div> --}}
             </div>
         </div>
-        <div>
+        <div class="relisetinerript">
             <h2>Relics</h2>
             @forelse($season->relics as $index=> $relic)
-                <div>
-                   <h4> Relic {{$index+1}} </h4> 
-                   <div>
-                        @if(auth()->user()->hasPermissionTo('Edit Seasonal Hunt'))
-                            <a href="{{ route('admin.relics.edit', $relic->id) }}" data-toggle="tooltip" title="Edit" >
-                                <i class="fa fa-pencil"></i>
-                            </a>
-                        @endif
+                <div class="allreicontitcover">
+                    <div class="titleedtdeltbtn">
+                        <h4> Relic <span>{{$index+1}}</span> </h4> 
+                        <div class="editdeltboxbtn">
+                            @if(auth()->user()->hasPermissionTo('Edit Seasonal Hunt'))
+                                <a href="{{ route('admin.relics.edit', $relic->id) }}" data-toggle="tooltip" title="Edit" >
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                            @endif
 
-                        @if(auth()->user()->hasPermissionTo('Delete Seasonal Hunt'))
-                            <a href="{{ route('admin.relics.destroy', $relic->id) }}" data-toggle="tooltip" data-action="delete" title="Edit" >
-                                <i class="fa fa-trash"></i>
-                            </a>
-                        @endif
-                   </div>
-                   <p>Relic Name: {{ $relic->name }}</p>
-                   <p>Relic Desc: {{ $relic->desc }}</p>
-                   <p>Status: {{ ($relic->active)? 'Active': 'Inactive' }}</p>
+                            @if(auth()->user()->hasPermissionTo('Delete Seasonal Hunt'))
+                                <a href="{{ route('admin.relics.destroy', $relic->id) }}" data-toggle="tooltip" data-action="delete" title="Edit" >
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            @endif
+                        </div> 
+                    </div>                  
+                   <p>Relic Name: <span>{{ $relic->name }}</span></p>
+                   <p>Relic Desc: <span>{{ $relic->desc }}</span></p>
+                   <p>Status: <span>{{ ($relic->active)? 'Active': 'Inactive' }}</span></p>
                    <div>
-                        <div class="img-container">
+                        <div class="img-container imgiconboxsetiner">
                             <p>Icon</p>
-                            <img 
-                                style="width: 80px;" 
-                                src="{{ $relic->icon }}" 
-                                alt="{{ $relic->name }} relic active icon">
+                            <a data-fancybox="{{ $relic->name }}" href="{{ $relic->icon }}">
+                                <img style="width: 80px;" src="{{ $relic->icon }}" alt="{{ $relic->name }} relic icon">
+                            </a>
                         </div>
-                        {{-- <div class="img-container">
+                        {{-- <div class="img-container imgiconboxsetiner">
                             <p>Inactive Icon</p>
                             <img 
                                 style="width: 80px;" 
