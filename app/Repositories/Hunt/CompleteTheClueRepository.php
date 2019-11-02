@@ -105,7 +105,7 @@ class CompleteTheClueRepository implements ClueInterface
         if ($selectedReward->widgets_order && is_array($selectedReward->widgets_order)) {
             
             $widgetRandNumber    = rand(1, 1000);
-            $widgetRandNumber    = 301;
+            // $widgetRandNumber    = 301;
             $widgetOrder         = collect($selectedReward->widgets_order);
             $gotchaDesiredWidget = true;
             $countableWidget     = $widgetOrder->where('min', '<=', $widgetRandNumber)->where('max','>=',$widgetRandNumber)->first();
@@ -132,7 +132,8 @@ class CompleteTheClueRepository implements ClueInterface
                 // $widgetOrder = array_splice($widgetOrder, 1);
                 // if (count($widgetOrder) == 0) { goto distSkeleton; }
 
-                $widgetOrder = $widgetOrder->where('widget_category', '!=', $widgetCategory)->where('widget_name', '!=' ,$widgetName);
+                // $widgetOrder = $widgetOrder->where('widget_category', '!=', $widgetCategory)->where('widget_name', '!=' ,$widgetName);
+                $widgetOrder = $widgetOrder->where('type', '!=', $widgetCategory)->where('widget_name', '!=' ,$widgetName);
                 $countableWidget = $widgetOrder->first();
                 if ($widgetOrder->count() == 0) {
                     $rewardData['type'] = 'skeleton_key';
@@ -148,31 +149,36 @@ class CompleteTheClueRepository implements ClueInterface
             $rewardData['widget'] = $widgetItems;
         }
 
-        if ($selectedReward->relics) {
-            relic:
-            $relicsCount = (new RelicRepository)->getModel()->active()->notParticipated(auth()->user()->id)
-                            ->whereHas('season', function($query) { $query->active(); })->count();
+        // if ($selectedReward->relics) {
+
+        //     $relicRandNumber    = rand(1, 1000);
+        //     $relicOrder         = collect($selectedReward->relics);
+        //     $countableRelic     = $relicOrder->where('min', '<=', $relicRandNumber)->where('max','>=',$relicRandNumber)->first();
+
+        //     relic:
+        //     $relicsCount = (new RelicRepository)->getModel()->active()->notParticipated(auth()->user()->id)
+        //                     ->whereHas('season', function($query) { $query->active(); })->count();
             
-            $relic = (new RelicRepository)->getModel()
-                        ->active()
-                        ->notParticipated(auth()->user()->id)
-                        ->whereHas('season', function($query) { $query->active(); })
-                        ->whereDoesntHave('rewards', function($query) { $query->where('user_id', auth()->user()->id); })
-                        ->select('_id', 'name', 'icon', 'season_id')
-                        ->skip(rand(0,$relicsCount-1))
-                        ->take(1)
-                        ->first();
+        //     $relic = (new RelicRepository)->getModel()
+        //                 ->active()
+        //                 ->notParticipated(auth()->user()->id)
+        //                 ->whereHas('season', function($query) { $query->active(); })
+        //                 ->whereDoesntHave('rewards', function($query) { $query->where('user_id', auth()->user()->id); })
+        //                 ->select('_id', 'name', 'icon', 'season_id')
+        //                 ->skip(rand(0,$relicsCount-1))
+        //                 ->take(1)
+        //                 ->first();
 
-            if (!$relic) {
-                $rewardData['type'] = 'skeleton_key';
-                $selectedReward->skeletons = 1;
-                goto distSkeleton; 
-            }
+        //     if (!$relic) {
+        //         $rewardData['type'] = 'skeleton_key';
+        //         $selectedReward->skeletons = 1;
+        //         goto distSkeleton; 
+        //     }
 
-            $message[] = 'Relic provided.';
-            $rewardData['relic_id'] = $relic->id;
-            $rewardData['relic'] = ['id'=> $relic->id, 'icon'=> $relic->icon];
-        }
+        //     $message[] = 'Relic provided.';
+        //     $rewardData['relic_id'] = $relic->id;
+        //     $rewardData['relic'] = ['id'=> $relic->id, 'icon'=> $relic->icon];
+        // }
 
         if ($selectedReward->skeletons){
             distSkeleton:
