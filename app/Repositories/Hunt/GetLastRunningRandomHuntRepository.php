@@ -31,7 +31,7 @@ class GetLastRunningRandomHuntRepository
                         ->select('_id','name');
                     }])
                     ->with('game_variation:_id,variation_name,variation_complexity,target,no_of_balls,bubble_level_id,game_id,variation_size,row,column')
-                    ->select('_id', 'status', 'game_id', 'game_variation_id', 'hunt_user_id', 'radius')
+                    ->select('_id', 'status', 'game_id', 'game_variation_id', 'hunt_user_id', 'radius', 'index')
                     ->get();
 
             // get non-completion clues

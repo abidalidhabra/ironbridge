@@ -58,6 +58,7 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
         $huntUserDetails = collect();
         for ($i=0; $i < $request->total_clues; $i++) { 
             $huntUserDetails[] = new HuntUserDetail([
+                'index' => ($i + 1),
                 'location' => null,
                 'game_id'  => $miniGames[$i]->id,
                 'radius'   => 5,

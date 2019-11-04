@@ -26,6 +26,7 @@ class HuntUserDetail extends Eloquent
         'skipped_at',
         'failures_at',
         'walked',
+        'index',
 	];
 
     protected $attributes = [

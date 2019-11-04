@@ -19,7 +19,8 @@ class HuntUser extends Eloquent
         'started_at',
         'ended_at',
         'finished_in',
-        'hunt_complexity_id'
+        'hunt_complexity_id',
+        'estimated_time'
     ];
 
     protected $dates = [

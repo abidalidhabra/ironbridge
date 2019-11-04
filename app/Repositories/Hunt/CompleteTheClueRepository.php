@@ -46,7 +46,7 @@ class CompleteTheClueRepository implements ClueInterface
         }
 
         // calculate the time & mark the clue as complete
-        $clueFinishedIn = (new HuntUserDetailRepository)->calculateTheTimer($huntUserDetail, 'completed')->finished_in;
+        $clueFinishedIn = (new HuntUserDetailRepository)->calculateTheTimer($huntUserDetail, 'rr')->finished_in;
         
         $rewardData = null;
         $totalFinishedIn = $clueFinishedIn;
@@ -84,40 +84,43 @@ class CompleteTheClueRepository implements ClueInterface
 
         /** Generate Reward **/
         $randNumber  = rand(1, 1000);
-        // $randNumber = 986;
         $huntUser    = $huntUserDetail->hunt_user()->select('complexity','user_id')->first();
         $complexity  = $huntUser->complexity;
-        // $complexity  = 1;
         $user        = auth()->user();
         $userId      = $user->_id;
-        $userGender  = ($user->avatar_detail)?$user->avatar_detail->gender:'male';
+        $userGender  = ($user->avatar_detail)? $user->avatar_detail->gender: 'male';
         $rewards     = HuntReward::all();
 
-        $selectedReward = $rewards->where('complexity',$complexity)->where('min_range', '<=', $randNumber)->where('max_range','>=',$randNumber)->first();
+        $complexity  = 1;
+        $randNumber  = 921; // widget
+        $randNumber  = 986; // relic
+
+        $selectedReward = $rewards->where('complexity',$complexity)
+                            ->where('min_range', '<=', $randNumber)
+                            ->where('max_range','>=',$randNumber)
+                            ->first();
+
         if (!$selectedReward) {
             return [ 'reward_messages' => 'No reward found.', 'reward_data' => new stdClass()];
         }
+
         $rewardData['type'] = $selectedReward->reward_type;
         $rewardData['hunt_user_id'] = $huntUser->id;
-
         $rewardData['random_number'] = $randNumber;
 
         if ($selectedReward->widgets_order && is_array($selectedReward->widgets_order)) {
             
             $widgetRandNumber    = rand(1, 1000);
-            // $widgetRandNumber    = 301;
             $widgetOrder         = collect($selectedReward->widgets_order);
-            $gotchaDesiredWidget = true;
-            $countableWidget     = $widgetOrder->where('min', '<=', $widgetRandNumber)->where('max','>=',$widgetRandNumber)->first();
-            // $widgetOrder     = $selectedReward->widgets_order;
+            $countableWidget     = $widgetOrder
+                                    ->where('min', '<=', $widgetRandNumber)
+                                    ->where('max','>=',$widgetRandNumber)
+                                    ->first();
             
             findWidget:
-            // $countableWidget = $widgetOrder[0];
             $widgetCategory  = $countableWidget['type'];
             $widgetName      = $countableWidget['widget_name'];
 
-            // $user = User::where('_id', auth()->user()->id)->select('_id', 'widgets')->first();
-            // $userWidgets = collect($user->widgets)->pluck('id');
             $userWidgets = collect($user->widgets)->pluck('id');
             $widgetItems = WidgetItem::when($widgetCategory != 'all', function ($query) use ($widgetCategory){
                                 return $query->where('widget_category', $widgetCategory);
@@ -127,14 +130,19 @@ class CompleteTheClueRepository implements ClueInterface
                             ->whereNotIn('_id',$userWidgets)
                             ->select('_id', 'widget_name', 'avatar_id', 'widget_category')
                             ->first();
-
+            
             if (!$widgetItems) {
-                // $widgetOrder = array_splice($widgetOrder, 1);
-                // if (count($widgetOrder) == 0) { goto distSkeleton; }
+                
+                $widgetOrder = $widgetOrder->reject(function($order) use ($widgetName, $widgetCategory) { 
+                    return ($order['widget_name'] == $widgetName && $order['type'] == $widgetCategory); 
+                });
 
-                // $widgetOrder = $widgetOrder->where('widget_category', '!=', $widgetCategory)->where('widget_name', '!=' ,$widgetName);
-                $widgetOrder = $widgetOrder->where('type', '!=', $widgetCategory)->where('widget_name', '!=' ,$widgetName);
-                $countableWidget = $widgetOrder->first();
+                $countableWidget = $widgetOrder
+                                    ->where('min', '!=', 0)
+                                    ->where('max', '!=', 0)
+                                    // ->sortByDesc('possibility')
+                                    ->first();
+
                 if ($widgetOrder->count() == 0) {
                     $rewardData['type'] = 'skeleton_key';
                     $selectedReward->skeletons = 1;
@@ -149,36 +157,41 @@ class CompleteTheClueRepository implements ClueInterface
             $rewardData['widget'] = $widgetItems;
         }
 
-        // if ($selectedReward->relics) {
+        if ($selectedReward->relics) {
 
-        //     $relicRandNumber    = rand(1, 1000);
-        //     $relicOrder         = collect($selectedReward->relics);
-        //     $countableRelic     = $relicOrder->where('min', '<=', $relicRandNumber)->where('max','>=',$relicRandNumber)->first();
+            $relicRandNumber    = rand(1, 1000);
+            $relicOrder         = collect($selectedReward->relics);
+            $countableRelic     = $relicOrder->where('min', '<=', $relicRandNumber)->where('max','>=',$relicRandNumber)->first();
 
-        //     relic:
-        //     $relicsCount = (new RelicRepository)->getModel()->active()->notParticipated(auth()->user()->id)
-        //                     ->whereHas('season', function($query) { $query->active(); })->count();
-            
-        //     $relic = (new RelicRepository)->getModel()
-        //                 ->active()
-        //                 ->notParticipated(auth()->user()->id)
-        //                 ->whereHas('season', function($query) { $query->active(); })
-        //                 ->whereDoesntHave('rewards', function($query) { $query->where('user_id', auth()->user()->id); })
-        //                 ->select('_id', 'name', 'icon', 'season_id')
-        //                 ->skip(rand(0,$relicsCount-1))
-        //                 ->take(1)
-        //                 ->first();
+            relic:
+            $relic = (new RelicRepository)->getModel()
+                        ->active()
+                        ->notParticipated(auth()->user()->id)
+                        ->whereHas('season', function($query) { $query->active(); })
+                        ->whereDoesntHave('rewards', function($query) { $query->where('user_id', auth()->user()->id); })
+                        ->where('index', $countableRelic['relic'])
+                        ->select('_id', 'name', 'icon', 'season_id')
+                        ->first();
 
-        //     if (!$relic) {
-        //         $rewardData['type'] = 'skeleton_key';
-        //         $selectedReward->skeletons = 1;
-        //         goto distSkeleton; 
-        //     }
+            if (!$relic) {
 
-        //     $message[] = 'Relic provided.';
-        //     $rewardData['relic_id'] = $relic->id;
-        //     $rewardData['relic'] = ['id'=> $relic->id, 'icon'=> $relic->icon];
-        // }
+                $relicOrder = $relicOrder->reject(function($order) use ($countableRelic) { 
+                    return ($order['relic'] == $countableRelic['relic']); 
+                });
+                $countableRelic = $relicOrder->where('min', '!=', 0)->where('max', '!=', 0)->sortByDesc('possibility')->first();
+
+                if ($relicOrder->count() == 0) {
+                    $rewardData['type'] = 'skeleton_key';
+                    $selectedReward->skeletons = 1;
+                    goto distSkeleton; 
+                }
+                goto relic; 
+            }
+
+            $message[] = 'Relic provided.';
+            $rewardData['relic_id'] = $relic->id;
+            $rewardData['relic'] = ['id'=> $relic->id, 'icon'=> $relic->icon];
+        }
 
         if ($selectedReward->skeletons){
             distSkeleton:

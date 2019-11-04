@@ -42,6 +42,7 @@ class ParticipationInSeasonalHuntRepository implements HuntParticipationInterfac
         return $this->user->hunt_user_v1()->create([
             'hunt_id'=> $this->relic->id,
             'complexity'=> $this->relic->complexity,
+            'estimated_time'=> $this->getEpproximatedTime(),
             'location'=> [
                 'type'=> "Point",
                 'coordinates'=> [0, 0]
@@ -53,8 +54,9 @@ class ParticipationInSeasonalHuntRepository implements HuntParticipationInterfac
     {
 
         $huntUserDetails = collect();
-        foreach ($this->relic['clues'] as $index => $clue) {
+        foreach ($this->relic->clues as $index => $clue) {
             $huntUserDetails[] = new HuntUserDetail([
+                'index' => ($index + 1),
                 'name' => $clue['name'],
                 'desc' => $clue['desc'],
                 'game_id'  => $clue['game_id'],
@@ -63,5 +65,24 @@ class ParticipationInSeasonalHuntRepository implements HuntParticipationInterfac
             ]);
         }
         return $huntUser->hunt_user_details()->saveMany($huntUserDetails);
+    }
+
+    public function getEpproximatedTime()
+    {
+        if ($this->relic->complexity == 1) {
+            $distance = 50; // Level 1 hunts have clues 50 meters apart. 3 stops per hunt.
+        }else if ($this->relic->complexity == 2) {
+            $distance = 100; // Level 2 hunts have clues 100 meters apart. 3-4 stops per hunt.
+        }else if ($this->relic->complexity == 3) {
+            $distance = 250; // Level 3 hunts have clues 250 meters apart. 3-4 stops per hunt.
+        }else if ($this->relic->complexity == 4) {
+            $distance = 500; // Level 4 hunts have clues 500 meters apart. 4-5 stops per hunt.
+        }else if ($this->relic->complexity == 5) {
+            $distance = 1000; // Level 5 hunts have clues 1000 meters apart. 4-5 stops per hunt.
+        }
+
+        $distance = $distance / 1000; // This distance in km.
+        $minutesToBeTaken = ((((60 / 4.5) * $distance) + 5) * count($this->relic->clues));
+        return $minutesToBeTaken * 60;
     }
 }

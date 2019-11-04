@@ -30,7 +30,7 @@ class PasswordResetController extends Controller
 		$user->save();
 		$user->notify(new PasswordResetRequest($otp));
 
-		return response()->json(['message' => 'We have e-mailed your password reset OTP!']);
+		return response()->json(['message' => 'Please check your email for a one time password.']);
 	}
 
 	public function matchOtp(Request $request)
