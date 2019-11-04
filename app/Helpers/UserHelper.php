@@ -52,7 +52,7 @@ class UserHelper {
 						$query->where(['user_id'=> $user->id, 'status'=> 'completed']);
 					})
 					->with('season:_id,name')
-					->select('_id', 'name', 'desc', 'active', 'icon', 'complexity','season_id')
+					->select('_id', 'name', 'desc', 'active', 'icon', 'complexity', 'season_id', 'fees')
 					->get();
 		return [
 			'avatars' => $avatars,
