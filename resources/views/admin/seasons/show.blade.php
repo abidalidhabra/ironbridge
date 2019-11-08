@@ -29,7 +29,7 @@
             <div class="">
                 <div class="img-container imgiconboxsetiner">
                     <p>Icon</p>
-                    <a data-fancybox="{{ $season->name }}" href="{{ $season->icon }}">
+                    <a data-fancybox="{{ $season->id }}" href="{{ $season->icon }}">
                         <img src="{{ $season->icon }}" alt="season icon">
                     </a>
                 </div>
@@ -68,7 +68,7 @@
                    <div>
                         <div class="img-container imgiconboxsetiner">
                             <p>Icon</p>
-                            <a data-fancybox="{{ $relic->name }}" href="{{ $relic->icon }}">
+                            <a data-fancybox="{{ $season->name }}" href="{{ $relic->icon }}">
                                 <img style="width: 80px;" src="{{ $relic->icon }}" alt="{{ $relic->name }} relic icon">
                             </a>
                         </div>

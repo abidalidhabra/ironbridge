@@ -91,9 +91,9 @@ class CompleteTheClueRepository implements ClueInterface
         $userGender  = ($user->avatar_detail)? $user->avatar_detail->gender: 'male';
         $rewards     = HuntReward::all();
 
-        $complexity  = 1;
-        $randNumber  = 921; // widget
-        $randNumber  = 986; // relic
+        // $complexity  = 1;
+        // $randNumber  = 921; // widget
+        // $randNumber  = 986; // relic
 
         $selectedReward = $rewards->where('complexity',$complexity)
                             ->where('min_range', '<=', $randNumber)
