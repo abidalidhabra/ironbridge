@@ -9,7 +9,7 @@ use Storage;
 class PracticeGameTarget extends Eloquent
 {
     protected $fillable = [
-        'game_id', 'target','variation_images'/*,'number_generate','variation_size'*/
+        'game_id', 'targets','variation_images'
     ];
 
     public function game()
@@ -17,6 +17,10 @@ class PracticeGameTarget extends Eloquent
         return $this->belongsTo('App\Models\v1\Game','game_id');
     }
 
+    public function getTargetsAttribute($value)
+    {
+        return collect($value);
+    }
 
     public function getVariationImagesAttribute($value)
     {
