@@ -28,13 +28,10 @@ class PracticeGameFinishRequest extends FormRequest
     {
         return [
             'practice_game_user_id' => ['required', 'exists:practice_game_users,_id', new UserTitleOfMiniGame],
-            // 'increase_completions_time' => ['required', 'string', 'in:true,false'],
             'random_mode' => ['required', 'string', 'in:true,false'],
-            'score' => ['required_with:time', 'required_without:final_score', 'numeric', 'integer', 'min:1'],
-            'time' => ['required_with:score', 'required_without:final_time', 'numeric', 'integer', 'min:1'],
+            'score' => ['required_with:time', 'numeric', 'integer', 'min:1'],
+            'time' => ['required_with:score', 'numeric', 'integer', 'min:1'],
             'type' => ['required', 'in:completed,finished'],
-            // 'final_score' => ['required_with:final_time', 'required_without:score', 'numeric', 'integer', 'min:1'],
-            // 'final_time' => ['required_with:final_score', 'required_without:time', 'numeric', 'integer', 'min:1'],
         ];
     }
 

@@ -10,7 +10,7 @@ use MongoDB\BSON\UTCDateTime;
 
 class PracticeGameUser extends Eloquent
 {
-    protected $fillable = ['user_id', 'game_id', 'completed_at', /*'piece', 'piece_collected',*/ 'unlocked_at', 'completion_times', 'favourite'];
+    protected $fillable = ['user_id', 'game_id', 'completed_at', 'unlocked_at', 'completion_times', 'favourite', 'last_play'];
 
     protected $dates = [
         'completed_at',
@@ -19,9 +19,12 @@ class PracticeGameUser extends Eloquent
 
     protected $attributes = [
         'completed_at' => null,
-        // 'piece_collected' => false,
         'unlocked_at' => null,
         'completion_times' => 0,
+        'last_play' => [
+            'stage'=> 0,
+            'score'=> 0
+        ],
     ];
     
     public function setCompletedAtAttribute($value)
@@ -38,11 +41,7 @@ class PracticeGameUser extends Eloquent
     {
 
         if (!is_null($this->completed_at)) {
-            // \DB::connection()->enableQueryLog();
             $this->forceFill(['completed_at' => null])->save();
-            // $queries = \DB::getQueryLog();
-            // dump($this->completed_at);
-            // dd($queries);
         }
     }
 
@@ -59,5 +58,10 @@ class PracticeGameUser extends Eloquent
     public function highestScore()
     {
         return $this->histories()->where(['action'=> 'completed'])->orderBy('score', 'desc')->select('_id', 'practice_game_user_id', 'score')->limit(1);
+    }
+
+    public function practice_games_targets()
+    {
+        return $this->hasOne('App\Models\v1\PracticeGameTarget', 'game_id', 'game_id');
     }
 }
