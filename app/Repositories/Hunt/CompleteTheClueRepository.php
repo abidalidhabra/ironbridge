@@ -157,41 +157,41 @@ class CompleteTheClueRepository implements ClueInterface
             $rewardData['widget'] = $widgetItems;
         }
 
-        if ($selectedReward->relics) {
+        // if ($selectedReward->relics) {
 
-            $relicRandNumber    = rand(1, 1000);
-            $relicOrder         = collect($selectedReward->relics);
-            $countableRelic     = $relicOrder->where('min', '<=', $relicRandNumber)->where('max','>=',$relicRandNumber)->first();
+        //     $relicRandNumber    = rand(1, 1000);
+        //     $relicOrder         = collect($selectedReward->relics);
+        //     $countableRelic     = $relicOrder->where('min', '<=', $relicRandNumber)->where('max','>=',$relicRandNumber)->first();
 
-            relic:
-            $relic = (new RelicRepository)->getModel()
-                        ->active()
-                        ->notParticipated(auth()->user()->id)
-                        ->whereHas('season', function($query) { $query->active(); })
-                        ->whereDoesntHave('rewards', function($query) { $query->where('user_id', auth()->user()->id); })
-                        ->where('index', $countableRelic['relic'])
-                        ->select('_id', 'name', 'icon', 'season_id')
-                        ->first();
+        //     relic:
+        //     $relic = (new RelicRepository)->getModel()
+        //                 ->active()
+        //                 ->notParticipated(auth()->user()->id)
+        //                 ->whereHas('season', function($query) { $query->active(); })
+        //                 ->whereDoesntHave('rewards', function($query) { $query->where('user_id', auth()->user()->id); })
+        //                 ->where('index', $countableRelic['relic'])
+        //                 ->select('_id', 'name', 'icon', 'season_id')
+        //                 ->first();
 
-            if (!$relic) {
+        //     if (!$relic) {
 
-                $relicOrder = $relicOrder->reject(function($order) use ($countableRelic) { 
-                    return ($order['relic'] == $countableRelic['relic']); 
-                });
-                $countableRelic = $relicOrder->where('min', '!=', 0)->where('max', '!=', 0)->sortByDesc('possibility')->first();
+        //         $relicOrder = $relicOrder->reject(function($order) use ($countableRelic) { 
+        //             return ($order['relic'] == $countableRelic['relic']); 
+        //         });
+        //         $countableRelic = $relicOrder->where('min', '!=', 0)->where('max', '!=', 0)->sortByDesc('possibility')->first();
 
-                if ($relicOrder->count() == 0) {
-                    $rewardData['type'] = 'skeleton_key';
-                    $selectedReward->skeletons = 1;
-                    goto distSkeleton; 
-                }
-                goto relic; 
-            }
+        //         if ($relicOrder->count() == 0) {
+        //             $rewardData['type'] = 'skeleton_key';
+        //             $selectedReward->skeletons = 1;
+        //             goto distSkeleton; 
+        //         }
+        //         goto relic; 
+        //     }
 
-            $message[] = 'Relic provided.';
-            $rewardData['relic_id'] = $relic->id;
-            $rewardData['relic'] = ['id'=> $relic->id, 'icon'=> $relic->icon];
-        }
+        //     $message[] = 'Relic provided.';
+        //     $rewardData['relic_id'] = $relic->id;
+        //     $rewardData['relic'] = ['id'=> $relic->id, 'icon'=> $relic->icon];
+        // }
 
         if ($selectedReward->skeletons){
             distSkeleton:
