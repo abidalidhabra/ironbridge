@@ -22,7 +22,7 @@
             <thead>
                 <tr>
                     <th>Sr.</th>
-                    <th>Icon</th>
+                    <th>Image</th>
                     <th>Complexity</th>
                     <th>Created at (UTC)</th>
                     <th>Action</th>

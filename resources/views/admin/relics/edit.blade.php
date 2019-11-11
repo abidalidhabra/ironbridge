@@ -27,7 +27,7 @@
                         <div class="row">
                             <div class="col-md-8">
                                 <div class="form-group @error('icon') has-error @enderror">
-                                    <label class="control-label">Active icon for relic:</label>
+                                    <label class="control-label">Active Image for relic:</label>
                                     <input 
                                     type="file" 
                                     class="form-control" 
@@ -97,8 +97,12 @@
                 contentType: false,
                 processData: false,
                 cache: false,
+                beforeSend: function() {    
+                    $('body').css('opacity','0.5');
+                },
                 success: function(response)
                 {
+                    $('body').css('opacity','1');
                     if (response.status == true) {
                         toastr.success(response.message);
                         setTimeout(function() {

@@ -189,9 +189,9 @@ class RelicRewardController extends Controller
             return $relic->created_at->format('d-M-Y @ h:i A');
         })
         ->addColumn('action', function($relic){
-                $html = '<a href="'.route('admin.relicReward.edit',$relic->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+                //$html = '<a href="'.route('admin.relicReward.edit',$relic->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
 
-                $html .= ' <a href="'.route('admin.relicReward.destroy',$relic->id).'" data-action="delete" data-toggle="tooltip" title="Delete" ><i class="fa fa-trash iconsetaddbox"></i></a>';
+                $html = ' <a href="'.route('admin.relicReward.destroy',$relic->id).'" data-action="delete" data-toggle="tooltip" title="Delete" ><i class="fa fa-trash iconsetaddbox"></i></a>';
 
                 $html .= ' <a href="'.route('admin.relicReward.show',$relic->id).'" data-action="View" data-toggle="tooltip" title="View" ><i class="fa fa-eye iconsetaddbox"></i></a>';
             return $html;
