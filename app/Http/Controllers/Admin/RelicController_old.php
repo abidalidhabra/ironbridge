@@ -10,9 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
-use DB;
 
-class RelicController extends Controller
+class RelicController_old extends Controller
 {
 
     private $disk = 'public';
@@ -30,7 +29,7 @@ class RelicController extends Controller
      */
     public function index()
     {
-        return view('admin.relics.index');
+        return view('admin.seasons.relics.index');
     }
 
     /**
@@ -40,7 +39,7 @@ class RelicController extends Controller
      */
     public function create()
     {
-        return view('admin.relics.create');
+        return view('admin.seasons.relics.create', ['seasons'=> Season::active()->get()]);
     }
 
     /**
@@ -51,25 +50,41 @@ class RelicController extends Controller
      */
     public function store(Request $request, $season_slug)
     {
+
         $validator = Validator::make($request->all(), [
+            'relic_name'=> 'required',
+            'relic_desc'=> 'required|unique:seasons,slug',
+            'active'=> 'nullable|in:true',
             'icon'=> 'required|image',
+            'fees'=> 'required|numeric|integer',
+            // 'active_icon'=> 'required|image',
+            // 'inactive_icon'=> 'required|image',
             'complexity'=> 'required|numeric|integer:min:1',
-            'pieces.*.image'=> 'required|image',
+            'clues.*.name'=> 'required|string',
+            'clues.*.desc'=> 'required|string',
+            'clues.*.radius'=> 'required|numeric|integer|min:1',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['message'=> $validator->messages()->first()], 422);
         }
 
-        $request->icon->store('relics/'.$request->complexity, $this->disk);
+        $season = Season::where('slug', $season_slug)->select('_id', 'name')->first();
+        
+        $request->icon->store('seasons/'.$season->id, $this->disk);
         // $request->active_icon->store('seasons/'.$season->id, $this->disk);
         // $request->inactive_icon->store('seasons/'.$season->id, $this->disk);
         
-
-        Relic::create([
+        $season->relics()->create([
+            'name'=> $request->relic_name,
+            'desc'=> $request->relic_desc,
+            'active'=> $request->has('active')? true: false,
             'icon'=> $request->icon->hashName(),
+            'fees'=> (float)$request->fees,
+            // 'active_icon'=> $request->active_icon->hashName(),
+            // 'inactive_icon'=> $request->inactive_icon->hashName(),
             'complexity'=> (int)$request->complexity,
-            'pieces'=> $this->allotGameToClueService->allot($request),
+            'clues'=> $this->allotGameToClueService->allot($request),
         ]);
          
         return response()->json(['status'=> true, 'message'=> 'Relic added! Please wait we are redirecting you.']);
@@ -83,8 +98,7 @@ class RelicController extends Controller
      */
     public function show($id)
     {
-        $relic = Relic::find($id);
-        return view('admin.relics.show', ['relic'=> $relic]);
+        //
     }
 
     /**
@@ -96,7 +110,8 @@ class RelicController extends Controller
     public function edit($id)
     {
         $relic = Relic::find($id);
-        return view('admin.relics.edit', ['relic'=> $relic]);
+        $seasons = Season::active()->get(['id', 'name']);
+        return view('admin.seasons.relics.edit', ['relic'=> $relic, 'seasons'=> $seasons]);
     }
 
     /**
@@ -110,8 +125,18 @@ class RelicController extends Controller
     {
         
         $validator = Validator::make($request->all(), [
+            'relic_name'=> 'required',
+            'relic_desc'=> 'required|unique:seasons,slug',
+            'active'=> 'nullable|in:true',
+            'season_id'=> 'required|exists:seasons,_id',
+            'fees'=> 'required|numeric|integer',
             // 'icon'=> 'nullable|image',
+            // 'active_icon'=> 'nullable|image',
+            // 'inactive_icon'=> 'nullable|image',
             'complexity'=> 'required|numeric|integer:min:1',
+            'clues.*.name'=> 'required|string',
+            'clues.*.desc'=> 'required|string',
+            'clues.*.radius'=> 'required|numeric|integer|min:1',
         ]);
 
         if ($validator->fails()) {
@@ -120,22 +145,31 @@ class RelicController extends Controller
 
         $relic = Relic::find($id);
 
-        
-
         if ($request->hasFile('icon')) {
-            Storage::disk($this->disk)->delete('relics/'.$relic->complexity.'/'.$relic->icon);
-            $request->icon->store('relics/'.$relic->complexity, $this->disk);
+            Storage::disk($this->disk)->delete('seasons/'.$relic->season_id.'/'.$relic->icon);
+            $request->icon->store('seasons/'.$relic->season_id, $this->disk);
             $relic->icon = $request->icon->hashName();
         }
 
+        // if ($request->hasFile('active_icon')) {
+        //     Storage::disk($this->disk)->delete('seasons/'.$relic->season_id.'/'.$relic->active_icon);
+        //     $request->active_icon->store('seasons/'.$relic->season_id, $this->disk);
+        //     $relic->active_icon = $request->active_icon->hashName();
+        // }
 
-        $request['status'] = "edit";
-        $request['id'] = $id;
+        // if ($request->hasFile('inactive_icon')) {
+        //     Storage::disk($this->disk)->delete('seasons/'.$relic->season_id.'/'.$relic->inactive_icon);
+        //     $request->inactive_icon->store('seasons/'.$relic->season_id, $this->disk);
+        //     $relic->inactive_icon = $request->inactive_icon->hashName();
+        // }
 
+        $relic->season_id = $request->season_id;
+        $relic->name = $request->relic_name;
+        $relic->desc = $request->relic_desc;
+        $relic->active = $request->has('active')? true: false;
         $relic->complexity = (int) $request->complexity;
-        if (isset($request->pieces)) {
-            $relic->pieces = $this->allotGameToClueService->allot($request);
-        }
+        $relic->clues = $this->allotGameToClueService->allot($request);
+        $relic->fees = (float)$request->fees;
         $relic->save();
 
         return response()->json(['status'=> true, 'message'=> 'Relic updated! Please wait we are redirecting you.']);
@@ -149,23 +183,20 @@ class RelicController extends Controller
      */
     public function destroy($id)
     {
-        // $relic = Relic::find($id);
-        $relic = DB::table('relics')->where('_id',$id)->first();
-        Storage::disk($this->disk)->delete('relics/'.$relic['complexity'].'/'.$relic['icon']);
+        $relic = Relic::find($id);
+        Storage::disk($this->disk)->delete([
+            'seasons/'.$relic->season_id.'/'.$relic->active_icon,
+            'seasons/'.$relic->season_id.'/'.$relic->inactive_icon
+        ]);
+        $relic->delete();
 
-        foreach ($relic['pieces'] as $key => $value) {
-            Storage::disk($this->disk)->delete('relics/'.$relic['complexity'].'/'.$value['image']);
-        }
-
-        Relic::find($id)->delete();
-
-        return response()->json(['status'=> true, 'message'=> 'Relic deleted successfully.']);
+        return response()->json(['status'=> true, 'message'=> 'Season deleted successfully.']);
     }
 
     public function clueHTML(Request $request)
     {
         if($request->ajax()) {
-            return view('admin.relics.clues.create')->with(['index'=> $request->index]);
+            return view('admin.seasons.relics.clues.create')->with(['index'=> $request->index]);
         }
         throw new Exception("You are not allow make this request");
     }
@@ -179,7 +210,8 @@ class RelicController extends Controller
         $seasons = Relic::when($search != '', function($query) use ($search) {
             $active = ($search == 'true' || $search == 'Active')? true: false;
             $query->where('_id','like','%'.$search.'%')
-            ->orWhere('complexity','like','%'.$search.'%')
+            ->orWhere('name','like','%'.$search.'%')
+            ->orWhere('active', $active)
             ->orWhere('created_at','like','%'.$search.'%');
         })
         ->orderBy('created_at','DESC')
@@ -189,43 +221,39 @@ class RelicController extends Controller
 
         /** Filter Result Total Count  **/
         $filterCount = Relic::when($search != '', function($query) use ($search) {
+            $active = ($search == 'true' || $search == 'Active')? true: false;
             $query->where('_id','like','%'.$search.'%')
-            ->orWhere('complexity','like','%'.$search.'%')
+            ->orWhere('name','like','%'.$search.'%')
+            ->orWhere('active', $active)
             ->orWhere('created_at','like','%'.$search.'%');
         })
         ->count();
 
         return DataTables::of($seasons)
         ->addIndexColumn()
+        ->editColumn('active', function($relic){
+            return ($relic->active)? "Active": "Inactive";
+        })
         ->editColumn('created_at', function($relic){
             return $relic->created_at->format('d-M-Y @ h:i A');
         })
-        ->editColumn('icon', function($relic){
-            return '<img src="'.$relic->icon.'" style="width: 96px;">';
+        ->addColumn('season', function($relic){
+            return "<a href=".$relic->season->path().">{$relic->season->name}</a>";
         })
         ->addColumn('action', function($relic){
+            if(auth()->user()->hasPermissionTo('Edit Seasonal Hunt')){
                 $html = '<a href="'.route('admin.relics.edit',$relic->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+            }
 
+            if(auth()->user()->hasPermissionTo('Delete Seasonal Hunt')){
                 $html .= ' <a href="'.route('admin.relics.destroy',$relic->id).'" data-action="delete" data-toggle="tooltip" title="Delete" ><i class="fa fa-trash iconsetaddbox"></i></a>';
-
-                $html .= ' <a href="'.route('admin.relics.show',$relic->id).'" data-action="View" data-toggle="tooltip" title="View" ><i class="fa fa-eye iconsetaddbox"></i></a>';
+            }
             return $html;
         })
-        ->rawColumns(['action', 'icon'])
+        ->rawColumns(['action', 'season'])
         ->setTotalRecords(Relic::count())
         ->setFilteredRecords($filterCount)
         ->skipPaging()
         ->make(true);
-    }
-
-    public function removePieces(Request $request){
-        // $relic = Relic::where('_id', $request->id)->first();
-        $relic =  DB::table('relics')->where('_id', $request->id)->first();
-        
-        Storage::disk($this->disk)->delete('relics/'.$relic['complexity'].'/'.$relic['pieces'][$request->pieces_id-1]['image']);
-        
-        Relic::where('_id', $request->id)->pull('pieces', ['id' => (int)$request->pieces_id]);
-
-        return response()->json(['status'=> true, 'message'=> 'Image deleted successfully.']);
     }
 }

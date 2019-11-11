@@ -192,11 +192,16 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('relics/clues/html', 'RelicController@clueHTML')->name('relics.clue.html');
 	// Route::get('relics/{season_slug}/edit/{id}', 'RelicController@edit')->name('relics.edit');
 	Route::resource('relics', 'RelicController')->except(['create', 'store']);;
+	Route::post('removePieces', 'RelicController@removePieces')->name('removePieces');
 
 	Route::group(['middleware' => ['permission:View App Settings']], function () {
 		Route::get('app/settings', 'AppSettingController@index')->name('app.settings.index');
 		Route::put('app/settings', 'AppSettingController@update')->name('app.settings.update');
 	});
+
+
+	Route::resource('relicReward', 'RelicRewardController');
+	Route::get('list', 'RelicRewardController@list')->name('relicReward.list');
 });
 
 // Auth::routes();

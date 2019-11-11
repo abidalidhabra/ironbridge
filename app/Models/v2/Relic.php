@@ -7,29 +7,35 @@ use App\Models\v2\HuntUser;
 use App\Models\v2\Season;
 use Illuminate\Database\Eloquent\Model;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
+use Storage;
 
 class Relic extends Eloquent
 {
 
-    protected $fillable = ['season_id', 'name', 'desc', 'active', 'icon', 'complexity', 'clues', 'game_id', 'game_variation_id', 'fees'];
+    protected $fillable = ['icon', 'complexity', 'pieces'];
     
-    public function season()
-    {
-        return $this->belongsTo(Season::class);
-    }
-
-    public function participations() {
-        return $this->hasMany(HuntUser::class, 'hunt_id');
-    }
-
     public function getIconAttribute($value)
     {
-        return asset('storage/seasons/'.$this->season_id.'/'.$value);
+        if (Storage::disk('public')->has('relics/'.$this->complexity.'/'.$value) && !is_null($value)) {
+            return asset('storage/relics/'.$this->complexity.'/'.$value);
+        } else {
+            return '';
+        }
     }
 
-    public function scopeActive($query)
+    public function getPiecesAttribute($value)
     {
-        $query->where('active', true);
+        if ($value != "") {
+            $data = [];
+            foreach ($value as $key => $piece) {
+                $data[$key] = $piece;
+                if (isset($piece['image']) && $piece['image']!="" && Storage::disk('public')->has('relics/'.$this->complexity.'/'.$piece['image']) && !is_null($piece['image'])) {
+                    $data[$key]['image'] = asset('storage/relics/'.$this->complexity.'/'.$piece['image']);
+                }
+            }
+            return $data;
+        }
+        return $value;
     }
 
     public function scopeNotParticipated($query, $userId)

@@ -2593,7 +2593,7 @@ table i.iconsetaddbox{
 
 
 
-.cluecontainer button.remove-clue {
+.cluecontainer button.remove-clue , .cluecontainer button.remove_pieces{
     position: absolute;
     right: 84px;
     top: 25px;

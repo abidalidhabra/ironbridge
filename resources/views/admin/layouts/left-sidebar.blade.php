@@ -101,7 +101,7 @@
 
 
 					@if($admin->hasPermissionTo('View Treasure Locations') || $admin->hasPermissionTo('View Complexity Targets') || $admin->hasPermissionTo('View Hunt Loot Tables'))
-					<li>
+					<!-- <li>
 						<a href="javascript:void(0)" class="plusbttnbox myBtn">Seasonal Hunts
 							<i 
 								class="fa 
@@ -166,11 +166,70 @@
 								@endif
 							</div>
 						</div>
-					</li>
+					</li> -->
 					@endif
 
+					<li>
+						<a href="javascript:void(0)" class="plusbttnbox myBtn">Relics
+							<i 
+								class="fa 
+								@if(Route::currentRouteName() == 'admin.relics.index' || 
+									Route::currentRouteName() == 'admin.relics.create' || 
+									Route::currentRouteName() == 'admin.relics.edit' || 
+									Route::currentRouteName() == 'admin.relics.show' ||
+									Route::currentRouteName() == 'admin.relicReward.index' ||
+									Route::currentRouteName() == 'admin.relicReward.create' || 
+									Route::currentRouteName() == 'admin.relicReward.edit' || 
+									Route::currentRouteName() == 'admin.relicReward.show') 
+									{{ 'fa-minus' }} 
+								@else 
+									{{ 'fa-plus' }} 
+								@endif" 
+								aria-hidden="true">
+							</i>
+						</a>
+
+						<div class="dropdown custmenbox">
+							<div  
+							class="dropdown-content myDropdown 
+							@if(Route::currentRouteName() == 'admin.relics.index' || 
+								Route::currentRouteName() == 'admin.relics.create' || 
+								Route::currentRouteName() == 'admin.relics.edit' || 
+								Route::currentRouteName() == 'admin.relics.show' ||
+								Route::currentRouteName() == 'admin.relicReward.index' ||
+								Route::currentRouteName() == 'admin.relicReward.create' || 
+								Route::currentRouteName() == 'admin.relicReward.edit' || 
+								Route::currentRouteName() == 'admin.relicReward.show') 
+								{{ 'show' }} 
+							@endif">
+									<a 
+									href="{{ route('admin.relics.index') }}" 
+									class="
+									@if(
+										Route::currentRouteName() == 'admin.relics.index' ||
+										Route::currentRouteName() == 'admin.relics.create' || 
+										Route::currentRouteName() == 'admin.relics.edit' || 
+										Route::currentRouteName() == 'admin.relics.show') 
+										{{ 'activelistsub' }} 
+									@endif
+									">Main Relics</a>
+									<a 
+									href="{{ route('admin.relicReward.index') }}" 
+									class="
+									@if(
+										Route::currentRouteName() == 'admin.relicReward.index' ||
+										Route::currentRouteName() == 'admin.relicReward.create' || 
+										Route::currentRouteName() == 'admin.relicReward.edit' || 
+										Route::currentRouteName() == 'admin.relicReward.show') 
+										{{ 'activelistsub' }} 
+									@endif
+									">Relic Reward</a>
+							</div>
+						</div>
+					</li>
+
 					{{-- @if($admin->hasPermissionTo('View Treasure Locations') || $admin->hasPermissionTo('View Complexity Targets') || $admin->hasPermissionTo('View Hunt Loot Tables')) --}}
-	{{-- 				<li >
+					{{--<li >
 						<a 
 							href="javascript:void(0)" 
 							class="plusbttnbox myBtn" >Relics Maps
