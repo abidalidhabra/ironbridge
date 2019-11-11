@@ -183,4 +183,10 @@ class UserRepository implements UserRepositoryInterface
     {
         return $this->model;
     }
+
+    public function addXp($points)
+    {
+        $this->model->query()->where('_id',$this->user->id)->increment('agent_status.xp', $points);
+        return $this->user->agent_status['xp'] + $points;
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Models\v2;
 
 //use Illuminate\Database\Eloquent\Model;
 use App\Collections\HuntUserCollection;
+use App\Models\v2\Relic;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class HuntUser extends Eloquent
@@ -20,7 +21,8 @@ class HuntUser extends Eloquent
         'ended_at',
         'finished_in',
         'hunt_complexity_id',
-        'estimated_time'
+        'estimated_time',
+        'relic_id'
     ];
 
     protected $dates = [
@@ -69,5 +71,10 @@ class HuntUser extends Eloquent
     public function newCollection(array $models = [])
     {
         return new HuntUserCollection($models);
+    }
+
+    public function relic()
+    {
+        return $this->belongsTo(Relic::class, 'relic_id', '_id');
     }
 }

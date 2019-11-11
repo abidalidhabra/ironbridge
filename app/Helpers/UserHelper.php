@@ -64,6 +64,7 @@ class UserHelper {
 			'free_outfit_occupied' => $user->free_outfit_taken,
 			'latest_news' => News::latest()->limit(1)->get()->map(function($news) { return $news->setHidden(['valid_till', 'updated_at']); }),
 			'relics' => $relics,
+			'available_complexities' => $user->getAvailableComplexities(),
 			// 'used_widgets' => $user->used_widgets,
 			// 'plans' => $plans,
 			// 'events_data' => $events,

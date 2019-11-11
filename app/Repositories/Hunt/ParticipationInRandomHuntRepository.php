@@ -39,8 +39,15 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
 
     public function add($request) : HuntUser
     {
+        $userRelics = collect($this->user->relics);
+        $relic = Relic::when(($userRelics->count() > 0), function($query) {
+                    $query->whereNotIn('_id', $this->user->relics->toArray());
+                })
+                ->first();
+
         return $this->user->hunt_user_v1()->create([
             'complexity'=> (int)$request->complexity,
+            'relic_id'=> $relic ?? $relic->id: null,
             'location'=> [
                 'type'=> "Point",
                 'coordinates'=> [(float)$request->longitude, (float)$request->latitude]

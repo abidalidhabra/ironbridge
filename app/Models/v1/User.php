@@ -44,6 +44,7 @@ class User extends Authenticatable implements JWTSubject
         'first_login',
         'additional',
         'tutorials',
+        'agent_status',
         // 'expnadable_skeleton_keys',
     ];
 
@@ -94,6 +95,10 @@ class User extends Authenticatable implements JWTSubject
             'home'=> null,
             'minigames'=> null,
         ],
+        'agent_status'=> [
+            'xp'=> 2500,
+            'level'=> 1
+        ]
         // 'expnadable_skeleton_keys'   => 0,
         // 'user_widgets' => [],
         // 'used_widgets' => [],
@@ -204,5 +209,11 @@ class User extends Authenticatable implements JWTSubject
             }
             return $contains;
         }
+    }
+
+    public function getAvailableComplexities()
+    {
+        // return HuntReward::where('agent_level', '<=', $this->agent->level)->pluck('complexity')->filter()->values();
+        return [];
     }
 }
