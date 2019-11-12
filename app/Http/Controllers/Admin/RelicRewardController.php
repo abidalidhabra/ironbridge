@@ -59,10 +59,10 @@ class RelicRewardController extends Controller
             'agent_level' => 'required|numeric',
             'xps'         => 'required|numeric',
             'minigames' => 'required|array',
-            'complexity'  => 'required|numeric',
+            // 'complexity'  => 'required|numeric',
         ],[
             'xps.required'  => 'The XP points field is required.',
-            'complexity.required'  => 'The difficulty field is required.'
+            // 'complexity.required'  => 'The difficulty field is required.'
         ]);
         
         if ($validator->fails())
@@ -89,9 +89,14 @@ class RelicRewardController extends Controller
             unset($data['bucket_size']);
         }
 
+        if (isset($data['complexity']) && $data['complexity']!="") {
+            $data['complexity'] =  (int)$data['complexity'];
+        } else {
+            unset($data['complexity']);
+        }
+
         $data['agent_level'] = (int)$request['agent_level'];
         $data['xps'] = (int)$request['xps'];
-        $data['complexity'] = (int)$request['complexity'];
         $data['widgets'] = $widgets;
         
         AgentComplementary::create($data);
@@ -152,10 +157,10 @@ class RelicRewardController extends Controller
             'agent_level' => 'required|numeric',
             'xps'         => 'required|numeric',
             'minigames' => 'required|array',
-            'complexity'  => 'required|numeric',
+            // 'complexity'  => 'required|numeric',
         ],[
             'xps.required'  => 'The XP points field is required.',
-            'complexity.required'  => 'The difficulty field is required.'
+            // 'complexity.required'  => 'The difficulty field is required.'
         ]);
         
         if ($validator->fails())
@@ -181,16 +186,22 @@ class RelicRewardController extends Controller
         if ($data['bucket_size']!="") {
             $data['bucket_size'] =  (int)$data['bucket_size'];
         }
+        if ($data['complexity']!="") {
+            $data['complexity'] =  (int)$data['complexity'];
+        }
 
         $data['agent_level'] = (int)$request['agent_level'];
         $data['xps'] = (int)$request['xps'];
-        $data['complexity'] = (int)$request['complexity'];
+        // $data['complexity'] = (int)$request['complexity'];
         $data['widgets'] = $widgets;
 
         $agentComplementary = AgentComplementary::find($id);
         $agentComplementary->update($data);
         if ($data['bucket_size']=="") {
             $agentComplementary->unset('bucket_size');
+        }
+        if ($data['complexity']=="") {
+            $agentComplementary->unset('complexity');
         }
         return response()->json(['status' => true,'message' => 'Agent complementary updated! Please wait we are redirecting you.']);
     }
@@ -242,6 +253,9 @@ class RelicRewardController extends Controller
 
         return DataTables::of($seasons)
         ->addIndexColumn()
+        ->editColumn('complexity', function($relic){
+            return ($relic->complexity)?$relic->complexity:'-';
+        })
         ->editColumn('created_at', function($relic){
             return $relic->created_at->format('d-M-Y @ h:i A');
         })
