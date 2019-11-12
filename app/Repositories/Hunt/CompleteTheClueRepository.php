@@ -272,7 +272,7 @@ class CompleteTheClueRepository implements ClueInterface
                 $data['relic_data'] = (new AddRelicService)->setUser($this->user)->setRelicId($this->huntUser->relic_id)->add()->getRelic(['_id', 'complexity','icon']);
                 $data['agent_data'] = (new AddXPService)->setUser($this->user)->add(150);
                 return $data;
-            }else{
+            }else {
                 $this->huntUser->collected_piece = $pieceRemaining;
                 $this->huntUser->save();
                 $data['collected_piece'] = $pieceRemaining;

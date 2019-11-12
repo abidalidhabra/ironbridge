@@ -61,7 +61,9 @@ class ProfileController extends Controller
             'gold_earned'=> $goldEarned, 
             'km_walked'=> $kmWalked, 
             'game_statistics'=> $gameStatistics,
-            'seasons'=> $seasons
+            'relics'=> $user->relics()->select('_id', 'complexity', 'icon')->get(),
+            'agent_status'=> $user->agent_status,
+            // 'seasons'=> $seasons,
         ]);
     }
 

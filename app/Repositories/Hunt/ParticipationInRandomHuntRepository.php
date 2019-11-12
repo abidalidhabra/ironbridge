@@ -43,6 +43,7 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
         $relic = Relic::when(($userRelics->count() > 0), function($query) {
                     $query->whereNotIn('_id', $this->user->relics->toArray());
                 })
+                ->active()
                 ->first();
 
         return $this->user->hunt_user_v1()->create([
