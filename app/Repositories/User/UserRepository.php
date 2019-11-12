@@ -183,4 +183,41 @@ class UserRepository implements UserRepositoryInterface
     {
         return $this->model;
     }
+
+    public function setAgentStatus($points = null, $level = null)
+    {
+        $this->user->agent_status = [
+            'level'=> ($level)?  $level: $this->user->agent_status['level'],
+            'xp'=> ($points)? ($this->user->agent_status['xp'] + $points): $this->user->agent_status['xp'],
+        ];
+        return $this;
+    }
+
+    public function addXp($points)
+    {
+        $this->model->where('_id',$this->user->id)->increment('agent_status.xp', $points);
+        $this->setAgentStatus($points);
+        return $this->user->agent_status['xp'];
+    }
+
+    public function allotAgentLevel($levelToBeIncrement)
+    {
+        $this->model->where('_id',$this->user->id)->increment('agent_status.level', $levelToBeIncrement);
+        $this->setAgentStatus(null, $levelToBeIncrement);
+        return $this->user->agent_status['level'];
+    }
+
+    public function addWidgets(Collection $ids)
+    {
+        $ids->map(function($id) {
+            $this->user->push('widgets', ['id'=> $id, 'selected'=> false]);
+            return $id;
+        });
+        return $ids;
+    }
+    
+    public function addRelic($relicId)
+    {
+        return $this->user->push('relics', $relicId, true);
+    }
 }

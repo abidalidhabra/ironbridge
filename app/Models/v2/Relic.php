@@ -12,7 +12,7 @@ use Storage;
 class Relic extends Eloquent
 {
 
-    protected $fillable = ['icon', 'complexity', 'pieces'];
+    protected $fillable = ['icon', 'complexity', 'pieces', 'active'];
     
     public function getIconAttribute($value)
     {
@@ -53,5 +53,10 @@ class Relic extends Eloquent
     public function path()
     {
         return route('admin.relics.edit', $this->season_id);
+    }
+
+    public function scopeActive($query)
+    {
+        $query->where('active', true);
     }
 }

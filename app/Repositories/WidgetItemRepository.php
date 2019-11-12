@@ -4,12 +4,14 @@ namespace App\Repositories;
 
 use App\Models\v1\WidgetItem;
 use App\Repositories\Contracts\WidgetItemInterface;
+use App\Repositories\ModelRepository;
 
-class WidgetItemRepository implements WidgetItemInterface
+class WidgetItemRepository extends ModelRepository implements WidgetItemInterface
 {
     
-    public function find($id, $fields = ['*'])
+    protected $model;
+	public function __construct()
     {
-        return WidgetItem::find($id, $fields);
+        $this->model = new WidgetItem;
     }
 }

@@ -47,7 +47,7 @@ class UserTitleOfMiniGame implements Rule
             //     $this->message = 'Wrong practice game user id provided.';
             // }else if ($miniGameUserData->user_id != $userId){
             //     $this->message = 'You are not authorized to access this practice game user id.';
-            // }else if ($miniGameUserData->piece_collected === true){
+            // }else if ($miniGameUserData->collected_piece === true){
             //     $this->message = 'This mini game is already completed, try different game.';
             // }else if ($coolDown){
             //     $this->message = 'This mini game is under the freeze mode.';
