@@ -70,7 +70,7 @@
                             <select name="bucket_size" class="form-control">
                                 <option value="">Select Bucket Size</option>
                                 @for($i=1;$i <= 10;$i++)
-                                    <option value="{{ $i }}">{{ $i.' Keys' }}</option>
+                                    <option value="{{ $i }}">{{ $i }}</option>
                                 @endfor
                             </select>
                             @error('complexity')

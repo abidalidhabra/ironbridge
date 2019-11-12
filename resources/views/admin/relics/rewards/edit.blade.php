@@ -46,7 +46,11 @@
                             <select name="minigames[]" class="form-control" id="minigames" multiple="multiple">
                                 <option value="">Select Minigames</option>
                                 @forelse($games as $game)
-                                <option value="{{ $game->id }}" @if(in_array($game->id,$relicReward->minigames)){{ 'selected' }}@endif >{{ $game->name }}</option>
+                                    @if(isset($relicReward->minigames)  && count($relicReward->minigames)>0)
+                                        <option value="{{ $game->id }}" @if(in_array($game->id,$relicReward->minigames)){{ 'selected' }}@endif >{{ $game->name }}</option>
+                                    @else
+                                        <option value="{{ $game->id }}">{{ $game->name }}</option>
+                                    @endif
                                 @empty
                                 @endforelse
                             </select>
@@ -69,7 +73,7 @@
                             <select name="bucket_size" class="form-control">
                                 <option value="">Select Bucket Size</option>
                                 @for($i=1;$i <= 10;$i++)
-                                    <option value="{{ $i }}" @if($i==$relicReward->bucket_size){{ 'selected' }}@endif>{{ $i.' Keys' }}</option>
+                                    <option value="{{ $i }}" @if($i==$relicReward->bucket_size){{ 'selected' }}@endif>{{ $i }}</option>
                                 @endfor
                             </select>
                             @error('complexity')

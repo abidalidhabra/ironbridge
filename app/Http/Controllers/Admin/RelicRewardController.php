@@ -58,7 +58,7 @@ class RelicRewardController extends Controller
         $validator = Validator::make($request->all(),[
             'agent_level' => 'required|numeric',
             'xps'         => 'required|numeric',
-            'minigames' => 'required|array',
+            // 'minigames' => 'required|array',
             // 'complexity'  => 'required|numeric',
         ],[
             'xps.required'  => 'The XP points field is required.',
@@ -74,6 +74,7 @@ class RelicRewardController extends Controller
         foreach ($request->widgets as $key => $value) {
             $widgetsItem = Str::plural(strtolower($key)); 
             $widgets[$widgetsItem] = null;
+            unset($value[0]);
             if (count(array_filter($value)) > 0) {
                 $widgets[$widgetsItem] = array_values(array_filter($value));
                 if (isset($value[0]) && $value[0]=="all") {
@@ -93,6 +94,12 @@ class RelicRewardController extends Controller
             $data['complexity'] =  (int)$data['complexity'];
         } else {
             unset($data['complexity']);
+        }
+
+        if (isset($data['minigames']) && count($data['minigames']) > 0) {
+            $data['minigames'] = $data['minigames'];
+        } else {
+            unset($data['minigames']);
         }
 
         $data['agent_level'] = (int)$request['agent_level'];
@@ -156,7 +163,7 @@ class RelicRewardController extends Controller
         $validator = Validator::make($request->all(),[
             'agent_level' => 'required|numeric',
             'xps'         => 'required|numeric',
-            'minigames' => 'required|array',
+            // 'minigames' => 'required|array',
             // 'complexity'  => 'required|numeric',
         ],[
             'xps.required'  => 'The XP points field is required.',
@@ -172,6 +179,7 @@ class RelicRewardController extends Controller
         foreach ($request->widgets as $key => $value) {
             $widgetsItem = Str::plural(strtolower($key)); 
             $widgets[$widgetsItem] = null;
+            unset($value[0]);
             if (count(array_filter($value)) > 0) {
                 $widgets[$widgetsItem] = array_values(array_filter($value));
                 if (isset($value[0]) && $value[0]=="all") {
@@ -180,14 +188,16 @@ class RelicRewardController extends Controller
             }
         }
         
-
-
         $data = $request->all();
         if ($data['bucket_size']!="") {
             $data['bucket_size'] =  (int)$data['bucket_size'];
         }
         if ($data['complexity']!="") {
             $data['complexity'] =  (int)$data['complexity'];
+        }
+
+        if (isset($data['minigames']) && count($data['minigames']) > 0) {
+            $data['minigames'] =  $data['minigames'];
         }
 
         $data['agent_level'] = (int)$request['agent_level'];
@@ -202,6 +212,9 @@ class RelicRewardController extends Controller
         }
         if ($data['complexity']=="") {
             $agentComplementary->unset('complexity');
+        }
+        if (!isset($data['minigames'])) {
+            $agentComplementary->unset('minigames');
         }
         return response()->json(['status' => true,'message' => 'Agent complementary updated! Please wait we are redirecting you.']);
     }
