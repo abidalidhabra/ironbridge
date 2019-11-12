@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\v2\PracticeGameUser;
 use App\Repositories\ModelRepository;
+use Illuminate\Support\Collection;
 
 class PracticeGameUserRepository extends ModelRepository
 {
@@ -14,9 +15,13 @@ class PracticeGameUserRepository extends ModelRepository
         $this->model = new PracticeGameUser;
     }
 
-    public function unlockTheGame(PracticeGameUser $practiceGameUser)
+    public function unlockTheGame(Collection $practiceGameUsers)
     {
-    	$practiceGameUser->unlocked_at = now();
-    	return $practiceGameUser->save();
+        $practiceGameUsers->map(function($practiceGameUser) {
+        	$practiceGameUser->unlocked_at = now();
+        	$practiceGameUser->save();
+            return $practiceGameUser;
+        });
+        return $practiceGameUsers;
     }
 }

@@ -14,6 +14,7 @@ use App\Repositories\RelicRepository;
 use App\Repositories\SeasonRepository;
 use App\Repositories\User\UserRepository;
 use App\Services\HuntReward\LogTheHuntRewardService;
+use App\Services\User\AddRelicService;
 use App\Services\User\AddXPService;
 use Illuminate\Support\Facades\Log;
 use MongoDB\BSON\UTCDateTime;
@@ -58,7 +59,7 @@ class CompleteTheClueRepository implements ClueInterface
         }
 
         // calculate the time & mark the clue as complete
-        $clueFinishedIn = (new HuntUserDetailRepository)->calculateTheTimer($this->huntUserDetail, 'rr')->finished_in;
+        $clueFinishedIn = (new HuntUserDetailRepository)->calculateTheTimer($this->huntUserDetail, 'completed')->finished_in;
         
         $rewardData = null;
         $totalFinishedIn = $clueFinishedIn;
@@ -74,7 +75,10 @@ class CompleteTheClueRepository implements ClueInterface
             // generate the reward
             $this->huntUser   = $this->huntUserDetail->hunt_user()->select('complexity','user_id', 'relic_id')->first();
             $rewardData = $this->generateReward();
-            $rewardData['map_piece_collected'] = $this->addMapPiece();
+            $data = $this->addMapPiece();
+            $rewardData['relic_data'] = is_array($data['relic_data'])? new stdClass(): $data['relic_data'];
+            $rewardData['agent_data'] = is_array($data['agent_data'])? new stdClass(): $data['agent_data'];
+            $rewardData['collected_piece'] = $data['collected_piece'];
             $rewardData['agent_status'] = $this->user->agent_status;
         }
 
@@ -252,28 +256,28 @@ class CompleteTheClueRepository implements ClueInterface
         // add relic in user's account only if:
         //      -> relic field is not null.
         //      -> all map pieces have collected.
-
+        
+        $data = [ 'collected_piece'=> 0, 'relic_data'=> [], 'agent_data'=> [] ];
         $relic = $this->huntUser->relic()->select('_id', 'pieces')->first();
         if ($relic) {
             $totalTreasureCompleted = $this->user->hunt_user_v1()
                                         ->where(['relic_id'=> $this->huntUser->relic_id, 'status'=> 'completed'])
-                                        ->pluck('piece_collected')
+                                        ->pluck('collected_piece')
                                         ->filter()
                                         ->values();
 
             $pieceRemaining = collect($relic->pieces)->whereNotIn('id', $totalTreasureCompleted)->pluck('id')->shuffle()->first();
-            // dd($pieceRemaining);
-            // if (!$pieceRemaining) {
-                return (new AddXPService)->setUser($this->user)->add(150);
-                // $this->user->agent_status = [
-                //     'level'=> $this->user->agent_status['level'],
-                //     'xp'=> $this->userRepository->addXp(150)
-                // ];
-                // return [
-                //     'piece_alloted'=> true,
-                // ];
-            // }
+            
+            if (!$pieceRemaining) {
+                $data['relic_data'] = (new AddRelicService)->setUser($this->user)->setRelicId($this->huntUser->relic_id)->add()->getRelic(['_id', 'complexity','icon']);
+                $data['agent_data'] = (new AddXPService)->setUser($this->user)->add(150);
+                return $data;
+            }else{
+                $this->huntUser->collected_piece = $pieceRemaining;
+                $this->huntUser->save();
+                $data['collected_piece'] = $pieceRemaining;
+            }
         }
-        return false;
+        return $data;
     }
 }

@@ -45,7 +45,7 @@ class MGController extends Controller
     		
             $response = [];
             $userMiniGames = auth()->user()->practice_games()
-                            ->select('_id', 'game_id', 'completed_at', 'piece_collected', 'completion_times', 'unlocked_at', 'favourite', 'last_play')
+                            ->select('_id', 'game_id', 'completed_at', 'collected_piece', 'completion_times', 'unlocked_at', 'favourite', 'last_play')
                             ->get();
 
             $userMiniGames->map(function($miniGame, $index) use (&$response){

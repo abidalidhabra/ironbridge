@@ -215,4 +215,9 @@ class UserRepository implements UserRepositoryInterface
         });
         return $ids;
     }
+    
+    public function addRelic($relicId)
+    {
+        return $this->user->push('relics', $relicId, true);
+    }
 }

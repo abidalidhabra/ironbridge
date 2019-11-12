@@ -2,8 +2,10 @@
 
 namespace App\Models\v1;
 
-use Illuminate\Notifications\Notifiable;
+use App\Models\v2\AgentComplementary;
+use App\Models\v2\Relic;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Notifications\Notifiable;
 use Jenssegers\Mongodb\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 // use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -45,6 +47,7 @@ class User extends Authenticatable implements JWTSubject
         'additional',
         'tutorials',
         'agent_status',
+        'relics',
         // 'expnadable_skeleton_keys',
     ];
 
@@ -213,7 +216,11 @@ class User extends Authenticatable implements JWTSubject
 
     public function getAvailableComplexities()
     {
-        // return HuntReward::where('agent_level', '<=', $this->agent->level)->pluck('complexity')->filter()->values();
-        return [];
+        return AgentComplementary::where('agent_level', '<=', $this->agent_status['level'])->get()->pluck('complexity')->filter()->values();
+    }
+
+    public function relics()
+    {
+        return $this->belongsToMany(Relic::class, null, 'users', 'relics');
     }
 }

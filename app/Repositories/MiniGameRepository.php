@@ -42,7 +42,7 @@ class MiniGameRepository implements MiniGameInterface
         // }
         
         // Throw an exception if minigame's piece is already collected
-        // if ($practiceGameUser->piece_collected === true) {
+        // if ($practiceGameUser->collected_piece === true) {
         //     throw new PieceAlreadyCollectedException('This mini game is already completed, try different game.', $practiceGameUser->completion_times);
         // }
 
@@ -114,14 +114,14 @@ class MiniGameRepository implements MiniGameInterface
         //         [
         //             '$match' => [
         //                 'user_id' => ['$eq' => $userId],
-        //                 'piece_collected' => ['$eq' => true]
+        //                 'collected_piece' => ['$eq' => true]
         //             ]       
         //         ],  
         //         [   
         //             '$group' => [
         //                 '_id' => '$piece',
         //                 'completed_at' => ['$last' => '$completed_at'],
-        //                 'piece_collected' => ['$last' => '$piece_collected'],
+        //                 'collected_piece' => ['$last' => '$collected_piece'],
         //                 'user_id' => ['$last' => '$user_id'],
         //                 'key' => ['$last' => '$key'],
         //                 'id' => ['$last' => '$_id'],
@@ -134,7 +134,7 @@ class MiniGameRepository implements MiniGameInterface
         // });
 
         // $piecesInfo = PracticeGameUser::whereIn('_id', $haveAllPieces->pluck('id'))->get();
-        // $haveAllPieces = PracticeGameUser::where(['user_id'=> $userId, 'piece_collected'=> true])->get();
+        // $haveAllPieces = PracticeGameUser::where(['user_id'=> $userId, 'collected_piece'=> true])->get();
         $pieceToBeUpdate = (($this->user->pieces_collected + 1) == 3)? -2: 1; 
         $this->user->increment('pieces_collected', $pieceToBeUpdate);
         // $this->user->pieces_collected = $pieceToBeUpdate;
@@ -154,7 +154,7 @@ class MiniGameRepository implements MiniGameInterface
             //         (new UserRepository($this->user))->addSkeletonKeys(1, ['plan_purchase_id' => $planPurchaseData->id]);
             //     }
             // }
-            // PracticeGameUser::whereIn('_id', $haveAllPieces->pluck('_id'))->update(['piece_collected'=> false]);
+            // PracticeGameUser::whereIn('_id', $haveAllPieces->pluck('_id'))->update(['collected_piece'=> false]);
         }
 
         return $this->user->available_skeleton_keys;
@@ -175,7 +175,7 @@ class MiniGameRepository implements MiniGameInterface
     public function markPracticeMiniGameAsComplete($practiceGameUser)
     {
         $practiceGameUser->completed_at = now();
-        // $practiceGameUser->piece_collected = true;
+        // $practiceGameUser->collected_piece = true;
         $practiceGameUser->save();
         return $practiceGameUser;
     }
