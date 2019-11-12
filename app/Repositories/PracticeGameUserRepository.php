@@ -8,8 +8,15 @@ use App\Repositories\ModelRepository;
 class PracticeGameUserRepository extends ModelRepository
 {
     protected $user;
-	function __construct()
+    protected $model;
+	public function __construct()
     {
         $this->model = new PracticeGameUser;
+    }
+
+    public function unlockTheGame(PracticeGameUser $practiceGameUser)
+    {
+    	$practiceGameUser->unlocked_at = now();
+    	return $practiceGameUser->save();
     }
 }

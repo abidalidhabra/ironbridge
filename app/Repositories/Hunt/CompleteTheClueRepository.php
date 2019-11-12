@@ -14,6 +14,7 @@ use App\Repositories\RelicRepository;
 use App\Repositories\SeasonRepository;
 use App\Repositories\User\UserRepository;
 use App\Services\HuntReward\LogTheHuntRewardService;
+use App\Services\User\AddXPService;
 use Illuminate\Support\Facades\Log;
 use MongoDB\BSON\UTCDateTime;
 use stdClass;
@@ -252,22 +253,27 @@ class CompleteTheClueRepository implements ClueInterface
         //      -> relic field is not null.
         //      -> all map pieces have collected.
 
-        $relic = $this->huntUser->relic()->select('_id', 'pieces','total_pieces')->first();
+        $relic = $this->huntUser->relic()->select('_id', 'pieces')->first();
         if ($relic) {
-            $totalTreasureCompleted = $this->user->hunt_user_v1()->where('relic_id', $this->huntUser->relic_id)->count();
-            $totalPieces = $relic->total_pieces;
-            if ($totalPieces <= $totalTreasureCompleted) {
-                $this->user->agent_status = [
-                    'level'=> $this->user->agent_status['level'],
-                    'xp'=> $this->userRepository->addXp(150)
-                ];
-                // return true;
-                return [
-                    'piece_alloted'=> true,
-                    'piece_no'=> 
-                ]
-            }
+            $totalTreasureCompleted = $this->user->hunt_user_v1()
+                                        ->where(['relic_id'=> $this->huntUser->relic_id, 'status'=> 'completed'])
+                                        ->pluck('piece_collected')
+                                        ->filter()
+                                        ->values();
+
+            $pieceRemaining = collect($relic->pieces)->whereNotIn('id', $totalTreasureCompleted)->pluck('id')->shuffle()->first();
+            // dd($pieceRemaining);
+            // if (!$pieceRemaining) {
+                return (new AddXPService)->setUser($this->user)->add(150);
+                // $this->user->agent_status = [
+                //     'level'=> $this->user->agent_status['level'],
+                //     'xp'=> $this->userRepository->addXp(150)
+                // ];
+                // return [
+                //     'piece_alloted'=> true,
+                // ];
+            // }
         }
-        // return false;
+        return false;
     }
 }

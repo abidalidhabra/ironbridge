@@ -47,7 +47,7 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
 
         return $this->user->hunt_user_v1()->create([
             'complexity'=> (int)$request->complexity,
-            'relic_id'=> $relic ?? $relic->id: null,
+            'relic_id'=> ($relic)? $relic->id: null,
             'location'=> [
                 'type'=> "Point",
                 'coordinates'=> [(float)$request->longitude, (float)$request->latitude]
