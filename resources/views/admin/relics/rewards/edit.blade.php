@@ -10,7 +10,7 @@
             </div>
             <div class="col-md-12">
                 <div class="row">
-                    <h3>Edit Relic Reward</h3>
+                    <h3>Edit Agent Complementary</h3>
                 </div>
             </div>
         </div>
@@ -18,8 +18,9 @@
     <br/>
     <br/>
     <div class="customdatatable_box">
-        <form method="POST" id="addRelicRewardForm">
+        <form method="POST" id="editRelicRewardForm">
             @csrf
+            @method('PUT')
             <div class="modal-body padboxset">
                 <div class="modalbodysetbox">
                     <div class="addrehcover">
@@ -97,8 +98,14 @@
                                                     <img class="card-img-top" src="{{ asset('admin_assets/images/no_image.png') }}" style="width: 100%" >
                                                 @endif
                                             </label>
+                                            @php
+                                                $widgetIds = [];
+                                                if($relicReward->widgets[Str::plural(strtolower($key))] != ""){
+                                                    $widgetIds = $relicReward->widgets[Str::plural(strtolower($key))];
+                                                }
+                                            @endphp
                                             <label class="checkbox-inline">
-                                                <input type="checkbox" id="{{ $widget->id }}" class="{{ $key.'widgets' }}" name="widgets[{{ $key }}][]" value="{{ $widget->id }}">{{ $widget->item_name }}
+                                                <input type="checkbox" id="{{ $widget->id }}" class="{{ $key.'widgets' }}" name="widgets[{{ $key }}][]" value="{{ $widget->id }}"  @if(in_array($widget->id, $widgetIds)){{ 'checked' }} @endif>{{ $widget->item_name }}
                                             </label>
                                         </div>
                                         @empty
@@ -128,9 +135,9 @@
 @section('scripts')
 <script>
     
-    $(document).on('submit', '#addRelicRewardForm', function(e) {
+    $(document).on('submit', '#editRelicRewardForm', function(e) {
         e.preventDefault();
-        let url = "{{ route('admin.relicReward.store') }}";
+        let url = "{{ route('admin.relicReward.update',$relicReward->id) }}";
         // if(validate()) {
             $.ajax({
                 type: "POST",

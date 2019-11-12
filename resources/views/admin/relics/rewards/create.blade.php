@@ -10,7 +10,7 @@
             </div>
             <div class="col-md-12">
                 <div class="row">
-                    <h3>Add Relic Reward</h3>
+                    <h3>Add Agent Complementary</h3>
                 </div>
             </div>
         </div>

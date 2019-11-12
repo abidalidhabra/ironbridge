@@ -202,6 +202,13 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 
 	Route::resource('relicReward', 'RelicRewardController');
 	Route::get('list', 'RelicRewardController@list')->name('relicReward.list');
+
+
+	Route::resource('practiceGame', 'PracticeGameController');
+	Route::get('GetPracticeGameList', 'PracticeGameController@GetPracticeGameList')->name('GetPracticeGameList');
+	Route::get('practiceGame/clues/html', 'PracticeGameController@targerHTML')->name('practiceGame.clue.html');
+
+
 });
 
 // Auth::routes();

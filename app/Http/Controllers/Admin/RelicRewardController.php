@@ -96,7 +96,7 @@ class RelicRewardController extends Controller
         
         AgentComplementary::create($data);
         
-        return response()->json(['status' => true,'message' => 'Relic rewards added! Please wait we are redirecting you.']);
+        return response()->json(['status' => true,'message' => 'Agent complementary added! Please wait we are redirecting you.']);
     }
 
     /**
@@ -148,7 +148,51 @@ class RelicRewardController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator = Validator::make($request->all(),[
+            'agent_level' => 'required|numeric',
+            'xps'         => 'required|numeric',
+            'minigames' => 'required|array',
+            'complexity'  => 'required|numeric',
+        ],[
+            'xps.required'  => 'The XP points field is required.',
+            'complexity.required'  => 'The difficulty field is required.'
+        ]);
+        
+        if ($validator->fails())
+        {
+            return response()->json(['status' => false,'message' => $validator->messages()->first()]);
+        }
+
+        $widgets = [];
+        foreach ($request->widgets as $key => $value) {
+            $widgetsItem = Str::plural(strtolower($key)); 
+            $widgets[$widgetsItem] = null;
+            if (count(array_filter($value)) > 0) {
+                $widgets[$widgetsItem] = array_values(array_filter($value));
+                if (isset($value[0]) && $value[0]=="all") {
+                    $widgets[$widgetsItem] = WidgetItem::where('widget_name',$key)->get()->pluck('id')->toArray();
+                }
+            }
+        }
+        
+
+
+        $data = $request->all();
+        if ($data['bucket_size']!="") {
+            $data['bucket_size'] =  (int)$data['bucket_size'];
+        }
+
+        $data['agent_level'] = (int)$request['agent_level'];
+        $data['xps'] = (int)$request['xps'];
+        $data['complexity'] = (int)$request['complexity'];
+        $data['widgets'] = $widgets;
+
+        $agentComplementary = AgentComplementary::find($id);
+        $agentComplementary->update($data);
+        if ($data['bucket_size']=="") {
+            $agentComplementary->unset('bucket_size');
+        }
+        return response()->json(['status' => true,'message' => 'Agent complementary updated! Please wait we are redirecting you.']);
     }
 
     /**
@@ -162,7 +206,7 @@ class RelicRewardController extends Controller
         AgentComplementary::find($id)->delete();
         return response()->json([
             'status' => true,
-            'message'=>'Relic Reward has been deleted successfully.',
+            'message'=>'Agent complementary has been deleted successfully.',
         ]);
     }
 

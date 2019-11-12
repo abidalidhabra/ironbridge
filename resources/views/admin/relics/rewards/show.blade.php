@@ -14,7 +14,7 @@
             </div>
             <div class="col-md-12">
                 <div class="row">
-                    <h3>Relic Reward Details: </h3>
+                    <h3>Agent Complementary Details: </h3>
                 </div>
             </div>
         </div>
@@ -27,7 +27,6 @@
             <p>Agent Level: <span>{{ $relicReward->agent_level }}</span> </p>
             <p>XP Points: <span>{{ $relicReward->xps }}</span> </p>
             <p>Difficulty: <span>{{ $relicReward->complexity }}</span> </p>
-            <p>Minigames: <span></span> </p>
         </div>
         <div class="relisetinerript">
             <h2>Minigames</h2>
