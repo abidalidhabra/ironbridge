@@ -43,10 +43,10 @@
 					@endif
 					@if($admin->hasPermissionTo('View Games') || $admin->hasPermissionTo('View Game Variations') || $admin->hasPermissionTo('Add Practice Games'))
 						<li >
-							<a href="javascript:void(0)" class="plusbttnbox myBtn">Manage Games <i class="fa @if(Route::currentRouteName() == 'admin.game.index' || Route::currentRouteName() == 'admin.gameVariation.index' || Route::currentRouteName() == 'admin.gameVariation.create' || Route::currentRouteName() == 'admin.gameVariation.show' || Route::currentRouteName() == 'admin.practiceGame') {{ 'fa-minus' }} @else {{ 'fa-plus' }} @endif" aria-hidden="true"></i></a>
+							<a href="javascript:void(0)" class="plusbttnbox myBtn">Manage Games <i class="fa @if(Route::currentRouteName() == 'admin.game.index' || Route::currentRouteName() == 'admin.gameVariation.index' || Route::currentRouteName() == 'admin.gameVariation.create' || Route::currentRouteName() == 'admin.gameVariation.show' || Route::currentRouteName() == 'admin.practiceGame.index' || Route::currentRouteName() == 'admin.practiceGame.edit') {{ 'fa-minus' }} @else {{ 'fa-plus' }} @endif" aria-hidden="true"></i></a>
 							<div class="dropdown custmenbox">
 								<!-- <button id="myBtn" class="dropbtn">Dropdown</button> -->
-								<div  class="dropdown-content myDropdown @if(Route::currentRouteName() == 'admin.game.index' || Route::currentRouteName() == 'admin.gameVariation.index' || Route::currentRouteName() == 'admin.gameVariation.create' || Route::currentRouteName() == 'admin.gameVariation.show' || Route::currentRouteName() == 'admin.practiceGame') {{ 'show' }} @endif">
+								<div  class="dropdown-content myDropdown @if(Route::currentRouteName() == 'admin.game.index' || Route::currentRouteName() == 'admin.gameVariation.index' || Route::currentRouteName() == 'admin.gameVariation.create' || Route::currentRouteName() == 'admin.gameVariation.show' || Route::currentRouteName() == 'admin.practiceGame.index' || Route::currentRouteName() == 'admin.practiceGame.edit') {{ 'show' }} @endif">
 									@if($admin->hasPermissionTo('View Games'))
 									<a href="{{ route('admin.game.index') }}" class="@if(Route::currentRouteName() == 'admin.game.index') {{ 'activelistsub' }} @endif" >Games</a>
 									@endif
@@ -55,7 +55,7 @@
 									@endif
 
 									@if($admin->hasPermissionTo('Add Practice Games'))
-										<a href="{{ route('admin.practiceGame') }}" class="@if(Route::currentRouteName() == 'admin.practiceGame') {{ 'activelistsub' }} @endif" >Practice Games Targets</a>
+										<a href="{{ route('admin.practiceGame.index') }}" class="@if(Route::currentRouteName() == 'admin.practiceGame.index' || Route::currentRouteName() == 'admin.practiceGame.edit') {{ 'activelistsub' }} @endif" >Practice Games Targets</a>
 									@endif
 
 								</div>
@@ -223,7 +223,7 @@
 										Route::currentRouteName() == 'admin.relicReward.show') 
 										{{ 'activelistsub' }} 
 									@endif
-									">Relic Reward</a>
+									">Agent Complementary</a>
 							</div>
 						</div>
 					</li>

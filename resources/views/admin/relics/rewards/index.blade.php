@@ -6,10 +6,10 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Relic Reward</h3>
+                <h3>Agent Complementary</h3>
             </div>
                 <div class="col-md-6 text-right modalbuttonadd">
-                    <a href="{{ route('admin.relicReward.create') }}" class="btn btn-info btn-md">Add Reward</a>
+                    <a href="{{ route('admin.relicReward.create') }}" class="btn btn-info btn-md">Add</a>
                 </div>
         </div>
     </div>
