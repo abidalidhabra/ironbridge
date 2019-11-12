@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\v1\Game;
 use App\Models\v1\WidgetItem;
-use App\Models\v2\RelicReward;
+use App\Models\v2\AgentComplementary;
 use Illuminate\Http\Request;
 use Validator;
 use Yajra\DataTables\DataTables;
@@ -94,7 +94,7 @@ class RelicRewardController extends Controller
         $data['complexity'] = (int)$request['complexity'];
         $data['widgets'] = $widgets;
         
-        RelicReward::create($data);
+        AgentComplementary::create($data);
         
         return response()->json(['status' => true,'message' => 'Relic rewards added! Please wait we are redirecting you.']);
     }
@@ -107,7 +107,7 @@ class RelicRewardController extends Controller
      */
     public function show($id)
     {
-        $relicReward = RelicReward::find($id);
+        $relicReward = AgentComplementary::find($id);
         $games = Game::whereIn('_id',$relicReward->minigames)
                     ->get()
                     ->pluck('name');
@@ -123,7 +123,20 @@ class RelicRewardController extends Controller
      */
     public function edit($id)
     {
-        //
+        $games = Game::where('status',true)->get();
+        $widgetItem = WidgetItem::orderBy('widget_name,avatar_id','desc')
+                                ->with('avatar')
+                                ->get()
+                                ->groupBy('widget_name');
+
+        $widgetItem->transform(function($value,$key){
+            $value = $value->mapToGroups(function ($avatar, $key) {
+                return [$avatar['avatar']['gender'] => $avatar];
+            });
+            return $value;
+        });
+        $relicReward = AgentComplementary::find($id);
+        return view('admin.relics.rewards.edit',compact('games','widgetItem','relicReward'));
     }
 
     /**
@@ -146,7 +159,7 @@ class RelicRewardController extends Controller
      */
     public function destroy($id)
     {
-        RelicReward::find($id)->delete();
+        AgentComplementary::find($id)->delete();
         return response()->json([
             'status' => true,
             'message'=>'Relic Reward has been deleted successfully.',
@@ -160,7 +173,7 @@ class RelicRewardController extends Controller
         $take = (int)$request->get('length');
         $search = $request->get('search')['value'];
 
-        $seasons = RelicReward::when($search != '', function($query) use ($search) {
+        $seasons = AgentComplementary::when($search != '', function($query) use ($search) {
             $active = ($search == 'true' || $search == 'Active')? true: false;
             $query->where('agent_level','like','%'.$search.'%')
             ->orWhere('xps','like','%'.$search.'%')
@@ -174,7 +187,7 @@ class RelicRewardController extends Controller
         ->get();
 
         /** Filter Result Total Count  **/
-        $filterCount = RelicReward::when($search != '', function($query) use ($search) {
+        $filterCount = AgentComplementary::when($search != '', function($query) use ($search) {
             $query->where('complexity','like','%'.$search.'%')
             ->orWhere('xps','like','%'.$search.'%')
             ->orWhere('complexity','like','%'.$search.'%')
@@ -197,7 +210,7 @@ class RelicRewardController extends Controller
             return $html;
         })
         ->rawColumns(['action', 'icon'])
-        ->setTotalRecords(RelicReward::count())
+        ->setTotalRecords(AgentComplementary::count())
         ->setFilteredRecords($filterCount)
         ->skipPaging()
         ->make(true);
