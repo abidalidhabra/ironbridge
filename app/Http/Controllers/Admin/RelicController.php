@@ -201,7 +201,7 @@ class RelicController extends Controller
             return $relic->created_at->format('d-M-Y @ h:i A');
         })
         ->editColumn('icon', function($relic){
-            return '<img src="'.$relic->icon.'" style="width: 96px;">';
+            return '<img src="'.$relic->icon.'" style="width: 70px;">';
         })
         ->addColumn('action', function($relic){
                 $html = '<a href="'.route('admin.relics.edit',$relic->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
