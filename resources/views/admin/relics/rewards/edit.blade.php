@@ -6,11 +6,11 @@
     <div class="users_datatablebox">
         <div class="">               
             <div class="col-md-12 text-right">
-                <a href="{{ route('admin.relics.index') }}" class="btn back-btn">Back</a>
+                <a href="{{ route('admin.relicReward.index') }}" class="btn back-btn">Back</a>
             </div>
             <div class="col-md-12">
                 <div class="row">
-                    <h3>Edit Relic</h3>
+                    <h3>Edit Relic Reward</h3>
                 </div>
             </div>
         </div>
@@ -18,57 +18,101 @@
     <br/>
     <br/>
     <div class="customdatatable_box">
-        <form method="POST" id="addRelicForm" action="{{ route('admin.relics.update', $relic->id) }}">
+        <form method="POST" id="addRelicRewardForm">
             @csrf
-            @method('PUT')
             <div class="modal-body padboxset">
                 <div class="modalbodysetbox">
                     <div class="addrehcover">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="form-group @error('icon') has-error @enderror">
-                                    <label class="control-label">Active icon for relic:</label>
-                                    <input 
-                                    type="file" 
-                                    class="form-control" 
-                                    name="icon" 
-                                    alias-name="Icon for relic">
-                                    @error('icon')
-                                    <div class="text-muted text-danger"> {{ $errors->first('icon') }} </div>
-                                    @enderror
-                                    
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="img-container imgiconboxsetiner">
-                                    <p>Icon</p>
-                                    <a data-fancybox="{{ $relic->name }}" href="{{ $relic->icon }}">
-                                        <img style="width: 80px;" src="{{ $relic->icon }}" alt="{{ $relic->name }} relic icon">
-                                    </a>
-                                </div>
-                            </div>
-                            
+                        <div class="form-group @error('agent_level') has-error @enderror">
+                            <label class="control-label">Agent Level:</label>
+                            <input type="number" class="form-control" 
+                            name="agent_level" value="{{ $relicReward->agent_level }}" placeholder="Enter The Agent Level">
+                            @error('agent_level')
+                            <div class="text-muted text-danger"> {{ $errors->first('agent_level') }} </div>
+                            @enderror
                         </div>
-                        
+                        <div class="form-group @error('xps') has-error @enderror">
+                            <label class="control-label">XP Points:</label>
+                            <input type="number" class="form-control" 
+                            name="xps" placeholder="Enter The XP Points" value="{{ $relicReward->xps }}">
+                            @error('xps')
+                            <div class="text-muted text-danger"> {{ $errors->first('xps') }} </div>
+                            @enderror
+                        </div>
+
                         <div class="form-group">
-                            <label>Relic Complexity:</label>
-                            <select name="complexity" class="form-control" alias-name="Relic complexity" required>
-                                <option value="">Select Complexity</option>
-                                @for($i = 1; $i<=5; $i++)
-                                <option value="{{ $i }}" {{ ($i == $relic->complexity)?'selected': '' }}>{{ $i }}</option>
-                                @endfor
+                            <label>Minigames:</label>
+                            <select name="minigames[]" class="form-control" id="minigames" multiple="multiple">
+                                <option value="">Select Minigames</option>
+                                @forelse($games as $game)
+                                <option value="{{ $game->id }}" @if(in_array($game->id,$relicReward->minigames)){{ 'selected' }}@endif >{{ $game->name }}</option>
+                                @empty
+                                @endforelse
                             </select>
                         </div>
-                        <div class="clues">
-                            @forelse($relic->pieces as $index=> $piece)
-                                @php $lastIndex = $index; @endphp
-                                @include('admin.relics.clues.edit', ['index'=> $index, 'clue'=> $piece, 'last'=> $loop->last])
-                            @empty
-                                <h4 class="text-danger">No clue found in this relic.</h4>
-                            @endforelse
-                            <input type="hidden" id="last-token" value="{{ $lastIndex ?? 0 }}">
+
+                        <div class="form-group @error('xps') has-error @enderror">
+                            <label class="control-label">Difficulty:</label>
+                            <select name="complexity" class="form-control">
+                                <option value="">Select Difficulty</option>
+                                @for($i=1;$i <= 5;$i++)
+                                    <option value="{{ $i }}" @if($i==$relicReward->complexity){{ 'selected' }}@endif>{{ $i }}</option>
+                                @endfor
+                            </select>
+                            @error('complexity')
+                            <div class="text-muted text-danger"> {{ $errors->first('complexity') }} </div>
+                            @enderror
                         </div>
-                        
+                        <div class="form-group @error('xps') has-error @enderror">
+                            <label class="control-label">Bucket Size:</label>
+                            <select name="bucket_size" class="form-control">
+                                <option value="">Select Bucket Size</option>
+                                @for($i=1;$i <= 10;$i++)
+                                    <option value="{{ $i }}" @if($i==$relicReward->bucket_size){{ 'selected' }}@endif>{{ $i.' Keys' }}</option>
+                                @endfor
+                            </select>
+                            @error('complexity')
+                            <div class="text-muted text-danger"> {{ $errors->first('complexity') }} </div>
+                            @enderror
+                        </div>
+                        <div style="height: 500px;overflow-x: auto;"> 
+                            @forelse($widgetItem as $key => $widgets)
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    <h4 class="control-label">{{ $key }}:</h4>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" value="{{ $key.'widgets' }}" class="widgets_select_all" data-widgets="{{ $key }}">Select All
+                                    </label>
+                                    <input type="hidden" name="widgets[{{ $key }}][]" class="all_widgets{{ $key }}">
+                                </div>
+                                @forelse($widgets as $gender=> $genderBased)
+                                    <div class="col-md-12">
+                                        <h4 >{{ $gender }}:</h4>
+                                        @forelse($genderBased as $widget)
+                                        <div class="col-md-3">
+                                            <label for="{{ $widget->id }}" >
+                                                @if (file_exists(public_path('admin_assets/widgets/'.$widget->id.'.png')))
+                                                    <img class="card-img-top" src="{{ asset('admin_assets/widgets/'.$widget->id.'.png') }}" style="width: 100%" >
+                                                @else
+                                                    <img class="card-img-top" src="{{ asset('admin_assets/images/no_image.png') }}" style="width: 100%" >
+                                                @endif
+                                            </label>
+                                            <label class="checkbox-inline">
+                                                <input type="checkbox" id="{{ $widget->id }}" class="{{ $key.'widgets' }}" name="widgets[{{ $key }}][]" value="{{ $widget->id }}">{{ $widget->item_name }}
+                                            </label>
+                                        </div>
+                                        @empty
+                                            <label>No Data Found</label>
+                                        @endforelse
+                                    </div>
+                                @empty
+                                    <label>No Data Found</label>
+                                @endforelse
+                            </div>
+                            @empty
+                                <p>No Data Found</p>
+                            @endforelse
+                        </div>
                     </div>
                 </div>
             </div>
@@ -82,15 +126,15 @@
 @endsection
 
 @section('scripts')
-@include('admin.seasons.scripts.relic-script')
-
 <script>
-    $(document).on('submit', '#addRelicForm', function(e) {
+    
+    $(document).on('submit', '#addRelicRewardForm', function(e) {
         e.preventDefault();
-        if(validate()) {
+        let url = "{{ route('admin.relicReward.store') }}";
+        // if(validate()) {
             $.ajax({
                 type: "POST",
-                url: '{{ route('admin.relics.update', $relic->id) }}',
+                url: url,
                 data: new FormData(this),
                 contentType: false,
                 processData: false,
@@ -100,10 +144,11 @@
                     if (response.status == true) {
                         toastr.success(response.message);
                         setTimeout(function() {
-                            window.location.href = '{{ route('admin.relics.index') }}';
+                            window.location.href = '{{ route('admin.relicReward.index') }}';
                         }, 2000)
                     } else {
-                        toastr.warning('You are not authorized to access this page.');
+                        // toastr.warning('You are not authorized to access this page.');
+                        toastr.warning(response.message);
                     }
                 },
                 error: function(xhr, exception) {
@@ -111,33 +156,21 @@
                     toastr.error(error.message);
                 }
             });
-        }
+        // }
     });
+    $('#minigames').select2();
 
-    $(".remove_pieces").confirmation({
-            container:"body",
-            btnOkClass:"btn btn-sm btn-success",
-            btnCancelClass:"btn btn-sm btn-danger",
-            onConfirm:function(event, element) {
-                var pieces_id = element.attr('data-id');
-                $.ajax({
-                    type: "POST",
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    url: '{{ route("admin.removePieces") }}',
-                    data: {pieces_id : pieces_id,id:'{{ $relic->id }}'},
-                    success: function(response)
-                    {
-                        if (response.status == true) {
-                            toastr.success(response.message);
-                            location.reload(true);
-                        } else {
-                            toastr.warning(response.message);
-                        }
-                    }
-                });
-            }
-        });
+
+    $(document).on('click','.widgets_select_all',function(){
+        var checkVal = $(this).val();
+        var widget = $(this).attr('data-widgets');
+        if ($(this).prop("checked")== true) {
+            $('.'+checkVal).prop("checked",true);
+            $('.all_widgets'+widget).val('all');
+        } else {
+            $('.'+checkVal).prop("checked",false);
+            $('.all_widgets'+widget).val('no');
+        }
+    })
 </script>
 @endsection
