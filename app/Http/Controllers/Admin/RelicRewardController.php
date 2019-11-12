@@ -120,9 +120,12 @@ class RelicRewardController extends Controller
     public function show($id)
     {
         $relicReward = AgentComplementary::find($id);
-        $games = Game::whereIn('_id',$relicReward->minigames)
-                    ->get()
-                    ->pluck('name');
+        $games = [];
+        if (isset($relicReward->minigames)) {        
+            $games = Game::whereIn('_id',$relicReward->minigames)
+                        ->get()
+                        ->pluck('name');
+        }
 
         return view('admin.relics.rewards.show', compact(['relicReward','games']));
     }
