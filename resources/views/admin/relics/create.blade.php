@@ -55,7 +55,7 @@
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-success">Save</button>
-                <button type="button" class="btn btn-danger" id="resetTheForm" onclick="document.getElementById('addRelicForm').reset()">Reset</button>
+                <!-- <button type="button" class="btn btn-danger" id="resetTheForm" onclick="document.getElementById('addRelicForm').reset()">Reset</button> -->
             </div>
         </form>
     </div>

@@ -6,7 +6,7 @@
     <div class="users_datatablebox">
         <div class="">               
             <div class="col-md-12 text-right">
-                <a href="{{ route('admin.relics.index') }}" class="btn back-btn">Back</a>
+                <a href="{{ route('admin.xpManagement.index') }}" class="btn back-btn">Back</a>
             </div>
             <div class="col-md-12">
                 <div class="row">
@@ -18,7 +18,7 @@
     <br/>
     <br/>
     <div class="customdatatable_box">
-        <form method="POST" id="addXpManagementForm" action="{{ route('admin.seasons.store') }}">
+        <form method="POST" id="addXpManagementForm">
             @csrf
             <div class="modal-body padboxset">
                 <div class="modalbodysetbox">

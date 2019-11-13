@@ -8,11 +8,9 @@
             <div class="col-md-6">
                 <h3>XP Management</h3>
             </div>
-            @if(auth()->user()->hasPermissionTo('Add Main Relics'))
-                <div class="col-md-6 text-right modalbuttonadd">
-                    <a href="{{ route('admin.xpManagement.create') }}" class="btn btn-info btn-md">Add</a>
-                </div>
-            @endif
+            <!-- <div class="col-md-6 text-right modalbuttonadd">
+                <a href="{{ route('admin.xpManagement.create') }}" class="btn btn-info btn-md">Add</a>
+            </div> -->
         </div>
     </div>
     <br/>

@@ -26,7 +26,7 @@
                     <div class="addrehcover">
                        <div class="form-group">
                             <label>Event:</label>
-                            <select name="event" class="form-control">
+                            <select name="event" class="form-control" disabled>
                                 <option value="">Select event</option>
                                 <option value="clue_completion" {{ ($xpManagement->event=='clue_completion')?'selected':'' }}>Clue Completion</option>
                                 <option value="treasure_completion" {{ ($xpManagement->event=='treasure_completion')?'selected':'' }}>Treasure Completion</option>

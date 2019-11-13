@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | Relics')
+@section('title','Ironbridge1779 | Agent Complementary')
 @extends('admin.layouts.admin-app')
 
 @section('content')

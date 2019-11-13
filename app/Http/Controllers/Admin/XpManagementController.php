@@ -102,7 +102,7 @@ class XpManagementController extends Controller
 
         $xpManagement = XpManagement::where('_id',$id)->first();
         $xpManagement->xp = (int)$request->xp;
-        $xpManagement->event = $request->event;
+        // $xpManagement->event = $request->event;
         $xpManagement->save();
         
         return response()->json([

@@ -233,7 +233,7 @@
 						</div>
 					</li>
 					@endif
-					<li  class="@if(Route::currentRouteName() == 'admin.xpManagement.index'	) {{ 'activelist' }} @endif">
+					<li  class="@if(Route::currentRouteName() == 'admin.xpManagement.index' || Route::currentRouteName() == 'admin.xpManagement.edit') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.xpManagement.index') }}">XP Management</a>
 					</li>
 					

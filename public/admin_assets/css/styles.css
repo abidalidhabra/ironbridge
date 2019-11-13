@@ -2593,7 +2593,7 @@ table i.iconsetaddbox{
 
 
 
-.cluecontainer button.remove-clue , .cluecontainer button.remove_pieces{
+.cluecontainer button.remove-clue ,.cluecontainer button.remove-target , .cluecontainer button.remove_pieces{
     position: absolute;
     right: 84px;
     top: 25px;
@@ -2601,7 +2601,7 @@ table i.iconsetaddbox{
     border-color: #d43f3a;
     color: #ffffff;
 }
-.cluecontainer button.add-clue {
+.cluecontainer button.add-clue , .cluecontainer button.add-target {
     position: absolute;
     right: 36px;
     top: 25px;
