@@ -20,7 +20,9 @@
                     <th width="7%">Sr.</th>
                     <th>Game</th>
                     <th>Total Targets</th>
+                    @if(auth()->user()->hasPermissionTo('Edit Practice Games'))
                     <th width="5%">Action</th>
+                    @endif
                 </tr>
             </thead>
             <tbody></tbody>
@@ -56,7 +58,9 @@
                 { data:'DT_RowIndex',name:'_id' },
                 { data:'game',name:'game'},
                 { data:'targets',name:'targets' },
-                { data:'action',name:'action' },
+                @if(auth()->user()->hasPermissionTo('Edit Practice Games'))
+                    { data:'action',name:'action' },
+                @endif
                 ],
                 columnDefs: [
                     {

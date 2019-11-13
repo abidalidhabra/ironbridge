@@ -189,8 +189,11 @@ class PracticeGameController extends Controller
             return count($practiceGame->targets); 
         })
         ->addColumn('action', function($practiceGame) use ($admin){
-            $html = '<a href="'.route('admin.practiceGame.edit',$practiceGame->id).'" class="edit_game" data-action="edit" data-id="'.$practiceGame->id.'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
-            
+            $html = '';
+            if($admin->hasPermissionTo('Edit Practice Games')){
+                $html .= '<a href="'.route('admin.practiceGame.edit',$practiceGame->id).'" class="edit_game" data-action="edit" data-id="'.$practiceGame->id.'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+            }
+
             $html .= ' <a href="'.route('admin.practiceGame.show',$practiceGame->id).'" data-action="View" data-toggle="tooltip" title="View" ><i class="fa fa-eye iconsetaddbox"></i></a>';
 
             return $html;
