@@ -8,9 +8,11 @@
             <div class="col-md-6">
                 <h3>Agent Complementary</h3>
             </div>
+            @if(auth()->user()->hasPermissionTo('Add Agent Complementary'))
                 <div class="col-md-6 text-right modalbuttonadd">
                     <a href="{{ route('admin.relicReward.create') }}" class="btn btn-info btn-md">Add</a>
                 </div>
+            @endif
         </div>
     </div>
     <br/>
@@ -23,7 +25,9 @@
                     <th>Agent Level</th>
                     <th>XP Points</th>
                     <th>Difficulty</th>
-                    <th>Action</th>
+                    @if(auth()->user()->hasPermissionTo('Edit Agent Complementary') || auth()->user()->hasPermissionTo('Delete Agent Complementary'))
+                     <th>Action</th>
+                    @endif
                 </tr>
             </thead>
             <tbody></tbody>
@@ -58,7 +62,9 @@
                         { data:'agent_level',name:'agent_level'},
                         { data:'xps',name:'xps'},
                         { data:'complexity',name:'Complexity' },
+                        @if(auth()->user()->hasPermissionTo('Edit Agent Complementary') || auth()->user()->hasPermissionTo('Delete Agent Complementary'))
                         { data:'action',name:'action' },
+                        @endif
                     ],
                     columnDefs: [{
                         orderable: false,

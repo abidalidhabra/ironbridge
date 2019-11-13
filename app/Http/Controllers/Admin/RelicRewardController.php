@@ -8,6 +8,7 @@ use App\Models\v1\WidgetItem;
 use App\Models\v2\AgentComplementary;
 use Illuminate\Http\Request;
 use Validator;
+use Auth;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Str;
 
@@ -267,6 +268,8 @@ class RelicRewardController extends Controller
         })
         ->count();
 
+        $admin = Auth::User();
+
         return DataTables::of($seasons)
         ->addIndexColumn()
         ->editColumn('complexity', function($relic){
@@ -275,11 +278,16 @@ class RelicRewardController extends Controller
         ->editColumn('created_at', function($relic){
             return $relic->created_at->format('d-M-Y @ h:i A');
         })
-        ->addColumn('action', function($relic){
-                $html = '<a href="'.route('admin.relicReward.edit',$relic->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+        ->addColumn('action', function($relic) use ($admin){
+                $html = '';
+                if($admin->hasPermissionTo('Edit Agent Complementary')){
+                    $html .= '<a href="'.route('admin.relicReward.edit',$relic->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+                }
 
-                $html .= ' <a href="'.route('admin.relicReward.destroy',$relic->id).'" data-action="delete" data-toggle="tooltip" title="Delete" ><i class="fa fa-trash iconsetaddbox"></i></a>';
-
+                if($admin->hasPermissionTo('Delete Agent Complementary')){
+                    $html .= ' <a href="'.route('admin.relicReward.destroy',$relic->id).'" data-action="delete" data-toggle="tooltip" title="Delete" ><i class="fa fa-trash iconsetaddbox"></i></a>';
+                }
+                
                 $html .= ' <a href="'.route('admin.relicReward.show',$relic->id).'" data-action="View" data-toggle="tooltip" title="View" ><i class="fa fa-eye iconsetaddbox"></i></a>';
             return $html;
         })

@@ -34,7 +34,6 @@
 @endsection
 
 @section('scripts')
-@include('admin.sponser-hunts.assets.sponser-hunts')
 
 <script>
     $(document).on('submit', '#updateAppSettings', function(e) {

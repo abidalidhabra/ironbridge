@@ -168,7 +168,7 @@
 						</div>
 					</li> -->
 					@endif
-
+					@if($admin->hasPermissionTo('View Main Relics') || $admin->hasPermissionTo('View Agent Complementary'))
 					<li>
 						<a href="javascript:void(0)" class="plusbttnbox myBtn">Relics
 							<i 
@@ -202,6 +202,7 @@
 								Route::currentRouteName() == 'admin.relicReward.show') 
 								{{ 'show' }} 
 							@endif">
+									@if($admin->hasPermissionTo('View Main Relics'))
 									<a 
 									href="{{ route('admin.relics.index') }}" 
 									class="
@@ -213,6 +214,9 @@
 										{{ 'activelistsub' }} 
 									@endif
 									">Main Relics</a>
+									@endif
+									
+									@if($admin->hasPermissionTo('View Agent Complementary'))
 									<a 
 									href="{{ route('admin.relicReward.index') }}" 
 									class="
@@ -224,10 +228,11 @@
 										{{ 'activelistsub' }} 
 									@endif
 									">Agent Complementary</a>
+									@endif
 							</div>
 						</div>
 					</li>
-
+					@endif
 					{{-- @if($admin->hasPermissionTo('View Treasure Locations') || $admin->hasPermissionTo('View Complexity Targets') || $admin->hasPermissionTo('View Hunt Loot Tables')) --}}
 					{{--<li >
 						<a 

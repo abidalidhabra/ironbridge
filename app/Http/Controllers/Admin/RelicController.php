@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 use DB;
+use Auth;
 
 class RelicController extends Controller
 {
@@ -194,7 +195,8 @@ class RelicController extends Controller
             ->orWhere('created_at','like','%'.$search.'%');
         })
         ->count();
-
+                
+        $admin = Auth::User();
         return DataTables::of($seasons)
         ->addIndexColumn()
         ->editColumn('created_at', function($relic){
@@ -203,10 +205,15 @@ class RelicController extends Controller
         ->editColumn('icon', function($relic){
             return '<img src="'.$relic->icon.'" style="width: 70px;">';
         })
-        ->addColumn('action', function($relic){
-                $html = '<a href="'.route('admin.relics.edit',$relic->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+        ->addColumn('action', function($relic) use($admin){
+                $html = '';
+                if($admin->hasPermissionTo('Edit Main Relics')){
+                    $html .= '<a href="'.route('admin.relics.edit',$relic->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+                }
 
-                $html .= ' <a href="'.route('admin.relics.destroy',$relic->id).'" data-action="delete" data-toggle="tooltip" title="Delete" ><i class="fa fa-trash iconsetaddbox"></i></a>';
+                if($admin->hasPermissionTo('Delete Main Relics')){
+                    $html .= ' <a href="'.route('admin.relics.destroy',$relic->id).'" data-action="delete" data-toggle="tooltip" title="Delete" ><i class="fa fa-trash iconsetaddbox"></i></a>';
+                }
 
                 $html .= ' <a href="'.route('admin.relics.show',$relic->id).'" data-action="View" data-toggle="tooltip" title="View" ><i class="fa fa-eye iconsetaddbox"></i></a>';
             return $html;
