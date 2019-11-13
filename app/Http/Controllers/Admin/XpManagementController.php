@@ -92,7 +92,7 @@ class XpManagementController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'event'=> 'required',
+            // 'event'=> 'required',
             'xp'=> 'required|numeric',
         ]);
 
