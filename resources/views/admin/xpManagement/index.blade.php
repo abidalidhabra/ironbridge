@@ -20,7 +20,7 @@
             <thead>
                 <tr>
                     <th>Sr.</th>
-                    <th>Event</th>
+                    <th>Name</th>
                     <th>XP</th>
                     <th>Created at (UTC)</th>
                     <th>Action</th>
@@ -55,7 +55,7 @@
                     },
                     columns:[
                         { data:'DT_RowIndex',name:'_id' },
-                        { data:'event',name:'event'},
+                        { data:'name',name:'name'},
                         { data:'xp',name:'xp'},
                         { data:'created_at',name:'created_at' },
                         { data:'action',name:'action' },

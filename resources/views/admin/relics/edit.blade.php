@@ -53,9 +53,9 @@
                                       
 
                         <div class="form-group">
-                            <label>Relic Complexity:</label>
+                            <label>TH Complexity:</label>
                             <select name="complexity" class="form-control" alias-name="Relic complexity" required>
-                                <option value="">Select Complexity</option>
+                                <option value="">Select TH Complexity</option>
                                 @for($i = 1; $i<=5; $i++)
                                 <option value="{{ $i }}" {{ ($i == $relic->complexity)?'selected': '' }}>{{ $i }}</option>
                                 @endfor

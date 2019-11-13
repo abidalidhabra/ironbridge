@@ -26,7 +26,8 @@
             <!-- <h2>Relics Detail:</h2> -->
             <p>Agent Level: <span>{{ (isset($relicReward->agent_level))?$relicReward->agent_level:'-' }}</span> </p>
             <p>XP Points: <span>{{ (isset($relicReward->xps)?$relicReward->xps:'-') }}</span> </p>
-            <p>Difficulty: <span>{{ (isset($relicReward->complexity)?$relicReward->complexity:'-') }}</span> </p>
+            <p>TH Difficulty: <span>{{ (isset($relicReward->complexity)?$relicReward->complexity:'-') }}</span> </p>
+            <p>Skeleton Key Bucket Size: <span>{{ (isset($relicReward->bucket_size)?$relicReward->bucket_size:'-') }}</span> </p>
         </div>
         <div class="relisetinerript">
             <h2>Minigames</h2>

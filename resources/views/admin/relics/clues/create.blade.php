@@ -2,7 +2,7 @@
     
     <div class="colmd6box">
         <div class="form-group">
-            <label class="control-label">Pieces Image:</label>
+            <label class="control-label">Relic Map Piece {{ $index+1 }}:</label>
             <input 
             type="file" 
             class="form-control" 

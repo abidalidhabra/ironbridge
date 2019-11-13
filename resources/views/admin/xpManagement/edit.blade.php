@@ -24,13 +24,17 @@
             <div class="modal-body padboxset">
                 <div class="modalbodysetbox">
                     <div class="addrehcover">
-                       <div class="form-group">
+                       <!-- <div class="form-group">
                             <label>Event:</label>
                             <select name="event" class="form-control" disabled>
                                 <option value="">Select event</option>
                                 <option value="clue_completion" {{ ($xpManagement->event=='clue_completion')?'selected':'' }}>Clue Completion</option>
                                 <option value="treasure_completion" {{ ($xpManagement->event=='treasure_completion')?'selected':'' }}>Treasure Completion</option>
                             </select>
+                        </div> -->
+                        <div class="form-group">
+                            <label>Name:</label>
+                            <input type="text" value="{{ $xpManagement->name }}" name="name" class="form-control">
                         </div>
                         <div class="form-group">
                             <label>XP:</label>

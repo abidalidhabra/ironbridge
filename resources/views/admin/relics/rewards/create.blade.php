@@ -52,9 +52,9 @@
                         </div>
 
                         <div class="form-group @error('xps') has-error @enderror">
-                            <label class="control-label">Difficulty:</label>
+                            <label class="control-label">TH Difficulty:</label>
                             <select name="complexity" class="form-control">
-                                <option value="">Select Difficulty</option>
+                                <option value="">Select TH Difficulty</option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>
@@ -66,9 +66,9 @@
                             @enderror
                         </div>
                         <div class="form-group @error('xps') has-error @enderror">
-                            <label class="control-label">Bucket Size:</label>
+                            <label class="control-label">Skeleton Key Bucket Size:</label>
                             <select name="bucket_size" class="form-control">
-                                <option value="">Select Bucket Size</option>
+                                <option value="">Select Skeleton Key Bucket Size</option>
                                 @for($i=1;$i <= 10;$i++)
                                     <option value="{{ $i }}">{{ $i }}</option>
                                 @endfor
