@@ -187,8 +187,8 @@ class UserRepository implements UserRepositoryInterface
     public function setAgentStatus($points = null, $level = null)
     {
         $this->user->agent_status = [
-            'level'=> ($level)?  $level: $this->user->agent_status['level'],
             'xp'=> ($points)? ($this->user->agent_status['xp'] + $points): $this->user->agent_status['xp'],
+            'level'=> ($level)?  ($this->user->agent_status['level'] + $level): $this->user->agent_status['level'],
         ];
         return $this;
     }
