@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | XP Management')
+@section('title','Ironbridge1779 | Hunts XP')
 @extends('admin.layouts.admin-app')
 
 @section('content')
@@ -6,13 +6,11 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>XP Management</h3>
+                <h3>Hunts XP</h3>
             </div>
-            @if(auth()->user()->hasPermissionTo('Add Main Relics'))
-                <div class="col-md-6 text-right modalbuttonadd">
-                    <a href="{{ route('admin.xpManagement.create') }}" class="btn btn-info btn-md">Add</a>
-                </div>
-            @endif
+            <!-- <div class="col-md-6 text-right modalbuttonadd">
+                <a href="{{ route('admin.xpManagement.create') }}" class="btn btn-info btn-md">Add</a>
+            </div> -->
         </div>
     </div>
     <br/>

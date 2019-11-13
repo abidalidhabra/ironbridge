@@ -41,7 +41,7 @@ class XpManagementController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'event'=> 'required',
+            // 'event'=> 'required',
             'xp'=> 'required|numeric',
         ]);
 
@@ -55,7 +55,7 @@ class XpManagementController extends Controller
         
         return response()->json([
             'status' => true,
-            'message'=>'XP Management has been added successfully.',
+            'message'=>'Hunts XP has been added successfully.',
         ]);
     }
 
@@ -92,7 +92,7 @@ class XpManagementController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'event'=> 'required',
+            // 'event'=> 'required',
             'xp'=> 'required|numeric',
         ]);
 
@@ -102,12 +102,12 @@ class XpManagementController extends Controller
 
         $xpManagement = XpManagement::where('_id',$id)->first();
         $xpManagement->xp = (int)$request->xp;
-        $xpManagement->event = $request->event;
+        // $xpManagement->event = $request->event;
         $xpManagement->save();
         
         return response()->json([
             'status' => true,
-            'message'=>'XP Management has been update successfully.',
+            'message'=>'Hunts XP has been update successfully.',
         ]);
     }
 

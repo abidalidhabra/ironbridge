@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | Season Detail')
+@section('title','Ironbridge1779 | Agent Levels')
 @extends('admin.layouts.admin-app')
 
 @section('style')
@@ -14,7 +14,7 @@
             </div>
             <div class="col-md-12">
                 <div class="row">
-                    <h3>Agent Complementary Details: </h3>
+                    <h3>Agent Levels: </h3>
                 </div>
             </div>
         </div>

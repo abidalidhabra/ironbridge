@@ -10,7 +10,7 @@
             </div>
             <div class="col-md-12">
                 <div class="row">
-                    <h3>Edit XP Management</h3>
+                    <h3>Edit Hunts XP</h3>
                 </div>
             </div>
         </div>
@@ -26,7 +26,7 @@
                     <div class="addrehcover">
                        <div class="form-group">
                             <label>Event:</label>
-                            <select name="event" class="form-control">
+                            <select name="event" class="form-control" disabled>
                                 <option value="">Select event</option>
                                 <option value="clue_completion" {{ ($xpManagement->event=='clue_completion')?'selected':'' }}>Clue Completion</option>
                                 <option value="treasure_completion" {{ ($xpManagement->event=='treasure_completion')?'selected':'' }}>Treasure Completion</option>

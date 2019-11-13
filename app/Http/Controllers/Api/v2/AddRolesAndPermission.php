@@ -154,14 +154,14 @@ class AddRolesAndPermission extends Controller
 						//['name' => 'Edit Seasonal Hunt','guard_name' => 'admin', 'module'=>'Seasonal Hunt'],
 						//['name' => 'Delete Seasonal Hunt','guard_name' => 'admin', 'module'=>'Seasonal Hunt'],
 						['name' => 'View App Settings','guard_name' => 'admin', 'module'=>'App Settings'],
-						['name' => 'View Main Relics','guard_name' => 'admin', 'module'=>'Relics / Main Relics'],
-						['name' => 'Add Main Relics','guard_name' => 'admin', 'module'=>'Relics / Main Relics'],
-						['name' => 'Edit Main Relics','guard_name' => 'admin', 'module'=>'Relics / Main Relics'],
-						['name' => 'Delete Main Relics','guard_name' => 'admin', 'module'=>'Relics / Main Relics'],
-						['name' => 'View Agent Complementary','guard_name' => 'admin', 'module'=>'Relics / Agent Complementary'],
-						['name' => 'Add Agent Complementary','guard_name' => 'admin', 'module'=>'Relics / Agent Complementary'],
-						['name' => 'Edit Agent Complementary','guard_name' => 'admin', 'module'=>'Relics / Agent Complementary'],
-						['name' => 'Delete Agent Complementary','guard_name' => 'admin', 'module'=>'Relics / Agent Complementary'],
+						['name' => 'View Relics','guard_name' => 'admin', 'module'=>'Manage Relics / Relics'],
+						['name' => 'Add Relics','guard_name' => 'admin', 'module'=>'Manage Relics / Relics'],
+						['name' => 'Edit Relics','guard_name' => 'admin', 'module'=>'Manage Relics / Relics'],
+						['name' => 'Delete Relics','guard_name' => 'admin', 'module'=>'Manage Relics / Relics'],
+						['name' => 'View Agent Levels','guard_name' => 'admin', 'module'=>'Manage Relics / Agent Levels'],
+						['name' => 'Add Agent Levels','guard_name' => 'admin', 'module'=>'Manage Relics / Agent Levels'],
+						['name' => 'Edit Agent Levels','guard_name' => 'admin', 'module'=>'Manage Relics / Agent Levels'],
+						['name' => 'Delete Agent Levels','guard_name' => 'admin', 'module'=>'Manage Relics / Agent Levels'],
 
 					];
 		

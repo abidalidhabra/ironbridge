@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | Games')
+@section('title','Ironbridge1779 | Mini Games XP/Score')
 @extends('admin.layouts.admin-app')
 @section('styles')
 <!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->
@@ -8,7 +8,7 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Practice Game</h3>
+                <h3>Mini Games XP/Score</h3>
             </div>
         </div>
     </div>
@@ -20,7 +20,9 @@
                     <th width="7%">Sr.</th>
                     <th>Game</th>
                     <th>Total Targets</th>
+                    @if(auth()->user()->hasPermissionTo('Edit Practice Games'))
                     <th width="5%">Action</th>
+                    @endif
                 </tr>
             </thead>
             <tbody></tbody>
@@ -56,7 +58,9 @@
                 { data:'DT_RowIndex',name:'_id' },
                 { data:'game',name:'game'},
                 { data:'targets',name:'targets' },
-                { data:'action',name:'action' },
+                @if(auth()->user()->hasPermissionTo('Edit Practice Games'))
+                    { data:'action',name:'action' },
+                @endif
                 ],
                 columnDefs: [
                     {

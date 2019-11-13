@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | Relic Creation')
+@section('title','Ironbridge1779 | Agent Levels')
 @extends('admin.layouts.admin-app')
 
 @section('content')
@@ -10,7 +10,7 @@
             </div>
             <div class="col-md-12">
                 <div class="row">
-                    <h3>Add Agent Complementary</h3>
+                    <h3>Add Agent Levels</h3>
                 </div>
             </div>
         </div>
@@ -120,7 +120,7 @@
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-success">Save</button>
-                <button type="button" class="btn btn-danger" id="resetTheForm" onclick="document.getElementById('addRelicForm').reset()">Reset</button>
+                <!-- <button type="button" class="btn btn-danger" id="resetTheForm" onclick="document.getElementById('addRelicForm').reset()">Reset</button> -->
             </div>
         </form>
     </div>
