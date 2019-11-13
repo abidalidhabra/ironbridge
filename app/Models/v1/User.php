@@ -99,7 +99,7 @@ class User extends Authenticatable implements JWTSubject
             'minigames'=> null,
         ],
         'agent_status'=> [
-            'xp'=> 2500,
+            'xp'=> 500,
             'level'=> 1
         ]
         // 'expnadable_skeleton_keys'   => 0,
