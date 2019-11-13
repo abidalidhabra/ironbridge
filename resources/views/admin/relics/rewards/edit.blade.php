@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | Agent Complementary')
+@section('title','Ironbridge1779 | Agent Levels')
 @extends('admin.layouts.admin-app')
 
 @section('content')
@@ -10,7 +10,7 @@
             </div>
             <div class="col-md-12">
                 <div class="row">
-                    <h3>Edit Agent Complementary</h3>
+                    <h3>Edit Agent Levels</h3>
                 </div>
             </div>
         </div>

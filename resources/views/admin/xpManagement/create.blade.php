@@ -10,7 +10,7 @@
             </div>
             <div class="col-md-12">
                 <div class="row">
-                    <h3>Add XP Management</h3>
+                    <h3>Add Hunts XP</h3>
                 </div>
             </div>
         </div>

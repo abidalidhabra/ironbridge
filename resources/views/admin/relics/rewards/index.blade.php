@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | Agent Complementary')
+@section('title','Ironbridge1779 | Agent Levels')
 @extends('admin.layouts.admin-app')
 
 @section('content')
@@ -6,9 +6,9 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Agent Complementary</h3>
+                <h3>Agent Levels</h3>
             </div>
-            @if(auth()->user()->hasPermissionTo('Add Agent Complementary'))
+            @if(auth()->user()->hasPermissionTo('Add Agent Levels'))
                 <div class="col-md-6 text-right modalbuttonadd">
                     <a href="{{ route('admin.relicReward.create') }}" class="btn btn-info btn-md">Add</a>
                 </div>
@@ -25,7 +25,7 @@
                     <th>Agent Level</th>
                     <th>XP Points</th>
                     <th>Difficulty</th>
-                    @if(auth()->user()->hasPermissionTo('Edit Agent Complementary') || auth()->user()->hasPermissionTo('Delete Agent Complementary'))
+                    @if(auth()->user()->hasPermissionTo('Edit Agent Levels') || auth()->user()->hasPermissionTo('Delete Agent Levels'))
                      <th>Action</th>
                     @endif
                 </tr>
@@ -62,7 +62,7 @@
                         { data:'agent_level',name:'agent_level'},
                         { data:'xps',name:'xps'},
                         { data:'complexity',name:'Complexity' },
-                        @if(auth()->user()->hasPermissionTo('Edit Agent Complementary') || auth()->user()->hasPermissionTo('Delete Agent Complementary'))
+                        @if(auth()->user()->hasPermissionTo('Edit Agent Levels') || auth()->user()->hasPermissionTo('Delete Agent Levels'))
                         { data:'action',name:'action' },
                         @endif
                     ],

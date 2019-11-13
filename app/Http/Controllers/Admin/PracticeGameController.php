@@ -140,7 +140,7 @@ class PracticeGameController extends Controller
         $practiceGame->save();
         return response()->json([
             'status' => true,
-            'message'=>'Practice Game has been updated successfully.',
+            'message'=>'Mini games XP/score has been updated successfully.',
         ]);
     }
 

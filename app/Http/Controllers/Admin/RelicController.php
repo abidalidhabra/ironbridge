@@ -207,11 +207,11 @@ class RelicController extends Controller
         })
         ->addColumn('action', function($relic) use($admin){
                 $html = '';
-                if($admin->hasPermissionTo('Edit Main Relics')){
+                if($admin->hasPermissionTo('Edit Relics')){
                     $html .= '<a href="'.route('admin.relics.edit',$relic->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
                 }
 
-                if($admin->hasPermissionTo('Delete Main Relics')){
+                if($admin->hasPermissionTo('Delete Relics')){
                     $html .= ' <a href="'.route('admin.relics.destroy',$relic->id).'" data-action="delete" data-toggle="tooltip" title="Delete" ><i class="fa fa-trash iconsetaddbox"></i></a>';
                 }
 

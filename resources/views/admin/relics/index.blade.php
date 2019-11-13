@@ -8,7 +8,7 @@
             <div class="col-md-6">
                 <h3>Relics</h3>
             </div>
-            @if(auth()->user()->hasPermissionTo('Add Main Relics'))
+            @if(auth()->user()->hasPermissionTo('Add Relics'))
                 <div class="col-md-6 text-right modalbuttonadd">
                     <a href="{{ route('admin.relics.create') }}" class="btn btn-info btn-md">Add Relic</a>
                 </div>
@@ -25,7 +25,7 @@
                     <th>Image</th>
                     <th>Complexity</th>
                     <th>Created at (UTC)</th>
-                     @if(auth()->user()->hasPermissionTo('Edit Main Relics') || auth()->user()->hasPermissionTo('Delete Main Relics'))
+                     @if(auth()->user()->hasPermissionTo('Edit Relics') || auth()->user()->hasPermissionTo('Delete Relics'))
                     <th>Action</th>
                     @endif
                 </tr>
@@ -62,7 +62,7 @@
                         { data:'icon',name:'icon'},
                         { data:'complexity',name:'complexity'},
                         { data:'created_at',name:'created_at' },
-                        @if(auth()->user()->hasPermissionTo('Edit Main Relics') || auth()->user()->hasPermissionTo('Delete Main Relics'))
+                        @if(auth()->user()->hasPermissionTo('Edit Relics') || auth()->user()->hasPermissionTo('Delete Relics'))
                          { data:'action',name:'action' },
                         @endif
                     ],

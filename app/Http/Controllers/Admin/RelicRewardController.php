@@ -109,7 +109,7 @@ class RelicRewardController extends Controller
         
         AgentComplementary::create($data);
         
-        return response()->json(['status' => true,'message' => 'Agent complementary added! Please wait we are redirecting you.']);
+        return response()->json(['status' => true,'message' => 'Agent levels added! Please wait we are redirecting you.']);
     }
 
     /**
@@ -220,7 +220,7 @@ class RelicRewardController extends Controller
         if (!isset($data['minigames'])) {
             $agentComplementary->unset('minigames');
         }
-        return response()->json(['status' => true,'message' => 'Agent complementary updated! Please wait we are redirecting you.']);
+        return response()->json(['status' => true,'message' => 'Agent levels updated! Please wait we are redirecting you.']);
     }
 
     /**
@@ -234,7 +234,7 @@ class RelicRewardController extends Controller
         AgentComplementary::find($id)->delete();
         return response()->json([
             'status' => true,
-            'message'=>'Agent complementary has been deleted successfully.',
+            'message'=>'Agent levels has been deleted successfully.',
         ]);
     }
 
@@ -280,11 +280,11 @@ class RelicRewardController extends Controller
         })
         ->addColumn('action', function($relic) use ($admin){
                 $html = '';
-                if($admin->hasPermissionTo('Edit Agent Complementary')){
+                if($admin->hasPermissionTo('Edit Agent Levels')){
                     $html .= '<a href="'.route('admin.relicReward.edit',$relic->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
                 }
 
-                if($admin->hasPermissionTo('Delete Agent Complementary')){
+                if($admin->hasPermissionTo('Delete Agent Levels')){
                     $html .= ' <a href="'.route('admin.relicReward.destroy',$relic->id).'" data-action="delete" data-toggle="tooltip" title="Delete" ><i class="fa fa-trash iconsetaddbox"></i></a>';
                 }
                 

@@ -43,7 +43,7 @@
 					@endif
 					@if($admin->hasPermissionTo('View Games') || $admin->hasPermissionTo('View Game Variations') || $admin->hasPermissionTo('Add Practice Games'))
 						<li >
-							<a href="javascript:void(0)" class="plusbttnbox myBtn">Manage Games <i class="fa @if(Route::currentRouteName() == 'admin.game.index' || Route::currentRouteName() == 'admin.gameVariation.index' || Route::currentRouteName() == 'admin.gameVariation.create' || Route::currentRouteName() == 'admin.gameVariation.show' || Route::currentRouteName() == 'admin.practiceGame.index' || Route::currentRouteName() == 'admin.practiceGame.edit' || Route::currentRouteName() == 'admin.practiceGame.show') {{ 'fa-minus' }} @else {{ 'fa-plus' }} @endif" aria-hidden="true"></i></a>
+							<a href="javascript:void(0)" class="plusbttnbox myBtn">Manage Minigames <i class="fa @if(Route::currentRouteName() == 'admin.game.index' || Route::currentRouteName() == 'admin.gameVariation.index' || Route::currentRouteName() == 'admin.gameVariation.create' || Route::currentRouteName() == 'admin.gameVariation.show' || Route::currentRouteName() == 'admin.practiceGame.index' || Route::currentRouteName() == 'admin.practiceGame.edit' || Route::currentRouteName() == 'admin.practiceGame.show') {{ 'fa-minus' }} @else {{ 'fa-plus' }} @endif" aria-hidden="true"></i></a>
 							<div class="dropdown custmenbox">
 								<!-- <button id="myBtn" class="dropbtn">Dropdown</button> -->
 								<div  class="dropdown-content myDropdown @if(Route::currentRouteName() == 'admin.game.index' || Route::currentRouteName() == 'admin.gameVariation.index' || Route::currentRouteName() == 'admin.gameVariation.create' || Route::currentRouteName() == 'admin.gameVariation.show' || Route::currentRouteName() == 'admin.practiceGame.index' || Route::currentRouteName() == 'admin.practiceGame.edit' || Route::currentRouteName() == 'admin.practiceGame.show') {{ 'show' }} @endif">
@@ -55,7 +55,7 @@
 									@endif
 
 									@if($admin->hasPermissionTo('Add Practice Games'))
-										<a href="{{ route('admin.practiceGame.index') }}" class="@if(Route::currentRouteName() == 'admin.practiceGame.index' || Route::currentRouteName() == 'admin.practiceGame.edit' || Route::currentRouteName() == 'admin.practiceGame.show') {{ 'activelistsub' }} @endif" >Practice Games Targets</a>
+										<a href="{{ route('admin.practiceGame.index') }}" class="@if(Route::currentRouteName() == 'admin.practiceGame.index' || Route::currentRouteName() == 'admin.practiceGame.edit' || Route::currentRouteName() == 'admin.practiceGame.show') {{ 'activelistsub' }} @endif" >Mini Games XP/Score</a>
 									@endif
 
 								</div>
@@ -64,7 +64,7 @@
 					@endif
 					@if($admin->hasPermissionTo('View Treasure Locations') || $admin->hasPermissionTo('View Complexity Targets') || $admin->hasPermissionTo('View Hunt Loot Tables'))
 					<li >
-						<a href="javascript:void(0)" class="plusbttnbox myBtn" >Manage Hunts <i class="fa @if(Route::currentRouteName() == 'admin.mapsList' ||Route::currentRouteName() == 'admin.add_location' || Route::currentRouteName() == 'admin.boundary_map' || Route::currentRouteName() == 'admin.starComplexityMap' || Route::currentRouteName() == 'admin.edit_location' || Route::currentRouteName() == 'admin.complexityTarget.index' || Route::currentRouteName() == 'admin.rewards.index' ) {{ 'fa-minus' }} @else {{ 'fa-plus' }} @endif" aria-hidden="true"></i></a>
+						<a href="javascript:void(0)" class="plusbttnbox myBtn" >Manage Hunts <i class="fa @if(Route::currentRouteName() == 'admin.mapsList' ||Route::currentRouteName() == 'admin.add_location' || Route::currentRouteName() == 'admin.boundary_map' || Route::currentRouteName() == 'admin.starComplexityMap' || Route::currentRouteName() == 'admin.edit_location' || Route::currentRouteName() == 'admin.complexityTarget.index' || Route::currentRouteName() == 'admin.rewards.index' || Route::currentRouteName() == 'admin.xpManagement.index' || Route::currentRouteName() == 'admin.xpManagement.edit') {{ 'fa-minus' }} @else {{ 'fa-plus' }} @endif" aria-hidden="true"></i></a>
 						<div class="dropdown custmenbox">
 							<!-- <button id="myBtn" class="dropbtn">Dropdown</button> -->
 							<div  
@@ -76,7 +76,7 @@
 								Route::currentRouteName() == 'admin.starComplexityMap' || 
 								Route::currentRouteName() == 'admin.edit_location' || 
 								Route::currentRouteName() == 'admin.complexityTarget.index' || 
-								Route::currentRouteName() == 'admin.rewards.index' ) {{ 'show' }} @endif">
+								Route::currentRouteName() == 'admin.rewards.index' || Route::currentRouteName() == 'admin.xpManagement.index' || Route::currentRouteName() == 'admin.xpManagement.edit') {{ 'show' }} @endif">
 								@if($admin->hasPermissionTo('View Treasure Locations'))
 								<a href="{{ route('admin.mapsList') }}" class="@if(Route::currentRouteName() == 'admin.mapsList' ||Route::currentRouteName() == 'admin.add_location' || Route::currentRouteName() == 'admin.boundary_map' || Route::currentRouteName() == 'admin.starComplexityMap' || Route::currentRouteName() == 'admin.edit_location') {{ 'activelistsub' }} @endif">Treasure Locations</a>
 								@endif
@@ -86,7 +86,7 @@
 								@if($admin->hasPermissionTo('View Hunt Loot Tables'))
 									<a href="{{ route('admin.rewards.index') }}" class="@if(Route::currentRouteName() == 'admin.rewards.index') {{ 'activelistsub' }} @endif">Hunt Loot Tables</a>
 								@endif
-								
+									<a href="{{ route('admin.xpManagement.index') }}" class="@if(Route::currentRouteName() == 'admin.xpManagement.index' || Route::currentRouteName() == 'admin.xpManagement.edit') {{ 'activelistsub' }} @endif">Hunts XP</a>
 							</div>
 						</div>
 					</li>
@@ -170,7 +170,7 @@
 					@endif
 					@if($admin->hasPermissionTo('View Main Relics') || $admin->hasPermissionTo('View Agent Complementary'))
 					<li>
-						<a href="javascript:void(0)" class="plusbttnbox myBtn">Relics
+						<a href="javascript:void(0)" class="plusbttnbox myBtn">Manage Relics
 							<i 
 								class="fa 
 								@if(Route::currentRouteName() == 'admin.relics.index' || 
@@ -213,7 +213,7 @@
 										Route::currentRouteName() == 'admin.relics.show') 
 										{{ 'activelistsub' }} 
 									@endif
-									">Main Relics</a>
+									">Relics</a>
 									@endif
 									
 									@if($admin->hasPermissionTo('View Agent Complementary'))
@@ -227,15 +227,13 @@
 										Route::currentRouteName() == 'admin.relicReward.show') 
 										{{ 'activelistsub' }} 
 									@endif
-									">Agent Complementary</a>
+									">Agent Levels</a>
 									@endif
 							</div>
 						</div>
 					</li>
 					@endif
-					<li  class="@if(Route::currentRouteName() == 'admin.xpManagement.index' || Route::currentRouteName() == 'admin.xpManagement.edit') {{ 'activelist' }} @endif">
-						<a href="{{ route('admin.xpManagement.index') }}">XP Management</a>
-					</li>
+					
 					
 					{{-- @if($admin->hasPermissionTo('View Treasure Locations') || $admin->hasPermissionTo('View Complexity Targets') || $admin->hasPermissionTo('View Hunt Loot Tables')) --}}
 					{{--<li >

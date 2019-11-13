@@ -55,7 +55,7 @@ class XpManagementController extends Controller
         
         return response()->json([
             'status' => true,
-            'message'=>'XP Management has been added successfully.',
+            'message'=>'Hunts XP has been added successfully.',
         ]);
     }
 
@@ -107,7 +107,7 @@ class XpManagementController extends Controller
         
         return response()->json([
             'status' => true,
-            'message'=>'XP Management has been update successfully.',
+            'message'=>'Hunts XP has been update successfully.',
         ]);
     }
 
