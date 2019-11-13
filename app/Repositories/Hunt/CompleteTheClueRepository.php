@@ -53,26 +53,20 @@ class CompleteTheClueRepository implements ClueInterface
          * update the mark hunt_user only if
          * 1. its a last clue -> mark hunt_user as completed and set the ended_at of hunt_user
          * 2. Its a first clue (because of skeleton key use) --> mark hunt_user as running and set the start_at of hunt_user
+         *  AIM: mark hunt_user as running and set the start_at of hunt_user
          */
         if($huntUserDetails->count() == $huntUserDetails->where('revealed_at', null)->count() && $huntUserDetails->where('status', 'completed')->count() == 0) {
-
-            // mark hunt_user as running and set the start_at of hunt_user 
-            $dataToBeUpdate = ['status'=> 'running', 'started_at'=> new UTCDateTime(now())];
-            (new HuntUserRepository)->update($dataToBeUpdate, ['_id'=> $this->huntUserDetail->hunt_user_id]);
+            (new HuntUserRepository)->update(['status'=> 'running', 'started_at'=> new UTCDateTime(now())], ['_id'=> $this->huntUserDetail->hunt_user_id]);
         }
 
-        // calculate the time & mark the clue as complete
+        // Calculate the time & mark the clue as complete
         $clueFinishedIn = (new HuntUserDetailRepository)->calculateTheTimer($this->huntUserDetail, 'rr')->finished_in;
 
-        $rewardData['clue_completion_xp_reward'] = $this->addXPService->add($this->huntUserDetail->game->practice_games_targets->targets->sortBy('stage')->first()['xp']);
-        
         $rewardData = null;
         $totalFinishedIn = $clueFinishedIn;
+        $huntCompleted = false;
         if ($stillRemain == 1) {
 
-            $rewardData['treasure_completion_xp_reward'] = $this->addXPService
-                                                           ->add((new XPManagementRepository)->getModel()->where('event', 'treasure_completion')->first()->xp);
-        
             // get the total completion except current clue
             $totalFinishedIn += $huntUserDetails->where('_id', '!=', $this->huntUserDetail->id)->sum('finished_in');
 
@@ -83,22 +77,25 @@ class CompleteTheClueRepository implements ClueInterface
             // generate the reward
             $this->huntUser   = $this->huntUserDetail->hunt_user()->select('complexity','user_id', 'relic_id')->first();
             $rewardData = $this->generateReward();
+            
+            // Add Map Piece OR Provide XP REWARDS
             $data = $this->addMapPiece();
-            $rewardData['relic_data'] = is_array($data['relic_data'])? new stdClass(): $data['relic_data'];
-            // $rewardData['agent_data'] = is_array($data['agent_data'])? new stdClass(): $data['agent_data'];
+            $rewardData['collected_relic'] = $data['collected_relic'];
             $rewardData['collected_piece'] = $data['collected_piece'];
-            $rewardData['agent_status'] = $this->user->agent_status;
+            $huntCompleted = true;
         }
+       
+        $rewardData['agent_status'] = $this->user->agent_status;
+        $rewardData['xp_reward'] = $this->addXP($huntCompleted);
 
         // unlock the minigame if it is locked in minigame module
-        $this->unlockeMiniGameIfLocked();
+        // $this->unlockeMiniGameIfLocked();
 
         // log the minigame statistic
         $this->logTheMinigmeHistory();
 
         //send the response
         return ['huntUserDetail'=> $this->huntUserDetail, 'rewardData'=> $rewardData, 'finishedIn'=> $totalFinishedIn];
-        // return ['huntUserDetail'=> $huntUserDetail, 'rewardData'=> $rewardData];
     }
 
     public function unlockeMiniGameIfLocked()
@@ -261,12 +258,12 @@ class CompleteTheClueRepository implements ClueInterface
 
     public function addMapPiece()
     {
-        // add relic in user's account only if:
-        //      -> relic field is not null.
-        //      -> all map pieces have collected.
-        
-        // $data = [ 'collected_piece'=> 0, 'relic_data'=> [], 'agent_data'=> [] ];
-        $data = [ 'collected_piece'=> 0, 'relic_data'=> [] ];
+        /**
+            -> Add relic in user's account IF:
+                -> relic field is not null.
+                -> all map pieces have collected.
+        **/
+        $data = [ 'collected_piece'=> 0, 'collected_relic'=> new stdClass ];
         $relic = $this->huntUser->relic()->select('_id', 'pieces')->first();
         if ($relic) {
             $totalTreasureCompleted = $this->user->hunt_user_v1()
@@ -278,8 +275,7 @@ class CompleteTheClueRepository implements ClueInterface
             $pieceRemaining = collect($relic->pieces)->whereNotIn('id', $totalTreasureCompleted)->pluck('id')->shuffle()->first();
             
             if (!$pieceRemaining) {
-                $data['relic_data'] = (new AddRelicService)->setUser($this->user)->setRelicId($this->huntUser->relic_id)->add()->getRelic(['_id', 'complexity','icon']);
-                // $data['agent_data'] = (new AddXPService)->setUser($this->user)->add(150);
+                $data['collected_relic'] = (new AddRelicService)->setUser($this->user)->setRelicId($this->huntUser->relic_id)->add()->getRelic(['_id', 'complexity','icon']);
                 return $data;
             }else {
                 $this->huntUser->collected_piece = $pieceRemaining;
@@ -288,5 +284,20 @@ class CompleteTheClueRepository implements ClueInterface
             }
         }
         return $data;
+    }
+
+    public function addXP($treasureCompleted)
+    {
+        /**
+            -> Add XP Multiple time IF:
+                -> relic field is not null.
+                -> all map pieces have collected.
+        **/
+        $xp = (new XPManagementRepository)->getModel()->where('event', 'treasure_completion')->first()->xp;
+        if ($treasureCompleted) {
+            $xp += $this->huntUserDetail->game->practice_games_targets->targets->sortBy('stage')->first()['xp'];
+        }
+        $xpReward = $this->addXPService->add($xp);
+        return is_array($xpReward)? new stdClass(): $xpReward;
     }
 }

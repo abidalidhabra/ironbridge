@@ -42,7 +42,6 @@ class AddXPService
         $widgetsToProvide = collect($ids)->flatten()->filter()->values()->reject(function ($id) use ($existingWidgets) {
                                 return $existingWidgets->contains($id);
                             });
-        // dd(collect($ids)->flatten()->filter(), collect($ids)->flatten()->filter()->values(), $existingWidgets, $widgetsToProvide);
         return $this->userRepository->addWidgets($widgetsToProvide);
     }
 
@@ -57,13 +56,17 @@ class AddXPService
             if ($complementaries->minigames) { 
                 $response['minigames'] = $this->allotMinigames($complementaries->minigames);
             }
-            
+
             if ($complementaries->bucket_size) { 
-                $response['bucket_size'] = $this->allotBucketSize(5); 
+                $this->allotBucketSize($complementaries->bucket_size); 
+                $response['bucket_size'] = $complementaries->bucket_size; 
             }
 
             if ($complementaries->widgets) {
-                $response['widgets'] = $this->allotWidget($complementaries->widgets);
+                $widgets = $this->allotWidget($complementaries->widgets);
+                if ($widgets->count()) {
+                    $response['widgets'] = $widgets;
+                }
             }
         }
         return $response ?? [];
