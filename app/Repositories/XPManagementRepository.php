@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\v2\XpManagement;
 use App\Repositories\ModelRepository;
 
 class XPManagementRepository extends ModelRepository

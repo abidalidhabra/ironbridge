@@ -82,19 +82,25 @@ class MGController extends Controller
     {
         try {
 
-            $availableSkeletonKeys = (new CompleteTheMiniGameService($this->user))->complete($request);
+            $data = (new CompleteTheMiniGameService($this->user))->complete($request);
             return response()->json([
                 'message'=> 'This mini game is marked as completed.', 
-                'available_skeleton_keys'=> $availableSkeletonKeys['available_skeleton_keys'],
-                'completion_times'=> $availableSkeletonKeys['completion_times'],
+                'available_skeleton_keys'=> $data['available_skeleton_keys'],
+                'completion_times'=> $data['completion_times'],
                 'pieces_collected'=> $this->user->pieces_collected,
+                'agent_status'=> $this->user->agent_status,
+                'last_play'=> $data['last_play'],
+                'xp_reward'=> $data['xp_reward'],
             ]);
         } catch(FreezeModeRunningException $e) {
             return response()->json([
                 'message'=> $e->getMessage(), 
                 'available_skeleton_keys'=> $e->getavailableSkeletonKeys(),
                 'completion_times'=> $e->getcompletionTimes(), 
-                'pieces_collected'=> $e->getavailablePieces()
+                'pieces_collected'=> $this->user->pieces_collected,
+                'agent_status'=> $this->user->agent_status,
+                'last_play'=> $e->getLastPlay(),
+                'xp_reward'=> $e->getXPReward(),
             ], 422);
         } catch (Exception $e) {
             return response()->json(['message'=> $e->getMessage().' on line '.$e->getLine().' in '.$e->getFile()], 500);
