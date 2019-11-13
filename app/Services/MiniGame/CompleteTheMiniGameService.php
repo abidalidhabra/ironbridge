@@ -6,6 +6,8 @@ use App\Exceptions\PracticeMiniGame\FreezeModeRunningException;
 use App\Factories\MinigameEventFactory;
 use App\Repositories\PracticeGameUserRepository;
 use App\Repositories\User\UserRepository;
+use App\Services\User\AddXPService;
+use stdClass;
 
 class CompleteTheMiniGameService
 {
@@ -39,23 +41,22 @@ class CompleteTheMiniGameService
             (new MinigameEventFactory('practice', 'completed', $request->all()))->override();
         }else{
             
-           
-            
             // log the action
             (new MinigameEventFactory('practice', 'completed', $request->all()))->add();
 
             // Throw an exception if cooldown period is active
             if ($this->practiceGameUser->completed_at && $this->practiceGameUser->completed_at->diffInHours() <= 24) {
-            	$availableSkeletonKeys = $this->allotKeyIfEligible($request, true);
+            	$data = $this->allotKeyIfEligible($request, true);
                 throw new FreezeModeRunningException('This mini game is under the freeze mode.', $this->practiceGameUser->completion_times, $availableSkeletonKeys, $this->user->pieces_collected);
             }else {
 	            // Allot a key to user's account if aligible
-	            $availableSkeletonKeys = $this->allotKeyIfEligible($request);
+	            $data = $this->allotKeyIfEligible($request);
             }
         }
 
         return [
-        	'available_skeleton_keys'=> $availableSkeletonKeys ?? $this->user->available_skeleton_keys, 
+        	'available_skeleton_keys'=> $data['available_skeleton_keys'] ?? $this->user->available_skeleton_keys, 
+            'xp_reward'=> $data['xp_reward'],
         	'completion_times'=> $this->practiceGameUser->completion_times
         ];
     }
@@ -121,7 +122,7 @@ class CompleteTheMiniGameService
             
             // Add last play as proof
             $this->addLastPlay($lastPlay);
-            
+            $xp_reward = (new AddXPService)->setUser($this->user)->add($countableTarget['xp']);
             // increase the key piece & Add skeleton key to user's account if its 3rd piece
             $pieceToBeUpdate = (($this->user->pieces_collected + 1) == 3)? -2: 1; 
             $this->user->increment('pieces_collected', $pieceToBeUpdate);
@@ -129,6 +130,9 @@ class CompleteTheMiniGameService
                 (new UserRepository($this->user))->addSkeletonKeys($keyToBeCredit);
             }
         }
-        return $this->user->available_skeleton_keys;
+        return [
+            'xp_reward'=> $xp_reward ?? new stdClass,
+            'available_skeleton_keys'=> $this->user->available_skeleton_keys
+        ];
     }
 }
