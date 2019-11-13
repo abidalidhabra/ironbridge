@@ -233,6 +233,10 @@
 						</div>
 					</li>
 					@endif
+					<li  class="@if(Route::currentRouteName() == 'admin.xpManagement.index'	) {{ 'activelist' }} @endif">
+						<a href="{{ route('admin.xpManagement.index') }}">XP Management</a>
+					</li>
+					
 					{{-- @if($admin->hasPermissionTo('View Treasure Locations') || $admin->hasPermissionTo('View Complexity Targets') || $admin->hasPermissionTo('View Hunt Loot Tables')) --}}
 					{{--<li >
 						<a 

@@ -208,7 +208,8 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('GetPracticeGameList', 'PracticeGameController@GetPracticeGameList')->name('GetPracticeGameList');
 	Route::get('practiceGame/clues/html', 'PracticeGameController@targerHTML')->name('practiceGame.clue.html');
 
-
+	Route::resource('xpManagement', 'XpManagementController');
+	Route::get('getXpManagementList', 'XpManagementController@getXpManagementList')->name('getXpManagementList');
 });
 
 // Auth::routes();
