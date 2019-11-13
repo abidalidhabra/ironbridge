@@ -350,7 +350,7 @@
 					@endif
 
 					@if($admin->hasPermissionTo('View App Settings'))
-					<li  class="@if(Route::currentRouteName() == 'admin.payment.index'	) {{ 'activelist' }} @endif">
+					<li  class="@if(Route::currentRouteName() == 'admin.app.settings.index'	) {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.app.settings.index') }}">App Settings</a>
 					</li>
 					@endif
