@@ -94,6 +94,7 @@ class PracticeGameController extends Controller
 
         $target = [];
         for ($i=0; $i < count($request->xp) ; $i++) { 
+            $target[$i]['stage'] = $i+1;
             if (isset($request['score'][$i]) && $request['score'][$i] != "") {
                 $target[$i]['score'] = (int)$request['score'][$i];
             }
