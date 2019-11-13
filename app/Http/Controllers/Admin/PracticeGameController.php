@@ -51,7 +51,12 @@ class PracticeGameController extends Controller
      */
     public function show($id)
     {
-        //
+        $practiceGame = PracticeGameTarget::where('_id',$id)
+                                            ->with('game')
+                                            ->first();
+        $games = Game::where('status',true)->get();
+        
+        return view('admin.game.practice.show',compact('practiceGame','games'));
     }
 
     /**
@@ -183,7 +188,11 @@ class PracticeGameController extends Controller
             return count($practiceGame->targets); 
         })
         ->addColumn('action', function($practiceGame) use ($admin){
-            return '<a href="'.route('admin.practiceGame.edit',$practiceGame->id).'" class="edit_game" data-action="edit" data-id="'.$practiceGame->id.'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+            $html = '<a href="'.route('admin.practiceGame.edit',$practiceGame->id).'" class="edit_game" data-action="edit" data-id="'.$practiceGame->id.'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+            
+            $html .= ' <a href="'.route('admin.practiceGame.show',$practiceGame->id).'" data-action="View" data-toggle="tooltip" title="View" ><i class="fa fa-eye iconsetaddbox"></i></a>';
+
+            return $html;
         })
         ->rawColumns(['action'])
         ->order(function ($query) {
