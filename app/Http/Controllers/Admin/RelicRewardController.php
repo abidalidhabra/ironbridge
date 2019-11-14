@@ -72,18 +72,41 @@ class RelicRewardController extends Controller
         }
 
         $widgets = [];
+        $outfits = [];
         foreach ($request->widgets as $key => $value) {
             $widgetsItem = Str::plural(strtolower($key)); 
             $widgets[$widgetsItem] = null;
             unset($value[0]);
             if (count(array_filter($value)) > 0) {
                 $widgets[$widgetsItem] = array_values(array_filter($value));
+                if ($key == 'Outfits') {
+                    $outfits = WidgetItem::whereIn('_id',$value)->get()->pluck('items')->toArray();
+                }
                 if (isset($value[0]) && $value[0]=="all") {
                     $widgets[$widgetsItem] = WidgetItem::where('widget_name',$key)->get()->pluck('id')->toArray();
                 }
             }
         }
-                
+        /* outfits */ 
+        if (count($outfits) > 0) {
+            $outfitsKey = [];
+            foreach ($outfits as $items) {
+                foreach ($items as $value) {
+                    $outfitsKey[] = $value;
+                }
+            }
+            $widgetsItemMulti = WidgetItem::whereIn('_id',$outfitsKey)->get()->groupBy('widget_name');
+            foreach ($widgetsItemMulti as $key => $value) {
+                if ( $widgets[Str::plural(strtolower($key))]!=null && count($widgets[Str::plural(strtolower($key))])>0) {
+                    $widgets[Str::plural(strtolower($key))] = array_unique(array_merge($widgets[Str::plural(strtolower($key))],$value->pluck('id')->toArray()));
+                } else {
+                    $widgets[Str::plural(strtolower($key))] = $value->pluck('id')->toArray();
+                }
+
+            }
+        }
+        /* end outfits */
+
         $data = $request->all();
         if (isset($data['bucket_size']) && $data['bucket_size']!="") {
             $data['bucket_size'] =  (int)$data['bucket_size'];
@@ -180,18 +203,44 @@ class RelicRewardController extends Controller
         }
 
         $widgets = [];
+        $outfits = [];
         foreach ($request->widgets as $key => $value) {
             $widgetsItem = Str::plural(strtolower($key)); 
             $widgets[$widgetsItem] = null;
             unset($value[0]);
             if (count(array_filter($value)) > 0) {
                 $widgets[$widgetsItem] = array_values(array_filter($value));
+                if ($key == 'Outfits') {
+                    $outfits = WidgetItem::whereIn('_id',$value)->get()->pluck('items')->toArray();
+                }
                 if (isset($value[0]) && $value[0]=="all") {
                     $widgets[$widgetsItem] = WidgetItem::where('widget_name',$key)->get()->pluck('id')->toArray();
                 }
             }
         }
         
+        /* outfits */ 
+        if (count($outfits) > 0) {
+            $outfitsKey = [];
+            foreach ($outfits as $items) {
+                foreach ($items as $value) {
+                    $outfitsKey[] = $value;
+                }
+            }
+            $widgetsItemMulti = WidgetItem::whereIn('_id',$outfitsKey)->get()->groupBy('widget_name');
+            foreach ($widgetsItemMulti as $key => $value) {
+                if ($widgets[Str::plural(strtolower($key))]!=null && count($widgets[Str::plural(strtolower($key))])>0) {
+                    $array_merge = array_unique(array_merge($widgets[Str::plural(strtolower($key))],$value->pluck('id')->toArray()));
+                    $widgets[Str::plural(strtolower($key))][] = (array)$array_merge;
+                } else {
+                    $widgets[Str::plural(strtolower($key))] = $value->pluck('id')->toArray();
+                }
+
+            }
+        }
+        /* end outfits */
+             
+
         $data = $request->all();
         if ($data['bucket_size']!="") {
             $data['bucket_size'] =  (int)$data['bucket_size'];
