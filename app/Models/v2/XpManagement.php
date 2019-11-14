@@ -8,5 +8,5 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class XpManagement extends Eloquent
 {
-    protected $fillable = ['event','name', 'xp'];
+    protected $fillable = ['event','name','complexity', 'xp'];
 }

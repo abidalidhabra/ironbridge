@@ -33,6 +33,15 @@
                             </select>
                         </div> -->
                         <div class="form-group">
+                            <label>Complexity:</label>
+                            <select name="complexity" class="form-control" disabled>
+                                <option value="">Select Complexity</option>
+                                @for($i=1;$i <= 5;$i++)
+                                    <option value="{{ $i }}" @if($i==$xpManagement->complexity){{ 'selected' }}@endif>{{ $i }}</option>
+                                @endfor
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label>Name:</label>
                             <input type="text" value="{{ $xpManagement->name }}" name="name" class="form-control">
                         </div>

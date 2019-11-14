@@ -22,6 +22,7 @@
                     <th>Sr.</th>
                     <th>Name</th>
                     <th>XP</th>
+                    <th>Complexity</th>
                     <th>Created at (UTC)</th>
                     <th>Action</th>
                 </tr>
@@ -57,6 +58,7 @@
                         { data:'DT_RowIndex',name:'_id' },
                         { data:'name',name:'name'},
                         { data:'xp',name:'xp'},
+                        { data:'complexity',name:'complexity'},
                         { data:'created_at',name:'created_at' },
                         { data:'action',name:'action' },
                     ],
