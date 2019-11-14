@@ -101,7 +101,8 @@ class User extends Authenticatable implements JWTSubject
         'agent_status'=> [
             'xp'=> 500,
             'level'=> 1
-        ]
+        ],
+        'relics'=> []
         // 'expnadable_skeleton_keys'   => 0,
         // 'user_widgets' => [],
         // 'used_widgets' => [],

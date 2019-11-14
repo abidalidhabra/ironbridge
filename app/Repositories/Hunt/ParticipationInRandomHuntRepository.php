@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\v2\HuntController;
 use App\Models\v1\Game;
 use App\Models\v2\HuntUser;
 use App\Models\v2\HuntUserDetail;
+use App\Models\v2\Relic;
 use App\Repositories\Game\GameRepository;
 use App\Repositories\Hunt\Contracts\HuntParticipationInterface;
 use App\Repositories\Hunt\GetLastParticipatedRandomHuntRepository;
