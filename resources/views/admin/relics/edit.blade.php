@@ -61,15 +61,11 @@
                                 @endfor
                             </select>
                         </div>
-                        <div class="clues">
-                            @forelse($relic->pieces as $index=> $piece)
-                                @php $lastIndex = $index; @endphp
-                                @include('admin.relics.clues.edit', ['index'=> $index, 'clue'=> $piece, 'last'=> $loop->last])
-                            @empty
-                                <h4 class="text-danger">No clue found in this relic.</h4>
-                            @endforelse
-                            <input type="hidden" id="last-token" value="{{ $lastIndex ?? 0 }}">
+                        <div class="form-group">
+                            <label>Relic Map Pieces:</label>
+                            <input type="number" name="pieces" class="form-control" placeholder="Enter the relic map pieces" value="{{ $relic->pieces }}">
                         </div>
+                        
                         
                     </div>
                 </div>
@@ -109,7 +105,7 @@
                             window.location.href = '{{ route('admin.relics.index') }}';
                         }, 2000)
                     } else {
-                        toastr.warning('You are not authorized to access this page.');
+                        toastr.warning(response.message);
                     }
                 },
                 error: function(xhr, exception) {

@@ -54,12 +54,13 @@ class RelicController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'icon'=> 'required|image',
-            'complexity'=> 'required|numeric|integer:min:1',
-            'pieces.*.image'=> 'required|image',
+            'complexity'=> 'required|numeric',
+            'pieces'=> 'required|numeric',
+            // 'pieces.*.image'=> 'required|image',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['message'=> $validator->messages()->first()], 422);
+            return response()->json(['message'=> $validator->messages()->first(),'status'=>false]);
         }
 
         $request->icon->store('relics/'.$request->complexity, $this->disk);
@@ -70,7 +71,8 @@ class RelicController extends Controller
         Relic::create([
             'icon'=> $request->icon->hashName(),
             'complexity'=> (int)$request->complexity,
-            'pieces'=> $this->allotGameToClueService->allot($request),
+            'pieces'=> (int)$request->pieces,
+            //'pieces'=> $this->allotGameToClueService->allot($request),
         ]);
          
         return response()->json(['status'=> true, 'message'=> 'Relic added! Please wait we are redirecting you.']);
@@ -113,10 +115,11 @@ class RelicController extends Controller
         $validator = Validator::make($request->all(), [
             // 'icon'=> 'nullable|image',
             'complexity'=> 'required|numeric|integer:min:1',
+            'pieces'=> 'required|numeric',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['message'=> $validator->messages()->first()], 422);
+            return response()->json(['message'=> $validator->messages()->first(),'status'=>false]);
         }
 
         $relic = Relic::find($id);
@@ -134,9 +137,10 @@ class RelicController extends Controller
         $request['id'] = $id;
 
         $relic->complexity = (int) $request->complexity;
-        if (isset($request->pieces)) {
+        $relic->pieces = (int) $request->pieces;
+        /*if (isset($request->pieces)) {
             $relic->pieces = $this->allotGameToClueService->allot($request);
-        }
+        }*/
         $relic->save();
 
         return response()->json(['status'=> true, 'message'=> 'Relic updated! Please wait we are redirecting you.']);
@@ -181,17 +185,19 @@ class RelicController extends Controller
             $active = ($search == 'true' || $search == 'Active')? true: false;
             $query->where('_id','like','%'.$search.'%')
             ->orWhere('complexity','like','%'.$search.'%')
+            ->orWhere('pieces','like','%'.$search.'%')
             ->orWhere('created_at','like','%'.$search.'%');
         })
         ->orderBy('created_at','DESC')
         ->skip($skip)
         ->take($take)
         ->get();
-
+        
         /** Filter Result Total Count  **/
         $filterCount = Relic::when($search != '', function($query) use ($search) {
             $query->where('_id','like','%'.$search.'%')
             ->orWhere('complexity','like','%'.$search.'%')
+            ->orWhere('pieces','like','%'.$search.'%')
             ->orWhere('created_at','like','%'.$search.'%');
         })
         ->count();

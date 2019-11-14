@@ -46,26 +46,26 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        // $class = get_class($exception);
-        // if($exception instanceof AuthenticationException){
-        //     switch($class) {
-        //         case 'Illuminate\Auth\AuthenticationException':
-        //             $guard = array_get($exception->guards(), 0);
-        //             switch ($guard) {
-        //                 case 'admin':
-        //                     $login = 'admin.login';
-        //                     break;
-        //             }
-        //         return redirect()->route($login);
-        //     }
-        // }
+        $class = get_class($exception);
+        if($exception instanceof AuthenticationException){
+            switch($class) {
+                case 'Illuminate\Auth\AuthenticationException':
+                    $guard = array_get($exception->guards(), 0);
+                    switch ($guard) {
+                        case 'admin':
+                            $login = 'admin.login';
+                            break;
+                    }
+                return redirect()->route($login);
+            }
+        }
         
-        // if($this->isHttpException($exception)){
-        //     return  $this->toIlluminateResponse($this->renderHttpException($exception), $exception);
-        // }
-        // return parent::render($request, $exception);
+        if($this->isHttpException($exception)){
+            return  $this->toIlluminateResponse($this->renderHttpException($exception), $exception);
+        }
+        return parent::render($request, $exception);
 
-        //return parent::render($request, $exception);
+        return parent::render($request, $exception);
 
         $class = get_class($exception);
         if($class == 'Illuminate\Auth\AuthenticationException'){

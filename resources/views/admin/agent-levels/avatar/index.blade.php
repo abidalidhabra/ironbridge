@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | Relics')
+@section('title','Ironbridge1779 | Agent Levels')
 @extends('admin.layouts.admin-app')
 
 @section('content')
@@ -6,11 +6,11 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Relics</h3>
+                <h3>Avatar Agent Levels</h3>
             </div>
-            @if(auth()->user()->hasPermissionTo('Add Relics'))
+            @if(auth()->user()->hasPermissionTo('Add Agent Levels'))
                 <div class="col-md-6 text-right modalbuttonadd">
-                    <a href="{{ route('admin.relics.create') }}" class="btn btn-info btn-md">Add Relic</a>
+                    <a href="{{ route('admin.avatar-agent-levels.create') }}" class="btn btn-info btn-md">Add</a>
                 </div>
             @endif
         </div>
@@ -22,12 +22,11 @@
             <thead>
                 <tr>
                     <th>Sr.</th>
-                    <th>Image</th>
-                    <th>TH Complexity</th>
-                    <th>Relic Map Pieces</th>
-                    <th>Created at (UTC)</th>
-                     @if(auth()->user()->hasPermissionTo('Edit Relics') || auth()->user()->hasPermissionTo('Delete Relics'))
-                    <th>Action</th>
+                    <th>Agent Level</th>
+                    <th>XP Points</th>
+                    <th>TH Difficulty</th>
+                    @if(auth()->user()->hasPermissionTo('Edit Agent Levels') || auth()->user()->hasPermissionTo('Delete Agent Levels'))
+                     <th>Action</th>
                     @endif
                 </tr>
             </thead>
@@ -48,7 +47,7 @@
                     lengthMenu: [[10, 50, 100, -1], [10, 50, 100, "All"]],
                     ajax: {
                         type: "get",
-                        url: "{{ route('admin.relics.list') }}",
+                        url: "{{ route('admin.avatar-agent-levels-list') }}",
                         data: function ( d ) {
                             d._token = "{{ csrf_token() }}";
                         },
@@ -60,12 +59,11 @@
                     },
                     columns:[
                         { data:'DT_RowIndex',name:'_id' },
-                        { data:'icon',name:'icon'},
-                        { data:'complexity',name:'complexity'},
-                        { data:'pieces',name:'pieces'},
-                        { data:'created_at',name:'created_at' },
-                        @if(auth()->user()->hasPermissionTo('Edit Relics') || auth()->user()->hasPermissionTo('Delete Relics'))
-                         { data:'action',name:'action' },
+                        { data:'agent_level',name:'agent_level'},
+                        { data:'xps',name:'xps'},
+                        { data:'complexity',name:'Complexity' },
+                        @if(auth()->user()->hasPermissionTo('Edit Agent Levels') || auth()->user()->hasPermissionTo('Delete Agent Levels'))
+                        { data:'action',name:'action' },
                         @endif
                     ],
                     columnDefs: [{

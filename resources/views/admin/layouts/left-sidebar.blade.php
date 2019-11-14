@@ -237,14 +237,14 @@
 					<li class="@if(Route::currentRouteName() == 'admin.agent-levels.index') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.agent-levels.index') }}">Agent Level</a>
 					</li>
-					<li class="@if(Route::currentRouteName() == 'admin.news.index') {{ 'activelist' }} @endif">
-						<a href="{{ route('admin.news.index') }}">Hunt / Agent Level</a>
+					<li class="@if(Route::currentRouteName() == 'admin.hunts-agent-levels.index') {{ 'activelist' }} @endif">
+						<a href="{{ route('admin.hunts-agent-levels.index') }}">Hunt / Agent Level</a>
 					</li>
-					<li class="@if(Route::currentRouteName() == 'admin.news.index') {{ 'activelist' }} @endif">
-						<a href="{{ route('admin.news.index') }}">Minigames / Agent Level</a>
+					<li class="@if(Route::currentRouteName() == 'admin.minigames-agent-levels.index') {{ 'activelist' }} @endif">
+						<a href="{{ route('admin.minigames-agent-levels.index') }}">Minigames / Agent Level</a>
 					</li>
-					<li class="@if(Route::currentRouteName() == 'admin.news.index') {{ 'activelist' }} @endif">
-						<a href="{{ route('admin.news.index') }}">Avatar / Agent Level</a>
+					<li class="@if(Route::currentRouteName() == 'admin.avatar-agent-levels.index') {{ 'activelist' }} @endif">
+						<a href="{{ route('admin.avatar-agent-levels.index') }}">Avatar / Agent Level</a>
 					</li>
 				<!-- 	<li class="@if(Route::currentRouteName() == 'admin.news.index') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.news.index') }}">TH Bucket Size / Agent Level</a>

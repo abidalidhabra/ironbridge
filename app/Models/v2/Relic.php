@@ -23,7 +23,7 @@ class Relic extends Eloquent
         }
     }
 
-    public function getPiecesAttribute($value)
+    /*public function getPiecesAttribute($value)
     {
         if ($value != "") {
             $data = [];
@@ -36,7 +36,7 @@ class Relic extends Eloquent
             return $data;
         }
         return $value;
-    }
+    }*/
 
     public function scopeNotParticipated($query, $userId)
     {

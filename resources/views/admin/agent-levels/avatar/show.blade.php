@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | Season Detail')
+@section('title','Ironbridge1779 | Agent Levels')
 @extends('admin.layouts.admin-app')
 
 @section('style')
@@ -10,11 +10,11 @@
     <div class="users_datatablebox">
         <div class="">               
             <div class="col-md-12 text-right">
-                <a href="{{ route('admin.relics.index') }}" class="btn back-btn">Back</a>
+                <a href="{{ route('admin.relicReward.index') }}" class="btn back-btn">Back</a>
             </div>
             <div class="col-md-12">
                 <div class="row">
-                    <h3>Relics Details: </h3>
+                    <h3>Agent Levels: </h3>
                 </div>
             </div>
         </div>
@@ -23,19 +23,48 @@
     <br/>
     <div class="customdatatable_box allboxinercoversgm" id="addSeasonContainer">
         <div class="seastaicoboxsettop">
-            <h2>Relics Detail:</h2>
-            <p>TH Complexity: <span>{{ $relic->complexity }}</span> </p>
-            <p>Relic Map Pieces: <span>{{ $relic->pieces }}</span> </p>
-            <div class="">
-                <div class="img-container imgiconboxsetiner">
-                    <p>Relic Image</p>
-                    <a data-fancybox="{{ $relic->id }}" href="{{ $relic->icon }}">
-                        <img src="{{ $relic->icon }}" alt="season icon">
-                    </a>
-                </div>
-               
-            </div>
+            <!-- <h2>Relics Detail:</h2> -->
+            <p>Agent Level: <span>{{ (isset($relicReward->agent_level))?$relicReward->agent_level:'-' }}</span> </p>
+            <p>XP Points: <span>{{ (isset($relicReward->xps)?$relicReward->xps:'-') }}</span> </p>
+            <p>TH Difficulty: <span>{{ (isset($relicReward->complexity)?$relicReward->complexity:'-') }}</span> </p>
+            <p>Skeleton Key Bucket Size: <span>{{ (isset($relicReward->bucket_size)?$relicReward->bucket_size:'-') }}</span> </p>
         </div>
+        <div class="relisetinerript">
+            <h2>Minigames</h2>
+            @forelse($games as $index => $game)
+                <h4>{{ ($index+1).' - '.$game }} </h4>
+            @empty
+                <h4>No Data Found</h4>
+            @endforelse
+        </div>
+        <div class="relisetinerript">
+            <h2>widgets</h2>
+            @forelse($relicReward->widgets as $key => $widgets)
+                <h4>{{ ucfirst($key) }} </h4>
+                    @if(!is_null($widgets) && count($widgets) > 0)
+                        <?php
+                            $widgetItem = \DB::table('widget_items')->whereIn('_id',$widgets)->get();
+                        ?>  
+                        @forelse($widgetItem as $key => $widget)
+                        <div class="col-md-3">
+                            @if (file_exists(public_path('admin_assets/widgets/'.$widget['_id'].'.png')))
+                                <img src="{{ asset('admin_assets/widgets/'.$widget['_id'].'.png') }}" style="width: 100%;height: auto;">
+                            @else
+                                <img src="{{ asset('admin_assets/images/no_image.png') }}" style="width: 100%;height: auto;">
+                            @endif
+                        </div>
+                        @empty
+                            <h4>No Data Found</h4>  
+                        @endforelse
+                    @else
+                        <p>No Data Found</p>
+                    @endif
+             
+            @empty
+                <h4>No Data Found</h4>
+            @endforelse
+        </div>
+      
     </div>
 </div>
 @endsection

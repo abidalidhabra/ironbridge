@@ -29,8 +29,7 @@
                             type="file" 
                             class="form-control" 
                             name="icon" 
-                            alias-name="Icon for relic"
-                            required>
+                            alias-name="Icon for relic">
                             @error('icon')
                             <div class="text-muted text-danger"> {{ $errors->first('icon') }} </div>
                             @enderror
@@ -38,18 +37,22 @@
 
                         <div class="form-group">
                             <label>TH Complexity:</label>
-                            <select name="complexity" class="form-control" alias-name="TH Complexity" required>
+                            <select name="complexity" class="form-control" alias-name="TH Complexity">
                                 <option value="">Select TH Complexity</option>
                                 @for($i = 1; $i<=5; $i++)
                                 <option value="{{ $i }}">{{ $i }}</option>
                                 @endfor
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label>Relic Map Pieces:</label>
+                            <input type="number" name="pieces" class="form-control" placeholder="Enter the relic map pieces">
+                        </div>
 
-                        <div class="clues">
+                        <!-- <div class="clues">
                             @include('admin.relics.clues.create', ['index'=> 0])
                             <input type="hidden" id="last-token" value="0">
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -91,7 +94,7 @@
                             window.location.href = '{{ route('admin.relics.index') }}';
                         }, 2000)
                     } else {
-                        toastr.warning('You are not authorized to access this page.');
+                        toastr.warning(response.message);
                     }
                 },
                 error: function(xhr, exception) {

@@ -215,6 +215,16 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::resource('agent-levels', 'AgentLevel\AgentLevelController');
 	Route::get('agent-level/bucket-sizes/list', 'AgentLevel\BucketSizeAgentLevelController@list')->name('bucket-sizes.list');
 	Route::resource('agent-level/bucket-sizes', 'AgentLevel\BucketSizeAgentLevelController');
+
+	Route::resource('hunts-agent-levels', 'AgentLevel\HuntAgentLevelController');
+	Route::get('hunts-agent-levels-list', 'AgentLevel\HuntAgentLevelController@list')->name('hunts-agent-levels-list');
+
+	Route::resource('minigames-agent-levels', 'AgentLevel\MinigameAgentLevelController');
+	Route::get('minigames-agent-levels-list', 'AgentLevel\MinigameAgentLevelController@list')->name('minigames-agent-levels-list');
+
+	Route::resource('avatar-agent-levels', 'AgentLevel\AvatarAgentLevelController');
+	Route::get('avatar-agent-levels-list', 'AgentLevel\AvatarAgentLevelController@list')->name('avatar-agent-levels-list');
+
 });
 
 // Auth::routes();

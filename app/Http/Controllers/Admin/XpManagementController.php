@@ -92,8 +92,9 @@ class XpManagementController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'name'=> 'required',
-            'xp'=> 'required|numeric',
+            'name'       => 'required',
+            // 'complexity' => 'required|numeric',
+            'xp'         => 'required|numeric',
         ]);
 
         if ($validator->fails()) {
@@ -132,6 +133,7 @@ class XpManagementController extends Controller
             $active = ($search == 'true' || $search == 'Active')? true: false;
             $query->where('_id','like','%'.$search.'%')
             ->orWhere('name','like','%'.$search.'%')
+            ->orWhere('complexity','like','%'.$search.'%')
             ->orWhere('xp','like','%'.$search.'%');
         })
         ->orderBy('created_at','DESC')
@@ -143,6 +145,7 @@ class XpManagementController extends Controller
         $filterCount = XpManagement::when($search != '', function($query) use ($search) {
             $query->where('_id','like','%'.$search.'%')
             ->orWhere('name','like','%'.$search.'%')
+            ->orWhere('complexity','like','%'.$search.'%')
             ->orWhere('xp','like','%'.$search.'%');
         })
         ->count();
