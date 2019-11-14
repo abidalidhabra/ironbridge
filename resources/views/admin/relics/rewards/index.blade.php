@@ -24,7 +24,7 @@
                     <th>Sr.</th>
                     <th>Agent Level</th>
                     <th>XP Points</th>
-                    <th>Difficulty</th>
+                    <th>TH Difficulty</th>
                     @if(auth()->user()->hasPermissionTo('Edit Agent Levels') || auth()->user()->hasPermissionTo('Delete Agent Levels'))
                      <th>Action</th>
                     @endif

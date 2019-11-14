@@ -57,9 +57,9 @@
                         </div>
 
                         <div class="form-group @error('xps') has-error @enderror">
-                            <label class="control-label">Difficulty:</label>
+                            <label class="control-label">TH Difficulty:</label>
                             <select name="complexity" class="form-control">
-                                <option value="">Select Difficulty</option>
+                                <option value="">Select TH Difficulty</option>
                                 @for($i=1;$i <= 5;$i++)
                                     <option value="{{ $i }}" @if($i==$relicReward->complexity){{ 'selected' }}@endif>{{ $i }}</option>
                                 @endfor
@@ -69,9 +69,9 @@
                             @enderror
                         </div>
                         <div class="form-group @error('xps') has-error @enderror">
-                            <label class="control-label">Bucket Size:</label>
+                            <label class="control-label">Skeleton Key Bucket Size:</label>
                             <select name="bucket_size" class="form-control">
-                                <option value="">Select Bucket Size</option>
+                                <option value="">Select Skeleton Key Bucket Size</option>
                                 @for($i=1;$i <= 10;$i++)
                                     <option value="{{ $i }}" @if($i==$relicReward->bucket_size){{ 'selected' }}@endif>{{ $i }}</option>
                                 @endfor

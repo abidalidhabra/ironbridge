@@ -92,7 +92,7 @@ class XpManagementController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            // 'event'=> 'required',
+            'name'=> 'required',
             'xp'=> 'required|numeric',
         ]);
 
@@ -102,7 +102,7 @@ class XpManagementController extends Controller
 
         $xpManagement = XpManagement::where('_id',$id)->first();
         $xpManagement->xp = (int)$request->xp;
-        // $xpManagement->event = $request->event;
+        $xpManagement->name = $request->name;
         $xpManagement->save();
         
         return response()->json([
@@ -131,7 +131,7 @@ class XpManagementController extends Controller
         $xpManagements = XpManagement::when($search != '', function($query) use ($search) {
             $active = ($search == 'true' || $search == 'Active')? true: false;
             $query->where('_id','like','%'.$search.'%')
-            ->orWhere('event','like','%'.$search.'%')
+            ->orWhere('name','like','%'.$search.'%')
             ->orWhere('xp','like','%'.$search.'%');
         })
         ->orderBy('created_at','DESC')
@@ -142,7 +142,7 @@ class XpManagementController extends Controller
         /** Filter Result Total Count  **/
         $filterCount = XpManagement::when($search != '', function($query) use ($search) {
             $query->where('_id','like','%'.$search.'%')
-            ->orWhere('event','like','%'.$search.'%')
+            ->orWhere('name','like','%'.$search.'%')
             ->orWhere('xp','like','%'.$search.'%');
         })
         ->count();

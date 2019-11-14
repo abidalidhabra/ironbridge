@@ -24,7 +24,7 @@
     <div class="customdatatable_box allboxinercoversgm" id="addSeasonContainer">
         <div class="seastaicoboxsettop">
             <h2>Relics Detail:</h2>
-            <p>Complexity: <span>{{ $relic->complexity }}</span> </p>
+            <p>TH Complexity: <span>{{ $relic->complexity }}</span> </p>
             <div class="">
                 <div class="img-container imgiconboxsetiner">
                     <p>Relic Image</p>
@@ -36,11 +36,11 @@
             </div>
         </div>
         <div class="relisetinerript">
-            <h2>Relics Piece</h2>
+            <h2>Relic Map Piece</h2>
             @forelse($relic->pieces as $index=> $piece)
                 <div class="allreicontitcover">
                     <div class="titleedtdeltbtn">
-                        <h4> Piece <span>{{$index+1}}</span> </h4> 
+                        <h4>Relic Map Piece {{$index+1}}</h4> 
                     </div>                  
                    <div>
                         <div class="img-container imgiconboxsetiner">

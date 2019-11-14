@@ -23,7 +23,7 @@
                 <tr>
                     <th>Sr.</th>
                     <th>Image</th>
-                    <th>Complexity</th>
+                    <th>TH Complexity</th>
                     <th>Created at (UTC)</th>
                      @if(auth()->user()->hasPermissionTo('Edit Relics') || auth()->user()->hasPermissionTo('Delete Relics'))
                     <th>Action</th>
