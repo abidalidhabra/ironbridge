@@ -210,6 +210,11 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 
 	Route::resource('xpManagement', 'XpManagementController');
 	Route::get('getXpManagementList', 'XpManagementController@getXpManagementList')->name('getXpManagementList');
+	
+	Route::get('agent-levels/list', 'AgentLevel\AgentLevelController@list')->name('agent-levels.list');
+	Route::resource('agent-levels', 'AgentLevel\AgentLevelController');
+	Route::get('agent-level/bucket-sizes/list', 'AgentLevel\BucketSizeAgentLevelController@list')->name('bucket-sizes.list');
+	Route::resource('agent-level/bucket-sizes', 'AgentLevel\BucketSizeAgentLevelController');
 });
 
 // Auth::routes();
