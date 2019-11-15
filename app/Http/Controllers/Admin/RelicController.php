@@ -158,9 +158,9 @@ class RelicController extends Controller
         $relic = DB::table('relics')->where('_id',$id)->first();
         Storage::disk($this->disk)->delete('relics/'.$relic['complexity'].'/'.$relic['icon']);
 
-        foreach ($relic['pieces'] as $key => $value) {
+        /*foreach ($relic['pieces'] as $key => $value) {
             Storage::disk($this->disk)->delete('relics/'.$relic['complexity'].'/'.$value['image']);
-        }
+        }*/
 
         Relic::find($id)->delete();
 
