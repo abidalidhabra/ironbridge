@@ -135,7 +135,7 @@ class BucketSizeAgentLevelController extends Controller
                         ->orWhere('bucket_size','like','%'.$search.'%');
                     })
                     ->whereNotNull('bucket_size')
-                    ->orderBy('created_at','DESC')
+                    ->orderBy('agent_level','ASc')
                     ->skip($skip)
                     ->take($take)
                     ->get();

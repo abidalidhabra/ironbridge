@@ -6,7 +6,7 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Avatar Agent Levels</h3>
+                <h3>Avatar Agent Level</h3>
             </div>
             @if(auth()->user()->hasPermissionTo('Add Agent Levels'))
                 <div class="col-md-6 text-right modalbuttonadd">
@@ -22,12 +22,9 @@
             <thead>
                 <tr>
                     <th>Sr.</th>
+                    <th>Total Avatar</th>
                     <th>Agent Level</th>
-                    <th>XP Points</th>
-                    <th>TH Difficulty</th>
-                    @if(auth()->user()->hasPermissionTo('Edit Agent Levels') || auth()->user()->hasPermissionTo('Delete Agent Levels'))
-                     <th>Action</th>
-                    @endif
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -59,16 +56,13 @@
                     },
                     columns:[
                         { data:'DT_RowIndex',name:'_id' },
+                        { data:'total_avatar',name:'total_avatar' },
                         { data:'agent_level',name:'agent_level'},
-                        { data:'xps',name:'xps'},
-                        { data:'complexity',name:'Complexity' },
-                        @if(auth()->user()->hasPermissionTo('Edit Agent Levels') || auth()->user()->hasPermissionTo('Delete Agent Levels'))
                         { data:'action',name:'action' },
-                        @endif
                     ],
                     columnDefs: [{
                         orderable: false,
-                        targets: [0,3,4],
+                        targets: [0,3],
                     }],
                 });
 

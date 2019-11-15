@@ -241,7 +241,7 @@ class AvatarAgentLevelController extends Controller
                                                     $query->where('agent_level','like','%'.$search.'%')
                                                     ->orWhere('complexity','like','%'.$search.'%');
                                                 })
-                                                ->orderBy('created_at','DESC')
+                                                ->orderBy('agent_level','ASC')
                                                 ->skip($skip)
                                                 ->take($take)
                                                 ->get();
@@ -256,8 +256,14 @@ class AvatarAgentLevelController extends Controller
         $admin = Auth::User();
         return DataTables::of($agent_complementary)
         ->addIndexColumn()
-        ->editColumn('complexity', function($relic){
-            return ($relic->complexity)?$relic->complexity:'-';
+        ->addColumn('total_avatar', function($relic){
+            $total_avatar = 0;
+            foreach ($relic->widgets as $key => $value) {
+                if ($value != "") {
+                    $total_avatar += count($value);
+                }
+            }
+            return $total_avatar; 
         })
         ->editColumn('created_at', function($relic){
             return $relic->created_at->format('d-M-Y @ h:i A');

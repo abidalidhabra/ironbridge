@@ -135,7 +135,7 @@ class AgentLevelController extends Controller
                                     $active = ($search == 'true' || $search == 'Active')? true: false;
                                     $query->where('agent_level','like','%'.$search.'%')->orWhere('xps','like','%'.$search.'%');
                                 })
-                                ->orderBy('created_at','DESC')
+                                ->orderBy('agent_level','ASC')
                                 ->skip($skip)
                                 ->take($take)
                                 ->get();

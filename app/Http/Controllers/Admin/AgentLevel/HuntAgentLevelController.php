@@ -145,8 +145,7 @@ class HuntAgentLevelController extends Controller
             $query->where('agent_level','like','%'.$search.'%')
             ->orWhere('complexity','like','%'.$search.'%');
         })
-        
-        ->orderBy('created_at','DESC')
+        ->orderBy('agent_level','ASC')
         ->skip($skip)
         ->take($take)
         ->get();
@@ -169,13 +168,9 @@ class HuntAgentLevelController extends Controller
         })
         ->addColumn('action', function($relic) use ($admin){
                 $html = '';
-                if($admin->hasPermissionTo('Edit Agent Levels')){
                     $html .= '<a href="javascript:void(0)" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox edit_agent" data-id="'.$relic->id.'"></i></a>';
-                }
 
-                if($admin->hasPermissionTo('Delete Agent Levels')){
-                    $html .= ' <a href="'.route('admin.hunts-agent-levels.destroy',$relic->id).'" data-action="delete" data-toggle="tooltip" title="Delete" ><i class="fa fa-trash iconsetaddbox"></i></a>';
-                }
+                    //$html .= ' <a href="'.route('admin.hunts-agent-levels.destroy',$relic->id).'" data-action="delete" data-toggle="tooltip" title="Delete" ><i class="fa fa-trash iconsetaddbox"></i></a>';
                 
                 //$html .= ' <a href="'.route('admin.hunts-agent-levels.show',$relic->id).'" data-action="View" data-toggle="tooltip" title="View" ><i class="fa fa-eye iconsetaddbox"></i></a>';
             return $html;

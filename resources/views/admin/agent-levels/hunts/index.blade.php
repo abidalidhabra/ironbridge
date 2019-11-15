@@ -6,16 +6,12 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Hunts Agent Levels</h3>
+                <h3>Hunt Agent Level</h3>
             </div>
-            @if(auth()->user()->hasPermissionTo('Add Agent Levels'))
                 <div class="col-md-6 text-right modalbuttonadd">
-                    <!-- <a href="{{ route('admin.relicReward.create') }}" class="btn btn-info btn-md">Add</a> -->
-                    <button type="button" class="btn btn-info btn-md" data-toggle="modal" data-target="#addHuntsAgentLevels">Add</button>
+                    <!-- <button type="button" class="btn btn-info btn-md" data-toggle="modal" data-target="#addHuntsAgentLevels">Add</button> -->
                 </div>
-
-            @endif
-        </div>
+            </div>
     </div>
     <br/>
     <br/>
@@ -24,12 +20,10 @@
             <thead>
                 <tr>
                     <th>Sr.</th>
+                    <th>TH Difficulty</th>
                     <th>Agent Level</th>
                     <!-- <th>XP Points</th> -->
-                    <th>TH Difficulty</th>
-                    @if(auth()->user()->hasPermissionTo('Edit Agent Levels') || auth()->user()->hasPermissionTo('Delete Agent Levels'))
-                     <th>Action</th>
-                    @endif
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -44,7 +38,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Add Hunts Agent Levels</h4>       
+                        <h4 class="modal-title">Add Hunt Agent Level</h4>       
                     </div>
                     <form method="post" id="addHuntsAgentForm">
                         @csrf
@@ -91,7 +85,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Add Hunts Agent Levels</h4>       
+                        <h4 class="modal-title">Add Hunt Agent Level</h4>       
                     </div>
                     <form method="post" id="editAgentForm">
                         
@@ -126,12 +120,10 @@
                     },
                     columns:[
                         { data:'DT_RowIndex',name:'_id' },
+                        { data:'complexity',name:'Complexity' },
                         { data:'agent_level',name:'agent_level'},
                         // { data:'xps',name:'xps'},
-                        { data:'complexity',name:'Complexity' },
-                        @if(auth()->user()->hasPermissionTo('Edit Agent Levels') || auth()->user()->hasPermissionTo('Delete Agent Levels'))
                         { data:'action',name:'action' },
-                        @endif
                     ],
                     columnDefs: [{
                         orderable: false,
