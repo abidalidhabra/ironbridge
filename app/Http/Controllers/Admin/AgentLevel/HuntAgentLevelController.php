@@ -63,7 +63,7 @@ class HuntAgentLevelController extends Controller
         $agentComplementary->complexity = (int)$request['complexity'];
         $agentComplementary->save();
         
-        return response()->json(['status' => true,'message' => 'Agent levels has been added successfully']);
+        return response()->json(['status' => true,'message' => 'Hunts agent levels has been added successfully']);
     }
 
     /**
@@ -117,7 +117,7 @@ class HuntAgentLevelController extends Controller
         $agent_complementary->complexity = (int)$request['complexity'];
         $agent_complementary->save();
 
-        return response()->json(['status' => true,'message' => 'Agent levels has been updated successfully']);
+        return response()->json(['status' => true,'message' => 'Hunts agent levels has been updated successfully']);
     }
 
     /**
@@ -129,7 +129,7 @@ class HuntAgentLevelController extends Controller
     public function destroy($id)
     {
         AgentComplementary::where('_id',$id)->unset('complexity');
-        return response()->json(['status'=> true, 'message'=> 'Agent Levels has been deleted successfully.']);
+        return response()->json(['status'=> true, 'message'=> 'Hunts agent levels has been deleted successfully.']);
     }
 
     

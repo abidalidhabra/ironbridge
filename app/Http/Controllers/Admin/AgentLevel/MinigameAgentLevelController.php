@@ -138,7 +138,7 @@ class MinigameAgentLevelController extends Controller
     {
         AgentComplementary::where('_id',$id)->unset('minigames');
 
-        return response()->json(['status'=> true, 'message'=> 'Agent Levels has been deleted successfully.']);
+        return response()->json(['status'=> true, 'message'=> 'Minigames agent Levels has been deleted successfully.']);
     }
 
     public function list(Request $request)

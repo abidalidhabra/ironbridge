@@ -224,6 +224,7 @@ class AvatarAgentLevelController extends Controller
     public function destroy($id)
     {
         AgentComplementary::where('_id',$id)->unset('widgets');
+        return response()->json(['status' => true, 'message'=>'Avatar levels has been deleted successfully.']);
     }
 
     public function list(Request $request)
