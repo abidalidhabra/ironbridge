@@ -52,7 +52,7 @@
                                     <div class="form-group">
                                         <select class="form-control" name="agent_level">
                                             @forelse($levels as $level)
-                                                <option value="{{ $level->id }}"> {{ $level->agent_level }} </option>
+                                                <option value="{{ $level->agent_level }}"> {{ $level->agent_level }} </option>
                                             @empty
                                                 <option value=""> No agent level found </option>
                                             @endforelse
@@ -91,7 +91,7 @@
                                     <div class="form-group">
                                         <select class="form-control" name="agent_level">
                                             @forelse($levels as $level)
-                                                <option value="{{ $level->id }}"> {{ $level->agent_level }} </option>
+                                                <option value="{{ $level->agent_level }}"> {{ $level->agent_level }} </option>
                                             @empty
                                                 <option value=""> No agent level found </option>
                                             @endforelse
@@ -129,7 +129,7 @@
 			success: function(response){
 				if (response.status == true) {
 					$('#editHuntBucketSizeForm input[name="bucket_size"]').val(response.agent_complementary.bucket_size);
-                    $('#editHuntBucketSizeForm select[name="agent_level"]').prop("selected", true);
+                    $('#editHuntBucketSizeForm select[name="agent_level"] [value="'+response.agent_complementary.agent_level+'"]').prop("selected", true);
 					$('#editHuntBucketSizeModal').modal('show');
 					// $('#editHuntBucketSizeForm input[name="agent_level"]').val(response.agent_complementary._id);
 					// $('#editHuntBucketSizeForm input[name="_id"]').val(response.agent_complementary._id);
@@ -146,8 +146,8 @@
 
 	$('#editHuntBucketSizeForm').on('submit', function(e) {
 		e.preventDefault();
-		let url = "{{ route('admin.agent-levels.update', ':agentComplementaryId') }}";
-		url = url.replace(':agentComplementaryId', $('#editHuntBucketSizeForm input[name="_id"]').val());
+		let url = "{{ route('admin.bucket-sizes.update', ':agentComplementaryId') }}";
+		url = url.replace(':agentComplementaryId', $('#editHuntBucketSizeForm select[name="agent_level"]').val());
 		$.ajax({
 			type: "POST",
 			url: url,
@@ -173,7 +173,7 @@
 		e.preventDefault();
 		$.ajax({
 			type: "POST",
-			url: "{{ route('admin.agent-levels.store') }}",
+			url: "{{ route('admin.bucket-sizes.store') }}",
 			data: $(this).serialize(),
 			dataType: 'json',
 			success: function(response){

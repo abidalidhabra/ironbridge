@@ -39,18 +39,21 @@ class BucketSizeAgentLevelController extends Controller
     {
         $request->validate([
             'agent_level'=> ['required', 'numeric', 'integer', 'min:1'],
-            'xps'=> 'required|numeric|integer',
+            'bucket_size'=> 'required|numeric|integer|min:1',
         ]);
 
-        $alreadyExist = AgentComplementary::where('agent_level', (int)$request->agent_level)->count();
+        $alreadyExist = AgentComplementary::where('agent_level', (int)$request->agent_level)
+                                            ->where('bucket_size', (int)$request->bucket_size)
+                                            ->count();
         if ($alreadyExist) {
             return response()->json(['status'=> false, 'message'=> 'Agent level already available, it must be unique.']);
         }else{
             return response()->json([
                 'status'=> true,
-                'message'=> 'Agent level added successfully.',
-                'agent_complementary'=> AgentComplementary::create(['agent_level'=> (int)$request->agent_level, 'xps'=> (int)$request->xps])
-            ]);
+                'message'=> 'Bucket Agent level added successfully.',
+                'agent_complementary'=> AgentComplementary::where('agent_level',(int)$request->agent_level)
+                                                            ->update(['bucket_size'=> (int)$request->bucket_size])
+                                    ]);
         }
     }
 
@@ -90,19 +93,19 @@ class BucketSizeAgentLevelController extends Controller
     {
         $request->validate([
             'agent_level'=> ['required', 'numeric', 'integer', 'min:1'],
-            'bucket_size'=> 'required|numeric|integer',
+            'bucket_size'=> 'required|numeric|integer|min:1',
         ]);
+
         
-        $alreadyExist = AgentComplementary::where('_id', '!=', $id)->where('agent_level', (int)$request->agent_level)->count();
-        if ($alreadyExist) {
-            return response()->json(['status'=> false, 'message'=> 'Agent level already available, it must be unique.'], 422);
-        }else{
-            return response()->json([
-                'status'=> true,
-                'message'=> 'Agent level updated successfully.',
-                'agent_complementary'=> AgentComplementary::where('_id', $id)->update(['agent_level'=> (int)$request->agent_level, 'bucket_size'=> (int)$request->bucket_size])
-            ]);
-        }
+        AgentComplementary::where('agent_level',(int)$id)
+                            ->where('agent_level', (int)$request->agent_level)
+                            ->update(['bucket_size' => (int)$request->bucket_size]);
+        
+        return response()->json([
+            'status'=> true,
+            'message'=> 'Agent level updated successfully.',
+            //'agent_complementary'=> AgentComplementary::where('_id', $id)->update(['agent_level'=> (int)$request->agent_level, 'bucket_size'=> (int)$request->bucket_size])
+        ]);
     }
 
     /**
@@ -113,14 +116,10 @@ class BucketSizeAgentLevelController extends Controller
      */
     public function destroy($id)
     {
-        $agentComplementary = AgentComplementary::find($id);
-        $users = User::where('agent_status.level', '>=' ,$agentComplementary->agent_level)->count();
-        if ($users > 0) {
-            return response()->json(['status' => false, 'message'=>'This agent level cannot be delete.']);
-        }else{
-            $agentComplementary->delete();
-            return response()->json(['status' => true, 'message'=>'Agent levels has been deleted successfully.']);
-        }
+        $agentComplementary = AgentComplementary::where('_id',$id)->unset('bucket_size');
+        
+        return response()->json(['status' => true, 'message'=>'Bucket-sizes Agent levels has been deleted successfully.']);
+        
     }
 
     public function list(Request $request)

@@ -10,7 +10,7 @@
     <div class="users_datatablebox">
         <div class="">               
             <div class="col-md-12 text-right">
-                <a href="{{ route('admin.relicReward.index') }}" class="btn back-btn">Back</a>
+                <a href="{{ route('admin.avatar-agent-levels.index') }}" class="btn back-btn">Back</a>
             </div>
             <div class="col-md-12">
                 <div class="row">
@@ -29,14 +29,7 @@
             <p>TH Difficulty: <span>{{ (isset($relicReward->complexity)?$relicReward->complexity:'-') }}</span> </p>
             <p>Skeleton Key Bucket Size: <span>{{ (isset($relicReward->bucket_size)?$relicReward->bucket_size:'-') }}</span> </p>
         </div>
-        <div class="relisetinerript">
-            <h2>Minigames</h2>
-            @forelse($games as $index => $game)
-                <h4>{{ ($index+1).' - '.$game }} </h4>
-            @empty
-                <h4>No Data Found</h4>
-            @endforelse
-        </div>
+        
         <div class="relisetinerript">
             <h2>widgets</h2>
             @forelse($relicReward->widgets as $key => $widgets)

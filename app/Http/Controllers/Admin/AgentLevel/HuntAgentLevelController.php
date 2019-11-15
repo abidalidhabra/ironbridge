@@ -46,7 +46,7 @@ class HuntAgentLevelController extends Controller
     {
         $validator = Validator::make($request->all(),[
             'agent_level' => 'required|numeric',
-            'complexity'  => 'required|numeric',
+            'complexity'  => 'required|numeric|min:1',
         ],[
             'complexity.required'  => 'The difficulty field is required.'
         ]);
@@ -102,7 +102,7 @@ class HuntAgentLevelController extends Controller
     {
         $validator = Validator::make($request->all(),[
             'agent_level' => 'required|numeric',
-            'complexity'  => 'required|numeric',
+            'complexity'  => 'required|numeric|min:1',
         ],[
             'complexity.required'  => 'The difficulty field is required.'
         ]);
