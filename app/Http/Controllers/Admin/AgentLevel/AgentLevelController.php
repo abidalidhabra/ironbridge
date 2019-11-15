@@ -41,7 +41,7 @@ class AgentLevelController extends Controller
     {
         $request->validate([
             'agent_level'=> ['required', 'numeric', 'integer', 'min:1'],
-            'xps'=> 'required|numeric|integer',
+            'xps'=> 'required|numeric|integer|min:1',
         ]);
 
         $alreadyExist = AgentComplementary::where('agent_level', (int)$request->agent_level)->count();
@@ -92,7 +92,7 @@ class AgentLevelController extends Controller
     {
         $request->validate([
             'agent_level'=> ['required', 'numeric', 'integer', 'min:1'],
-            'xps'=> 'required|numeric|integer',
+            'xps'=> 'required|numeric|integer|min:1',
         ]);
         
         $alreadyExist = AgentComplementary::where('_id', '!=', $id)->where('agent_level', (int)$request->agent_level)->count();

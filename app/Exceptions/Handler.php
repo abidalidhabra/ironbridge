@@ -70,7 +70,6 @@ class Handler extends ExceptionHandler
         $class = get_class($exception);
         if($class == 'Illuminate\Auth\AuthenticationException'){
             $guard = array_get($exception->guards(), 0);
-            dd($guard);
             switch ($guard) {
                 case 'admin':
                 $login = 'admin.login';
