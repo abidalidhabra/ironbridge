@@ -2,27 +2,14 @@ version: '3'
 
 services:
   tests:
-    container_name: tests
-    image: laravel-mongodb:latest
+    container_name: irinbridge
+    restart: always
+    image: 905666888987.dkr.ecr.us-east-1.amazonaws.com/laravel:latest
     volumes:
-      - ./:/var/www/html
+      # - laravel:/var/www/html
+      - ./irinbridge/log:/var/log/apache2
     ports:
-      - "80:80"
+      - "443:443"
 
-  mongodb:
-    container_name: mongodb
-    image: mongo
-    ports:
-      - 27017:27017
-    # environment:
-    #   - MONGO_INITDB_ROOT_USERNAME=admin
-    #   - MONGO_INITDB_ROOT_PASSWORD=admin
-    volumes:
-      - mongodb:/data/db
-      - mongoconfig:/data/configdb
-    logging:
-      driver: none
-
-volumes:
-  mongodb:
-  mongoconfig:
+# volumes:
+#   laravel:

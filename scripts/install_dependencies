@@ -1,0 +1,7 @@
+#!/bin/bash
+sudo apt-get install docker.io
+sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+sudo apt-get install awscli
+$(aws ecr get-login --no-include-email --region us-east-1)
+docker pull 905666888987.dkr.ecr.us-east-1.amazonaws.com/laravel:latest
