@@ -185,7 +185,7 @@ class MinigameAgentLevelController extends Controller
             return $html;
         })
         ->rawColumns(['action', 'icon'])
-        ->setTotalRecords(AgentComplementary::count())
+        ->setTotalRecords(AgentComplementary::whereNotNull('minigames')->count())
         ->setFilteredRecords($filterCount)
         ->skipPaging()
         ->make(true);

@@ -168,7 +168,7 @@ class BucketSizeAgentLevelController extends Controller
             return $html;
         })
         ->rawColumns(['action', 'icon'])
-        ->setTotalRecords(AgentComplementary::count())
+        ->setTotalRecords(AgentComplementary::whereNotNull('bucket_size')->count())
         ->setFilteredRecords($filterCount)
         ->skipPaging()
         ->make(true);

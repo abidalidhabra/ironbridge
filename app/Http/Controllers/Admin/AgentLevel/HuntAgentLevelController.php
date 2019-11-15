@@ -176,7 +176,7 @@ class HuntAgentLevelController extends Controller
             return $html;
         })
         ->rawColumns(['action', 'icon'])
-        ->setTotalRecords(AgentComplementary::count())
+        ->setTotalRecords(AgentComplementary::whereNotNull('complexity')->count())
         ->setFilteredRecords($filterCount)
         ->skipPaging()
         ->make(true);
