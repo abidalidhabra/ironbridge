@@ -128,9 +128,9 @@ class RelicController extends Controller
         $dbRelic = DB::table('relics')->where('_id',$id)->first(); 
 
         if ($request->hasFile('icon')) {
-            Storage::disk($this->disk)->delete('relics/'.$relic->complexity.'/'.$dbRelic['icon']);
-            $request->icon->store('relics/'.$relic->complexity, $this->disk);
+            $request->icon->store('relics/'.$request->complexity, $this->disk);
             $relic->icon = $request->icon->hashName();
+            Storage::disk($this->disk)->delete('relics/'.$dbRelic['complexity'].'/'.$dbRelic['icon']);
         } else {
             if ($relic->complexity != $request->complexity) {
                 Storage::disk('public')->move('/relics/'.$dbRelic['complexity'].'/'.$dbRelic['icon'], '/relics/'.$request->complexity.'/'.$dbRelic['icon']);
