@@ -6,7 +6,7 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Avatar Agent Level</h3>
+                <h3>Avatar | Agent Levels</h3>
             </div>
             @if(auth()->user()->hasPermissionTo('Add Agent Levels'))
                 <div class="col-md-6 text-right modalbuttonadd">
@@ -22,8 +22,8 @@
             <thead>
                 <tr>
                     <th>Sr.</th>
-                    <th>Total Avatar</th>
-                    <th>Agent Level</th>
+                    <th>Total Avatar Items</th>
+                    <th>Agent Levels</th>
                     <th>Action</th>
                 </tr>
             </thead>

@@ -14,7 +14,7 @@
             </div>
             <div class="col-md-12">
                 <div class="row">
-                    <h3>Agent Levels: </h3>
+                    <h3>Details Avatar | Agent Levels</h3>
                 </div>
             </div>
         </div>

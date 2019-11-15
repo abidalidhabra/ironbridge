@@ -250,7 +250,7 @@
 
 
 					<li>
-						<a href="javascript:void(0)" class="plusbttnbox myBtn">Manage Agent Level
+						<a href="javascript:void(0)" class="plusbttnbox myBtn">Manage Levels
 							<i 
 								class="fa 
 								@if(Route::currentRouteName() == 'admin.agent-levels.index' || Route::currentRouteName() == 'admin.hunts-agent-levels.index' || Route::currentRouteName() == 'admin.minigames-agent-levels.index' ||
@@ -278,21 +278,21 @@
 									@if(Route::currentRouteName() == 'admin.agent-levels.index') 
 										{{ 'activelistsub' }} 
 									@endif
-									">Agent Level</a>
+									">Agent Levels</a>
 									<a 
 									href="{{ route('admin.hunts-agent-levels.index') }}" 
 									class="
 									@if(Route::currentRouteName() == 'admin.hunts-agent-levels.index') 
 										{{ 'activelistsub' }} 
 									@endif
-									">Hunt / Agent Level</a>
+									">Hunt / Agent Levels</a>
 									<a 
 									href="{{ route('admin.minigames-agent-levels.index') }}" 
 									class="
 									@if(Route::currentRouteName() == 'admin.minigames-agent-levels.index') 
 										{{ 'activelistsub' }} 
 									@endif
-									">Minigames / Agent Level</a>
+									">Minigames / Agent Levels</a>
 
 									<a 
 									href="{{ route('admin.avatar-agent-levels.index') }}" 
@@ -300,14 +300,14 @@
 									@if(Route::currentRouteName() == 'admin.avatar-agent-levels.index' || Route::currentRouteName() == 'admin.avatar-agent-levels.create' || Route::currentRouteName() == 'admin.avatar-agent-levels.edit' || Route::currentRouteName() == 'admin.avatar-agent-levels.show') 
 										{{ 'activelistsub' }} 
 									@endif
-									">Avatar / Agent Level</a>
+									">Avatar / Agent Levels</a>
 									<a 
 									href="{{ route('admin.bucket-sizes.index') }}" 
 									class="
 									@if(Route::currentRouteName() == 'admin.bucket-sizes.index') 
 										{{ 'activelistsub' }} 
 									@endif
-									">Bucket Size / Agent Level</a>
+									">Bucket Size / Agent Levels</a>
 							</div>
 						</div>
 					</li>
