@@ -31,7 +31,7 @@ class UseTheSkeletonKeyRule implements Rule
     public function passes($attribute, $value)
     {
         
-        $huntUser = (new HuntUserDetailRepository)->find($value)->hunt_user()->first();
+        $huntUser = (new HuntUserDetailRepository)->find($value)->hunt_user;
 
         if ($huntUser) {
             if ($huntUser->user_id != $this->userId) {

@@ -41,7 +41,7 @@ class CompleteTheClueRepository implements ClueInterface
 
         // get single hunt user detail
         $this->huntUserDetail = (new HuntUserDetailRepository)->find($request->hunt_user_details_id);
-        $this->huntUser   = $this->huntUserDetail->hunt_user()->select('complexity','user_id', 'relic_id')->first();
+        $this->huntUser   = $this->huntUserDetail->hunt_user()->select('_id', 'complexity', 'user_id', 'relic_id')->first();
         $huntUserDetails  = $this->huntUserDetail->hunt_user->hunt_user_details()->get();
 
         // check if hunt is completed
