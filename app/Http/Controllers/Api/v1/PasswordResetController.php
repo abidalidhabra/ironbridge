@@ -49,7 +49,7 @@ class PasswordResetController extends Controller
 			return response()->json(['message' => 'This password reset otp is invalid.'],422);
 		}
 
-		return response()->json(['message' => 'OTP matched.']);
+		return response()->json(['message' => 'one time password confirmed']);
 	}
 
 	public function resetpasswordByEmail(Request $request)
