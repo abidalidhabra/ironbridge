@@ -129,12 +129,18 @@ class RelicController extends Controller
         $relic = Relic::find($id);
 
         
+        $dbRelic = DB::table('relics')->where('_id',$id)->first(); 
 
         if ($request->hasFile('icon')) {
-            Storage::disk($this->disk)->delete('relics/'.$relic->complexity.'/'.$relic->icon);
-            $request->icon->store('relics/'.$relic->complexity, $this->disk);
+            $request->icon->store('relics/'.$request->complexity, $this->disk);
             $relic->icon = $request->icon->hashName();
+            Storage::disk($this->disk)->delete('relics/'.$dbRelic['complexity'].'/'.$dbRelic['icon']);
+        } else {
+            if ($relic->complexity != $request->complexity) {
+                Storage::disk('public')->move('/relics/'.$dbRelic['complexity'].'/'.$dbRelic['icon'], '/relics/'.$request->complexity.'/'.$dbRelic['icon']);
+            }
         }
+
 
 
         $request['status'] = "edit";
@@ -142,9 +148,7 @@ class RelicController extends Controller
 
         $relic->complexity = (int) $request->complexity;
         $relic->pieces = (int) $request->pieces;
-        /*if (isset($request->pieces)) {
-            $relic->pieces = $this->allotGameToClueService->allot($request);
-        }*/
+        
         $relic->save();
 
         return response()->json(['status'=> true, 'message'=> 'Relic updated! Please wait we are redirecting you.']);
