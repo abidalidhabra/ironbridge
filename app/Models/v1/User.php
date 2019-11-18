@@ -220,8 +220,13 @@ class User extends Authenticatable implements JWTSubject
         return AgentComplementary::where('agent_level', '<=', $this->agent_status['level'])->get()->pluck('complexity')->filter()->values();
     }
 
-    public function relics()
+    public function getRelicsAttribute($value)
     {
-        return $this->belongsToMany(Relic::class, null, 'users', 'relics');
+        return collect($value);
+    }
+
+    public function relics_info()
+    {
+        return $this->belongsToMany(Relic::class, null, 'users', 'relics._id');
     }
 }

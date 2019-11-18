@@ -12,7 +12,7 @@ use Storage;
 class Relic extends Eloquent
 {
 
-    protected $fillable = ['icon', 'complexity', 'pieces', 'active'];
+    protected $fillable = ['icon', 'complexity', 'pieces', 'active', 'users', 'game_id', 'game_variation_id'];
     
     public function getIconAttribute($value)
     {
@@ -58,5 +58,14 @@ class Relic extends Eloquent
     public function scopeActive($query)
     {
         $query->where('active', true);
+    }
+
+    public function game()
+    {
+        return $this->belongsTo('App\Models\v1\Game','game_id');
+    }
+
+    public function game_variation(){
+        return $this->belongsTo('App\Models\v1\GameVariation','game_variation_id');     
     }
 }

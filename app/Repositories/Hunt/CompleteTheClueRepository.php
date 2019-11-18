@@ -274,16 +274,17 @@ class CompleteTheClueRepository implements ClueInterface
         if ($relic) {
             $totalTreasureCompleted = $this->user->hunt_user_v1()
                                         ->where(['relic_id'=> $this->huntUser->relic_id, 'status'=> 'completed'])
-                                        ->pluck('collected_piece')
-                                        ->filter()
-                                        ->values()
-                                        ->sum();
+                                        ->count();
+                                        // ->pluck('collected_piece')
+                                        // ->filter()
+                                        // ->values()
+                                        // ->sum();
 
             $totalPiecesRemaining = $relic->pieces - $totalTreasureCompleted;
             $pieceRemaining = $totalTreasureCompleted + 1;
             // $totalPiecesRemaining = collect($relic->pieces)->whereNotIn('id', $totalTreasureCompleted)->pluck('id');
             // $pieceRemaining = collect($relic->pieces)->whereNotIn('id', $totalTreasureCompleted)->pluck('id')->shuffle()->first();
-
+            
             if ($totalPiecesRemaining == 1) {
                 $data['collected_relic'] = (new AddRelicService)->setUser($this->user)->setRelicId($this->huntUser->relic_id)->add()->getRelic(['_id', 'complexity','icon']);
                 // $data['collected_piece'] = $this->addPiece($pieceRemaining);

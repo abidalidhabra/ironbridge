@@ -54,6 +54,12 @@ class UserHelper {
 		// 			->with('season:_id,name')
 		// 			->select('_id', 'name', 'desc', 'active', 'icon', 'complexity', 'season_id', 'fees')
 		// 			->get();
+		// $relicsInfo = $user->relics_info()->select('_id', 'complexity', 'icon')->get();
+		// $relics = $user->relics->map(function($relic) use ($relicsInfo) { 
+		// 	// dd($relic, $relicsInfo->toArray());
+		// 	$relic['info'] = $relicsInfo->where('_id', $relic['id'])->first(); 
+		// 	return $relic; 
+		// });
 		return [
 			'avatars' => $avatars,
 			'widgets' => $widgets,
@@ -63,7 +69,7 @@ class UserHelper {
 			'events_cities' => $eventsCities,
 			'free_outfit_occupied' => $user->free_outfit_taken,
 			'latest_news' => News::latest()->limit(1)->get()->map(function($news) { return $news->setHidden(['valid_till', 'updated_at']); }),
-			'relics' => $user->relics()->select('_id', 'complexity', 'icon')->get(),
+			// 'relics' => $relics,
 			'available_complexities' => $user->getAvailableComplexities(),
 			// 'used_widgets' => $user->used_widgets,
 			// 'plans' => $plans,

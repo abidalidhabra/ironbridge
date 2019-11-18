@@ -84,7 +84,7 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
         if ($this->user) {
             $userMiniGames['locked'] = $this->user->practice_games()
                                         ->with('game:id')
-                                        ->whereNull('unlocked_at')
+                                        ->whereNotNull('unlocked_at')
                                         ->limit($noOfClues)
                                         ->select('_id', 'game_id', 'unlocked_at')
                                         ->get()

@@ -106,7 +106,7 @@ class CompleteTheMiniGameService
         //  - Mark the minigame as complete and piece as collected
         if (
             (isset($minTarget['score']) && ($minTarget['score'] <= (int)$request->score)) ||
-            (isset($minTarget['time']) && ($minTarget['time'] >= (int)$request->time))
+            // (isset($minTarget['time']) && ($minTarget['time'] >= (int)$request->time))
         ) {
             $this->addCompletionTimes($this->practiceGameUser);
             $this->addCompletedAt($this->practiceGameUser);
@@ -119,10 +119,11 @@ class CompleteTheMiniGameService
         if (isset($countableTarget['score']) && ($countableTarget['score'] <= (int)$request->score)) {
             $lastPlay['score'] = (int)$request->score;
             $youAreAtHigher = true;
-        }else if(isset($countableTarget['time']) && ($countableTarget['time'] >= (int)$request->time)){
-            $lastPlay['time'] = (int)$request->time;
-            $youAreAtHigher = true;
         }
+        // else if(isset($countableTarget['time']) && ($countableTarget['time'] >= (int)$request->time)){
+        //     $lastPlay['time'] = (int)$request->time;
+        //     $youAreAtHigher = true;
+        // }
 
         /** Status of 2 & 3 Gateways **/
         $xpReward = new stdClass;

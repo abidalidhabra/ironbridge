@@ -26,7 +26,9 @@ class AddRelicService
     }
 
     public function add() {
-        $this->user->relics()->attach($this->relicId);
+
+        // $this->user->relics()->attach($this->relicId);
+        $this->userRepository->addRelic($this->relicId);
         return $this;
     }
 

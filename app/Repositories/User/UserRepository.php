@@ -4,6 +4,7 @@ namespace App\Repositories\User;
 
 use App\Models\v1\User;
 use App\Models\v1\WidgetItem;
+use App\Repositories\RelicRepository;
 use App\Repositories\User\UserRepositoryInterface;
 use Exception;
 use Illuminate\Support\Collection;
@@ -216,8 +217,15 @@ class UserRepository implements UserRepositoryInterface
         return $ids;
     }
     
+    // public function addRelic($relicId)
+    // {
+    //     return $this->user->push('relics', $relicId, true);
+    // }
+
     public function addRelic($relicId)
     {
-        return $this->user->push('relics', $relicId, true);
+        $status = $this->model->where('_id', $this->user->id)->where('relics.id', '!=', $relicId)->push('relics', ['id'=> $relicId, 'status'=> false]);
+        (new RelicRepository)->setRelicId($relicId)->addUser($this->user->id);
+        return ['_id'=> $relicId, 'status'=> false];
     }
 }

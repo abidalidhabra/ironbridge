@@ -8,6 +8,7 @@ class RelicRepository
 {
 
     protected $model;
+    protected $relicId;
 
     public function __construct()
     {
@@ -27,5 +28,17 @@ class RelicRepository
     public function getModel()
     {
         return $this->model;
+    }
+
+    public function setRelicId($relicId)
+    {
+        $this->relicId = $relicId;
+        return $this;
+    }
+
+    public function addUser($userId)
+    {
+        $this->model->where('_id', $this->relicId)->push('users', $userId, true);
+        return $userId;
     }
 }

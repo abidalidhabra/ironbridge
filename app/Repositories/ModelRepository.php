@@ -21,6 +21,11 @@ class ModelRepository
         return $this->model->all($fields);
     }
 
+    public function get($fields = ['*'])
+    {
+        return $this->model->all($fields);
+    }
+
     public function with($ralation = null, \Closure $callback = null)
     {
         if ($callback) {
@@ -33,6 +38,15 @@ class ModelRepository
     public function whereHas($relation, \Closure $callback = null)
     {
         return $this->model->whereHas($relation, $callback);
+    }
+
+    public function where($field, $operator = null, $value = null)
+    {
+        if (count(func_get_args()) == 1) {
+            return $this->model->where($field);
+        }else{
+            return $this->model->where(...func_get_args());
+        }
     }
 
     public function getModel()

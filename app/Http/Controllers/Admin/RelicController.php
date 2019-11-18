@@ -5,13 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\v2\Relic;
 use App\Models\v2\Season;
+use App\Repositories\Hunt\ParticipationInRandomHuntRepository;
 use App\Services\Hunt\SponserHunt\AllotGameToClueService;
+use Auth;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
-use DB;
-use Auth;
 
 class RelicController extends Controller
 {
@@ -67,10 +68,13 @@ class RelicController extends Controller
         // $request->active_icon->store('seasons/'.$season->id, $this->disk);
         // $request->inactive_icon->store('seasons/'.$season->id, $this->disk);
         
-
+        $miniGames = (new ParticipationInRandomHuntRepository)->randomizeGames(1);
         Relic::create([
             'icon'=> $request->icon->hashName(),
             'complexity'=> (int)$request->complexity,
+            'pieces'=> (int)$request->pieces,
+            'game_id'=> $miniGames[0]->id;
+            'game_variation_id'=> $miniGames[0]->game_variation()->limit(1)->first()->id;
             'pieces'=> (int)$request->pieces,
             //'pieces'=> $this->allotGameToClueService->allot($request),
         ]);
