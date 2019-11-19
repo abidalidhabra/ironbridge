@@ -27,7 +27,8 @@ class AddXPService
 
     public function allotMinigames($gameId)
     {
-        $practiceGameUser = $this->user->practice_games()->whereNull('unlocked_at')->whereIn('game_id', $gameId)->with('game:_id,name')->select('_id', 'game_id', 'user_id', 'unlocked_at')->get();
+        // $practiceGameUser = $this->user->practice_games()->whereNull('unlocked_at')->whereIn('game_id', $gameId)->with('game:_id,name')->select('_id', 'game_id', 'user_id', 'unlocked_at')->get();
+        $practiceGameUser = $this->user->practice_games()->whereIn('game_id', $gameId)->with('game:_id,name')->select('_id', 'game_id', 'user_id', 'unlocked_at')->get();
         return (new PracticeGameUserRepository)->unlockTheGame($practiceGameUser);
     }
 
@@ -75,6 +76,8 @@ class AddXPService
     public function add($points) {
         $this->userRepository->addXp($points);
         $data = $this->hikeAgent();
+        $this->userRepository->allotAgentLevel(-1); // static
+        $this->userRepository->addXp(($points * -1)); // static
         return $data;
     }
 }

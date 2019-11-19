@@ -14,7 +14,7 @@ class GetHuntParticipationDetailRepository
         // get hunt user info
         $huntUser = (new HuntUserRepository)
                     ->where('_id', $huntUserId)
-                    ->select('_id', 'user_id', 'status', 'complexity', 'estimated_time')
+                    ->select('_id', 'user_id', 'status', 'complexity', 'estimated_time', 'relic_reference_id')
                     ->first();
             
             // get clues info
@@ -28,10 +28,6 @@ class GetHuntParticipationDetailRepository
                             ->with('game_variation:_id,variation_name,variation_complexity,target,no_of_balls,bubble_level_id,game_id,variation_size,row,column')
                             ->select('_id', 'status', 'game_id', 'game_variation_id', 'hunt_user_id', 'radius', 'index')
                             ->get();
-
-            // get non-completion clues
-            // $remainingClues = $huntUserDetails->where('status', '!=' ,'completed')->values();
-            // $totalCompletedClues = $huntUserDetails->where('status', 'completed')->values();
             
             // pause the running clues of previous running hunt
             $initializeAction = (new ClueFactory)->initializeAction('paused');

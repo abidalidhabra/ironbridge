@@ -17,7 +17,7 @@ class GetLastRunningRandomHuntRepository
                         $query->where('_id', auth()->user()->id);
                     })
                     ->whereIn('status', ['participated', 'running', 'paused'])
-                    ->latest()->select('_id', 'user_id', 'status', 'complexity')->first();
+                    ->latest()->select('_id', 'user_id', 'status', 'complexity', 'relic_reference_id')->first();
 
         if ($huntUser) {
             $runningHuntFound = true;
