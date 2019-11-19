@@ -57,6 +57,7 @@ class RelicController extends Controller
             'icon'=> 'required|image',
             'complexity'=> 'required|numeric',
             'pieces'=> 'required|numeric',
+            'status'=> 'required|in:active,inactive',
             // 'pieces.*.image'=> 'required|image',
         ]);
 
@@ -73,9 +74,10 @@ class RelicController extends Controller
             'icon'=> $request->icon->hashName(),
             'complexity'=> (int)$request->complexity,
             'pieces'=> (int)$request->pieces,
-            'game_id'=> $miniGames[0]->id;
-            'game_variation_id'=> $miniGames[0]->game_variation()->limit(1)->first()->id;
+            // 'game_id'=> $miniGames[0]->id,
+            // 'game_variation_id'=> $miniGames[0]->game_variation()->limit(1)->first()->id,
             'pieces'=> (int)$request->pieces,
+            'active'=> ($request->status=='active')?true:false,
             //'pieces'=> $this->allotGameToClueService->allot($request),
         ]);
          
@@ -120,6 +122,7 @@ class RelicController extends Controller
             // 'icon'=> 'nullable|image',
             'complexity'=> 'required|numeric|integer:min:1',
             'pieces'=> 'required|numeric',
+            'status'=> 'required|in:active,inactive',
         ]);
 
         if ($validator->fails()) {
@@ -143,11 +146,13 @@ class RelicController extends Controller
 
 
 
-        $request['status'] = "edit";
+        //$request['status'] = "edit";
         $request['id'] = $id;
 
         $relic->complexity = (int) $request->complexity;
         $relic->pieces = (int) $request->pieces;
+        $relic->active = ($request->status=='active')?true:false;
+
         
         $relic->save();
 
