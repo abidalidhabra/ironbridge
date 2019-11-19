@@ -28,7 +28,7 @@ class HuntParticipationRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        $huntUser = (new HuntUserRepository)->getModel()->where(['user_id'=> $this->user->id, 'hunt_id'=> $value])->count();
+        $huntUser = (new HuntUserRepository)->getModel()->where(['user_id'=> $this->user->id, 'relic_id'=> $value])->count();
         return ($huntUser)? false: true;
     }
 

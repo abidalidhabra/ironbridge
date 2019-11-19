@@ -41,7 +41,7 @@ class CompleteTheClueRepository implements ClueInterface
 
         // get single hunt user detail
         $this->huntUserDetail = (new HuntUserDetailRepository)->find($request->hunt_user_details_id);
-        $this->huntUser   = $this->huntUserDetail->hunt_user()->select('_id', 'complexity', 'user_id', 'relic_id')->first();
+        $this->huntUser   = $this->huntUserDetail->hunt_user()->select('_id', 'complexity', 'user_id', 'relic_reference_id')->first();
         $huntUserDetails  = $this->huntUserDetail->hunt_user->hunt_user_details()->get();
 
         // check if hunt is completed
@@ -211,7 +211,7 @@ class CompleteTheClueRepository implements ClueInterface
         //     }
 
         //     $message[] = 'Relic provided.';
-        //     $rewardData['relic_id'] = $relic->id;
+        //     $rewardData['relic_reference_id'] = $relic->id;
         //     $rewardData['relic'] = ['id'=> $relic->id, 'icon'=> $relic->icon];
         // }
 
@@ -270,29 +270,20 @@ class CompleteTheClueRepository implements ClueInterface
                 -> all map pieces have collected.
         **/
         $data = [ 'collected_piece'=> 0, 'collected_relic'=> new stdClass ];
-        $relic = $this->huntUser->relic()->select('_id', 'pieces')->first();
+        $relic = $this->huntUser->relic_reference()->select('_id', 'pieces')->first();
         if ($relic) {
             $totalTreasureCompleted = $this->user->hunt_user_v1()
-                                        ->where(['relic_id'=> $this->huntUser->relic_id, 'status'=> 'completed'])
+                                        ->where(['relic_reference_id'=> $this->huntUser->relic_reference_id, 'status'=> 'completed'])
                                         ->count();
-                                        // ->pluck('collected_piece')
-                                        // ->filter()
-                                        // ->values()
-                                        // ->sum();
-
+                                        
             $totalPiecesRemaining = $relic->pieces - $totalTreasureCompleted;
-            $pieceRemaining = $totalTreasureCompleted + 1;
-            // $totalPiecesRemaining = collect($relic->pieces)->whereNotIn('id', $totalTreasureCompleted)->pluck('id');
-            // $pieceRemaining = collect($relic->pieces)->whereNotIn('id', $totalTreasureCompleted)->pluck('id')->shuffle()->first();
-            
-            if ($totalPiecesRemaining == 1) {
-                $data['collected_relic'] = (new AddRelicService)->setUser($this->user)->setRelicId($this->huntUser->relic_id)->add()->getRelic(['_id', 'complexity','icon']);
-                // $data['collected_piece'] = $this->addPiece($pieceRemaining);
-                $data['collected_piece'] = $this->addPiece($pieceRemaining);
+            // $pieceRemaining = $totalTreasureCompleted + 1;
+            if ($totalPiecesRemaining <= 0) {
+                $data['collected_relic'] = (new AddRelicService)->setUser($this->user)->setRelicId($this->huntUser->relic_reference_id)->add()->getRelic(['_id', 'complexity','icon']);
+                $data['collected_piece'] = $this->addPiece($totalTreasureCompleted);
                 return $data;
             }else {
-                // $data['collected_piece'] = $this->addPiece($pieceRemaining);
-                $data['collected_piece'] = $this->addPiece($pieceRemaining);
+                $data['collected_piece'] = $this->addPiece($totalTreasureCompleted);
             }
         }
         return $data;

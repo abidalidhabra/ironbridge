@@ -34,6 +34,6 @@ class AddRelicService
 
     public function getRelic($fields = ['*'])
     {
-        return $this->user->relics()->where('_id', $this->relicId)->first($fields);
+        return $this->user->relics_info()->where('_id', $this->relicId)->first($fields);
     }
 }

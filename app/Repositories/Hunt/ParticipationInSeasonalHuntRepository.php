@@ -2,16 +2,11 @@
 
 namespace App\Repositories\Hunt;
 
-use App\Http\Controllers\Api\Hunt\RandomHuntController;
-use App\Http\Controllers\Api\v2\HuntController;
-use App\Models\v1\Game;
 use App\Models\v2\HuntUser;
 use App\Models\v2\HuntUserDetail;
-use App\Repositories\Game\GameRepository;
 use App\Repositories\Hunt\Contracts\HuntParticipationInterface;
-use App\Repositories\Hunt\GetHuntParticipationDetailRepository;
+use App\Repositories\Hunt\ParticipationInRandomHuntRepository;
 use App\Repositories\RelicRepository;
-use App\Repositories\User\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -24,50 +19,51 @@ class ParticipationInSeasonalHuntRepository implements HuntParticipationInterfac
     {
         $this->user = auth()->user();
         $this->relic = (new RelicRepository)->find($request->relic_id);
-        $availableGold = (new UserRepository($this->user))->deductGold($this->relic->fees);
         $huntUser = $this->add($request);
         $clueDetails = $this->addClues($request, $huntUser);
 
-        $data = (new GetHuntParticipationDetailRepository)->get($huntUser->id);
+        $data = (new GetRelicHuntParticipationRepository)->get($huntUser->id);
 
         return [
             'hunt_user'=> $data['hunt_user'],
             'clues_data'=> $data['clues_data'],
-            'available_gold'=> $availableGold,
         ];
     }
 
     public function add($request) : HuntUser
     {
         return $this->user->hunt_user_v1()->create([
-            'hunt_id'=> $this->relic->id,
+            'relic_id'=> $this->relic->id,
             'complexity'=> $this->relic->complexity,
-            'estimated_time'=> $this->getEpproximatedTime(),
+            'estimated_time'=> $this->getEpproximatedTime($request->total_clues),
             'location'=> [
                 'type'=> "Point",
                 'coordinates'=> [0, 0]
-            ] 
+            ]
         ]);
     }
 
     public function addClues($request, $huntUser) : Collection
     {
 
+        // Get the games in random orders
+        $miniGames = (new ParticipationInRandomHuntRepository)->setUser($this->user)->randomizeGames($request->total_clues);
+
+        // Reface the games in random orders
         $huntUserDetails = collect();
-        foreach ($this->relic->clues as $index => $clue) {
+        for ($i=0; $i < $request->total_clues; $i++) { 
             $huntUserDetails[] = new HuntUserDetail([
-                'index' => ($index + 1),
-                'name' => $clue['name'],
-                'desc' => $clue['desc'],
-                'game_id'  => $clue['game_id'],
-                'radius'  => $clue['radius'],
-                'game_variation_id' => $clue['game_variation_id'],
+                'index' => ($i + 1),
+                'location' => null,
+                'game_id'  => $miniGames[$i]->id,
+                'radius'   => 5,
+                'game_variation_id' => $miniGames[$i]->game_variation()->limit(1)->first()->id,
             ]);
         }
         return $huntUser->hunt_user_details()->saveMany($huntUserDetails);
     }
 
-    public function getEpproximatedTime()
+    public function getEpproximatedTime($totalClues)
     {
         if ($this->relic->complexity == 1) {
             $distance = 50; // Level 1 hunts have clues 50 meters apart. 3 stops per hunt.
@@ -82,7 +78,7 @@ class ParticipationInSeasonalHuntRepository implements HuntParticipationInterfac
         }
 
         $distance = $distance / 1000; // This distance in km.
-        $minutesToBeTaken = ((((60 / 4.5) * $distance) + 5) * count($this->relic->clues));
-        return $minutesToBeTaken * 60;
+        $minutesToBeTaken = ((((60 / 4.5) * $distance) + 5) * $totalClues);
+        return round($minutesToBeTaken * 60, 2);
     }
 }
