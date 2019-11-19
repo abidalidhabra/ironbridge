@@ -40,16 +40,17 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
 
     public function add($request) : HuntUser
     {
-        $userRelics = collect($this->user->relics);
-        $relic = Relic::when(($userRelics->count() > 0), function($query) {
-                    $query->whereNotIn('_id', $this->user->relics->toArray());
+        $relic = Relic::when(($this->user->relics->count() > 0), function($query) {
+                    $query->whereNotIn('_id', $this->user->relics->pluck('id')->toArray());
                 })
+                ->where('complexity', (int)$request->complexity)
                 ->active()
+                ->orderBy('created_at', 'asc')
                 ->first();
 
         return $this->user->hunt_user_v1()->create([
             'complexity'=> (int)$request->complexity,
-            'relic_id'=> ($relic)? $relic->id: null,
+            'relic_reference_id'=> ($relic)? $relic->id: null,
             'location'=> [
                 'type'=> "Point",
                 'coordinates'=> [(float)$request->longitude, (float)$request->latitude]
@@ -75,6 +76,12 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
             ]);
         }
         return $huntUser->hunt_user_details()->saveMany($huntUserDetails);
+    }
+
+    public function setUser($user)
+    {
+        $this->user = $user;
+        return $this;
     }
 
     public function randomizeGames(int $noOfClues) :Collection

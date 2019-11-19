@@ -8,6 +8,7 @@ use App\Http\Requests\v1\ParticipateRequest;
 use App\Repositories\Hunt\Factory\HuntFactory;
 use App\Repositories\Hunt\GetHuntParticipationDetailRepository;
 use App\Repositories\Hunt\GetLastRunningRandomHuntRepository;
+use App\Repositories\Hunt\GetRelicHuntParticipationRepository;
 use App\Repositories\Hunt\HuntUserDetailRepository;
 use App\Repositories\Hunt\HuntUserRepository;
 use Exception;
@@ -48,12 +49,13 @@ class RandomHuntController extends Controller
     {
         try {
 
-            $data = (new GetHuntParticipationDetailRepository)->get($request->hunt_user_id);
+            // $data = (new GetHuntParticipationDetailRepository)->get($request->hunt_user_id);
+            $data = (new GetRelicHuntParticipationRepository)->get($request->hunt_user_id);
             return response()->json([
                 'message' => 'Last Hunt\'s information has been retrieved.', 
-                'last_running_hunt'=> [
+                'relic_details'=> [
                     'hunt_user'=> $data['hunt_user'], 
-                    'clues_data'=> $data['clues_data'], 
+                    'clues_data'=> $data['clues_data'],
                 ]
             ]);
         } catch (Exception $e) {

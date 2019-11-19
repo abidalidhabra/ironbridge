@@ -68,4 +68,9 @@ class Relic extends Eloquent
     public function game_variation(){
         return $this->belongsTo('App\Models\v1\GameVariation','game_variation_id');     
     }
+
+    public function hunt_users()
+    {
+        return $this->hasMany(HuntUser::class);
+    }
 }
