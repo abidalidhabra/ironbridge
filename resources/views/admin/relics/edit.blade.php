@@ -65,7 +65,14 @@
                             <label>Relic Map Pieces:</label>
                             <input type="number" name="pieces" class="form-control" placeholder="Enter the relic map pieces" value="{{ $relic->pieces }}">
                         </div>
-                        
+                        <div class="form-group">
+                            <label>Status:</label>
+                            <select name="status" class="form-control">
+                                <option value="">Please select status</option>
+                                <option value="active" {{ ($relic->active == true)?'selected': '' }}>Active</option>
+                                <option value="inactive" {{ ($relic->active == false)?'selected': '' }}>Inactive</option>
+                            </select>
+                        </div>
                         
                     </div>
                 </div>

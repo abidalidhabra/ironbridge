@@ -48,6 +48,14 @@
                             <label>Relic Map Pieces:</label>
                             <input type="number" name="pieces" class="form-control" placeholder="Enter the relic map pieces">
                         </div>
+                        <div class="form-group">
+                            <label>Status:</label>
+                            <select name="status" class="form-control">
+                                <option value="">Please select status</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
 
                         <!-- <div class="clues">
                             @include('admin.relics.clues.create', ['index'=> 0])
