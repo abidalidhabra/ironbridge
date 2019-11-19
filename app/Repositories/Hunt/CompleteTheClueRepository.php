@@ -73,14 +73,17 @@ class CompleteTheClueRepository implements ClueInterface
             $dataToBeUpdate = ['status'=> 'completed', 'ended_at'=> new UTCDateTime(now()), 'finished_in'=> $totalFinishedIn];
             (new HuntUserRepository)->update($dataToBeUpdate, ['_id'=> $this->huntUserDetail->hunt_user_id]);
             
-            // generate the reward
-
-            $rewardData = $this->generateReward();
-            
-            // Add Map Piece OR Provide XP REWARDS
-            $data = $this->addMapPiece();
-            $rewardData['collected_relic'] = $data['collected_relic'];
-            $rewardData['collected_piece'] = $data['collected_piece'];
+            if ($this->huntUser->relic_id) {
+                $rewardData['collected_relic'] = $this->user->relics_info()->where('_id', $this->huntUser->relic_id)->select('_id', 'icon', 'complexity')->first();
+            }else{
+                // generate the reward
+                $rewardData = $this->generateReward();
+                
+                // Add Map Piece OR Provide XP REWARDS
+                $data = $this->addMapPiece();
+                $rewardData['collected_relic'] = $data['collected_relic'];
+                $rewardData['collected_piece'] = $data['collected_piece'];
+            }
             $huntCompleted = true;
         }
        
@@ -97,11 +100,11 @@ class CompleteTheClueRepository implements ClueInterface
         return ['huntUserDetail'=> $this->huntUserDetail, 'rewardData'=> $rewardData, 'finishedIn'=> $totalFinishedIn];
     }
 
-    public function unlockeMiniGameIfLocked()
-    {
-        return PracticeGameUser::where(['game_id'=> $this->huntUserDetail->game_id, 'user_id'=> $this->user->id])->whereNull('unlocked_at')
-        ->update(['unlocked_at'=> new UTCDateTime(now())]);
-    }
+    // public function unlockeMiniGameIfLocked()
+    // {
+    //     return PracticeGameUser::where(['game_id'=> $this->huntUserDetail->game_id, 'user_id'=> $this->user->id])->whereNull('unlocked_at')
+    //     ->update(['unlocked_at'=> new UTCDateTime(now())]);
+    // }
 
     public function generateReward(){
 
@@ -297,11 +300,11 @@ class CompleteTheClueRepository implements ClueInterface
                 -> all map pieces have collected.
         **/
         
-        $XPManagementRepository = new XPManagementRepository;
+        $xPManagementRepository = new XPManagementRepository;
         $complexity = $this->huntUser->complexity;
-        $xp = $XPManagementRepository->getModel()->where(['event'=> 'clue_completion', 'complexity'=> $complexity])->first()->xp;
+        $xp = $xPManagementRepository->getModel()->where(['event'=> 'clue_completion', 'complexity'=> $complexity])->first()->xp;
         if ($treasureCompleted) {
-            $xp += $XPManagementRepository->getModel()->where(['event'=> 'treasure_completion', 'complexity'=> $complexity])->first()->xp;
+            $xp += $xPManagementRepository->getModel()->where(['event'=> 'treasure_completion', 'complexity'=> $complexity])->first()->xp;
             // $xp += $this->huntUserDetail->game->practice_games_targets->targets->sortBy('stage')->first()['xp'];
         }
         $xpReward = $this->addXPService->add($xp);
