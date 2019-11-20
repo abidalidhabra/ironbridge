@@ -51,8 +51,8 @@ class CompleteTheMiniGameService
                 throw (new FreezeModeRunningException('This mini game is under the freeze mode.'))
                         ->setCompletionTimes($this->practiceGameUser->completion_times)
                         ->setAvailableSkeletonKeys($data['available_skeleton_keys'])
-                        ->setLastPlay($this->practiceGameUser->last_play)
-                        ->setXPReward($data['xp_reward']);
+                        ->setLastPlay($this->practiceGameUser->last_play);
+                        // ->setXPReward($data['xp_reward']);
             }else {
 	            // Allot a key to user's account if aligible
 	            $data = $this->allotKeyIfEligible($request);
@@ -90,40 +90,34 @@ class CompleteTheMiniGameService
 
     public function allotKeyIfEligible($request, $freezeMode = false)
     {
-        /** Gateway 1 **/
+        /** check if bucket_size full **/
         $keyToBeCredit = (collect($this->user->skeleton_keys)->where('used_at', null)->count() >= $this->user->skeletons_bucket)?0:1;
         
-        /** Gateway 2 **/
+        /** check if score passed **/
         $scores = $this->practiceGameUser->practice_games_targets->targets->sortBy('stage')->values();
-        $minTarget = $scores->first();
-        $countableTarget = $scores->when($freezeMode, function($query) {
-                                return $query->where('stage', '>', $this->practiceGameUser->last_play['stage']);
-                            })
-                            ->first();
-
-        // If users cross the target of stage 1:
-        //  - Increase the completion time.
-        //  - Mark the minigame as complete and piece as collected
-        if (
-            (isset($minTarget['score']) && ($minTarget['score'] <= (int)$request->score))
-            // (isset($minTarget['time']) && ($minTarget['time'] >= (int)$request->time))
-        ) {
-            $this->addCompletionTimes($this->practiceGameUser);
-            $this->addCompletedAt($this->practiceGameUser);
-        }
+        $countableTargets = $scores
+                                ->where('score', '<=', (int)$request->score)
+                                ->when($freezeMode, function($query) {
+                                    return $query->where('stage', '>', $this->practiceGameUser->last_play['stage']);
+                                })
+                                ->values();
 
         $lastPlay = [];
         $youAreAtHigher = false;
-        $lastPlay['stage'] = $countableTarget['stage'] ?? 0;
 
-        if (isset($countableTarget['score']) && ($countableTarget['score'] <= (int)$request->score)) {
+        if ($countableTargets->count() > 0) {
+            
+            if (!$freezeMode && $countableTargets->first()['stage'] == 1) {
+                /** Increase completion_times only for stage 1 **/
+                $this->addCompletionTimes($this->practiceGameUser);
+                /** Mark the minigame as complete and piece as collected **/
+                $this->addCompletedAt($this->practiceGameUser);
+            }
+
+            $lastPlay['stage'] = $countableTargets->last()['stage'];
             $lastPlay['score'] = (int)$request->score;
             $youAreAtHigher = true;
         }
-        // else if(isset($countableTarget['time']) && ($countableTarget['time'] >= (int)$request->time)){
-        //     $lastPlay['time'] = (int)$request->time;
-        //     $youAreAtHigher = true;
-        // }
 
         /** Status of 2 & 3 Gateways **/
         $xpReward = new stdClass;
@@ -131,17 +125,20 @@ class CompleteTheMiniGameService
             
             // Add last play as proof
             $this->addLastPlay($lastPlay);
-            $xpReward = (new AddXPService)->setUser($this->user)->add($countableTarget['xp']);
+            // $xpReward = (new AddXPService)->setUser($this->user)->add($countableTarget['xp']);
 
-            // increase the key piece & Add skeleton key to user's account if its 3rd piece
-            $pieceToBeUpdate = (($this->user->pieces_collected + 1) == 3)? -2: 1; 
-            if ($lastPlay['stage'] == 1) {
+            for ($i=0; $i < $countableTargets->count(); $i++) { 
+                
+                // increase the key piece & Add skeleton key to user's account if its 3rd piece
+                $pieceToBeUpdate = (($this->user->pieces_collected + 1) == 3)? -2: 1; 
                 $this->user->increment('pieces_collected', $pieceToBeUpdate);
-            }
-            if ($pieceToBeUpdate < 0) {
-                (new UserRepository($this->user))->addSkeletonKeys($keyToBeCredit);
+                
+                if ($pieceToBeUpdate < 0) {
+                    (new UserRepository($this->user))->addSkeletonKeys($keyToBeCredit);
+                }
             }
         }
+
         return [
             'xp_reward'=> (is_array($xpReward) && count($xpReward))? $xpReward: new stdClass,
             'available_skeleton_keys'=> $this->user->available_skeleton_keys

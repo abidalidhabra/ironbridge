@@ -48,7 +48,7 @@ class AddXPService
 
     public function hikeAgent()
     {
-        $complementaries = AgentComplementary::where('agent_level', '>', $this->user->agent_status['level'])->where('xps', '<=', $this->user->agent_status['xp'])->first();
+        $complementaries = AgentComplementary::where('agent_level', '>', $this->user->agent_status['level'])->where('xps', '<=', $this->user->agent_status['xp'])->latest()->first();
 
         if ($complementaries) {
 

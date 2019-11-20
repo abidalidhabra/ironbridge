@@ -90,7 +90,7 @@ class MGController extends Controller
                 'pieces_collected'=> $this->user->pieces_collected,
                 'agent_status'=> $this->user->agent_status,
                 'last_play'=> $data['last_play'],
-                'xp_reward'=> $data['xp_reward'],
+                // 'xp_reward'=> $data['xp_reward'],
             ]);
         } catch(FreezeModeRunningException $e) {
             return response()->json([
@@ -100,7 +100,7 @@ class MGController extends Controller
                 'pieces_collected'=> $this->user->pieces_collected,
                 'agent_status'=> $this->user->agent_status,
                 'last_play'=> $e->getLastPlay(),
-                'xp_reward'=> $e->getXPReward(),
+                // 'xp_reward'=> $e->getXPReward(),
             ], 422);
         } catch (Exception $e) {
             return response()->json(['message'=> $e->getMessage().' on line '.$e->getLine().' in '.$e->getFile()], 500);
