@@ -295,7 +295,7 @@ class CompleteTheClueRepository implements ClueInterface
     public function addXP($treasureCompleted)
     {
         /**
-            -> Add XP Multiple time IF:
+            -> Add XP twice IF:
                 -> relic field is not null.
                 -> all map pieces have collected.
         **/

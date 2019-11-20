@@ -105,7 +105,7 @@ class CompleteTheMiniGameService
         //  - Increase the completion time.
         //  - Mark the minigame as complete and piece as collected
         if (
-            (isset($minTarget['score']) && ($minTarget['score'] <= (int)$request->score)) ||
+            (isset($minTarget['score']) && ($minTarget['score'] <= (int)$request->score))
             // (isset($minTarget['time']) && ($minTarget['time'] >= (int)$request->time))
         ) {
             $this->addCompletionTimes($this->practiceGameUser);
@@ -135,7 +135,9 @@ class CompleteTheMiniGameService
 
             // increase the key piece & Add skeleton key to user's account if its 3rd piece
             $pieceToBeUpdate = (($this->user->pieces_collected + 1) == 3)? -2: 1; 
-            $this->user->increment('pieces_collected', $pieceToBeUpdate);
+            if ($lastPlay['stage'] == 1) {
+                $this->user->increment('pieces_collected', $pieceToBeUpdate);
+            }
             if ($pieceToBeUpdate < 0) {
                 (new UserRepository($this->user))->addSkeletonKeys($keyToBeCredit);
             }
