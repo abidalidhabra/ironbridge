@@ -38,9 +38,13 @@ class GetRelicHuntParticipationRepository
                 return $clue;
             });
 
+        $remainingClues = $huntUserDetails->where('status', '!=' ,'completed')->count();
+        $completedClues = $huntUserDetails->where('status', 'completed')->count();
         return [
             'clues_data'=> $huntUserDetails, 
             'hunt_user'=> $huntUser,
+            'total_remaining_clues'=> $remainingClues,
+            'total_completed_clues'=> $completedClues
         ];
     }
 }

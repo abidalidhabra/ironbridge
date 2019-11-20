@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Hunt;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Hunt\HuntUserRequest;
 use App\Http\Requests\Hunt\RevokeTheRevealRequest;
 use App\Http\Requests\v1\ParticipateRequest;
 use App\Repositories\Hunt\Factory\HuntFactory;
@@ -25,7 +26,7 @@ class RandomHuntController extends Controller
         return response()->json($response);
     }
 
-    public function initiateTheHunts(Request $request)
+    public function initiateTheHunts(HuntUserRequest $request)
     {
         try {
 
@@ -45,7 +46,7 @@ class RandomHuntController extends Controller
         }
     }
 
-    public function getRelicDetails(Request $request)
+    public function getRelicDetails(HuntUserRequest $request)
     {
         try {
 
@@ -56,6 +57,8 @@ class RandomHuntController extends Controller
                 'relic_details'=> [
                     'hunt_user'=> $data['hunt_user'], 
                     'clues_data'=> $data['clues_data'],
+                    'total_remaining_clues'=> $data['total_remaining_clues'],
+                    'total_completed_clues'=> $data['total_completed_clues'],
                 ]
             ]);
         } catch (Exception $e) {
