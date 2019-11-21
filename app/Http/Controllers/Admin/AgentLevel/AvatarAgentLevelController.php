@@ -270,10 +270,13 @@ class AvatarAgentLevelController extends Controller
         })
         ->addColumn('action', function($relic) use ($admin){
                 $html = '';
-                $html .= '<a href="'.route('admin.avatar-agent-levels.edit',$relic->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox edit_agent" data-id="'.$relic->id.'"></i></a>';
+                if(auth()->user()->hasPermissionTo('Edit Avatar / Agent Levels')){
+                    $html .= '<a href="'.route('admin.avatar-agent-levels.edit',$relic->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox edit_agent" data-id="'.$relic->id.'"></i></a>';
+                }
 
-                $html .= ' <a href="'.route('admin.avatar-agent-levels.destroy',$relic->id).'" data-action="delete" data-toggle="tooltip" title="Delete" ><i class="fa fa-trash iconsetaddbox"></i></a>';
-                
+                if(auth()->user()->hasPermissionTo('Delete Avatar / Agent Levels')){
+                    $html .= ' <a href="'.route('admin.avatar-agent-levels.destroy',$relic->id).'" data-action="delete" data-toggle="tooltip" title="Delete" ><i class="fa fa-trash iconsetaddbox"></i></a>';
+                }
                 $html .= ' <a href="'.route('admin.avatar-agent-levels.show',$relic->id).'" data-action="View" data-toggle="tooltip" title="View" ><i class="fa fa-eye iconsetaddbox"></i></a>';
 
                 //$html .= ' <a href="'.route('admin.hunts-agent-levels.show',$relic->id).'" data-action="View" data-toggle="tooltip" title="View" ><i class="fa fa-eye iconsetaddbox"></i></a>';

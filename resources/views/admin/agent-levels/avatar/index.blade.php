@@ -8,7 +8,7 @@
             <div class="col-md-6">
                 <h3>Avatar | Agent Levels</h3>
             </div>
-            @if(auth()->user()->hasPermissionTo('Add Agent Levels'))
+            @if(auth()->user()->hasPermissionTo('Add Avatar / Agent Levels'))
                 <div class="col-md-6 text-right modalbuttonadd">
                     <a href="{{ route('admin.avatar-agent-levels.create') }}" class="btn btn-info btn-md">Add</a>
                 </div>
@@ -24,7 +24,9 @@
                     <th>Sr.</th>
                     <th>Total Avatar Items</th>
                     <th>Agent Levels</th>
+                    @if(auth()->user()->hasPermissionTo('Delete Avatar / Agent Levels') || auth()->user()->hasPermissionTo('Edit Avatar / Agent Levels'))
                     <th>Action</th>
+                    @endif
                 </tr>
             </thead>
             <tbody></tbody>
@@ -58,7 +60,9 @@
                         { data:'DT_RowIndex',name:'_id' },
                         { data:'total_avatar',name:'total_avatar' },
                         { data:'agent_level',name:'agent_level'},
+                        @if(auth()->user()->hasPermissionTo('Delete Avatar / Agent Levels') || auth()->user()->hasPermissionTo('Edit Avatar / Agent Levels'))
                         { data:'action',name:'action' },
+                        @endif
                     ],
                     columnDefs: [{
                         orderable: false,

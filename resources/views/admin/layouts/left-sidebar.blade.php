@@ -62,7 +62,7 @@
 							</div>
 						</li>
 					@endif
-					@if($admin->hasPermissionTo('View Treasure Locations') || $admin->hasPermissionTo('View Complexity Targets') || $admin->hasPermissionTo('View Hunt Loot Tables'))
+					@if($admin->hasPermissionTo('View Treasure Locations') || $admin->hasPermissionTo('View Complexity Targets') || $admin->hasPermissionTo('View Hunt Loot Tables') || $admin->hasPermissionTo('View Hunts XP'))
 					<li >
 						<a href="javascript:void(0)" class="plusbttnbox myBtn" >Manage Hunts <i class="fa @if(Route::currentRouteName() == 'admin.mapsList' ||Route::currentRouteName() == 'admin.add_location' || Route::currentRouteName() == 'admin.boundary_map' || Route::currentRouteName() == 'admin.starComplexityMap' || Route::currentRouteName() == 'admin.edit_location' || Route::currentRouteName() == 'admin.complexityTarget.index' || Route::currentRouteName() == 'admin.rewards.index' || Route::currentRouteName() == 'admin.xpManagement.index' || Route::currentRouteName() == 'admin.xpManagement.edit') {{ 'fa-minus' }} @else {{ 'fa-plus' }} @endif" aria-hidden="true"></i></a>
 						<div class="dropdown custmenbox">
@@ -86,7 +86,9 @@
 								@if($admin->hasPermissionTo('View Hunt Loot Tables'))
 									<a href="{{ route('admin.rewards.index') }}" class="@if(Route::currentRouteName() == 'admin.rewards.index') {{ 'activelistsub' }} @endif">Hunt Loot Tables</a>
 								@endif
+								@if($admin->hasPermissionTo('View Hunts XP'))
 									<a href="{{ route('admin.xpManagement.index') }}" class="@if(Route::currentRouteName() == 'admin.xpManagement.index' || Route::currentRouteName() == 'admin.xpManagement.edit') {{ 'activelistsub' }} @endif">Hunts XP</a>
+								@endif
 							</div>
 						</div>
 					</li>
@@ -168,6 +170,7 @@
 						</div>
 					</li> -->
 					@endif
+
 					@if($admin->hasPermissionTo('View Relics') || $admin->hasPermissionTo('View Agent Levels'))
 					<!-- <li>
 						<a href="javascript:void(0)" class="plusbttnbox myBtn">Manage Relics
@@ -242,6 +245,7 @@
 						<a href="{{ route('admin.relics.index') }}">Manage Relics</a>
 					</li>
 					@endif
+
 					<li class="@if(Route::currentRouteName() == 'admin.loots.index' || 
 								Route::currentRouteName() == 'admin.loots.show') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.loots.index') }}">Manage Loot</a>
@@ -253,7 +257,7 @@
 
 
 
-					@if($admin->hasPermissionTo('View Agent Levels') || $admin->hasPermissionTo('View Hunt / Agent Levels'))
+					@if($admin->hasPermissionTo('View Agent Levels') || $admin->hasPermissionTo('View Hunt / Agent Levels') || $admin->hasPermissionTo('View Minigames / Agent Levels') || $admin->hasPermissionTo('View Avatar / Agent Levels') || $admin->hasPermissionTo('View Bucket Size / Agent Levels'))
 					<li>
 						<a href="javascript:void(0)" class="plusbttnbox myBtn">Manage Levels
 							<i 
@@ -296,26 +300,32 @@
 									">Hunt / Agent Levels</a>
 									@endif
 
+									@if($admin->hasPermissionTo('View Minigames / Agent Levels'))
 									<a href="{{ route('admin.minigames-agent-levels.index') }}" 
 									class="
 									@if(Route::currentRouteName() == 'admin.minigames-agent-levels.index') 
 										{{ 'activelistsub' }} 
 									@endif
 									">Minigames / Agent Levels</a>
+									@endif
 
+									@if($admin->hasPermissionTo('View Avatar / Agent Levels'))
 									<a href="{{ route('admin.avatar-agent-levels.index') }}" 
 									class="
 									@if(Route::currentRouteName() == 'admin.avatar-agent-levels.index' || Route::currentRouteName() == 'admin.avatar-agent-levels.create' || Route::currentRouteName() == 'admin.avatar-agent-levels.edit' || Route::currentRouteName() == 'admin.avatar-agent-levels.show') 
 										{{ 'activelistsub' }} 
 									@endif
 									">Avatar / Agent Levels</a>
-									
-									<a href="{{ route('admin.bucket-sizes.index') }}" 
-									class="
-									@if(Route::currentRouteName() == 'admin.bucket-sizes.index') 
-										{{ 'activelistsub' }} 
 									@endif
-									">Bucket Size / Agent Levels</a>
+									
+									@if($admin->hasPermissionTo('View Bucket Size / Agent Levels'))
+										<a href="{{ route('admin.bucket-sizes.index') }}" 
+										class="
+										@if(Route::currentRouteName() == 'admin.bucket-sizes.index') 
+											{{ 'activelistsub' }} 
+										@endif
+										">Bucket Size / Agent Levels</a>
+									@endif
 							</div>
 						</div>
 					</li>

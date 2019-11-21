@@ -23,13 +23,19 @@
                 </tr>
             </thead>
             <tbody>
+                @php
+                    $i = 1;
+                @endphp
                 @forelse($loots as $key => $value)
                     <tr>
-                      <th scope="row">1</th>
+                      <th scope="row">{{ $i }}</th>
                       <td>{{ $key }}</td>
                       <td>{{ implode(',', array_keys($value->groupBy('complexity')->toArray()))}}</td>
                       <td><a href="{{ route('admin.loots.show',$key) }}" data-action="View" data-toggle="tooltip" title="View" ><i class="fa fa-eye iconsetaddbox"></i></a></td>
                     </tr>
+                    @php
+                        $i++;
+                    @endphp
                 @empty
                 @endforelse
             </tbody>
