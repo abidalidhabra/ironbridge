@@ -54,9 +54,11 @@ class RelicController extends Controller
     public function store(Request $request, $season_slug)
     {
         $validator = Validator::make($request->all(), [
+            'name'=> 'required',
             'icon'=> 'required|image',
             'complexity'=> 'required|numeric',
             'pieces'=> 'required|numeric',
+            'number'=> 'required|numeric|integer',
             'status'=> 'required|in:active,inactive',
             // 'pieces.*.image'=> 'required|image',
         ]);
@@ -71,12 +73,14 @@ class RelicController extends Controller
         
         $miniGames = (new ParticipationInRandomHuntRepository)->randomizeGames(1);
         Relic::create([
+            'name'=> $request->name,
             'icon'=> $request->icon->hashName(),
             'complexity'=> (int)$request->complexity,
             'pieces'=> (int)$request->pieces,
             // 'game_id'=> $miniGames[0]->id,
             // 'game_variation_id'=> $miniGames[0]->game_variation()->limit(1)->first()->id,
             'pieces'=> (int)$request->pieces,
+            'number'=> (int)$request->number,
             'active'=> ($request->status=='active')?true:false,
             //'pieces'=> $this->allotGameToClueService->allot($request),
         ]);
@@ -120,8 +124,10 @@ class RelicController extends Controller
         
         $validator = Validator::make($request->all(), [
             // 'icon'=> 'nullable|image',
+            'name'=> 'required',
             'complexity'=> 'required|numeric|integer:min:1',
             'pieces'=> 'required|numeric',
+            'number'=> 'required|numeric|integer',
             'status'=> 'required|in:active,inactive',
         ]);
 
@@ -150,7 +156,9 @@ class RelicController extends Controller
         $request['id'] = $id;
 
         $relic->complexity = (int) $request->complexity;
+        $relic->name = $request->name;
         $relic->pieces = (int) $request->pieces;
+        $relic->number = (int) $request->number;
         $relic->active = ($request->status=='active')?true:false;
 
         
@@ -223,6 +231,12 @@ class RelicController extends Controller
         })
         ->editColumn('icon', function($relic){
             return '<img src="'.$relic->icon.'" style="width: 70px;">';
+        })
+        ->editColumn('active', function($relic){
+            return ($relic->active==true)?'Active':'InActive';
+        })
+        ->editColumn('name', function($relic){
+            return ($relic->name)?$relic->name:'-';
         })
         ->addColumn('action', function($relic) use($admin){
                 $html = '';

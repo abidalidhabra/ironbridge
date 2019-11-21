@@ -24,6 +24,10 @@
             <div class="modal-body padboxset">
                 <div class="modalbodysetbox">
                     <div class="addrehcover">
+                        <div class="form-group">
+                            <label>Name:</label>
+                            <input type="text" name="name" class="form-control" placeholder="Enter the name" value="{{ $relic->name }}">
+                        </div>
                         <div class="row">
                             <div class="col-md-8">
                                 <div class="form-group @error('icon') has-error @enderror">
@@ -64,6 +68,10 @@
                         <div class="form-group">
                             <label>Relic Map Pieces:</label>
                             <input type="number" name="pieces" class="form-control" placeholder="Enter the relic map pieces" value="{{ $relic->pieces }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Number:</label>
+                            <input type="number" name="number" class="form-control" placeholder="Enter the number" value="{{ $relic->number }}">
                         </div>
                         <div class="form-group">
                             <label>Status:</label>

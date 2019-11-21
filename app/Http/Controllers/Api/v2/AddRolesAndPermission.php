@@ -154,24 +154,31 @@ class AddRolesAndPermission extends Controller
 						//['name' => 'Edit Seasonal Hunt','guard_name' => 'admin', 'module'=>'Seasonal Hunt'],
 						//['name' => 'Delete Seasonal Hunt','guard_name' => 'admin', 'module'=>'Seasonal Hunt'],
 						['name' => 'View App Settings','guard_name' => 'admin', 'module'=>'App Settings'],
-						['name' => 'View Relics','guard_name' => 'admin', 'module'=>'Manage Relics / Relics'],
-						['name' => 'Add Relics','guard_name' => 'admin', 'module'=>'Manage Relics / Relics'],
-						['name' => 'Edit Relics','guard_name' => 'admin', 'module'=>'Manage Relics / Relics'],
-						['name' => 'Delete Relics','guard_name' => 'admin', 'module'=>'Manage Relics / Relics'],
-						['name' => 'View Agent Levels','guard_name' => 'admin', 'module'=>'Manage Relics / Agent Levels'],
-						['name' => 'Add Agent Levels','guard_name' => 'admin', 'module'=>'Manage Relics / Agent Levels'],
-						['name' => 'Edit Agent Levels','guard_name' => 'admin', 'module'=>'Manage Relics / Agent Levels'],
-						['name' => 'Delete Agent Levels','guard_name' => 'admin', 'module'=>'Manage Relics / Agent Levels'],
+						['name' => 'View Relics','guard_name' => 'admin', 'module'=>'Manage Relics'],
+						['name' => 'Add Relics','guard_name' => 'admin', 'module'=>'Manage Relics'],
+						['name' => 'Edit Relics','guard_name' => 'admin', 'module'=>'Manage Relics'],
+						['name' => 'Delete Relics','guard_name' => 'admin', 'module'=>'Manage Relics'],
+						['name' => 'View Agent Levels','guard_name' => 'admin', 'module'=>'Manage Levels / Agent Levels'],
+						['name' => 'Add Agent Levels','guard_name' => 'admin', 'module'=>'Manage Levels / Agent Levels'],
+						['name' => 'Edit Agent Levels','guard_name' => 'admin', 'module'=>'Manage Levels / Agent Levels'],
+						['name' => 'Delete Agent Levels','guard_name' => 'admin', 'module'=>'Manage Levels / Agent Levels'],
+						['name' => 'View Hunt / Agent Levels','guard_name' => 'admin', 'module'=>'Manage Levels / Hunt / Agent Levels'],
+						['name' => 'Add Hunt / Agent Levels','guard_name' => 'admin', 'module'=>'Manage Levels / Hunt / Agent Levels'],
+						['name' => 'Edit Hunt / Agent Levels','guard_name' => 'admin', 'module'=>'Manage Levels / Hunt / Agent Levels'],
+						['name' => 'Delete Hunt / Agent Levels','guard_name' => 'admin', 'module'=>'Manage Levels / Hunt / Agent Levels'],
 
 					];
-		
 		$admin = Admin::where('email','support@ironbridge1779.com')->first();
 
 		$allPermission = Permission::all()->pluck('module')->toArray();
 		$newPermission = [];
 		foreach ($permission as $key => $value) {
 			if (!in_array($value['module'], $allPermission)) {
-				$permissionId =Permission::create([
+				$permissionId =Permission::updateOrCreate(
+											['name' => $value['name'],
+											'guard_name' =>$value['guard_name'],
+											'module'=>$value['module'],
+											],[
 											'name' => $value['name'],
 											'guard_name' =>$value['guard_name'],
 											'module'=>$value['module'],

@@ -23,6 +23,10 @@
             <div class="modal-body padboxset">
                 <div class="modalbodysetbox">
                     <div class="addrehcover">
+                        <div class="form-group">
+                            <label>Name:</label>
+                            <input type="text" name="name" class="form-control" placeholder="Enter the name">
+                        </div>
                         <div class="form-group @error('icon') has-error @enderror">
                             <label class="control-label">Image for relic:</label>
                             <input 
@@ -47,6 +51,10 @@
                         <div class="form-group">
                             <label>Relic Map Pieces:</label>
                             <input type="number" name="pieces" class="form-control" placeholder="Enter the relic map pieces">
+                        </div>
+                        <div class="form-group">
+                            <label>Number:</label>
+                            <input type="number" name="number" class="form-control" placeholder="Enter the number">
                         </div>
                         <div class="form-group">
                             <label>Status:</label>
