@@ -9,9 +9,12 @@ use App\Http\Requests\v1\ParticipateRequest;
 use App\Repositories\Hunt\Factory\HuntFactory;
 use App\Repositories\Hunt\GetHuntParticipationDetailRepository;
 use App\Repositories\Hunt\GetLastRunningRandomHuntRepository;
+use App\Repositories\Hunt\GetRandomizeGameService;
 use App\Repositories\Hunt\GetRelicHuntParticipationRepository;
 use App\Repositories\Hunt\HuntUserDetailRepository;
 use App\Repositories\Hunt\HuntUserRepository;
+use App\Repositories\Hunt\MinigameNodeClaimPrizeService;
+use App\Repositories\Hunt\ParticipationInRandomHuntRepository;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -85,5 +88,23 @@ class RandomHuntController extends Controller
         $huntUserDetail->revealed_at = null;
         $huntUserDetail->save();
         return response()->json(['message' => 'Hunt reveal is successfully revoked.']);
+    }
+
+    public function getMinigameForNode(Request $request)
+    {
+        // \DB::connection()->enableQueryLog();
+        $minigame = (new GetRandomizeGameService)->setUser(auth()->user())->get();
+        // $queries = \DB::getQueryLog();
+        // dd($queries);
+        return response()->json(['message' => 'minigame has been retrieved for the node.', 'minigame'=> $minigame->load('treasure_nodes_target')]);
+    }
+
+    public function clainPrizeForMinigameNode(Request $request)
+    {
+        // \DB::connection()->enableQueryLog();
+        $reward = (new MinigameNodeClaimPrizeService)->setUser(auth()->user())->do();
+        // $queries = \DB::getQueryLog();
+        // dd($queries);
+        return response()->json(['message' => 'prize provided on the behalf of minigame.', 'reward'=> $reward]);
     }
 }

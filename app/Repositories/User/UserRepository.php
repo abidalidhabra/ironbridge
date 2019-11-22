@@ -228,4 +228,23 @@ class UserRepository implements UserRepositoryInterface
         (new RelicRepository)->setRelicId($relicId)->addUser($this->user->id);
         return ['_id'=> $relicId, 'status'=> false];
     }
+
+    public function addPower(int $power)
+    {
+        // \DB::connection()->enableQueryLog();
+        // $queries = \DB::getQueryLog();
+        // dd($queries);
+        if ($power == 100) {
+            // $condition = ['power_status.power'=> $power, 'full_peaked_at'=> new UTCDateTime(now())];
+            $this->user->power_status = ['power'=> $power, 'full_peaked_at'=> new UTCDateTime(now())];
+        }else{
+            $this->user->power_status = ['power'=> $power];
+            // $this->user->increment('power_status.power', $power);
+            // $condition = ['power_status.power'=> $power];
+        }
+            // $this->model->where('_id', $this->user->id)
+            //     ->update($condition);
+        $this->user->save();
+        return $this->user->power_status;
+    }
 }
