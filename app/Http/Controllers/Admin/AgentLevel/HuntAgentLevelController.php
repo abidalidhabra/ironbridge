@@ -168,7 +168,9 @@ class HuntAgentLevelController extends Controller
         })
         ->addColumn('action', function($relic) use ($admin){
                 $html = '';
+                if($admin->hasPermissionTo('Edit Hunt / Agent Levels')){
                     $html .= '<a href="javascript:void(0)" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox edit_agent" data-id="'.$relic->id.'"></i></a>';
+                }
 
                     //$html .= ' <a href="'.route('admin.hunts-agent-levels.destroy',$relic->id).'" data-action="delete" data-toggle="tooltip" title="Delete" ><i class="fa fa-trash iconsetaddbox"></i></a>';
                 

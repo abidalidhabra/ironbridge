@@ -26,7 +26,9 @@
                     <th>Minigames</th>
                     <th>Agent Levels</th>
                     <!-- <th>XP Points</th> -->
+                    @if(auth()->user()->hasPermissionTo('Edit Minigames / Agent Levels'))
                     <th>Action</th>
+                    @endif
                 </tr>
             </thead>
             <tbody></tbody>
@@ -126,7 +128,9 @@
                         { data:'DT_RowIndex',name:'_id' },
                         { data:'minigames',name:'minigames' },
                         { data:'agent_level',name:'agent_level'},
+                        @if(auth()->user()->hasPermissionTo('Edit Minigames / Agent Levels'))
                         { data:'action',name:'action' },
+                        @endif
                     ],
                     columnDefs: [{
                         orderable: false,

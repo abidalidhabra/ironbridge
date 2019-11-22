@@ -123,7 +123,9 @@
                         { data:'complexity',name:'Complexity' },
                         { data:'agent_level',name:'agent_level'},
                         // { data:'xps',name:'xps'},
+                        @if(auth()->user()->hasPermissionTo('Edit Hunt / Agent Levels'))
                         { data:'action',name:'action' },
+                        @endif
                     ],
                     columnDefs: [{
                         orderable: false,

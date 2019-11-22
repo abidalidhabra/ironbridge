@@ -174,6 +174,10 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::group(['middleware' => ['permission:View Hunt Loot Tables']], function () {
 		Route::resource('rewards', 'RewardController');
 	});
+	
+	Route::resource('loots', 'LootController');
+	Route::resource('treasure_nodes_targets', 'TreasureNodesTargetController');
+	Route::get('getTreasureNodesTargetsList', 'TreasureNodesTargetController@getTreasureNodesTargetsList')->name('getTreasureNodesTargetsList');
 
 	Route::group(['middleware' => ['permission:View Seasonal Hunt']], function () {
 		Route::get('sponser-hunts/list', 'SponserHuntController@list')->name('sponser-hunts.list');

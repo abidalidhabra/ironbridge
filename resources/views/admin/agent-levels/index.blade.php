@@ -8,11 +8,11 @@
             <div class="col-md-6">
                 <h3>Agent Levels</h3>
             </div>
-            <!-- @if(auth()->user()->hasPermissionTo('Add Agent Levels')) -->
+            @if(auth()->user()->hasPermissionTo('Add Agent Levels'))
                 <div class="col-md-6 text-right modalbuttonadd">
                     <a href="#addAgentLevelModal" class="btn btn-info btn-md" data-toggle="modal">Add</a>
                 </div>
-            <!-- @endif -->
+            @endif
         </div>
     </div>
     <br/>
@@ -24,9 +24,9 @@
                     <th>Sr.</th>
                     <th>XP Points</th>
                     <th>Agent Levels</th>
-                    <!-- @if(auth()->user()->hasPermissionTo('Edit Agent Levels') || auth()->user()->hasPermissionTo('Delete Agent Levels')) -->
+                    @if(auth()->user()->hasPermissionTo('Edit Agent Levels') || auth()->user()->hasPermissionTo('Delete Agent Levels'))
                      <th>Action</th>
-                    <!-- @endif -->
+                    @endif
                 </tr>
             </thead>
             <tbody></tbody>

@@ -22,10 +22,12 @@
             <thead>
                 <tr>
                     <th>Sr.</th>
+                    <th>Name</th>
                     <th>Image</th>
                     <th>TH Complexity</th>
                     <th>Relic Map Pieces</th>
-                    <th>Created at (UTC)</th>
+                    <!-- <th>Created at (UTC)</th> -->
+                    <th>Status</th>
                      @if(auth()->user()->hasPermissionTo('Edit Relics') || auth()->user()->hasPermissionTo('Delete Relics'))
                     <th>Action</th>
                     @endif
@@ -60,17 +62,18 @@
                     },
                     columns:[
                         { data:'DT_RowIndex',name:'_id' },
+                        { data:'name',name:'name'},
                         { data:'icon',name:'icon'},
                         { data:'complexity',name:'complexity'},
                         { data:'pieces',name:'pieces'},
-                        { data:'created_at',name:'created_at' },
+                        { data:'active',name:'active' },
                         @if(auth()->user()->hasPermissionTo('Edit Relics') || auth()->user()->hasPermissionTo('Delete Relics'))
                          { data:'action',name:'action' },
                         @endif
                     ],
                     columnDefs: [{
                         orderable: false,
-                        targets: [0,3,4],
+                        targets: [0,2,6],
                     }],
                 });
 

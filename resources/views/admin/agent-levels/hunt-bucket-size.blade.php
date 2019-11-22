@@ -8,11 +8,11 @@
             <div class="col-md-6">
                 <h3>Bucket Size | Agent Levels</h3>
             </div>
-            <!-- @if(auth()->user()->hasPermissionTo('Add Agent Levels')) -->
+            @if(auth()->user()->hasPermissionTo('Add Bucket Size / Agent Levels'))
                 <div class="col-md-6 text-right modalbuttonadd">
                     <a href="#addHuntBucketSizeModal" class="btn btn-info btn-md" data-toggle="modal">Add</a>
                 </div>
-            <!-- @endif -->
+            @endif
         </div>
     </div>
     <br/>
@@ -24,9 +24,9 @@
                     <th>Sr.</th>
                     <th>Bucket Size</th>
                     <th>Agent Levels</th>
-                    <!-- @if(auth()->user()->hasPermissionTo('Edit Agent Levels') || auth()->user()->hasPermissionTo('Delete Agent Levels')) -->
+                    @if(auth()->user()->hasPermissionTo('Edit Bucket Size / Agent Levels') || auth()->user()->hasPermissionTo('Delete Bucket Size / Agent Levels'))
                      <th>Action</th>
-                    <!-- @endif -->
+                    @endif
                 </tr>
             </thead>
             <tbody></tbody>
@@ -215,7 +215,7 @@
                         { data:'DT_RowIndex',name:'_id' },
                         { data:'bucket_size',name:'bucket_size'},
                         { data:'agent_level',name:'agent_level'},
-                        @if(auth()->user()->hasPermissionTo('Edit Agent Levels') || auth()->user()->hasPermissionTo('Delete Agent Levels'))
+                        @if(auth()->user()->hasPermissionTo('Edit Bucket Size / Agent Levels') || auth()->user()->hasPermissionTo('Delete Bucket Size / Agent Levels'))
                         { data:'action',name:'action' },
                         @endif
                     ],

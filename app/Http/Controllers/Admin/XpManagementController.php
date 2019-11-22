@@ -161,9 +161,9 @@ class XpManagementController extends Controller
         })
         ->addColumn('action', function($xpManagement) use($admin){
                 $html = '';
-                //if($admin->hasPermissionTo('Edit Main Relics')){
+                if($admin->hasPermissionTo('Edit Hunts XP')){
                     $html .= '<a href="'.route('admin.xpManagement.edit',$xpManagement->id).'" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
-                //}
+                }
 
                     //$html .= ' <a href="'.route('admin.relics.destroy',$xpManagement->id).'" data-action="delete" data-toggle="tooltip" title="Delete" ><i class="fa fa-trash iconsetaddbox"></i></a>';
 

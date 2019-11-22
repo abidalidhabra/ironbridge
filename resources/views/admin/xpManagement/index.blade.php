@@ -24,7 +24,9 @@
                     <th>XP</th>
                     <th>Complexity</th>
                     <th>Created at (UTC)</th>
+                    @if(auth()->user()->hasPermissionTo('Edit Hunts XP'))
                     <th>Action</th>
+                    @endif
                 </tr>
             </thead>
             <tbody></tbody>
@@ -60,7 +62,9 @@
                         { data:'xp',name:'xp'},
                         { data:'complexity',name:'complexity'},
                         { data:'created_at',name:'created_at' },
+                        @if(auth()->user()->hasPermissionTo('Edit Hunts XP'))
                         { data:'action',name:'action' },
+                        @endif
                     ],
                     columnDefs: [{
                         orderable: false,

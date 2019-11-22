@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\v2\Relic;
 use App\Models\v2\Season;
+use App\Models\v2\Loot;
 use App\Repositories\Hunt\ParticipationInRandomHuntRepository;
 use App\Services\Hunt\SponserHunt\AllotGameToClueService;
 use Auth;
@@ -42,7 +43,8 @@ class RelicController extends Controller
      */
     public function create()
     {
-        return view('admin.relics.create');
+        $loots = Loot::get()->groupBy('number')->sortKeysDesc();
+        return view('admin.relics.create',compact('loots'));
     }
 
     /**
@@ -54,10 +56,13 @@ class RelicController extends Controller
     public function store(Request $request, $season_slug)
     {
         $validator = Validator::make($request->all(), [
-            'icon'=> 'required|image',
-            'complexity'=> 'required|numeric',
-            'pieces'=> 'required|numeric',
-            'status'=> 'required|in:active,inactive',
+            'name'          => 'required',
+            'icon'          => 'required|image',
+            'complexity'    => 'required|numeric',
+            'pieces'        => 'required|numeric',
+            'number'        => 'required|numeric|integer',
+            'loot_table_number' => 'required|numeric|integer',
+            'status'        => 'required|in:active,inactive',
             // 'pieces.*.image'=> 'required|image',
         ]);
 
@@ -71,12 +76,15 @@ class RelicController extends Controller
         
         $miniGames = (new ParticipationInRandomHuntRepository)->randomizeGames(1);
         Relic::create([
+            'name'=> $request->name,
             'icon'=> $request->icon->hashName(),
             'complexity'=> (int)$request->complexity,
             'pieces'=> (int)$request->pieces,
             // 'game_id'=> $miniGames[0]->id,
             // 'game_variation_id'=> $miniGames[0]->game_variation()->limit(1)->first()->id,
             'pieces'=> (int)$request->pieces,
+            'number'=> (int)$request->number,
+            'loot_table_number'=> (int)$request->loot_table_number,
             'active'=> ($request->status=='active')?true:false,
             //'pieces'=> $this->allotGameToClueService->allot($request),
         ]);
@@ -105,7 +113,8 @@ class RelicController extends Controller
     public function edit($id)
     {
         $relic = Relic::find($id);
-        return view('admin.relics.edit', ['relic'=> $relic]);
+        $loots = Loot::get()->groupBy('number')->sortKeysDesc();
+        return view('admin.relics.edit', ['relic'=> $relic,'loots'=>$loots]);
     }
 
     /**
@@ -120,9 +129,12 @@ class RelicController extends Controller
         
         $validator = Validator::make($request->all(), [
             // 'icon'=> 'nullable|image',
-            'complexity'=> 'required|numeric|integer:min:1',
-            'pieces'=> 'required|numeric',
-            'status'=> 'required|in:active,inactive',
+            'name'          => 'required',
+            'complexity'    => 'required|numeric|integer:min:1',
+            'pieces'        => 'required|numeric',
+            'number'        => 'required|numeric|integer',
+            'loot_table_number' => 'required|numeric|integer',
+            'status'        => 'required|in:active,inactive',
         ]);
 
         if ($validator->fails()) {
@@ -150,7 +162,10 @@ class RelicController extends Controller
         $request['id'] = $id;
 
         $relic->complexity = (int) $request->complexity;
+        $relic->name = $request->name;
         $relic->pieces = (int) $request->pieces;
+        $relic->number = (int) $request->number;
+        $relic->loot_table_number = (int) $request->loot_table_number;
         $relic->active = ($request->status=='active')?true:false;
 
         
@@ -223,6 +238,12 @@ class RelicController extends Controller
         })
         ->editColumn('icon', function($relic){
             return '<img src="'.$relic->icon.'" style="width: 70px;">';
+        })
+        ->editColumn('active', function($relic){
+            return ($relic->active==true)?'Active':'InActive';
+        })
+        ->editColumn('name', function($relic){
+            return ($relic->name)?$relic->name:'-';
         })
         ->addColumn('action', function($relic) use($admin){
                 $html = '';
