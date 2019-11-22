@@ -176,7 +176,8 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	});
 	
 	Route::resource('loots', 'LootController');
-	Route::get('getLootsList', 'LootController@getLootsList')->name('getLootsList');
+	Route::resource('treasure_nodes_targets', 'TreasureNodesTargetController');
+	Route::get('getTreasureNodesTargetsList', 'TreasureNodesTargetController@getTreasureNodesTargetsList')->name('getTreasureNodesTargetsList');
 
 	Route::group(['middleware' => ['permission:View Seasonal Hunt']], function () {
 		Route::get('sponser-hunts/list', 'SponserHuntController@list')->name('sponser-hunts.list');
