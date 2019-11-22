@@ -61,7 +61,7 @@ class CompleteTheMiniGameService
 
         return [
         	'available_skeleton_keys'=> $data['available_skeleton_keys'] ?? $this->user->available_skeleton_keys, 
-            'xp_reward'=> $data['xp_reward'],
+            'xp_reward'=> $data['xp_reward'] ?? new stdClass,
         	'last_play'=> $this->practiceGameUser->last_play,
             'completion_times'=> $this->practiceGameUser->completion_times
         ];

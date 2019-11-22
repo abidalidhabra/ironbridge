@@ -26,7 +26,7 @@ class RandomHuntController extends Controller
         return response()->json($response);
     }
 
-    public function initiateTheHunts(HuntUserRequest $request)
+    public function initiateTheHunts(Request $request)
     {
         try {
 
