@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\v2\Relic;
 use App\Models\v2\Season;
+use App\Models\v2\Loot;
 use App\Repositories\Hunt\ParticipationInRandomHuntRepository;
 use App\Services\Hunt\SponserHunt\AllotGameToClueService;
 use Auth;
@@ -42,7 +43,8 @@ class RelicController extends Controller
      */
     public function create()
     {
-        return view('admin.relics.create');
+        $loots = Loot::get()->groupBy('number')->sortKeysDesc();
+        return view('admin.relics.create',compact('loots'));
     }
 
     /**
@@ -54,12 +56,13 @@ class RelicController extends Controller
     public function store(Request $request, $season_slug)
     {
         $validator = Validator::make($request->all(), [
-            'name'=> 'required',
-            'icon'=> 'required|image',
-            'complexity'=> 'required|numeric',
-            'pieces'=> 'required|numeric',
-            'number'=> 'required|numeric|integer',
-            'status'=> 'required|in:active,inactive',
+            'name'          => 'required',
+            'icon'          => 'required|image',
+            'complexity'    => 'required|numeric',
+            'pieces'        => 'required|numeric',
+            'number'        => 'required|numeric|integer',
+            'loot_table_number' => 'required|numeric|integer',
+            'status'        => 'required|in:active,inactive',
             // 'pieces.*.image'=> 'required|image',
         ]);
 
@@ -81,6 +84,7 @@ class RelicController extends Controller
             // 'game_variation_id'=> $miniGames[0]->game_variation()->limit(1)->first()->id,
             'pieces'=> (int)$request->pieces,
             'number'=> (int)$request->number,
+            'loot_table_number'=> (int)$request->loot_table_number,
             'active'=> ($request->status=='active')?true:false,
             //'pieces'=> $this->allotGameToClueService->allot($request),
         ]);
@@ -109,7 +113,8 @@ class RelicController extends Controller
     public function edit($id)
     {
         $relic = Relic::find($id);
-        return view('admin.relics.edit', ['relic'=> $relic]);
+        $loots = Loot::get()->groupBy('number')->sortKeysDesc();
+        return view('admin.relics.edit', ['relic'=> $relic,'loots'=>$loots]);
     }
 
     /**
@@ -124,11 +129,12 @@ class RelicController extends Controller
         
         $validator = Validator::make($request->all(), [
             // 'icon'=> 'nullable|image',
-            'name'=> 'required',
-            'complexity'=> 'required|numeric|integer:min:1',
-            'pieces'=> 'required|numeric',
-            'number'=> 'required|numeric|integer',
-            'status'=> 'required|in:active,inactive',
+            'name'          => 'required',
+            'complexity'    => 'required|numeric|integer:min:1',
+            'pieces'        => 'required|numeric',
+            'number'        => 'required|numeric|integer',
+            'loot_table_number' => 'required|numeric|integer',
+            'status'        => 'required|in:active,inactive',
         ]);
 
         if ($validator->fails()) {
@@ -159,6 +165,7 @@ class RelicController extends Controller
         $relic->name = $request->name;
         $relic->pieces = (int) $request->pieces;
         $relic->number = (int) $request->number;
+        $relic->loot_table_number = (int) $request->loot_table_number;
         $relic->active = ($request->status=='active')?true:false;
 
         

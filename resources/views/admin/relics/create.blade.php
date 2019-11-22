@@ -38,7 +38,6 @@
                             <div class="text-muted text-danger"> {{ $errors->first('icon') }} </div>
                             @enderror
                         </div>
-
                         <div class="form-group">
                             <label>TH Complexity:</label>
                             <select name="complexity" class="form-control" alias-name="TH Complexity">
@@ -55,6 +54,16 @@
                         <div class="form-group">
                             <label>Number:</label>
                             <input type="number" name="number" class="form-control" placeholder="Enter the number">
+                        </div>
+                        <div class="form-group">
+                            <label>Loot Number:</label>
+                            <select name="loot_table_number" class="form-control">
+                                <option value="">Select Loot Number</option>
+                                @forelse($loots as $key => $value)
+                                <option value="{{ $key }}">{{ $key }}</option>
+                                @empty
+                                @endforelse
+                            </select>
                         </div>
                         <div class="form-group">
                             <label>Status:</label>
