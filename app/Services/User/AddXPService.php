@@ -42,7 +42,7 @@ class AddXPService
         $existingWidgets = collect($this->user->widgets)->pluck('id');
         $widgetsToProvide = collect($ids)->flatten()->filter()->values()->reject(function ($id) use ($existingWidgets) {
                                 return $existingWidgets->contains($id);
-                            });
+                            })->values();
         return $this->userRepository->addWidgets($widgetsToProvide);
     }
 
@@ -76,8 +76,8 @@ class AddXPService
     public function add($points) {
         $this->userRepository->addXp($points);
         $data = $this->hikeAgent();
-        $this->userRepository->allotAgentLevel(-1); // static
-        $this->userRepository->addXp(($points * -1)); // static
+        // $this->userRepository->allotAgentLevel(-1); // static
+        // $this->userRepository->addXp(($points * -1)); // static
         return $data;
     }
 }
