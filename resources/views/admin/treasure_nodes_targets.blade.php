@@ -10,7 +10,7 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Bonus Treasure Nodes Target</h3>
+                <h3>Minigames Nodes</h3>
             </div>
             <!-- <div class="col-md-6 text-right modalbuttonadd">
                 <button type="button" class="btn btn-info btn-md" data-toggle="modal" data-target="#addTreasureNodesTargets">Add</button>

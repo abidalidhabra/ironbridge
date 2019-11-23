@@ -16,6 +16,8 @@ class Loot extends Eloquent
         'widget_value',
         'widgets_order',
         'skeletons',
-        'possibility'
+        'possibility',
+        'reward_type',
+        'status'
     ];
 }

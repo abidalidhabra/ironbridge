@@ -43,7 +43,7 @@ class RelicController extends Controller
      */
     public function create()
     {
-        $loots = Loot::get()->groupBy('number')->sortKeysDesc();
+        $loots = Loot::where('status',true)->get()->groupBy('number')->sortKeysDesc();
         return view('admin.relics.create',compact('loots'));
     }
 
@@ -113,7 +113,7 @@ class RelicController extends Controller
     public function edit($id)
     {
         $relic = Relic::find($id);
-        $loots = Loot::get()->groupBy('number')->sortKeysDesc();
+        $loots = Loot::where('status',true)->get()->groupBy('number')->sortKeysDesc();
         return view('admin.relics.edit', ['relic'=> $relic,'loots'=>$loots]);
     }
 

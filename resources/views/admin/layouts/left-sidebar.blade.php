@@ -247,12 +247,13 @@
 					@endif
 
 					<li class="@if(Route::currentRouteName() == 'admin.loots.index' || 
-								Route::currentRouteName() == 'admin.loots.show') {{ 'activelist' }} @endif">
+								Route::currentRouteName() == 'admin.loots.show' || 
+								Route::currentRouteName() == 'admin.loots.create') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.loots.index') }}">Manage Loot</a>
 					</li>
 					<li class="@if(Route::currentRouteName() == 'admin.treasure_nodes_targets.index' || 
 								Route::currentRouteName() == 'admin.treasure_nodes_targets.edit') {{ 'activelist' }} @endif">
-						<a href="{{ route('admin.treasure_nodes_targets.index') }}">Bonus Treasure Nodes Target</a>
+						<a href="{{ route('admin.treasure_nodes_targets.index') }}">Minigames Nodes</a>
 					</li>
 
 					@if($admin->hasPermissionTo('View Agent Levels') || $admin->hasPermissionTo('View Hunt / Agent Levels') || $admin->hasPermissionTo('View Minigames / Agent Levels') || $admin->hasPermissionTo('View Avatar / Agent Levels') || $admin->hasPermissionTo('View Bucket Size / Agent Levels'))

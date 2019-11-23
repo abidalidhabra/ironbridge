@@ -2606,6 +2606,14 @@ table i.iconsetaddbox{
     right: 36px;
     top: 25px;
 }
+.adlotdetacover{
+    display: inline-block;
+    width: 100%;
+}
+.adlotdetacover button{
+    margin-top: 24px;
+    margin-left: 15px;
+}
 
 .huntnameboxlr button.remove-hunt {
     position: absolute;
