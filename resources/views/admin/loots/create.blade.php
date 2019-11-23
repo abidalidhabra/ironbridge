@@ -86,9 +86,9 @@
                 {
                     if (response.status == true) {
                         toastr.success(response.message);
-                        /*setTimeout(function() {
-                            window.location.href = '{{ route('admin.relicReward.index') }}';
-                        }, 2000)*/
+                        setTimeout(function() {
+                            window.location.href = '{{ route('admin.loots.index') }}';
+                        }, 2000)
                     } else {
                         // toastr.warning('You are not authorized to access this page.');
                         toastr.warning(response.message);
