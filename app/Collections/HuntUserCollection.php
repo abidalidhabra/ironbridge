@@ -18,6 +18,6 @@ class HuntUserCollection extends Collection
             $kmWalked += ($hutUser->hunt_user_details()->sum('walked') / 1000);
             return $hutUser;
         });
-        return $kmWalked;
+        return round($kmWalked, 2);
     }
 }

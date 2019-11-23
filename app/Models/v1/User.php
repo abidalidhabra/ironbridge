@@ -48,6 +48,7 @@ class User extends Authenticatable implements JWTSubject
         'tutorials',
         'agent_status',
         'relics',
+        'power',
         // 'expnadable_skeleton_keys',
     ];
 
@@ -71,6 +72,7 @@ class User extends Authenticatable implements JWTSubject
 
     protected $dates = [
         'dob',
+        'power_status.full_peaked_at',
     ];
     
     /**
@@ -102,7 +104,10 @@ class User extends Authenticatable implements JWTSubject
             'xp'=> 500,
             'level'=> 1
         ],
-        'relics'=> []
+        'relics'=> [],
+        'power_status'=> [
+            'power'=> 0
+        ],
         // 'expnadable_skeleton_keys'   => 0,
         // 'user_widgets' => [],
         // 'used_widgets' => [],
@@ -228,5 +233,13 @@ class User extends Authenticatable implements JWTSubject
     public function relics_info()
     {
         return $this->belongsToMany(Relic::class, null, 'users', 'relics._id');
+    }
+
+    public function getPowerStatusAttribute($value)
+    {
+        if (isset($value['full_peaked_at'])) {
+            $value['full_peaked_at'] = $value['full_peaked_at']->toDateTime()->format('Y-m-d H:i:s');
+        }
+        return $value;
     }
 }

@@ -58,4 +58,10 @@ class ProfileController extends Controller
         $data = (new UserRepository(auth()->user()))->markTutorialAsComplete($request->module);
         return response()->json(['message' => 'Tutorial has been marked as complete.']); 
     }
+
+    public function boostThePower(Request $request)
+    {
+        $data = (new UserRepository(auth()->user()))->addPower((int)$request->power);
+        return response()->json(['message' => 'Power has been boosted.', 'power_status'=> $data]); 
+    }
 }

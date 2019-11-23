@@ -3,6 +3,7 @@
 namespace App\Models\v1;
 
 // use Illuminate\Database\Eloquent\Model;
+use App\Models\v2\TreasureNodesTarget;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class Game extends Eloquent
@@ -38,6 +39,11 @@ class Game extends Eloquent
     public function practice_games_targets()
     {
         return $this->hasOne('App\Models\v1\PracticeGameTarget');
+    }
+
+    public function treasure_nodes_target()
+    {
+        return $this->hasOne(TreasureNodesTarget::class);
     }
 
     // public function practice_mini_games()
