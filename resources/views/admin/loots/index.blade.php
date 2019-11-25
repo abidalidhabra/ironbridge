@@ -104,6 +104,9 @@
                     } else {
                         toastr.warning(response.message);
                     }
+                },error: function (xhr) {
+                    let error = JSON.parse(xhr.responseText);
+                    toastr.error(error.message);
                 }
             });
         }

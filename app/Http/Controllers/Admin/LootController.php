@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use MongoDB\BSON\UTCDateTime as MongoDBDate;
 use App\Models\v2\Loot;
 use App\Models\v1\WidgetItem;
+use App\Models\v2\Relic;
 use Validator;
 use Auth;
 use Yajra\Datatables\Datatables;
@@ -347,6 +348,12 @@ class LootController extends Controller
      */
     public function destroy($id)
     {
+        $relics = Relic::where('loot_table_number',(int)$id)->first();
+        if ($relics){
+            return response()->json([
+                'message'=>'This loot table can not be delete.',
+            ],422);
+        }
         Loot::where('number',(int)$id)->delete();
         return response()->json([
             'status' => true,
