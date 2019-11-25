@@ -130,10 +130,10 @@ class LootController extends Controller
 
             if ($key == 'skeleton_key' && $data['skeleton_key_check'] == 'true') {
                 for ($i=0; $i < count($value['possibility']) ; $i++) {
-                    $maxRange =  (int)$value['possibility'][$i]*10;
+                    $maxRange =  (int)array_values($value['possibility'])[$i]*10;
                     $loot = [
                                     'possibility' => (float)array_values($value['possibility'])[$i],
-                                    'skeletons'    => (int)$value['skeleton'][$i],
+                                    'skeletons'    => (int)array_values($value['skeleton'])[$i],
                                     'min_range'   => (int)$a+1,
                                     'max_range'   => (int)$maxRange+$a,
                                     'number'   => (int)$number,
@@ -149,8 +149,8 @@ class LootController extends Controller
                     $maxRange =  (int)array_values($value['possibility'])[$i]*10;
                     $loot = [
                                     'possibility' => (float)array_values($value['possibility'])[$i],
-                                    'skeletons'   => (int)$value['skeleton'][$i],
-                                    'gold_value'  => (int)$value['gold'][$i],
+                                    'skeletons'   => (int)array_values($value['skeleton'])[$i],
+                                    'gold_value'  => (int)array_values($value['gold'])[$i],
                                     'min_range'   => (int)$a+1,
                                     'max_range'   => (int)$maxRange+$a,
                                     'number'   => (int)$number,
@@ -166,13 +166,13 @@ class LootController extends Controller
                     $maxRange =  (int)array_values($value['possibility'])[$i]*10;
                     $widgetPossibility = [];
                     $m = 0;
-                    for ($w=0; $w < count($value['widgets_order']['possibility'][$i]) ; $w++) { 
-                        $widgetsOrder = explode(',',str_replace('__', ',', $value['widgets_order']['widget_name'][$i][$w]));
-                        $max = $value['widgets_order']['possibility'][$i][$w]*10; 
+                    for ($w=0; $w < count(array_values($value['widgets_order']['possibility'])[$i]) ; $w++) { 
+                        $widgetsOrder = explode(',',str_replace('__', ',', array_values($value['widgets_order']['widget_name'])[$i][$w]));
+                        $max = array_values($value['widgets_order']['possibility'])[$i][$w]*10; 
                         $widgetPossibility[] = [
                                                 'type' =>    $widgetsOrder[1],      
                                                 'widget_name' =>    $widgetsOrder[0],      
-                                                'possibility' =>(float)$value['widgets_order']['possibility'][$i][$w],      
+                                                'possibility' =>(float)array_values($value['widgets_order']['possibility'])[$i][$w],      
                                                 'min' => (int)1+$m,      
                                                 'max' => (int)$max+$m,
                                                 
@@ -454,6 +454,12 @@ class LootController extends Controller
     }
 
     public function changeStatus(Request $request){
+        $relics = Relic::where('loot_table_number',(int)$request->id)->first();
+        if ($relics){
+            return response()->json([
+                'message'=>'This loot table can not be deactivated.',
+            ],422);
+        }
         Loot::where('number',(int)$request->id)->update(['status'=>($request->status=='true')?true:false]);
         return response()->json([
             'status' => true,
