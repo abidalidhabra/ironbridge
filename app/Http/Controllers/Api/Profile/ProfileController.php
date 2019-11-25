@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Profile;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Profile\MarkTutorialAsCompleteRequest;
+use App\Models\v2\AgentComplementary;
 use App\Repositories\ComplexityTargetRepository;
 use App\Repositories\HuntRewardDistributionHistoryRepository;
 use App\Repositories\Hunt\GetRelicHuntParticipationRepository;
@@ -42,7 +43,13 @@ class ProfileController extends Controller
                     $relic->acquired = $user->relics->where('id', $relic->_id)->first();
                     return $relic; 
                 });
-                
+
+        $agentMin = AgentComplementary::min('agent_level');
+        $agentMax = AgentComplementary::max('agent_level');
+        $xpRemainingToBeCompleted = AgentComplementary::where('agent_level', ($user->agent_status['level']+1))
+                                    ->select('_id', 'agent_level', 'xps')
+                                    ->first();
+        
         return response()->json([
             'message'=> 'OK', 
             'gold_earned'=> $goldEarned, 
@@ -50,6 +57,11 @@ class ProfileController extends Controller
             'relics'=> $relics,
             'game_statistics'=> $gameStatistics,
             'agent_status'=> $user->agent_status,
+            'agent_stack'=> [
+                'min'=> $agentMin,
+                'max'=> $agentMax,
+            ],
+            'xp_needed'=> ($xpRemainingToBeCompleted)? ($xpRemainingToBeCompleted->xps - $user->agent_status['xp']): 0
         ]);
     }
 
