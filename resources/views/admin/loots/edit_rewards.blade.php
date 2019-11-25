@@ -2,7 +2,19 @@
 
 <div class="modal-body">
     <input type="hidden" name="complexity" id="complexity" value="{{ $id }}">
-    @forelse($huntReward as $key => $reward)
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Status</label>
+                <select name="status" class="form-control">
+                    <option value="">Please select status</option>
+                    <option value="active" {{ ($loot[0]->status == true)?'selected': '' }}>Active</option>
+                    <option value="inactive" {{ ($loot[0]->status == false)?'selected': '' }}>Inactive</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    @forelse($lootReward as $key => $reward)
         <h4>{{ ucwords(str_replace('_',' ',$key)) }}</h4>
         @if($key == 'gold' || $key == 'skeleton_key' || $key == 'avatar_item' || $key == 'avatar_item_and_gold')
             <div class="row">

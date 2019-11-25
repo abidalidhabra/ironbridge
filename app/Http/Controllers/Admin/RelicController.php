@@ -213,6 +213,8 @@ class RelicController extends Controller
             $active = ($search == 'true' || $search == 'Active')? true: false;
             $query->where('_id','like','%'.$search.'%')
             ->orWhere('complexity','like','%'.$search.'%')
+            ->orWhere('loot_table_number','like','%'.$search.'%')
+            ->orWhere('name','like','%'.$search.'%')
             ->orWhere('pieces','like','%'.$search.'%')
             ->orWhere('created_at','like','%'.$search.'%');
         })
@@ -225,6 +227,8 @@ class RelicController extends Controller
         $filterCount = Relic::when($search != '', function($query) use ($search) {
             $query->where('_id','like','%'.$search.'%')
             ->orWhere('complexity','like','%'.$search.'%')
+            ->orWhere('loot_table_number','like','%'.$search.'%')
+            ->orWhere('name','like','%'.$search.'%')
             ->orWhere('pieces','like','%'.$search.'%')
             ->orWhere('created_at','like','%'.$search.'%');
         })
@@ -241,6 +245,9 @@ class RelicController extends Controller
         })
         ->editColumn('active', function($relic){
             return ($relic->active==true)?'Active':'InActive';
+        })
+        ->editColumn('loot_table_number', function($relic){
+            return ($relic->loot_table_number)?$relic->loot_table_number:'-';
         })
         ->editColumn('name', function($relic){
             return ($relic->name)?$relic->name:'-';
