@@ -114,7 +114,7 @@ class LootController extends Controller
                     $maxRange =  (int)array_values($value['possibility'])[$i]*10;
 
                     $loot = [
-                                    'possibility' => (int)array_values($value['possibility'])[$i],
+                                    'possibility' => (float)array_values($value['possibility'])[$i],
                                     'gold_value'  => (int)array_values($value['gold'])[$i],
                                     'min_range'   => (int)$a+1,
                                     'max_range'   => (int)$maxRange+$a,
@@ -131,7 +131,7 @@ class LootController extends Controller
                 for ($i=0; $i < count($value['possibility']) ; $i++) {
                     $maxRange =  (int)$value['possibility'][$i]*10;
                     $loot = [
-                                    'possibility' => (int)array_values($value['possibility'])[$i],
+                                    'possibility' => (float)array_values($value['possibility'])[$i],
                                     'skeletons'    => (int)$value['skeleton'][$i],
                                     'min_range'   => (int)$a+1,
                                     'max_range'   => (int)$maxRange+$a,
@@ -147,7 +147,7 @@ class LootController extends Controller
                 for ($i=0; $i < count(array_values($value['possibility'])) ; $i++) {
                     $maxRange =  (int)array_values($value['possibility'])[$i]*10;
                     $loot = [
-                                    'possibility' => (int)array_values($value['possibility'])[$i],
+                                    'possibility' => (float)array_values($value['possibility'])[$i],
                                     'skeletons'   => (int)$value['skeleton'][$i],
                                     'gold_value'  => (int)$value['gold'][$i],
                                     'min_range'   => (int)$a+1,
@@ -171,7 +171,7 @@ class LootController extends Controller
                         $widgetPossibility[] = [
                                                 'type' =>    $widgetsOrder[1],      
                                                 'widget_name' =>    $widgetsOrder[0],      
-                                                'possibility' =>(int)$value['widgets_order']['possibility'][$i][$w],      
+                                                'possibility' =>(float)$value['widgets_order']['possibility'][$i][$w],      
                                                 'min' => (int)1+$m,      
                                                 'max' => (int)$max+$m,
                                                 
@@ -179,7 +179,7 @@ class LootController extends Controller
                         $m += $max; 
                     }
                     $loot = [
-                                    'possibility'   => (int)array_values($value['possibility'])[$i],
+                                    'possibility'   => (float)array_values($value['possibility'])[$i],
                                     'widgets_order' => $widgetPossibility,
                                     'min_range'   => (int)1+$a,
                                     'max_range'   => (int)$maxRange+$a,
@@ -222,10 +222,11 @@ class LootController extends Controller
      */
     public function edit($id)
     {
-        $huntReward = Loot::where('number',(int)$id)->get()->groupBy('reward_type');
+        $loot = Loot::where('number',(int)$id)->get();
+        $lootReward = $loot->groupBy('reward_type');
         $widgetItem = WidgetItem::groupBy('widget_name')->groupBy('widget_category')->get();
         
-        return view('admin.loots.edit_rewards',compact('huntReward','widgetItem','id'));
+        return view('admin.loots.edit_rewards',compact('lootReward','widgetItem','id','loot'));
     }
 
     /**
@@ -258,18 +259,21 @@ class LootController extends Controller
         if (array_sum($possibility) != 100) {
             return response()->json(['status' => false,'message' => 'A total sum of possibilities needs equal to 100']);
         }
-        $widgetsPossibility = array_values($request->get('widgets_possibility')); 
-        
-        if (array_sum($widgetsPossibility[0]) != 100) {
-            return response()->json(['status' => false,'message' => 'A total sum of possibilities needs equal to 100']);
+        if (isset($request->widgets_possibility) && $request->widgets_possibility != "") {
+            $widgetsPossibility = array_values($request->get('widgets_possibility'));
+            foreach ($request->widgets_possibility as $key => $value) {
+                if (array_sum($value) != 100) {
+                    return response()->json(['status' => false,'message' => 'A total sum of possibilities needs equal to 100']);
+                }
+            }
         }
 
         $allData = $request->all();
         $i = 0;
         
-        $huntReward = Loot::where('number',(int)$id)->get();
+        $loots = Loot::where('number',(int)$id)->get();
         
-        foreach ($huntReward as $key => $value) {
+        foreach ($loots as $key => $value) {
             $data = [];
             $huntRewardId = $value->id;
             $value->possibility = (float)$possibility[$huntRewardId];
@@ -278,7 +282,7 @@ class LootController extends Controller
             $value->max_range = (int)$i;
 
             if ($value->reward_type == 'gold') {
-                $value->gold_value = (float)$allData['gold_value'][$huntRewardId];
+                $value->gold_value = (int)$allData['gold_value'][$huntRewardId];
             }
             if ($value->reward_type == 'avatar_item') {
                 $data['widgets_order'] = [];
@@ -300,7 +304,7 @@ class LootController extends Controller
                 $value->widgets_order = $data['widgets_order'];
             }
             if ($value->reward_type == 'avatar_item_and_gold') {
-                $value->gold_value = (float)$allData['gold_value'][$huntRewardId];
+                $value->gold_value = (int)$allData['gold_value'][$huntRewardId];
 
                 $data['widgets_order'] = [];
                 $m = 0;
@@ -323,7 +327,7 @@ class LootController extends Controller
                 $value->skeletons = (int)$allData['skeletons'][$huntRewardId];
             }
             if ($value->reward_type == 'skeleton_key_and_gold') {
-                $value->gold_value = (float)$allData['gold_value'][$huntRewardId];
+                $value->gold_value = (int)$allData['gold_value'][$huntRewardId];
                 $value->skeletons = (int)$allData['skeletons'][$huntRewardId];
             }
             $value->save();
@@ -331,7 +335,7 @@ class LootController extends Controller
 
         return response()->json([
             'status' => true,
-            'message'=>'Hunt reward has been updated successfully.',
+            'message'=>'Loots has been updated successfully.',
         ]);
     }
 

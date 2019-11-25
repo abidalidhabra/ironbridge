@@ -21,7 +21,7 @@
         <div class="tab-content">
             <div class="tab-pane fade in active">                
                 @if(auth()->user()->hasPermissionTo('Edit Hunt Loot Tables'))
-                    <!-- <a href="javascript:void(0)" class="btn pull-right edit_reward default-btn" data-id="{{ $id }}">Edit</a> -->
+                    <a href="javascript:void(0)" class="btn pull-right edit_reward default-btn" data-id="{{ $id }}">Edit</a>
                 @endif
                 @forelse($loots as $key => $value)
                     <div class="rewardsbox">
@@ -178,7 +178,7 @@
                 {
                     if (response.status == true) {
                         toastr.success(response.message);
-                        location.reload(true);
+                        window.location.href = '{{ route('admin.loots.index') }}';
                     } else {
                         toastr.warning(response.message);
                     }
