@@ -54,7 +54,8 @@ class PasswordResetController extends Controller
 
 	public function resetpasswordByEmail(Request $request)
 	{   
-
+		\Log::info('---------------');
+		\Log::info($request->all());
 		$request['email'] = strtolower($request->email);
 		$validator = Validator::make($request->all(),[
 			'password'  => 'required',

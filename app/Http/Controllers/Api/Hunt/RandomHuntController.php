@@ -17,6 +17,7 @@ use App\Repositories\Hunt\MinigameNodeClaimPrizeService;
 use App\Repositories\Hunt\ParticipationInRandomHuntRepository;
 use Exception;
 use Illuminate\Http\Request;
+use Validator;
 
 class RandomHuntController extends Controller
 {
@@ -110,6 +111,14 @@ class RandomHuntController extends Controller
 
     public function updateARMode(Request $request)
     {
+        $validator = Validator::make($request->all(),[
+                        'status'=> "required|in:true,false",
+                    ]);
+        
+        if ($validator->fails()) {
+            return response()->json(['message'=>$validator->messages()->first()], 422);
+        }
+        $user = auth()->user();
         $user->ar_mode = filter_var($request->status, FILTER_VALIDATE_BOOLEAN);
         $user->save();
         return response()->json(['message' => 'AR Mode has been updated.', 'ar_mode'=> $user->ar_mode]);
