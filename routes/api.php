@@ -204,6 +204,7 @@ Route::group(['namespace' => 'Api\Hunt', 'prefix' => 'hunts', 'middleware' => 'j
 	Route::get('random/getRelicDetails', 'RandomHuntController@getRelicDetails');
 	Route::get('random/getMinigameForNode', 'RandomHuntController@getMinigameForNode');
 	Route::post('random/clainPrizeForMinigameNode', 'RandomHuntController@clainPrizeForMinigameNode');
+	Route::put('map/armode', 'RandomHuntController@updateARMode');
 });
 
 Route::group(['namespace' => 'Api\Profile', 'prefix' => 'profile', 'middleware' => 'jwt-auth'], function ($router) {

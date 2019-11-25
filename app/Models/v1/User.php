@@ -49,6 +49,7 @@ class User extends Authenticatable implements JWTSubject
         'agent_status',
         'relics',
         'power',
+        'ar_mode',
         // 'expnadable_skeleton_keys',
     ];
 
@@ -108,6 +109,7 @@ class User extends Authenticatable implements JWTSubject
         'power_status'=> [
             'power'=> 0
         ],
+        'ar_mode'=> true,
         // 'expnadable_skeleton_keys'   => 0,
         // 'user_widgets' => [],
         // 'used_widgets' => [],

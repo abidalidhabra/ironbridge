@@ -44,12 +44,11 @@ class ProfileController extends Controller
                     return $relic; 
                 });
 
-        $agentMin = AgentComplementary::min('agent_level');
-        $agentMax = AgentComplementary::max('agent_level');
-        $xpRemainingToBeCompleted = AgentComplementary::where('agent_level', ($user->agent_status['level']+1))
-                                    ->select('_id', 'agent_level', 'xps')
-                                    ->first();
-        
+        $agentLevels = AgentComplementary::whereIn('agent_level', [$user->agent_status['level'], $user->agent_status['level']+1])
+                        ->orderBy('agent_level', 'asc')
+                        ->select('_id', 'agent_level', 'xps')
+                        ->get();
+
         return response()->json([
             'message'=> 'OK', 
             'gold_earned'=> $goldEarned, 
@@ -58,10 +57,9 @@ class ProfileController extends Controller
             'game_statistics'=> $gameStatistics,
             'agent_status'=> $user->agent_status,
             'agent_stack'=> [
-                'min'=> $agentMin,
-                'max'=> $agentMax,
+                'current'=> $agentLevels->first(),
+                'upcoming'=> $agentLevels->last(),
             ],
-            'xp_needed'=> ($xpRemainingToBeCompleted)? ($xpRemainingToBeCompleted->xps - $user->agent_status['xp']): 0
         ]);
     }
 

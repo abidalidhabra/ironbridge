@@ -107,4 +107,11 @@ class RandomHuntController extends Controller
         // dd($queries);
         return response()->json(['message' => 'prize provided on the behalf of minigame.', 'reward'=> $reward]);
     }
+
+    public function updateARMode(Request $request)
+    {
+        $user->ar_mode = filter_var($request->status, FILTER_VALIDATE_BOOLEAN);
+        $user->save();
+        return response()->json(['message' => 'AR Mode has been updated.', 'ar_mode'=> $user->ar_mode]);
+    }
 }
