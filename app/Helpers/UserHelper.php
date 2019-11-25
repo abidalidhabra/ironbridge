@@ -8,6 +8,7 @@ use App\Models\v1\News;
 use App\Models\v1\WidgetItem;
 use App\Repositories\EventRepository;
 use App\Repositories\RelicRepository;
+use App\Repositories\User\UserRepository;
 use Auth;
 use MongoDB\BSON\ObjectId as MongoID;
 use MongoDB\BSON\UTCDateTime;
@@ -60,6 +61,7 @@ class UserHelper {
 		// 	$relic['info'] = $relicsInfo->where('_id', $relic['id'])->first(); 
 		// 	return $relic; 
 		// });
+
 		return [
 			'avatars' => $avatars,
 			'widgets' => $widgets,
@@ -72,6 +74,7 @@ class UserHelper {
 			// 'relics' => $relics,
 			'relics' => [],
 			'available_complexities' => $user->getAvailableComplexities(),
+			'agent_stack'=> (new UserRepository($user))->getAgentStatus(),
 			// 'used_widgets' => $user->used_widgets,
 			// 'plans' => $plans,
 			// 'events_data' => $events,

@@ -4,6 +4,7 @@ namespace App\Repositories\User;
 
 use App\Models\v1\User;
 use App\Models\v1\WidgetItem;
+use App\Models\v2\AgentComplementary;
 use App\Repositories\RelicRepository;
 use App\Repositories\User\UserRepositoryInterface;
 use Exception;
@@ -246,5 +247,15 @@ class UserRepository implements UserRepositoryInterface
             //     ->update($condition);
         $this->user->save();
         return $this->user->power_status;
+    }
+
+    public function getAgentStatus()
+    {
+        $agentLevels = AgentComplementary::whereIn('agent_level', [$this->user->agent_status['level'], $this->user->agent_status['level']+1])
+                        ->orderBy('agent_level', 'asc')
+                        ->select('_id', 'agent_level', 'xps')
+                        ->get();
+
+        return ['current'=> $agentLevels->first(), 'upcoming'=> $agentLevels->last()];
     }
 }
