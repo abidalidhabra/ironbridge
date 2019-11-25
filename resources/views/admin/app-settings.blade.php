@@ -38,7 +38,7 @@
 <script>
     $(document).on('submit', '#updateAppSettings', function(e) {
         e.preventDefault();
-        if(validate()) {
+        // if(validate()) {
             $.ajax({
                 type: "POST",
                 url: '{{ route('admin.app.settings.update') }}',
@@ -53,7 +53,7 @@
                     }
                 }
             });
-        }
+        // }
     });
 </script>
 @endsection

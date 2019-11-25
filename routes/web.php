@@ -176,6 +176,7 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	});
 	
 	Route::resource('loots', 'LootController');
+	Route::resource('hunt_statistics', 'HuntStatisticController');
 	Route::get('goldHTML', 'LootController@goldHTML')->name('loots.goldHTML');
 	Route::get('skeletonHTML', 'LootController@skeletonHTML')->name('loots.skeletonHTML');
 	Route::get('skeletonGoldHTML', 'LootController@skeletonGoldHTML')->name('loots.skeletonGoldHTML');

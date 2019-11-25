@@ -93,14 +93,6 @@
 						</div>
 					</li>
 					@endif
-					
-
-
-
-
-
-
-
 
 					@if($admin->hasPermissionTo('View Treasure Locations') || $admin->hasPermissionTo('View Complexity Targets') || $admin->hasPermissionTo('View Hunt Loot Tables'))
 					<!-- <li>
@@ -253,7 +245,7 @@
 					</li>
 					<li class="@if(Route::currentRouteName() == 'admin.treasure_nodes_targets.index' || 
 								Route::currentRouteName() == 'admin.treasure_nodes_targets.edit') {{ 'activelist' }} @endif">
-						<a href="{{ route('admin.treasure_nodes_targets.index') }}">Minigames Nodes</a>
+						<a href="{{ route('admin.treasure_nodes_targets.index') }}">Challenge Nodes</a>
 					</li>
 
 					@if($admin->hasPermissionTo('View Agent Levels') || $admin->hasPermissionTo('View Hunt / Agent Levels') || $admin->hasPermissionTo('View Minigames / Agent Levels') || $admin->hasPermissionTo('View Avatar / Agent Levels') || $admin->hasPermissionTo('View Bucket Size / Agent Levels'))
@@ -330,33 +322,6 @@
 					</li>
 					@endif
 
-
-
-
-
-
-
-
-
-
-
-
-					<!-- <li class="@if(Route::currentRouteName() == 'admin.agent-levels.index') {{ 'activelist' }} @endif">
-						<a href="{{ route('admin.agent-levels.index') }}">Agent Level</a>
-					</li> -->
-					<!-- <li class="@if(Route::currentRouteName() == 'admin.hunts-agent-levels.index') {{ 'activelist' }} @endif">
-						<a href="{{ route('admin.hunts-agent-levels.index') }}">Hunt / Agent Level</a>
-					</li> -->
-					<!-- <li class="@if(Route::currentRouteName() == 'admin.minigames-agent-levels.index') {{ 'activelist' }} @endif">
-						<a href="{{ route('admin.minigames-agent-levels.index') }}">Minigames / Agent Level</a>
-					</li> -->
-					<!-- <li class="@if(Route::currentRouteName() == 'admin.avatar-agent-levels.index' || Route::currentRouteName() == 'admin.avatar-agent-levels.create' || Route::currentRouteName() == 'admin.avatar-agent-levels.edit' || Route::currentRouteName() == 'admin.avatar-agent-levels.show') {{ 'activelist' }} @endif">
-						<a href="{{ route('admin.avatar-agent-levels.index') }}">Avatar / Agent Level</a>
-					</li> -->
-					<!-- <li class="@if(Route::currentRouteName() == 'admin.bucket-sizes.index') {{ 'activelist' }} @endif">
-						<a href="{{ route('admin.bucket-sizes.index') }}">Bucket Size / Agent Level</a>
-					</li> -->
-					
 					{{-- @if($admin->hasPermissionTo('View Treasure Locations') || $admin->hasPermissionTo('View Complexity Targets') || $admin->hasPermissionTo('View Hunt Loot Tables')) --}}
 					{{--<li >
 						<a 
@@ -469,6 +434,10 @@
 					</li>
 					@endif
 
+					<li class="@if(Route::currentRouteName() == 'admin.hunt_statistics.index') {{ 'activelist' }} @endif">
+						<a href="{{ route('admin.hunt_statistics.index') }}">Hunt Statistics</a>
+					</li>
+					
 					@if($admin->hasPermissionTo('View App Settings'))
 					<li  class="@if(Route::currentRouteName() == 'admin.app.settings.index'	) {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.app.settings.index') }}">App Settings</a>
