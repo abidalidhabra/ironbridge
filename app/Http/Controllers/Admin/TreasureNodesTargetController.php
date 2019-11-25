@@ -91,7 +91,7 @@ class TreasureNodesTargetController extends Controller
         
         return response()->json([
             'status' => true,
-            'message'=>'Minigames nodes has been update successfully.',
+            'message'=>'Challenge nodes has been update successfully.',
         ]);
     }
 
