@@ -24,7 +24,7 @@ class LootController extends Controller
      */
     public function index()
     {
-        $loots = Loot::get()->groupBy('number')->sortKeysDesc();
+        $loots = Loot::with('relics_info')->orderBy('number', 'asc')->get()->groupBy('number');
         return view('admin.loots.index',compact('loots'));
     }
 
@@ -35,8 +35,9 @@ class LootController extends Controller
      */
     public function create()
     {
+        $relics = Relic::where(['active'=>true])->get();
         $widgetItem = WidgetItem::groupBy('widget_name')->groupBy('widget_category')->get();
-        return view('admin.loots.create',compact('widgetItem'));   
+        return view('admin.loots.create',compact('widgetItem','relics'));   
     }
 
     /**
@@ -59,9 +60,13 @@ class LootController extends Controller
         if (!isset($request['avatar_check'])) {
             $request['avatar_check'] = 'false';
         }
+        if (!isset($request['relics'])) {
+            $request['relics'] = '';
+        }
 
         $validator = Validator::make($request->all(),[
             'status'                    => 'required',
+            'relics'                    => 'required',
             'gold.*.*'                  => 'required_if:gold_check,==,true',
             'skeleton_key.*.*'          => 'required_if:skeleton_key_check,==,true',
             'skeleton_key_and_gold.*.*' => 'required_if:skeleton_gold_check,==,true',
@@ -122,9 +127,11 @@ class LootController extends Controller
                                     'number'      => (int)$number,
                                     'reward_type' => $key,
                                     'status'      => ($data['status']=="active")?true:false,
+                                    'relics'   => $data['relics'],
                                 ];
                     $a += $maxRange;
-                    Loot::create($loot);
+                    $loot1 = Loot::create($loot);
+                    Relic::whereIn('_id',$data['relics'])->push('loot_tables', $loot1->id,true);
                 }
             }
 
@@ -139,9 +146,11 @@ class LootController extends Controller
                                     'number'   => (int)$number,
                                     'reward_type' => $key,
                                     'status'      => ($data['status']=="active")?true:false,
+                                    'relics'   => $data['relics'],
                                 ];
                      $a += $maxRange;
-                     Loot::create($loot); 
+                     $loot1 = Loot::create($loot);
+                     Relic::whereIn('_id',$data['relics'])->push('loot_tables', $loot1->id,true);
                 }
             }
             if ($key == 'skeleton_key_and_gold' && $data['skeleton_gold_check'] == 'true') {
@@ -156,9 +165,11 @@ class LootController extends Controller
                                     'number'   => (int)$number,
                                     'reward_type' => $key,
                                     'status'      => ($data['status']=="active")?true:false,
+                                    'relics'   => $data['relics'],
                                 ];
                      $a += $maxRange;
-                    Loot::create($loot);
+                    $loot1 = Loot::create($loot);
+                     Relic::whereIn('_id',$data['relics'])->push('loot_tables', $loot1->id,true);
                 }   
             }
             if ($key == 'avatar_item' && $data['avatar_check'] == 'true') {
@@ -187,9 +198,12 @@ class LootController extends Controller
                                     'number'   => (int)$number,
                                     'reward_type' => $key,
                                     'status'      => ($data['status']=="active")?true:false,
+                                    'relics'   => $data['relics'],
                                 ];
                      $a += $maxRange; 
-                    Loot::create($loot);
+                    $loot1 =Loot::create($loot);
+                    Relic::whereIn('_id',$data['relics'])->push('loot_tables', $loot1->id,true);
+
                 }
             }
 
@@ -210,9 +224,9 @@ class LootController extends Controller
      */
     public function show($id)
     {
-        $loots = Loot::where('number',(int)$id)->get()->groupBy('reward_type');
-        
-        return view('admin.loots.show',compact('loots','id'));
+        $loot = Loot::where('number',(int)$id)->with('relics_info:_id,name,loot_tables')->get();
+        $loots = $loot->groupBy('reward_type');
+        return view('admin.loots.show',compact('loots','loot','id'));
     }
 
     /**
@@ -223,11 +237,12 @@ class LootController extends Controller
      */
     public function edit($id)
     {
-        $loot = Loot::where('number',(int)$id)->get();
+        $loot = Loot::where('number',(int)$id)->with('relics_info:_id,name,loot_tables')->get();
+        $relics = Relic::where(['active'=>true])->get();
         $lootReward = $loot->groupBy('reward_type');
         $widgetItem = WidgetItem::groupBy('widget_name')->groupBy('widget_category')->get();
         
-        return view('admin.loots.edit_rewards',compact('lootReward','widgetItem','id','loot'));
+        return view('admin.loots.edit_rewards',compact('lootReward','widgetItem','id','loot','relics'));
     }
 
     /**
@@ -239,15 +254,20 @@ class LootController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (!isset($request['relics'])) {
+            $request['relics'] = '';
+        }
         $validator = Validator::make($request->all(),[
-            'gold_value.*' => 'required_if:reward_type,avatar_item_and_gold,gold,skeleton_key_and_gold|numeric',
-            //'min_range'  => 'required|integer',
-            //'max_range'  => 'required|integer',
-            // 'type.*'        => 'required_if:reward_type,avatar_item,avatar_item_and_gold',
-            'widget_name.*'  => 'required_if:reward_type,avatar_item,avatar_item_and_gold',
-            'skeletons.*'  => 'required_if:reward_type,skeleton_key,skeleton_key_and_gold|numeric',
-            'possibility.*'  => 'required|numeric',
-            'widgets_possibility.*.*'  => 'required|numeric',
+            'status'                  => 'required',
+            'relics'                  => 'required',
+            'gold_value.*'            => 'required_if:reward_type,avatar_item_and_gold,gold,skeleton_key_and_gold|numeric',
+            //'min_range' => 'required|integer',
+            //'max_range' => 'required|integer',
+            // 'type.*'       => 'required_if:reward_type,avatar_item,avatar_item_and_gold',
+            'widget_name.*'           => 'required_if:reward_type,avatar_item,avatar_item_and_gold',
+            'skeletons.*'             => 'required_if:reward_type,skeleton_key,skeleton_key_and_gold|numeric',
+            'possibility.*'           => 'required|numeric',
+            'widgets_possibility.*.*' => 'required|numeric',
         ]);
         
         if ($validator->fails())
@@ -255,7 +275,7 @@ class LootController extends Controller
             $message = $validator->messages()->first();
             return response()->json(['status' => false,'message' => $message]);
         }
-        
+
         $possibility = $request->get('possibility');
         if (array_sum($possibility) != 100) {
             return response()->json(['status' => false,'message' => 'A total sum of possibilities needs equal to 100']);
@@ -331,9 +351,13 @@ class LootController extends Controller
                 $value->gold_value = (int)$allData['gold_value'][$huntRewardId];
                 $value->skeletons = (int)$allData['skeletons'][$huntRewardId];
             }
-            $value->save();
-        }
 
+            $value->status = ($request->status=="active")?true:false;
+            Relic::whereIn('_id',$value->relics)->pull('loot_tables', $value->id);
+            $value->relics = $request->relics;
+            $value->save();
+            Relic::whereIn('_id',$request->relics)->push('loot_tables', $value->id);
+        }
         return response()->json([
             'status' => true,
             'message'=>'Loots has been updated successfully.',
@@ -348,12 +372,12 @@ class LootController extends Controller
      */
     public function destroy($id)
     {
-        $relics = Relic::where('loot_table_number',(int)$id)->first();
-        if ($relics){
-            return response()->json([
-                'message'=>'This loot table can not be delete.',
-            ],422);
+        $loot = Loot::where('number',(int)$id)->get();
+        
+        if ($loot[0]->relics) {
+            Relic::whereIn('_id',$loot[0]->relics)->pull('loot_tables',$loot->pluck('id')->toArray());
         }
+
         Loot::where('number',(int)$id)->delete();
         return response()->json([
             'status' => true,
@@ -454,12 +478,6 @@ class LootController extends Controller
     }
 
     public function changeStatus(Request $request){
-        $relics = Relic::where('loot_table_number',(int)$request->id)->first();
-        if ($relics){
-            return response()->json([
-                'message'=>'This loot table can not be deactivated.',
-            ],422);
-        }
         Loot::where('number',(int)$request->id)->update(['status'=>($request->status=='true')?true:false]);
         return response()->json([
             'status' => true,

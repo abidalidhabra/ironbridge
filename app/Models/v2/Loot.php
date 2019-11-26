@@ -3,6 +3,7 @@
 namespace App\Models\v2;
 
 //use Illuminate\Database\Eloquent\Model;
+use App\Models\v2\Relic;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class Loot extends Eloquent
@@ -18,6 +19,12 @@ class Loot extends Eloquent
         'skeletons',
         'possibility',
         'reward_type',
-        'status'
+        'status',
+        'relics'
     ];
+
+    public function relics_info()
+    {
+        return $this->belongsToMany(Relic::class, null, 'loot_tables', 'relics');
+    }
 }

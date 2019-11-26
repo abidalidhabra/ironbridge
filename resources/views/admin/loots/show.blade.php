@@ -23,6 +23,17 @@
                 @if(auth()->user()->hasPermissionTo('Edit Hunt Loot Tables'))
                     <a href="javascript:void(0)" class="btn pull-right edit_reward default-btn" data-id="{{ $id }}">Edit</a>
                 @endif
+                    <div class="rewardsbox">
+                        <h4>Relics</h4>
+                        <div class="col-md-3">
+                            <div class="smallrewardbox">
+                                @forelse($loot[0]->relics_info as $key => $relic)
+                                    <p> {{ ($key+1).' - '.$relic->name }}</p>
+                                @empty
+                                @endforelse
+                            </div>
+                        </div>  
+                    </div>
                 @forelse($loots as $key => $value)
                     <div class="rewardsbox">
                     <h4>{{ ucwords(str_replace('_',' ',$key)) }}</h4>
@@ -136,6 +147,9 @@
 <script type="text/javascript">
     $(document).ready(function(){
         
+        $('#relics').select2();
+
+
         /* EDIT MODEL SHOW */
         $(document).on('click','.edit_reward',function(){
             var id = $(this).attr('data-id');
@@ -153,6 +167,7 @@
                     //if (response.status == true) {
                         $('#editRewardModal').modal('show');
                         $('#editrewardForm').html(response);
+                        $('#relics').select2();
                     /*} else {
                         toastr.warning(response.message);
                     }*/

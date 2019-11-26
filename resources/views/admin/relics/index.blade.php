@@ -26,7 +26,6 @@
                     <th>Image</th>
                     <th>TH Complexity</th>
                     <th>Relic Map Pieces</th>
-                    <th>Loot Table Number</th>
                     <!-- <th>Created at (UTC)</th> -->
                     <th>Status</th>
                      @if(auth()->user()->hasPermissionTo('Edit Relics') || auth()->user()->hasPermissionTo('Delete Relics'))
@@ -67,7 +66,6 @@
                         { data:'icon',name:'icon'},
                         { data:'complexity',name:'complexity'},
                         { data:'pieces',name:'pieces'},
-                        { data:'loot_table_number',name:'loot_table_number'}, 
                         { data:'active',name:'active' },
                         @if(auth()->user()->hasPermissionTo('Edit Relics') || auth()->user()->hasPermissionTo('Delete Relics'))
                          { data:'action',name:'action' },
@@ -96,6 +94,10 @@
                         } else {
                             toastr.warning(response.message);
                         }
+                    },
+                    error: function(xhr, exception) {
+                        let error = JSON.parse(xhr.responseText);
+                        toastr.error(error.message);
                     }
                 });
             }

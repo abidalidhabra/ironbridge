@@ -21,6 +21,7 @@
                 <tr>
                     <th>Sr.</th>
                     <th>Loot Table Number</th>
+                    <th>Relics</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
@@ -39,6 +40,15 @@
                             @else
                                 <button data-action="status" data-status="true" data-id="{{ $key }}" class="btn btn-danger btn-xs">InActive</button>
                             @endif
+                        </td>
+                        <td>
+                            @if(count($value[0]->relics_info) > 0)
+                                @php
+                                    echo implode(',',$value[0]->relics_info->pluck('name')->toArray());
+                                @endphp
+                            @else
+                                -
+                            @endif    
                         </td>
                         <td>
                             <a href="javascript:void(0)" data-id="{{ $key }}" data-action="delete" data-toggle="tooltip" title="Delete"  data-toggle="confirmation"><i class="fa fa-trash iconsetaddbox"></i></a>

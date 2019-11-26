@@ -43,8 +43,7 @@ class RelicController extends Controller
      */
     public function create()
     {
-        $loots = Loot::where('status',true)->get()->groupBy('number')->sortKeysDesc();
-        return view('admin.relics.create',compact('loots'));
+        return view('admin.relics.create');
     }
 
     /**
@@ -61,7 +60,6 @@ class RelicController extends Controller
             'complexity'    => 'required|numeric',
             'pieces'        => 'required|numeric',
             'number'        => 'required|numeric|integer',
-            'loot_table_number' => 'required|numeric|integer',
             'status'        => 'required|in:active,inactive',
             // 'pieces.*.image'=> 'required|image',
         ]);
@@ -84,7 +82,6 @@ class RelicController extends Controller
             // 'game_variation_id'=> $miniGames[0]->game_variation()->limit(1)->first()->id,
             'pieces'=> (int)$request->pieces,
             'number'=> (int)$request->number,
-            'loot_table_number'=> (int)$request->loot_table_number,
             'active'=> ($request->status=='active')?true:false,
             //'pieces'=> $this->allotGameToClueService->allot($request),
         ]);
@@ -113,8 +110,7 @@ class RelicController extends Controller
     public function edit($id)
     {
         $relic = Relic::find($id);
-        $loots = Loot::where('status',true)->get()->groupBy('number')->sortKeysDesc();
-        return view('admin.relics.edit', ['relic'=> $relic,'loots'=>$loots]);
+        return view('admin.relics.edit', ['relic'=> $relic]);
     }
 
     /**
@@ -133,7 +129,6 @@ class RelicController extends Controller
             'complexity'    => 'required|numeric|integer:min:1',
             'pieces'        => 'required|numeric',
             'number'        => 'required|numeric|integer',
-            'loot_table_number' => 'required|numeric|integer',
             'status'        => 'required|in:active,inactive',
         ]);
 
@@ -165,7 +160,6 @@ class RelicController extends Controller
         $relic->name = $request->name;
         $relic->pieces = (int) $request->pieces;
         $relic->number = (int) $request->number;
-        $relic->loot_table_number = (int) $request->loot_table_number;
         $relic->active = ($request->status=='active')?true:false;
 
         
@@ -184,6 +178,10 @@ class RelicController extends Controller
     {
         // $relic = Relic::find($id);
         $relic = DB::table('relics')->where('_id',$id)->first();
+        $loot = Loot::whereIn('_id',$relic['loot_tables'])->first();
+        if ($loot) {
+            return response()->json(['message'=>'This relic table can not be delete.'],422);
+        }
         Storage::disk($this->disk)->delete('relics/'.$relic['complexity'].'/'.$relic['icon']);
 
         /*foreach ($relic['pieces'] as $key => $value) {
@@ -245,9 +243,6 @@ class RelicController extends Controller
         })
         ->editColumn('active', function($relic){
             return ($relic->active==true)?'Active':'InActive';
-        })
-        ->editColumn('loot_table_number', function($relic){
-            return ($relic->loot_table_number)?$relic->loot_table_number:'-';
         })
         ->editColumn('name', function($relic){
             return ($relic->name)?$relic->name:'-';

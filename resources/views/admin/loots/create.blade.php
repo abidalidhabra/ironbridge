@@ -33,6 +33,18 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label>Relics</label>
+                                <select name="relics[]" class="form-control" id="relics" multiple>
+                                    <!-- <option value="">Please select relics</option> -->
+                                    @forelse($relics as $relic)
+                                        <option value="{{ $relic->id }}">{{ $relic->name }}</option>
+                                    @empty
+                                    @endforelse
+                                </select>
+                            </div>
+                        </div>
                         <div class="golds">
                             <h3>Gold</h3>
                             <input type="checkbox" name="gold_check" value="true"> Gold<br>
@@ -101,5 +113,6 @@
             });
         // }
     });
+    $('#relics').select2();
 </script>
 @endsection
