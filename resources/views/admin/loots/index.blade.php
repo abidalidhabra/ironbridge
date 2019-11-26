@@ -23,8 +23,8 @@
                 <tr>
                     <th>Sr.</th>
                     <th>Loot Table Number</th>
-                    <th>Status</th>
                     <th>Relics</th>
+                    <th>Status</th>
                     @if(auth()->user()->hasPermissionTo('Delete Loot'))
                     <th>Action</th>
                     @endif
@@ -39,13 +39,6 @@
                         <th scope="row">{{ $i }}</th>
                         <td>{{ $key }}</td>
                         <td>
-                            @if($value[0]->status == true)
-                                <button data-action="status" data-status="false" data-id="{{ $key }}" class="btn btn-success btn-xs">Active</button>
-                            @else
-                                <button data-action="status" data-status="true" data-id="{{ $key }}" class="btn btn-danger btn-xs">InActive</button>
-                            @endif
-                        </td>
-                        <td>
                             @if(count($value[0]->relics_info) > 0)
                                 @php
                                     echo implode(',',$value[0]->relics_info->pluck('number')->toArray());
@@ -55,10 +48,17 @@
                             @endif    
                         </td>
                         <td>
+                            @if($value[0]->status == true)
+                                <button data-action="status" data-status="false" data-id="{{ $key }}" class="btn btn-success btn-xs">Active</button>
+                            @else
+                                <button data-action="status" data-status="true" data-id="{{ $key }}" class="btn btn-danger btn-xs">InActive</button>
+                            @endif
+                        </td>
+                        <td>
                         @if(auth()->user()->hasPermissionTo('Delete Loot'))
                             <a href="javascript:void(0)" data-id="{{ $key }}" data-action="delete" data-toggle="tooltip" title="Delete"  data-toggle="confirmation"><i class="fa fa-trash iconsetaddbox"></i></a>
                         @endif
-                            <a href="{{ route('admin.loots.edit_details',$key) }}" data-action="Edit" data-toggle="tooltip" title="View" ><i class="fa fa-pencil iconsetaddbox"></i></a>
+                            <a href="{{ route('admin.loots.edit_details',$key) }}" data-action="Edit" data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>
                             <a href="{{ route('admin.loots.show',$key) }}" data-action="View" data-toggle="tooltip" title="View" ><i class="fa fa-eye iconsetaddbox"></i></a>
                         </td>
                     </tr>

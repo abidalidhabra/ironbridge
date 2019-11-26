@@ -171,8 +171,12 @@
                 },
                 url: url,
                 data: {id : id},
+                beforeSend: function() {    
+                    $('body').css('opacity','0.5');
+                },
                 success: function(response)
                 {
+                    $('body').css('opacity','1');
                     //if (response.status == true) {
                         $('#editRewardModal').modal('show');
                         $('#editrewardForm').html(response);
