@@ -77,6 +77,6 @@ class Relic extends Eloquent
 
     public function loot_info()
     {
-        return $this->belongsToMany(Loot::class, null, 'loot_tables', 'relics');
+        return $this->belongsToMany(Loot::class, null, 'relics','loot_tables');
     }
 }

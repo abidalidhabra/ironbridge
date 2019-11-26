@@ -97,7 +97,7 @@ class RelicController extends Controller
      */
     public function show($id)
     {
-        $relic = Relic::find($id);
+        $relic = Relic::where('_id',$id)->with('loot_info')->first();
         return view('admin.relics.show', ['relic'=> $relic]);
     }
 
