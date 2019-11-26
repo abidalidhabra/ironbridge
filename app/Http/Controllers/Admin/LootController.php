@@ -288,7 +288,6 @@ class LootController extends Controller
                 }
             }
         }
-
         $allData = $request->all();
         $i = 0;
         
@@ -353,7 +352,9 @@ class LootController extends Controller
             }
 
             $value->status = ($request->status=="active")?true:false;
-            Relic::whereIn('_id',$value->relics)->pull('loot_tables', $value->id);
+            if ($value->relics) {
+                Relic::whereIn('_id',$value->relics)->pull('loot_tables', $value->id);
+            }
             $value->relics = $request->relics;
             $value->save();
             Relic::whereIn('_id',$request->relics)->push('loot_tables', $value->id);
