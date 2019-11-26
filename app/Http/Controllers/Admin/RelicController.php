@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
+use Illuminate\Validation\Rule;
 
 class RelicController extends Controller
 {
@@ -59,7 +60,7 @@ class RelicController extends Controller
             'icon'          => 'required|image',
             'complexity'    => 'required|numeric',
             'pieces'        => 'required|numeric',
-            'number'        => 'required|numeric|integer',
+            'number'        => 'required|numeric|integer|unique:relics,number',
             'status'        => 'required|in:active,inactive',
             // 'pieces.*.image'=> 'required|image',
         ]);
@@ -68,6 +69,9 @@ class RelicController extends Controller
             return response()->json(['message'=> $validator->messages()->first(),'status'=>false]);
         }
 
+        if(Relic::where('number',(int)$request->number)->first()){
+            return response()->json(['message'=> 'Relic number already exists','status'=>false]);    
+        }
         $request->icon->store('relics/'.$request->complexity, $this->disk);
         // $request->active_icon->store('seasons/'.$season->id, $this->disk);
         // $request->inactive_icon->store('seasons/'.$season->id, $this->disk);
@@ -136,6 +140,10 @@ class RelicController extends Controller
             return response()->json(['message'=> $validator->messages()->first(),'status'=>false]);
         }
 
+        if(Relic::where('number',(int)$request->number)->where('_id','!=',$id)->first()){
+            return response()->json(['message'=> 'Relic number already used','status'=>false]);    
+        }
+        
         $relic = Relic::find($id);
 
         
@@ -178,9 +186,11 @@ class RelicController extends Controller
     {
         // $relic = Relic::find($id);
         $relic = DB::table('relics')->where('_id',$id)->first();
-        $loot = Loot::whereIn('_id',$relic['loot_tables'])->first();
-        if ($loot) {
-            return response()->json(['message'=>'This relic table can not be delete.'],422);
+        if (isset($relic['loot_tables'])) {
+            $loot = Loot::whereIn('_id',$relic['loot_tables'])->first();
+            if ($loot) {
+                return response()->json(['message'=>'This relic table can not be delete.'],422);
+            }
         }
         Storage::disk($this->disk)->delete('relics/'.$relic['complexity'].'/'.$relic['icon']);
 

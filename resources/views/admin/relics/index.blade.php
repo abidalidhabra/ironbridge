@@ -23,6 +23,7 @@
                 <tr>
                     <th>Sr.</th>
                     <th>Name</th>
+                    <th>Number</th>
                     <th>Image</th>
                     <th>TH Complexity</th>
                     <th>Relic Map Pieces</th>
@@ -63,6 +64,7 @@
                     columns:[
                         { data:'DT_RowIndex',name:'_id' },
                         { data:'name',name:'name'},
+                        { data:'number',name:'number'},
                         { data:'icon',name:'icon'},
                         { data:'complexity',name:'complexity'},
                         { data:'pieces',name:'pieces'},
@@ -73,7 +75,7 @@
                     ],
                     columnDefs: [{
                         orderable: false,
-                        targets: [0,2,6],
+                        targets: [0,3,7],
                     }],
                 });
 
