@@ -152,10 +152,16 @@
         
         $('#relics').select2();
 
-
+        @if(Session::has('action') && Session::get('action')=='edit_model')
+            editmodel({{$id}});
+        @endif
         /* EDIT MODEL SHOW */
         $(document).on('click','.edit_reward',function(){
             var id = $(this).attr('data-id');
+            editmodel(id);
+        });
+        /* END EDIT MODEL SHOW */
+        function editmodel(id){
             var url ='{{ route("admin.loots.edit",':id') }}';
             url = url.replace(':id',id);
             $.ajax({
@@ -176,9 +182,7 @@
                     }*/
                 }
             });
-        });
-        /* END EDIT MODEL SHOW */
-    
+        }
         /* UPDATE REWARDSD */
         $(document).on('submit','#editrewardForm',function(e){
             e.preventDefault();

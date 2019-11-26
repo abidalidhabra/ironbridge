@@ -183,6 +183,7 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('avatarHTML', 'LootController@avatarHTML')->name('loots.avatarHTML');
 	Route::get('widgetHTML', 'LootController@widgetHTML')->name('loots.widgetHTML');
 	Route::get('changeStatus', 'LootController@changeStatus')->name('loots.changeStatus');
+	Route::get('edit_details/{id}', 'LootController@edit_details')->name('loots.edit_details');
 	
 	Route::resource('treasure_nodes_targets', 'TreasureNodesTargetController');
 	Route::get('getTreasureNodesTargetsList', 'TreasureNodesTargetController@getTreasureNodesTargetsList')->name('getTreasureNodesTargetsList');

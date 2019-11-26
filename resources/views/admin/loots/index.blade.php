@@ -58,6 +58,7 @@
                         @if(auth()->user()->hasPermissionTo('Delete Loot'))
                             <a href="javascript:void(0)" data-id="{{ $key }}" data-action="delete" data-toggle="tooltip" title="Delete"  data-toggle="confirmation"><i class="fa fa-trash iconsetaddbox"></i></a>
                         @endif
+                            <a href="{{ route('admin.loots.edit_details',$key) }}" data-action="Edit" data-toggle="tooltip" title="View" ><i class="fa fa-pencil iconsetaddbox"></i></a>
                             <a href="{{ route('admin.loots.show',$key) }}" data-action="View" data-toggle="tooltip" title="View" ><i class="fa fa-eye iconsetaddbox"></i></a>
                         </td>
                     </tr>

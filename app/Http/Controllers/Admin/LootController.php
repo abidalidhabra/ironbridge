@@ -11,6 +11,7 @@ use App\Models\v1\WidgetItem;
 use App\Models\v2\Relic;
 use Validator;
 use Auth;
+use Session;
 use Yajra\Datatables\Datatables;
 use Yajra\DataTables\EloquentDataTable;
 
@@ -484,5 +485,11 @@ class LootController extends Controller
             'status' => true,
             'message'=>'Status has been changed successfully.',
         ]);
+    }
+
+    public function edit_details($id){
+        Session::flash('action', 'edit_model');
+        
+        return redirect()->route('admin.loots.show',$id);
     }
 }
