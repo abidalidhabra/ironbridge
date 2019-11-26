@@ -8,9 +8,11 @@
             <div class="col-md-6">
                 <h3>Manage Loot Table</h3>
             </div>
+            @if(auth()->user()->hasPermissionTo('Add Loot'))
             <div class="col-md-6 text-right modalbuttonadd">
                 <a href="{{ route('admin.loots.create') }}" class="btn btn-info btn-md">Add</a>
             </div>
+            @endif
         </div>
     </div>
     <br/>
@@ -22,8 +24,10 @@
                     <th>Sr.</th>
                     <th>Loot Table Number</th>
                     <th>Status</th>
-                    <th>Relics</th> 
+                    <th>Relics</th>
+                    @if(auth()->user()->hasPermissionTo('Delete Loot'))
                     <th>Action</th>
+                    @endif
                 </tr>
             </thead>
             <tbody>
@@ -51,7 +55,9 @@
                             @endif    
                         </td>
                         <td>
+                        @if(auth()->user()->hasPermissionTo('Delete Loot'))
                             <a href="javascript:void(0)" data-id="{{ $key }}" data-action="delete" data-toggle="tooltip" title="Delete"  data-toggle="confirmation"><i class="fa fa-trash iconsetaddbox"></i></a>
+                        @endif
                             <a href="{{ route('admin.loots.show',$key) }}" data-action="View" data-toggle="tooltip" title="View" ><i class="fa fa-eye iconsetaddbox"></i></a>
                         </td>
                     </tr>

@@ -226,7 +226,7 @@ class RelicController extends Controller
             ->orWhere('pieces','like','%'.$search.'%')
             ->orWhere('created_at','like','%'.$search.'%');
         })
-        ->orderBy('created_at','DESC')
+        ->orderBy('number','asc')
         ->skip($skip)
         ->take($take)
         ->get();

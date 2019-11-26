@@ -180,7 +180,15 @@ class AddRolesAndPermission extends Controller
 						['name' => 'Delete Bucket Size / Agent Levels','guard_name' => 'admin', 'module'=>'Manage Levels / Bucket Size / Agent Levels'],
 						['name' => 'View Hunts XP','guard_name' => 'admin', 'module'=>'Manage Hunts / Hunts XP'],
 						['name' => 'Edit Hunts XP','guard_name' => 'admin', 'module'=>'Manage Hunts / Hunts XP'],
-
+						['name' => 'Add Loot','guard_name' => 'admin', 'module'=>'Manage Loot Table'],
+						['name' => 'Edit Loot','guard_name' => 'admin', 'module'=>'Manage Loot Table'],
+						['name' => 'View Loot','guard_name' => 'admin', 'module'=>'Manage Loot Table'],
+						['name' => 'Delete Loot','guard_name' => 'admin', 'module'=>'Manage Loot Table'],
+						['name' => 'View Challenge Nodes','guard_name' => 'admin', 'module'=>'Challenge Nodes'],
+						['name' => 'Edit Challenge Nodes','guard_name' => 'admin', 'module'=>'Challenge Nodes'],
+						['name' => 'View Hunt Statistics','guard_name' => 'admin', 'module'=>'Hunt Statistics'],
+						['name' => 'Edit Hunt Statistics','guard_name' => 'admin', 'module'=>'Hunt Statistics'],
+						
 					];
 		$admin = Admin::where('email','support@ironbridge1779.com')->first();
 

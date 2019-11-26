@@ -220,22 +220,36 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('GetPracticeGameList', 'PracticeGameController@GetPracticeGameList')->name('GetPracticeGameList');
 	Route::get('practiceGame/clues/html', 'PracticeGameController@targerHTML')->name('practiceGame.clue.html');
 
-	Route::resource('xpManagement', 'XpManagementController');
-	Route::get('getXpManagementList', 'XpManagementController@getXpManagementList')->name('getXpManagementList');
+	Route::group(['middleware' => ['permission:View Hunts XP']], function () {
+		Route::resource('xpManagement', 'XpManagementController');
+		Route::get('getXpManagementList', 'XpManagementController@getXpManagementList')->name('getXpManagementList');
+	});
+		
+	Route::group(['middleware' => ['permission:View Agent Levels']], function () {
+		Route::get('agent-levels/list', 'AgentLevel\AgentLevelController@list')->name('agent-levels.list');
+		Route::resource('agent-levels', 'AgentLevel\AgentLevelController');
+	});
 	
-	Route::get('agent-levels/list', 'AgentLevel\AgentLevelController@list')->name('agent-levels.list');
-	Route::resource('agent-levels', 'AgentLevel\AgentLevelController');
-	Route::get('agent-level/bucket-sizes/list', 'AgentLevel\BucketSizeAgentLevelController@list')->name('bucket-sizes.list');
-	Route::resource('agent-level/bucket-sizes', 'AgentLevel\BucketSizeAgentLevelController');
+	Route::group(['middleware' => ['permission:View Bucket Size / Agent Levels']], function () {
+		Route::get('agent-level/bucket-sizes/list', 'AgentLevel\BucketSizeAgentLevelController@list')->name('bucket-sizes.list');
+		Route::resource('agent-level/bucket-sizes', 'AgentLevel\BucketSizeAgentLevelController');
+	});
 
-	Route::resource('hunts-agent-levels', 'AgentLevel\HuntAgentLevelController');
-	Route::get('hunts-agent-levels-list', 'AgentLevel\HuntAgentLevelController@list')->name('hunts-agent-levels-list');
+	Route::group(['middleware' => ['permission:View Hunt / Agent Levels']], function () {
+		Route::resource('hunts-agent-levels', 'AgentLevel\HuntAgentLevelController');
+		Route::get('hunts-agent-levels-list', 'AgentLevel\HuntAgentLevelController@list')->name('hunts-agent-levels-list');
+	});
 
-	Route::resource('minigames-agent-levels', 'AgentLevel\MinigameAgentLevelController');
-	Route::get('minigames-agent-levels-list', 'AgentLevel\MinigameAgentLevelController@list')->name('minigames-agent-levels-list');
+	Route::group(['middleware' => ['permission:View Minigames / Agent Levels']], function () {
+		Route::resource('minigames-agent-levels', 'AgentLevel\MinigameAgentLevelController');
+		Route::get('minigames-agent-levels-list', 'AgentLevel\MinigameAgentLevelController@list')->name('minigames-agent-levels-list');
+	});
 
-	Route::resource('avatar-agent-levels', 'AgentLevel\AvatarAgentLevelController');
-	Route::get('avatar-agent-levels-list', 'AgentLevel\AvatarAgentLevelController@list')->name('avatar-agent-levels-list');
+
+	Route::group(['middleware' => ['permission:View Avatar / Agent Levels']], function () {
+		Route::resource('avatar-agent-levels', 'AgentLevel\AvatarAgentLevelController');
+		Route::get('avatar-agent-levels-list', 'AgentLevel\AvatarAgentLevelController@list')->name('avatar-agent-levels-list');
+	});
 
 });
 

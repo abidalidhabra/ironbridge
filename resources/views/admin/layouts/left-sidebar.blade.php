@@ -238,15 +238,20 @@
 					</li>
 					@endif
 
+					@if($admin->hasPermissionTo('View Loot'))
 					<li class="@if(Route::currentRouteName() == 'admin.loots.index' || 
 								Route::currentRouteName() == 'admin.loots.show' || 
 								Route::currentRouteName() == 'admin.loots.create') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.loots.index') }}">Manage Loot Table</a>
 					</li>
+					@endif
+					
+					@if($admin->hasPermissionTo('View Challenge Nodes'))
 					<li class="@if(Route::currentRouteName() == 'admin.treasure_nodes_targets.index' || 
 								Route::currentRouteName() == 'admin.treasure_nodes_targets.edit') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.treasure_nodes_targets.index') }}">Challenge Nodes</a>
 					</li>
+					@endif
 
 					@if($admin->hasPermissionTo('View Agent Levels') || $admin->hasPermissionTo('View Hunt / Agent Levels') || $admin->hasPermissionTo('View Minigames / Agent Levels') || $admin->hasPermissionTo('View Avatar / Agent Levels') || $admin->hasPermissionTo('View Bucket Size / Agent Levels'))
 					<li>
@@ -434,9 +439,11 @@
 					</li>
 					@endif
 
+					@if($admin->hasPermissionTo('View Hunt Statistics'))
 					<li class="@if(Route::currentRouteName() == 'admin.hunt_statistics.index') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.hunt_statistics.index') }}">Hunt Statistics</a>
 					</li>
+					@endif
 					
 					@if($admin->hasPermissionTo('View App Settings'))
 					<li  class="@if(Route::currentRouteName() == 'admin.app.settings.index'	) {{ 'activelist' }} @endif">

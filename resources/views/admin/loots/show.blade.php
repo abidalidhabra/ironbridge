@@ -23,7 +23,7 @@
     <div class="rewardsmainbox">
         <div class="tab-content">
             <div class="tab-pane fade in active">                
-                @if(auth()->user()->hasPermissionTo('Edit Hunt Loot Tables'))
+                @if(auth()->user()->hasPermissionTo('Edit Loot'))
                     <a href="javascript:void(0)" class="btn pull-right edit_reward default-btn" data-id="{{ $id }}">Edit</a>
                 @endif
                     <div class="rewardsbox">

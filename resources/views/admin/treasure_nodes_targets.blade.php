@@ -26,7 +26,9 @@
                     <th width="7%">Sr.</th>
                     <th>Game</th>
                     <th>Score</th>
+                    @if(auth()->user()->hasPermissionTo('Edit Challenge Nodes'))
                     <th width="5%">Action</th>
+                    @endif
                 </tr>
             </thead>
             <tbody></tbody>
@@ -121,12 +123,14 @@
                 { data:'DT_RowIndex',name:'_id' },
                 { data:'game',name:'game'},
                 { data:'score',name:'score'},
+                @if(auth()->user()->hasPermissionTo('Edit Challenge Nodes'))
                 { data:'action',name:'action' },
+                @endif
                 ],
                 columnDefs: [
                     {
                         orderable: false,
-                        targets: [0,3],
+                        targets: [0],
                         // "bSortable": false
                     }
                 ],
