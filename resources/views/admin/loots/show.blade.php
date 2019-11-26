@@ -4,13 +4,16 @@
 <!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->
 @endsection
 @section('content')
+<style type="text/css">
+    .select2-container{display: initial !important;}
+</style>
 <div class="right_paddingboxpart">      
     <div class="">
     </div>
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Hunt Loot Tables</h3>
+                <h3>Manage Loot Tables</h3>
             </div>
             <a href="{{ route('admin.loots.index') }}" class="btn pull-right default-btn">Back</a>
         </div>
@@ -28,7 +31,7 @@
                         <div class="col-md-3">
                             <div class="smallrewardbox">
                                 @forelse($loot[0]->relics_info as $key => $relic)
-                                    <p> {{ ($key+1).' - '.$relic->name }}</p>
+                                    <p> {{ ($key+1).' - '.$relic->number }}</p>
                                 @empty
                                 @endforelse
                             </div>

@@ -10,7 +10,7 @@
             </div>
             <div class="col-md-12">
                 <div class="row">
-                    <h3>Add Loot</h3>
+                    <h3>Add Loot Table</h3>
                 </div>
             </div>
         </div>

@@ -224,7 +224,7 @@ class LootController extends Controller
      */
     public function show($id)
     {
-        $loot = Loot::where('number',(int)$id)->with('relics_info:_id,name,loot_tables')->get();
+        $loot = Loot::where('number',(int)$id)->with('relics_info:_id,name,number,loot_tables')->get();
         $loots = $loot->groupBy('reward_type');
         return view('admin.loots.show',compact('loots','loot','id'));
     }
@@ -237,7 +237,7 @@ class LootController extends Controller
      */
     public function edit($id)
     {
-        $loot = Loot::where('number',(int)$id)->with('relics_info:_id,name,loot_tables')->get();
+        $loot = Loot::where('number',(int)$id)->with('relics_info:_id,name,number,loot_tables')->get();
         $relics = Relic::where(['active'=>true])->get();
         $lootReward = $loot->groupBy('reward_type');
         $widgetItem = WidgetItem::groupBy('widget_name')->groupBy('widget_category')->get();

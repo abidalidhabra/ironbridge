@@ -6,7 +6,7 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Loots</h3>
+                <h3>Manage Loot Table</h3>
             </div>
             <div class="col-md-6 text-right modalbuttonadd">
                 <a href="{{ route('admin.loots.create') }}" class="btn btn-info btn-md">Add</a>
@@ -21,8 +21,8 @@
                 <tr>
                     <th>Sr.</th>
                     <th>Loot Table Number</th>
-                    <th>Relics</th>
                     <th>Status</th>
+                    <th>Relics</th> 
                     <th>Action</th>
                 </tr>
             </thead>
@@ -44,7 +44,7 @@
                         <td>
                             @if(count($value[0]->relics_info) > 0)
                                 @php
-                                    echo implode(',',$value[0]->relics_info->pluck('name')->toArray());
+                                    echo implode(',',$value[0]->relics_info->pluck('number')->toArray());
                                 @endphp
                             @else
                                 -

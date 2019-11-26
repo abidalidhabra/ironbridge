@@ -241,7 +241,7 @@
 					<li class="@if(Route::currentRouteName() == 'admin.loots.index' || 
 								Route::currentRouteName() == 'admin.loots.show' || 
 								Route::currentRouteName() == 'admin.loots.create') {{ 'activelist' }} @endif">
-						<a href="{{ route('admin.loots.index') }}">Manage Loot</a>
+						<a href="{{ route('admin.loots.index') }}">Manage Loot Table</a>
 					</li>
 					<li class="@if(Route::currentRouteName() == 'admin.treasure_nodes_targets.index' || 
 								Route::currentRouteName() == 'admin.treasure_nodes_targets.edit') {{ 'activelist' }} @endif">
