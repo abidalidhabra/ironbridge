@@ -15,7 +15,7 @@
     </div>
     <br/>
     <br/>
-    <div class="customdatatable_box">
+    <div class="customdatatable_box col-md-12">
         <table class="table table-striped table-hover datatables" style="width: 100%;" id="dataTable">
             <thead>
                 <tr>
@@ -68,7 +68,7 @@
 
 @section('scripts')
 <script>
-    $('#dataTable').DataTable();
+   
     // $("table").delegate("button[data-action='status']", "click", function() {
     $(document).on('click',"button[data-action='status']",function(){
         var status = $(this).data('status');
@@ -96,6 +96,7 @@
     })
 
     // $(document).on('click',"a[data-action='delete']",function(){
+     $('#dataTable').DataTable(
     $("a[data-action='delete']").confirmation({
         container:"body",
         btnOkClass:"btn btn-sm btn-success",
@@ -124,6 +125,7 @@
             });
         }
     })
+    );
 
 </script>
 @endsection
