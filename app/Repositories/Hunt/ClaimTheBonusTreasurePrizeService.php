@@ -5,18 +5,18 @@ namespace App\Repositories\Hunt;
 use App\Models\v2\HuntStatistic;
 use App\Repositories\User\UserRepository;
 
-class MinigameNodeClaimPrizeService
+class ClaimTheBonusTreasurePrizeService
 {
 
     private $user;
     private $userRepository;
     private $huntStatistic;
 
-    public function FunctionName($value='')
+    public function __construct()
     {
         $this->huntStatistic = HuntStatistic::first(['_id', 'gold', 'skeleton_keys']);
-
     }
+    
     public function setUser($user)
     {
         $this->user = $user;

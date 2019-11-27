@@ -203,7 +203,8 @@ Route::group(['namespace' => 'Api\Hunt', 'prefix' => 'hunts', 'middleware' => 'j
 	Route::post('random/revokeTheReveal', 'RandomHuntController@revokeTheReveal');
 	Route::get('random/getRelicDetails', 'RandomHuntController@getRelicDetails');
 	Route::get('random/getMinigameForNode', 'RandomHuntController@getMinigameForNode');
-	Route::post('random/clainPrizeForMinigameNode', 'RandomHuntController@clainPrizeForMinigameNode');
+	Route::post('random/claimPrizeForBonuseTreasureNode', 'RandomHuntController@claimPrizeForBonuseTreasureNode');
+	Route::post('random/claimPrizeForMinigameNode', 'RandomHuntController@claimPrizeForMinigameNode');
 	Route::post('map/ARMode', 'RandomHuntController@updateARMode');
 });
 
