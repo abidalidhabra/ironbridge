@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Hunt\HuntUserRequest;
 use App\Http\Requests\Hunt\RevokeTheRevealRequest;
 use App\Http\Requests\v1\ParticipateRequest;
+use App\Models\v2\HuntStatistic;
 use App\Repositories\Hunt\ClaimTheBonusTreasurePrizeService;
 use App\Repositories\Hunt\ClaimTheMinigameNodePrizeService;
 use App\Repositories\Hunt\Factory\HuntFactory;
@@ -16,6 +17,7 @@ use App\Repositories\Hunt\GetRelicHuntParticipationRepository;
 use App\Repositories\Hunt\HuntUserDetailRepository;
 use App\Repositories\Hunt\HuntUserRepository;
 use App\Repositories\Hunt\ParticipationInRandomHuntRepository;
+use App\Repositories\User\UserRepository;
 use Exception;
 use Illuminate\Http\Request;
 use Validator;
@@ -129,5 +131,12 @@ class RandomHuntController extends Controller
         $user->ar_mode = filter_var($request->status, FILTER_VALIDATE_BOOLEAN);
         $user->save();
         return response()->json(['message' => 'AR Mode has been updated.', 'ar_mode'=> $user->ar_mode]);
+    }
+
+    public function boostThePower(Request $request)
+    {
+        $huntStatistic = HuntStatistic::first(['_id', 'power_ratio']);
+        $data = (new UserRepository(auth()->user()))->addPower((int)$huntStatistic->power_ratio);
+        return response()->json(['message' => 'Power has been boosted.', 'power_status'=> $data]); 
     }
 }

@@ -16,7 +16,7 @@ class GetRandomizeGameService
     public function get()
     {
         return $this->user->practice_games()
-                            ->with('game:id')
+                            ->with('game:_id,name,identifier')
                             ->whereNotNull('unlocked_at')
                             ->select('_id', 'game_id', 'unlocked_at')
                             ->get()

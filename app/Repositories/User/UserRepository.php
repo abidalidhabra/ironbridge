@@ -232,19 +232,13 @@ class UserRepository implements UserRepositoryInterface
 
     public function addPower(int $power)
     {
-        // \DB::connection()->enableQueryLog();
-        // $queries = \DB::getQueryLog();
-        // dd($queries);
-        if ($power == 100) {
-            // $condition = ['power_status.power'=> $power, 'full_peaked_at'=> new UTCDateTime(now())];
-            $this->user->power_status = ['power'=> $power, 'full_peaked_at'=> new UTCDateTime(now())];
-        }else{
+        if ($this->user->power_status['power'] == 100) {
             $this->user->power_status = ['power'=> $power];
-            // $this->user->increment('power_status.power', $power);
-            // $condition = ['power_status.power'=> $power];
+        }else if(($this->user->power_status['power'] + $power) >= 100) {
+            $this->user->power_status = ['power'=> 100, 'full_peaked_at'=> new UTCDateTime(now())];
+        }else if(($this->user->power_status['power'] + $power) < 100) {
+            $this->user->power_status = ['power'=> ($this->user->power_status['power'] + $power)];
         }
-            // $this->model->where('_id', $this->user->id)
-            //     ->update($condition);
         $this->user->save();
         return $this->user->power_status;
     }

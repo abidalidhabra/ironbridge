@@ -11,6 +11,7 @@ use App\Repositories\EventRepository;
 use App\Repositories\RelicRepository;
 use App\Repositories\User\UserRepository;
 use Auth;
+use Carbon\CarbonImmutable;
 use MongoDB\BSON\ObjectId as MongoID;
 use MongoDB\BSON\UTCDateTime;
 use Request;
@@ -62,7 +63,7 @@ class UserHelper {
 		// 	$relic['info'] = $relicsInfo->where('_id', $relic['id'])->first(); 
 		// 	return $relic; 
 		// });
-		$userBoostedAt = $user->power_status['full_peaked_at'] ?? false;
+		$userBoostedAt = (isset($user->power_status['full_peaked_at']))?CarbonImmutable::parse($user->power_status['full_peaked_at']): false;
 		if ($userBoostedAt) {
 			$freezeThePowerTill = HuntStatistic::select('_id', 'boost_power_till')->first();
 			$remainingFreezePowerTill = $userBoostedAt->addSeconds($freezeThePowerTill->boost_power_till);

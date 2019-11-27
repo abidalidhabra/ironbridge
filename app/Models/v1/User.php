@@ -241,7 +241,7 @@ class User extends Authenticatable implements JWTSubject
     public function getPowerStatusAttribute($value)
     {
         if (isset($value['full_peaked_at'])) {
-            $value['full_peaked_at'] = CarbonImmutable::createFromTimestamp($value['full_peaked_at']->toDateTime()->getTimestamp());
+            $value['full_peaked_at'] = CarbonImmutable::createFromTimestamp($value['full_peaked_at']->toDateTime()->getTimestamp())->format('Y-m-d H:i:s');
         }
         return $value;
     }

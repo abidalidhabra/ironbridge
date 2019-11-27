@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\Profile;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Profile\MarkTutorialAsCompleteRequest;
-use App\Models\v2\HuntStatistic;
 use App\Repositories\ComplexityTargetRepository;
 use App\Repositories\HuntRewardDistributionHistoryRepository;
 use App\Repositories\Hunt\GetRelicHuntParticipationRepository;
@@ -58,12 +57,5 @@ class ProfileController extends Controller
     {
         $data = (new UserRepository(auth()->user()))->markTutorialAsComplete($request->module);
         return response()->json(['message' => 'Tutorial has been marked as complete.']); 
-    }
-
-    public function boostThePower(Request $request)
-    {
-        $huntStatistic = HuntStatistic::first(['_id', 'power_ratio']);
-        $data = (new UserRepository(auth()->user()))->addPower((int)$huntStatistic->power_ratio);
-        return response()->json(['message' => 'Power has been boosted.', 'power_status'=> $data]); 
     }
 }
