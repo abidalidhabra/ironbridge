@@ -10,6 +10,7 @@ class HuntStatistic extends Eloquent
     protected $fillable = [
     	'power_ratio',
     	'gold',
-    	'skeleton_keys'
+    	'skeleton_keys',
+    	'boost_power_till'
     ];
 }

@@ -73,9 +73,10 @@ class HuntStatisticController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(),[
-            'power_ratio'   => 'required|numeric',
-            'gold'          => 'required|numeric',
-            'skeleton_keys' => 'required|numeric',
+            'power_ratio'      => 'required|numeric',
+            'gold'             => 'required|numeric',
+            'skeleton_keys'    => 'required|numeric',
+            'boost_power_till' => 'required|numeric',
         ]);
 
         if ($validator->fails())
@@ -88,6 +89,7 @@ class HuntStatisticController extends Controller
         $huntStatistic->power_ratio =  (int)$request->power_ratio;
         $huntStatistic->gold =  (int)$request->gold;
         $huntStatistic->skeleton_keys =  (int)$request->skeleton_keys;
+        $huntStatistic->boost_power_till =  (int)$request->boost_power_till;
         $huntStatistic->save();
 
         return response()->json([
