@@ -5,8 +5,10 @@ namespace App\Repositories\User;
 use App\Models\v1\User;
 use App\Models\v1\WidgetItem;
 use App\Models\v2\AgentComplementary;
+use App\Models\v2\HuntStatistic;
 use App\Repositories\RelicRepository;
 use App\Repositories\User\UserRepositoryInterface;
+use Carbon\CarbonImmutable;
 use Exception;
 use Illuminate\Support\Collection;
 use MongoDB\BSON\ObjectId;
@@ -251,5 +253,16 @@ class UserRepository implements UserRepositoryInterface
                         ->get();
 
         return ['current'=> $agentLevels->first(), 'upcoming'=> $agentLevels->last()];
+    }
+
+    public function powerFreezeTill()
+    {
+        $userBoostedAt = (isset($this->user->power_status['full_peaked_at']))?CarbonImmutable::parse($this->user->power_status['full_peaked_at']): false;
+        if ($userBoostedAt) {
+            $freezeThePowerTill = HuntStatistic::select('_id', 'boost_power_till')->first();
+            $remainingFreezePowerTill = $userBoostedAt->addSeconds($freezeThePowerTill->boost_power_till);
+            $remainingFreezePowerTime = ($remainingFreezePowerTill->gte(now()))? $remainingFreezePowerTill->diffInSeconds(now()): 0;
+        }
+        return $remainingFreezePowerTime ?? 0;
     }
 }

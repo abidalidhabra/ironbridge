@@ -6,12 +6,10 @@ use App\Models\v1\City;
 use App\Models\v1\Game;
 use App\Models\v1\News;
 use App\Models\v1\WidgetItem;
-use App\Models\v2\HuntStatistic;
 use App\Repositories\EventRepository;
 use App\Repositories\RelicRepository;
 use App\Repositories\User\UserRepository;
 use Auth;
-use Carbon\CarbonImmutable;
 use MongoDB\BSON\ObjectId as MongoID;
 use MongoDB\BSON\UTCDateTime;
 use Request;
@@ -63,12 +61,6 @@ class UserHelper {
 		// 	$relic['info'] = $relicsInfo->where('_id', $relic['id'])->first(); 
 		// 	return $relic; 
 		// });
-		$userBoostedAt = (isset($user->power_status['full_peaked_at']))?CarbonImmutable::parse($user->power_status['full_peaked_at']): false;
-		if ($userBoostedAt) {
-			$freezeThePowerTill = HuntStatistic::select('_id', 'boost_power_till')->first();
-			$remainingFreezePowerTill = $userBoostedAt->addSeconds($freezeThePowerTill->boost_power_till);
-			$remainingFreezePowerTime = ($remainingFreezePowerTill->gte(now()))? $remainingFreezePowerTill->diffInSeconds(now()): 0;
-		}
 		return [
 			'avatars' => $avatars,
 			'widgets' => $widgets,
@@ -84,7 +76,7 @@ class UserHelper {
 			'agent_stack'=> (new UserRepository($user))->getAgentStatus(),
 			'hunt_statistics'=> [
 				'power_station'=> [
-					'till'=> $remainingFreezePowerTime ?? 0
+					'till'=> (new UserRepository($user))->powerFreezeTill()
 				]
 			],
 			// 'used_widgets' => $user->used_widgets,

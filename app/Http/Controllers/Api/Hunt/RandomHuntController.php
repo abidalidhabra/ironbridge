@@ -135,8 +135,15 @@ class RandomHuntController extends Controller
 
     public function boostThePower(Request $request)
     {
+        $user = auth()->user();
         $huntStatistic = HuntStatistic::first(['_id', 'power_ratio']);
-        $data = (new UserRepository(auth()->user()))->addPower((int)$huntStatistic->power_ratio);
-        return response()->json(['message' => 'Power has been boosted.', 'power_status'=> $data]); 
+        $data = (new UserRepository($user))->addPower((int)$huntStatistic->power_ratio);
+        return response()->json([
+            'message' => 'Power has been boosted.', 
+            'power_station'=> [
+                'power'=> $data['power'], 
+                'till'=> (new UserRepository($user))->powerFreezeTill()
+            ]
+        ]); 
     }
 }
