@@ -11,6 +11,7 @@ use App\Models\v2\Relic;
 use App\Repositories\Game\GameRepository;
 use App\Repositories\Hunt\Contracts\HuntParticipationInterface;
 use App\Repositories\Hunt\GetLastParticipatedRandomHuntRepository;
+use App\Repositories\Hunt\TerminatedTheLastRandomHuntRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -22,14 +23,15 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
     {
         $this->user = auth()->user();
         
-        $bypassStatus = $this->bypassPreviousHunt();
+        (new TerminatedTheLastRandomHuntRepository)->terminate();
+        // $bypassStatus = $this->bypassPreviousHunt();
         $huntUser = $this->add($request);
         $clueDetails = $this->addClues($request, $huntUser);
 
         $data = (new GetLastParticipatedRandomHuntRepository)->get();
 
         return [
-            'bypass_previous_hunt'  => $bypassStatus,
+            // 'bypass_previous_hunt'  => $bypassStatus,
             'participated_hunt_found'=> $data['participated_hunt_found'], 
             'total_clues'=> $data['total_clues'],
             'completed_clues'=> $data['completed_clues'],
@@ -114,15 +116,15 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
         return $userMiniGames->flatten();
     }
 
-    public function bypassPreviousHunt()
-    {
-        $data = (new GetLastRunningRandomHuntRepository)->get();
-        if ($data['running_hunt_found']) {
-            $bypassStatus = true;
-            $data['hunt_user']->status = 'skipped';
-            $data['hunt_user']->save();
-            $data['hunt_user']->hunt_user_details()->where('status', '!=', 'completed')->update(['status'=> 'skipped']);
-        }
-        return $bypassStatus ?? false;
-    }
+    // public function bypassPreviousHunt()
+    // {
+    //     $data = (new GetLastRunningRandomHuntRepository)->get();
+    //     if ($data['running_hunt_found']) {
+    //         $bypassStatus = true;
+    //         $data['hunt_user']->status = 'skipped';
+    //         $data['hunt_user']->save();
+    //         $data['hunt_user']->hunt_user_details()->where('status', '!=', 'completed')->update(['status'=> 'skipped']);
+    //     }
+    //     return $bypassStatus ?? false;
+    // }
 }
