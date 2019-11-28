@@ -81,6 +81,15 @@ class LootController extends Controller
             return response()->json(['status' => false,'message' => $message]);
         }
 
+        $relicsCheck = Relic::whereIn('_id',$request->relics)
+                            ->where('loot_tables.0','exists',true)
+                            // ->whereRaw('count(loot_tables) > 1')
+                            ->get();
+                            
+        if(count($relicsCheck)>0){
+            return response()->json(['message' => 'Relic '.$relicsCheck[0]->name.' already associated with other loot table.'],422);
+        }
+
         $data = $request->all();
         $possibility = [];
         foreach ($data as $key => $value) {
@@ -112,8 +121,12 @@ class LootController extends Controller
         }
 
         $a = 0;
-        $number = Loot::orderBy('number','desc')->first()->number+1;
-        
+        $number = Loot::orderBy('number','desc')->first();
+        if ($number) {
+            $number = $number->number+1;
+        } else {
+            $number = 1;
+        }
         foreach ($data as $key => $value) {
             $loot = ($data['status']=="active")?true:false;
             if ($key == 'gold' && $data['gold_check'] == 'true') {
@@ -277,6 +290,17 @@ class LootController extends Controller
             return response()->json(['status' => false,'message' => $message]);
         }
 
+        $relics = Relic::whereIn('_id',$request->relics)
+                            ->get();
+
+        foreach ($relics as $key => $relic) {
+            if($relic->loot_info->count() > 0){
+                if ($relic->loot_info->first()->number != $id) {
+                    return response()->json(['message' => 'Relic '.$relic->name.' already associated with other loot table.'],422);
+                }
+            }
+        }
+        
         $possibility = $request->get('possibility');
         if (array_sum($possibility) != 100) {
             return response()->json(['status' => false,'message' => 'A total sum of possibilities needs equal to 100']);
