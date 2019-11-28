@@ -89,7 +89,7 @@ class CompleteTheClueRepository implements ClueInterface
        
         $rewardData['xp_reward'] = $this->addXP($huntCompleted);
         $rewardData['agent_status'] = $this->user->agent_status;
-        $rewardData['agent_stack'] = $this->userRepository->getAgentStatus();
+        $rewardData['agent_stack'] = $this->userRepository->getAgentStack();
 
         // unlock the minigame if it is locked in minigame module
         // $this->unlockeMiniGameIfLocked();

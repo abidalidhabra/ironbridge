@@ -11,7 +11,7 @@ use App\Models\v2\Relic;
 use App\Repositories\Game\GameRepository;
 use App\Repositories\Hunt\Contracts\HuntParticipationInterface;
 use App\Repositories\Hunt\GetLastParticipatedRandomHuntRepository;
-use App\Repositories\Hunt\TerminatedTheLastRandomHuntRepository;
+use App\Repositories\Hunt\TerminateTheLastRandomHuntRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -23,7 +23,7 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
     {
         $this->user = auth()->user();
         
-        (new TerminatedTheLastRandomHuntRepository)->terminate();
+        (new TerminateTheLastRandomHuntRepository)->terminate();
         // $bypassStatus = $this->bypassPreviousHunt();
         $huntUser = $this->add($request);
         $clueDetails = $this->addClues($request, $huntUser);

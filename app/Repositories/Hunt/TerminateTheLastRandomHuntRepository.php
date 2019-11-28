@@ -4,7 +4,7 @@ namespace App\Repositories\Hunt;
 
 use App\Repositories\Hunt\HuntUserRepository;
 
-class TerminatedTheLastRandomHuntRepository
+class TerminateTheLastRandomHuntRepository
 {
     public function terminate($isRelicHunt = false) : bool
     {

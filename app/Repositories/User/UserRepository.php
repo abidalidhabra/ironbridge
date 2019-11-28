@@ -245,7 +245,7 @@ class UserRepository implements UserRepositoryInterface
         return $this->user->power_status;
     }
 
-    public function getAgentStatus()
+    public function getAgentStack()
     {
         $agentLevels = AgentComplementary::whereIn('agent_level', [$this->user->agent_status['level'], $this->user->agent_status['level']+1])
                         ->orderBy('agent_level', 'asc')

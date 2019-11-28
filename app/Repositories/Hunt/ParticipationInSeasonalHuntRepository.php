@@ -6,7 +6,7 @@ use App\Models\v2\HuntUser;
 use App\Models\v2\HuntUserDetail;
 use App\Repositories\Hunt\Contracts\HuntParticipationInterface;
 use App\Repositories\Hunt\ParticipationInRandomHuntRepository;
-use App\Repositories\Hunt\TerminatedTheLastRandomHuntRepository;
+use App\Repositories\Hunt\TerminateTheLastRandomHuntRepository;
 use App\Repositories\RelicRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -19,7 +19,7 @@ class ParticipationInSeasonalHuntRepository implements HuntParticipationInterfac
     public function participate($request)
     {
         $this->user = auth()->user();
-        (new TerminatedTheLastRandomHuntRepository)->terminate(true);
+        (new TerminateTheLastRandomHuntRepository)->terminate(true);
         $this->relic = (new RelicRepository)->find($request->relic_id);
         $huntUser = $this->add($request);
         $clueDetails = $this->addClues($request, $huntUser);
