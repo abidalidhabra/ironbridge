@@ -16,7 +16,7 @@ hooks:
       runas: root
   ValidateService:
     - location: scripts/composer_update.sh
-      timeout: 300
+      timeout: 3000
       runas: root
   ApplicationStop:
     - location: scripts/stop_server
