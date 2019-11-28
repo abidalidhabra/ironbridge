@@ -6,10 +6,10 @@ services:
     restart: always
     image: 905666888987.dkr.ecr.us-east-1.amazonaws.com/laravel:latest
     volumes:
-      # - laravel:/var/www/html
+      - laravel:/var/www/html
       - ./irinbridge/log:/var/log/apache2
     ports:
       - "443:443"
 
-# volumes:
-#   laravel:
+volumes:
+  laravel:
