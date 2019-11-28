@@ -5,8 +5,10 @@ namespace App\Repositories\User;
 use App\Models\v1\User;
 use App\Models\v1\WidgetItem;
 use App\Models\v2\AgentComplementary;
+use App\Models\v2\HuntStatistic;
 use App\Repositories\RelicRepository;
 use App\Repositories\User\UserRepositoryInterface;
+use Carbon\CarbonImmutable;
 use Exception;
 use Illuminate\Support\Collection;
 use MongoDB\BSON\ObjectId;
@@ -232,24 +234,18 @@ class UserRepository implements UserRepositoryInterface
 
     public function addPower(int $power)
     {
-        // \DB::connection()->enableQueryLog();
-        // $queries = \DB::getQueryLog();
-        // dd($queries);
-        if ($power == 100) {
-            // $condition = ['power_status.power'=> $power, 'full_peaked_at'=> new UTCDateTime(now())];
-            $this->user->power_status = ['power'=> $power, 'full_peaked_at'=> new UTCDateTime(now())];
-        }else{
+        if ($this->user->power_status['power'] == 100) {
             $this->user->power_status = ['power'=> $power];
-            // $this->user->increment('power_status.power', $power);
-            // $condition = ['power_status.power'=> $power];
+        }else if(($this->user->power_status['power'] + $power) >= 100) {
+            $this->user->power_status = ['power'=> 100, 'full_peaked_at'=> new UTCDateTime(now())];
+        }else if(($this->user->power_status['power'] + $power) < 100) {
+            $this->user->power_status = ['power'=> ($this->user->power_status['power'] + $power)];
         }
-            // $this->model->where('_id', $this->user->id)
-            //     ->update($condition);
         $this->user->save();
         return $this->user->power_status;
     }
 
-    public function getAgentStatus()
+    public function getAgentStack()
     {
         $agentLevels = AgentComplementary::whereIn('agent_level', [$this->user->agent_status['level'], $this->user->agent_status['level']+1])
                         ->orderBy('agent_level', 'asc')
@@ -257,5 +253,16 @@ class UserRepository implements UserRepositoryInterface
                         ->get();
 
         return ['current'=> $agentLevels->first(), 'upcoming'=> $agentLevels->last()];
+    }
+
+    public function powerFreezeTill()
+    {
+        $userBoostedAt = (isset($this->user->power_status['full_peaked_at']))?CarbonImmutable::parse($this->user->power_status['full_peaked_at']): false;
+        if ($userBoostedAt) {
+            $freezeThePowerTill = HuntStatistic::select('_id', 'boost_power_till')->first();
+            $remainingFreezePowerTill = $userBoostedAt->addSeconds($freezeThePowerTill->boost_power_till);
+            $remainingFreezePowerTime = ($remainingFreezePowerTill->gte(now()))? $remainingFreezePowerTill->diffInSeconds(now()): 0;
+        }
+        return $remainingFreezePowerTime ?? 0;
     }
 }

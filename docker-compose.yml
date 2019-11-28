@@ -7,9 +7,13 @@ services:
     image: 905666888987.dkr.ecr.us-east-1.amazonaws.com/laravel:latest
     volumes:
       # - laravel:/var/www/html
+      - admin_assests:/var/www/html/public/admin_assets/images
+      - storage:/var/www/html/storage
       - ./irinbridge/log:/var/log/apache2
     ports:
       - "443:443"
 
-# volumes:
-#   laravel:
+volumes:
+  admin_assests:
+  storage:
+  # laravel:

@@ -29,7 +29,13 @@ class ParticipateRequest extends FormRequest
     {
         return [
             'random'=> "required_without_all:relic_id,hunt_mode",
-            'relic_id'=> ["string", "exists:relics,_id", "required_without:random", new HuntParticipationRule($this->ownableUser()), new GoldAvailabilityForRelicRule($this->ownableUser())],
+            'relic_id'=> [
+                "string", 
+                "exists:relics,_id", 
+                "required_without:random", 
+                // new HuntParticipationRule($this->ownableUser()), 
+                // new GoldAvailabilityForRelicRule($this->ownableUser())
+            ],
             'complexity'=> "required_with:random|integer|between:1,5"
         ];
     }

@@ -61,7 +61,7 @@ class UserHelper {
 		// 	$relic['info'] = $relicsInfo->where('_id', $relic['id'])->first(); 
 		// 	return $relic; 
 		// });
-
+		$userRepository = (new UserRepository($user));
 		return [
 			'avatars' => $avatars,
 			'widgets' => $widgets,
@@ -74,7 +74,12 @@ class UserHelper {
 			// 'relics' => $relics,
 			'relics' => [],
 			'available_complexities' => $user->getAvailableComplexities(),
-			'agent_stack'=> (new UserRepository($user))->getAgentStatus(),
+			'agent_stack'=> $userRepository->getAgentStack(),
+			'hunt_statistics'=> [
+				'power_station'=> [
+					'till'=> $userRepository->powerFreezeTill()
+				]
+			],
 			// 'used_widgets' => $user->used_widgets,
 			// 'plans' => $plans,
 			// 'events_data' => $events,

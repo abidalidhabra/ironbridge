@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Hunt\HuntUserRequest;
 use App\Http\Requests\Hunt\RevokeTheRevealRequest;
 use App\Http\Requests\v1\ParticipateRequest;
+use App\Models\v2\HuntStatistic;
+use App\Repositories\Hunt\ClaimTheBonusTreasurePrizeService;
+use App\Repositories\Hunt\ClaimTheMinigameNodePrizeService;
 use App\Repositories\Hunt\Factory\HuntFactory;
 use App\Repositories\Hunt\GetHuntParticipationDetailRepository;
 use App\Repositories\Hunt\GetLastRunningRandomHuntRepository;
@@ -13,8 +16,8 @@ use App\Repositories\Hunt\GetRandomizeGameService;
 use App\Repositories\Hunt\GetRelicHuntParticipationRepository;
 use App\Repositories\Hunt\HuntUserDetailRepository;
 use App\Repositories\Hunt\HuntUserRepository;
-use App\Repositories\Hunt\MinigameNodeClaimPrizeService;
 use App\Repositories\Hunt\ParticipationInRandomHuntRepository;
+use App\Repositories\User\UserRepository;
 use Exception;
 use Illuminate\Http\Request;
 use Validator;
@@ -30,25 +33,25 @@ class RandomHuntController extends Controller
         return response()->json($response);
     }
 
-    public function initiateTheHunts(Request $request)
-    {
-        try {
+    // public function initiateTheHunts(Request $request)
+    // {
+    //     try {
 
-            $data = (new GetLastRunningRandomHuntRepository)->get();
-            return response()->json([
-                'message' => 'Relic\'s information has been retrieved.', 
-                'last_running_hunt'=> [
-                    'hunt_user'=> $data['hunt_user'], 
-                    'running_hunt_found'=> $data['running_hunt_found'], 
-                    'remaining_clues'=> $data['remaining_clues'],
-                    'total_remaining_clues'=> $data['total_remaining_clues'],
-                    'total_completed_clues'=> $data['total_completed_clues'],
-                ]
-            ]);
-        } catch (Exception $e) {
-            return response()->json(['message'=> $e->getMessage()], 500);
-        }
-    }
+    //         $data = (new GetLastRunningRandomHuntRepository)->get();
+    //         return response()->json([
+    //             'message' => 'Relic\'s information has been retrieved.', 
+    //             'last_running_hunt'=> [
+    //                 'hunt_user'=> $data['hunt_user'], 
+    //                 'running_hunt_found'=> $data['running_hunt_found'], 
+    //                 'remaining_clues'=> $data['remaining_clues'],
+    //                 'total_remaining_clues'=> $data['total_remaining_clues'],
+    //                 'total_completed_clues'=> $data['total_completed_clues'],
+    //             ]
+    //         ]);
+    //     } catch (Exception $e) {
+    //         return response()->json(['message'=> $e->getMessage()], 500);
+    //     }
+    // }
 
     public function getRelicDetails(HuntUserRequest $request)
     {
@@ -70,18 +73,18 @@ class RandomHuntController extends Controller
         }
     }
 
-    public function terminate($hunt_user)
-    {
-        $hunt_user = (new HuntUserRepository)->find($hunt_user);
-        if (!$hunt_user) {
-            return response()->json(['message'=> 'You have provided invalid hunt user id provided.'], 500);
-        }
-        $hunt_user->status = 'terminated';
-        $hunt_user->ended_at = now();
-        $hunt_user->save();
-        $hunt_user->hunt_user_details()->where('status', '!=', 'completed')->update(['status'=> 'terminated']);
-        return response()->json(['message' => 'Hunt is successfully terminated.']);
-    }
+    // public function terminate($hunt_user)
+    // {
+    //     $hunt_user = (new HuntUserRepository)->find($hunt_user);
+    //     if (!$hunt_user) {
+    //         return response()->json(['message'=> 'You have provided invalid hunt user id provided.'], 500);
+    //     }
+    //     $hunt_user->status = 'terminated';
+    //     $hunt_user->ended_at = now();
+    //     $hunt_user->save();
+    //     $hunt_user->hunt_user_details()->where('status', '!=', 'completed')->update(['status'=> 'terminated']);
+    //     return response()->json(['message' => 'Hunt is successfully terminated.']);
+    // }
 
     public function revokeTheReveal(RevokeTheRevealRequest $request)
     {
@@ -100,12 +103,18 @@ class RandomHuntController extends Controller
         return response()->json(['message' => 'minigame has been retrieved for the node.', 'minigame'=> $minigame->load('treasure_nodes_target')]);
     }
 
-    public function clainPrizeForMinigameNode(Request $request)
+    public function claimPrizeForBonuseTreasureNode(Request $request)
     {
         // \DB::connection()->enableQueryLog();
-        $reward = (new MinigameNodeClaimPrizeService)->setUser(auth()->user())->do();
+        $reward = (new ClaimTheBonusTreasurePrizeService)->setUser(auth()->user())->do();
         // $queries = \DB::getQueryLog();
         // dd($queries);
+        return response()->json(['message' => 'prize provided on the behalf of bonuse treasure node.', 'reward'=> $reward]);
+    }
+
+    public function claimPrizeForMinigameNode(Request $request)
+    {
+        $reward = (new ClaimTheMinigameNodePrizeService)->setUser(auth()->user())->do();
         return response()->json(['message' => 'prize provided on the behalf of minigame.', 'reward'=> $reward]);
     }
 
@@ -122,5 +131,19 @@ class RandomHuntController extends Controller
         $user->ar_mode = filter_var($request->status, FILTER_VALIDATE_BOOLEAN);
         $user->save();
         return response()->json(['message' => 'AR Mode has been updated.', 'ar_mode'=> $user->ar_mode]);
+    }
+
+    public function boostThePower(Request $request)
+    {
+        $user = auth()->user();
+        $huntStatistic = HuntStatistic::first(['_id', 'power_ratio']);
+        $data = (new UserRepository($user))->addPower((int)$huntStatistic->power_ratio);
+        return response()->json([
+            'message' => 'Power has been boosted.', 
+            'power_station'=> [
+                'power'=> $data['power'], 
+                'till'=> (new UserRepository($user))->powerFreezeTill()
+            ]
+        ]); 
     }
 }

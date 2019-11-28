@@ -10,6 +10,7 @@ use App\Models\v2\PracticeGameUser;
 use App\Repositories\Hunt\Contracts\ClueInterface;
 use App\Repositories\Hunt\HuntUserDetailRepository;
 use App\Repositories\Hunt\HuntUserRepository;
+// use App\Repositories\PracticeGameUserRepository;
 use App\Repositories\RelicRepository;
 use App\Repositories\SeasonRepository;
 use App\Repositories\User\UserRepository;
@@ -41,7 +42,7 @@ class CompleteTheClueRepository implements ClueInterface
 
         // get single hunt user detail
         $this->huntUserDetail = (new HuntUserDetailRepository)->find($request->hunt_user_details_id);
-        $this->huntUser   = $this->huntUserDetail->hunt_user()->select('_id', 'complexity', 'user_id', 'relic_reference_id')->first();
+        $this->huntUser   = $this->huntUserDetail->hunt_user()->select('_id', 'complexity', 'user_id', 'relic_reference_id', 'relic_id')->first();
         $huntUserDetails  = $this->huntUserDetail->hunt_user->hunt_user_details()->get();
 
         // check if hunt is completed
@@ -59,7 +60,7 @@ class CompleteTheClueRepository implements ClueInterface
         }
 
         // Calculate the time & mark the clue as complete
-        $clueFinishedIn = (new HuntUserDetailRepository)->calculateTheTimer($this->huntUserDetail, 'completed')->finished_in;
+        $clueFinishedIn = (new HuntUserDetailRepository)->calculateTheTimer($this->huntUserDetail, 'completeds')->finished_in;
 
         $rewardData = null;
         $totalFinishedIn = $clueFinishedIn;
@@ -74,6 +75,7 @@ class CompleteTheClueRepository implements ClueInterface
             (new HuntUserRepository)->update($dataToBeUpdate, ['_id'=> $this->huntUserDetail->hunt_user_id]);
             
             if ($this->huntUser->relic_id) {
+                $rewardData = $this->generateRelicReward();
                 $rewardData['collected_relic'] = $this->user->relics_info()->where('_id', $this->huntUser->relic_id)->select('_id', 'icon', 'complexity')->first();
             }else{
                 // generate the reward
@@ -89,7 +91,7 @@ class CompleteTheClueRepository implements ClueInterface
        
         $rewardData['xp_reward'] = $this->addXP($huntCompleted);
         $rewardData['agent_status'] = $this->user->agent_status;
-        $rewardData['agent_stack'] = $this->userRepository->getAgentStatus();
+        $rewardData['agent_stack'] = $this->userRepository->getAgentStack();
 
         // unlock the minigame if it is locked in minigame module
         // $this->unlockeMiniGameIfLocked();
@@ -250,6 +252,85 @@ class CompleteTheClueRepository implements ClueInterface
         return [ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData];
     }
 
+    public function generateRelicReward() {
+
+        $userId      = $this->user->_id;
+        $loots = $this->huntUser->relic->loot_info->first();
+
+        if (!$loots) {
+            return [ 'reward_messages' => 'No reward found.', 'reward_data' => new stdClass()];
+        }
+
+        // if ($loots->widgets_order && is_array($loots->widgets_order)) {
+
+        //     $widgetOrder         = collect($loots->widgets_order);
+            
+        //     findWidget:
+        //     $widgetCategory  = $countableWidget['type'];
+        //     $widgetName      = $countableWidget['widget_name'];
+
+        //     $userWidgets = collect($this->user->widgets)->pluck('id');
+        //     $widgetItems = WidgetItem::when($widgetCategory != 'all', function ($query) use ($widgetCategory){
+        //                         return $query->where('widget_category', $widgetCategory);
+        //                     })
+        //                     ->havingGender($userGender)
+        //                     ->where('widget_name',$widgetName)
+        //                     ->whereNotIn('_id',$userWidgets)
+        //                     ->select('_id', 'widget_name', 'avatar_id', 'widget_category')
+        //                     ->first();
+            
+        //     if (!$widgetItems) {
+
+        //         $widgetOrder = $widgetOrder->reject(function($order) use ($widgetName, $widgetCategory) { 
+        //             return ($order['widget_name'] == $widgetName && $order['type'] == $widgetCategory); 
+        //         });
+
+        //         $countableWidget = $widgetOrder->where('min', '!=', 0)->where('max', '!=', 0)->sortByDesc('possibility')->first();
+
+        //         if ($widgetOrder->count() == 0) {
+        //             $rewardData['type'] = 'skeleton_key';
+        //             $loots->skeletons = 1;
+        //             goto distSkeleton; 
+        //         }
+        //         goto findWidget; 
+        //     }
+
+        //     $widget = [ 'id'=> $widgetItems->id, 'selected'=> false ];
+        //     $this->user->push('widgets', $widget);
+        //     $message[] = 'Widget has been unlocked';
+        //     $rewardData['widget'] = $widgetItems;
+        // }
+
+        if ($loots->skeletons){
+            distSkeleton:
+            $skeletons = [];
+            for ($i=0; $i < $loots->skeletons; $i++) { 
+                $skeletons[] = [
+                    'key'       => strtoupper(substr(uniqid(), 0, 10)),
+                    'created_at'=> new UTCDateTime(),
+                    'used_at'   => null
+                ];
+            }
+            $this->user->push('skeleton_keys', $skeletons);
+            $message[] = 'Skeleton key provided';
+            $rewardData['skeleton_keys'] = $skeletons;
+        }
+
+        if ($loots->gold_value){
+            distGold:
+            $this->user->gold_balance += $loots->gold_value;
+            $this->user->save();
+            $message[] = 'Gold provided.';
+            $rewardData['golds'] = $loots->gold_value;
+        }
+        
+        $rewardData['user_id'] = $userId;
+        (new LogTheHuntRewardService)->add($rewardData);
+        unset($rewardData['hunt_user_id'], $rewardData['user_id'], $rewardData['type']);
+        // Log::info([ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData]);
+        return [ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData];
+    }
+
     public function logTheMinigmeHistory()
     {
         $data['hunt_user_detail_id'] = $this->huntUserDetail->id;
@@ -283,7 +364,7 @@ class CompleteTheClueRepository implements ClueInterface
             $totalPiecesRemaining = $relic->pieces - $totalTreasureCompleted;
             // $pieceRemaining = $totalTreasureCompleted + 1;
             if ($totalPiecesRemaining <= 0) {
-                $data['collected_relic'] = (new AddRelicService)->setUser($this->user)->setRelicId($this->huntUser->relic_reference_id)->add()->getRelic(['_id', 'complexity','icon']);
+                $data['collected_relic'] = (new AddRelicService)->setUser($this->user)->setRelicId($this->huntUser->relic_reference_id)->add()->getRelic(['_id', 'complexity','icon', 'number']);
                 $data['collected_piece'] = $this->addPiece($totalTreasureCompleted);
                 return $data;
             }else {

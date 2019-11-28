@@ -4,6 +4,8 @@ namespace App\Models\v1;
 
 use App\Models\v2\AgentComplementary;
 use App\Models\v2\Relic;
+use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Notifications\Notifiable;
 use Jenssegers\Mongodb\Auth\User as Authenticatable;
@@ -48,7 +50,7 @@ class User extends Authenticatable implements JWTSubject
         'tutorials',
         'agent_status',
         'relics',
-        'power',
+        'power_status',
         'ar_mode',
         // 'expnadable_skeleton_keys',
     ];
@@ -73,7 +75,6 @@ class User extends Authenticatable implements JWTSubject
 
     protected $dates = [
         'dob',
-        'power_status.full_peaked_at',
     ];
     
     /**
@@ -240,7 +241,7 @@ class User extends Authenticatable implements JWTSubject
     public function getPowerStatusAttribute($value)
     {
         if (isset($value['full_peaked_at'])) {
-            $value['full_peaked_at'] = $value['full_peaked_at']->toDateTime()->format('Y-m-d H:i:s');
+            $value['full_peaked_at'] = CarbonImmutable::createFromTimestamp($value['full_peaked_at']->toDateTime()->getTimestamp())->format('Y-m-d H:i:s');
         }
         return $value;
     }

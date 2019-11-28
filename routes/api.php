@@ -198,13 +198,15 @@ Route::group(['namespace' => 'Api\Hunt', 'prefix' => 'hunts', 'middleware' => 'j
 
 	/** Hunt requests **/
 	Route::post('random/participate', 'RandomHuntController@participate');
-	Route::get('getHuntsOnStartup', 'RandomHuntController@initiateTheHunts');
-	Route::put('random/{hunt_user}/terminate', 'RandomHuntController@terminate');
+	// Route::get('getHuntsOnStartup', 'RandomHuntController@initiateTheHunts');
+	// Route::put('random/{hunt_user}/terminate', 'RandomHuntController@terminate');
 	Route::post('random/revokeTheReveal', 'RandomHuntController@revokeTheReveal');
 	Route::get('random/getRelicDetails', 'RandomHuntController@getRelicDetails');
 	Route::get('random/getMinigameForNode', 'RandomHuntController@getMinigameForNode');
-	Route::post('random/clainPrizeForMinigameNode', 'RandomHuntController@clainPrizeForMinigameNode');
+	Route::post('random/claimPrizeForBonuseTreasureNode', 'RandomHuntController@claimPrizeForBonuseTreasureNode');
+	Route::post('random/claimPrizeForMinigameNode', 'RandomHuntController@claimPrizeForMinigameNode');
 	Route::post('map/ARMode', 'RandomHuntController@updateARMode');
+	Route::post('random/boostThePower', 'RandomHuntController@boostThePower');
 });
 
 Route::group(['namespace' => 'Api\Profile', 'prefix' => 'profile', 'middleware' => 'jwt-auth'], function ($router) {
@@ -212,7 +214,6 @@ Route::group(['namespace' => 'Api\Profile', 'prefix' => 'profile', 'middleware' 
 	/** Hunt requests **/
 	Route::get('getRelicsData', 'ProfileController@getRelics');
 	Route::post('markTutorialAsComplete', 'ProfileController@markTutorialAsComplete');
-	Route::post('boostThePower', 'ProfileController@boostThePower');
 });
 
 Route::group(['namespace' => 'Api\Relic', 'prefix' => 'relics', 'middleware' => 'jwt-auth'], function ($router) {
