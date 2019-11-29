@@ -5,6 +5,7 @@ namespace App\Models\v1;
 // use Illuminate\Database\Eloquent\Model;
 use App\Models\v2\TreasureNodesTarget;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
+use App\Collections\GameCollection;
 
 class Game extends Eloquent
 {
@@ -44,6 +45,11 @@ class Game extends Eloquent
     public function treasure_nodes_target()
     {
         return $this->hasOne(TreasureNodesTarget::class);
+    }
+
+    public function newCollection(array $models = [])
+    {
+        return new GameCollection($models);
     }
 
     // public function practice_mini_games()

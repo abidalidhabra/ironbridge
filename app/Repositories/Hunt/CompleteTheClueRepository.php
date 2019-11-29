@@ -60,7 +60,7 @@ class CompleteTheClueRepository implements ClueInterface
         }
 
         // Calculate the time & mark the clue as complete
-        $clueFinishedIn = (new HuntUserDetailRepository)->calculateTheTimer($this->huntUserDetail, 'completeds')->finished_in;
+        $clueFinishedIn = (new HuntUserDetailRepository)->calculateTheTimer($this->huntUserDetail, 'completed')->finished_in;
 
         $rewardData = null;
         $totalFinishedIn = $clueFinishedIn;

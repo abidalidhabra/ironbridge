@@ -27,9 +27,13 @@ class ClaimTheBonusTreasurePrizeService
     public function do()
     {
         if (rand(0, 1)) {
-            return ['gold_balance'=> $this->userRepository->addSkeletonKeys($this->huntStatistic->gold)];
+            return ['gold_balance'=> $this->userRepository->addGold($this->huntStatistic->gold)];
+            // $this->userRepository->addGold($this->huntStatistic->gold);
+            // return ['gold_credited'=> $this->huntStatistic->gold];
         }else {
-            return ['available_skeleton_keys'=> $this->userRepository->addGold($this->huntStatistic->skeleton_keys)];
+            return ['available_skeleton_keys'=> $this->userRepository->addSkeletonKeys($this->huntStatistic->skeleton_keys)];
+            // $this->userRepository->addSkeletonKeys($this->huntStatistic->skeleton_keys)
+            // return ['skeleton_keys_credited'=> $this->huntStatistic->skeleton_keys];
         }
     }
 }
