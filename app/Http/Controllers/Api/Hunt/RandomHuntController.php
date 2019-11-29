@@ -101,7 +101,7 @@ class RandomHuntController extends Controller
         $minigames = (new GetRandomizeGamesService)->setUser(auth()->user())->get(10);
         // $queries = \DB::getQueryLog();
         // dd($queries);
-        return response()->json(['message' => 'minigame has been retrieved for the node.', 'minigame'=> $minigames->getTreasureNodesTargets()]);
+        return response()->json(['message' => 'minigame has been retrieved for the node.', 'minigames'=> $minigames->getTreasureNodesTargets()]);
     }
 
     public function claimPrizeForBonuseTreasureNode(Request $request)
