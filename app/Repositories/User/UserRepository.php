@@ -199,6 +199,9 @@ class UserRepository implements UserRepositoryInterface
 
     public function addXp($points)
     {
+        if ($this->powerFreezeTill() > 0) {
+            $points *= 2;
+        }
         $this->model->where('_id',$this->user->id)->increment('agent_status.xp', $points);
         $this->setAgentStatus($points);
         return $this->user->agent_status['xp'];
