@@ -83,8 +83,10 @@ class CompleteTheClueRepository implements ClueInterface
                 
                 // Add Map Piece OR Provide XP REWARDS
                 $data = $this->addMapPiece();
-                $rewardData['collected_relic'] = $data['collected_relic'];
-                $rewardData['collected_piece'] = $data['collected_piece'];
+                // $rewardData['collected_relic'] = $data['collected_relic'];
+                // $rewardData['collected_piece'] = $data['collected_piece'];
+                // $rewardData['streaming_relic'] = $data['streaming_relic'] ?? null;
+                $rewardData = array_merge($rewardData, $data);
             }
             $huntCompleted = true;
         }
@@ -366,6 +368,7 @@ class CompleteTheClueRepository implements ClueInterface
             if ($totalPiecesRemaining <= 0) {
                 $data['collected_relic'] = (new AddRelicService)->setUser($this->user)->setRelicId($this->huntUser->relic_reference_id)->add()->getRelic(['_id', 'complexity','icon', 'number']);
                 $data['collected_piece'] = $this->addPiece($totalTreasureCompleted);
+                $data['streaming_relic'] = $this->userRepository->streamingRelic();
                 return $data;
             }else {
                 $data['collected_piece'] = $this->addPiece($totalTreasureCompleted);

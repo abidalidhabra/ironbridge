@@ -237,9 +237,10 @@ class UserRepository implements UserRepositoryInterface
 
     public function addPower(int $power)
     {
-        if ($this->user->power_status['power'] == 100) {
-            $this->user->power_status = ['power'=> $power];
-        }else if(($this->user->power_status['power'] + $power) >= 100) {
+        // if ($this->user->power_status['power'] == 100) {
+        //     $this->user->power_status = ['power'=> $power];
+        // }else 
+        if(($this->user->power_status['power'] + $power) >= 100) {
             $this->user->power_status = ['power'=> 100, 'full_peaked_at'=> new UTCDateTime(now())];
         }else if(($this->user->power_status['power'] + $power) < 100) {
             $this->user->power_status = ['power'=> ($this->user->power_status['power'] + $power)];
@@ -271,13 +272,18 @@ class UserRepository implements UserRepositoryInterface
 
     public function streamingRelic()
     {
-        return (new RelicRepository)->getModel()->when(($this->user->relics->count() > 0), function($query) {
+        $relic = (new RelicRepository)->getModel()->when(($this->user->relics->count() > 0), function($query) {
                     $query->whereNotIn('_id', $this->user->relics->pluck('id')->toArray());
                 })
                 ->active()
                 // ->orderBy('created_at', 'asc')
                 ->orderBy('number', 'asc')
-                ->select('_id', 'name', 'number', 'active')
+                ->select('_id', 'name', 'number', 'active', 'pieces')
                 ->first();
+
+        if ($relic) {
+            $relic->collected_pieces = $relic->hunt_users_reference()->where(['status'=> 'completed', 'user_id'=> $this->user->id])->count();
+        }
+        return $relic;
     }
 }

@@ -73,6 +73,11 @@ class Relic extends Eloquent
     public function hunt_users()
     {
         return $this->hasMany(HuntUser::class);
+    }    
+
+    public function hunt_users_reference()
+    {
+        return $this->hasMany(HuntUser::class, 'relic_reference_id');
     }
 
     public function loot_info()
