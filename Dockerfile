@@ -13,4 +13,4 @@ RUN composer install
 # RUN php artisan migrate
 RUN chown -R www-data:www-data /var/www/html
 
-RUN service apache2 restart
+# RUN service apache2 restart
