@@ -3,8 +3,9 @@
 namespace App\Repositories;
 
 use App\Models\v2\Relic;
+use App\Repositories\ModelRepository;
 
-class RelicRepository
+class RelicRepository extends ModelRepository
 {
 
     protected $model;
@@ -13,21 +14,6 @@ class RelicRepository
     public function __construct()
     {
         $this->model = new Relic;
-    }
-
-    public function find($id, $columns = ['*'])
-    {
-        return $this->model->find($id, $columns);
-    }
-
-    public function all($fields = ['*'])
-    {
-        return $this->model->all($fields);
-    }
-
-    public function getModel()
-    {
-        return $this->model;
     }
 
     public function setRelicId($relicId)

@@ -265,4 +265,16 @@ class UserRepository implements UserRepositoryInterface
         }
         return $remainingFreezePowerTime ?? 0;
     }
+
+    public function streamingRelic()
+    {
+        return (new RelicRepository)->getModel()->when(($this->user->relics->count() > 0), function($query) {
+                    $query->whereNotIn('_id', $this->user->relics->pluck('id')->toArray());
+                })
+                ->active()
+                // ->orderBy('created_at', 'asc')
+                ->orderBy('number', 'asc')
+                ->select('_id', 'name', 'number', 'active')
+                ->first();
+    }
 }

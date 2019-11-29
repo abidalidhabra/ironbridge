@@ -12,26 +12,34 @@ use App\Repositories\Game\GameRepository;
 use App\Repositories\Hunt\Contracts\HuntParticipationInterface;
 use App\Repositories\Hunt\GetLastParticipatedRandomHuntRepository;
 use App\Repositories\Hunt\TerminateTheLastRandomHuntRepository;
+use App\Repositories\User\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 class ParticipationInRandomHuntRepository implements HuntParticipationInterface
 {
     private $user;
+    private $userRepository;
 
+    public function setUser($user)
+    {
+        $this->user = $user;
+        return $this;
+    }
+    
     public function participate($request)
     {
         $this->user = auth()->user();
+        $this->userRepository = new UserRepository($this->user);
         
         (new TerminateTheLastRandomHuntRepository)->terminate();
-        // $bypassStatus = $this->bypassPreviousHunt();
+        
         $huntUser = $this->add($request);
         $clueDetails = $this->addClues($request, $huntUser);
 
         $data = (new GetLastParticipatedRandomHuntRepository)->get();
 
         return [
-            // 'bypass_previous_hunt'  => $bypassStatus,
             'participated_hunt_found'=> $data['participated_hunt_found'], 
             'total_clues'=> $data['total_clues'],
             'completed_clues'=> $data['completed_clues'],
@@ -42,14 +50,7 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
 
     public function add($request) : HuntUser
     {
-        $relic = Relic::when(($this->user->relics->count() > 0), function($query) {
-                    $query->whereNotIn('_id', $this->user->relics->pluck('id')->toArray());
-                })
-                ->where('complexity', (int)$request->complexity)
-                ->active()
-                ->orderBy('created_at', 'asc')
-                ->first();
-
+        $relic = $this->userRepository->streamingRelic();
         return $this->user->hunt_user_v1()->create([
             'complexity'=> (int)$request->complexity,
             'relic_reference_id'=> ($relic)? $relic->id: null,
@@ -62,7 +63,6 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
 
     public function addClues($request, $huntUser) : Collection
     {
-
         // Get the games in random orders
         $miniGames = $this->randomizeGames($request->total_clues);
 
@@ -78,12 +78,6 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
             ]);
         }
         return $huntUser->hunt_user_details()->saveMany($huntUserDetails);
-    }
-
-    public function setUser($user)
-    {
-        $this->user = $user;
-        return $this;
     }
 
     public function randomizeGames(int $noOfClues) :Collection
@@ -115,16 +109,4 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
         
         return $userMiniGames->flatten();
     }
-
-    // public function bypassPreviousHunt()
-    // {
-    //     $data = (new GetLastRunningRandomHuntRepository)->get();
-    //     if ($data['running_hunt_found']) {
-    //         $bypassStatus = true;
-    //         $data['hunt_user']->status = 'skipped';
-    //         $data['hunt_user']->save();
-    //         $data['hunt_user']->hunt_user_details()->where('status', '!=', 'completed')->update(['status'=> 'skipped']);
-    //     }
-    //     return $bypassStatus ?? false;
-    // }
 }

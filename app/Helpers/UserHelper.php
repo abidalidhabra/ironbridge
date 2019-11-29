@@ -72,7 +72,7 @@ class UserHelper {
 			'free_outfit_occupied' => $user->free_outfit_taken,
 			'latest_news' => News::latest()->limit(1)->get()->map(function($news) { return $news->setHidden(['valid_till', 'updated_at']); }),
 			// 'relics' => $relics,
-			'relics' => [],
+			'streaming_relic' => $userRepository->streamingRelic(),
 			// 'available_complexities' => $user->getAvailableComplexities(),
 			'available_complexities' => [1],
 			'agent_stack'=> $userRepository->getAgentStack(),
