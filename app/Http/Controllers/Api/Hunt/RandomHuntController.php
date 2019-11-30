@@ -140,11 +140,21 @@ class RandomHuntController extends Controller
         // $huntStatistic = HuntStatistic::first(['_id', 'power_ratio']);
         $data = (new UserRepository($user))->addPower((int)$request->power);
         return response()->json([
-            'message' => 'Power has been boosted.', 
+            'message' => 'Power has been boosted.',
             'power_station'=> [
                 'power'=> $data['power'], 
-                'till'=> (new UserRepository($user))->powerFreezeTill()
+                // 'till'=> (new UserRepository($user))->powerFreezeTill()
+                'activated'=> $data['activated'] ?? false, 
             ]
-        ]); 
+        ]);
+    }
+
+    public function activateThePower(Request $request)
+    {
+        $user = auth()->user();
+        if (isset($user->power_status['activated_at'])) {
+            return response()->json([ 'message' => 'Power cannot be activate.' ], 422);
+        }
+        return response()->json([ 'message' => 'Power has been activated.', 'power_station'=> (new UserRepository($user))->activateThePower() ]);
     }
 }

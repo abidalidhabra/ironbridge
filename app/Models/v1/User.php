@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Notifications\Notifiable;
 use Jenssegers\Mongodb\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use MongoDB\BSON\UTCDateTime;
 // use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements JWTSubject
@@ -238,10 +239,24 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Relic::class, null, 'users', 'relics._id');
     }
 
+    public function setPowerStatusAttribute($value)
+    {
+        if (isset($value['full_peaked_at']) && is_string($value['full_peaked_at'])) {
+            $value['full_peaked_at'] = new UTCDateTime(CarbonImmutable::parse($value['full_peaked_at'])->getTimestamp() * 1000);
+        }
+        if (isset($value['activated_at']) && is_string($value['activated_at'])) {
+            $value['activated_at'] = new UTCDateTime(CarbonImmutable::parse($value['activated_at'])->getTimestamp() * 1000);
+        }
+        return $this->attributes['power_status'] = $value;
+    }
+
     public function getPowerStatusAttribute($value)
     {
         if (isset($value['full_peaked_at'])) {
             $value['full_peaked_at'] = CarbonImmutable::createFromTimestamp($value['full_peaked_at']->toDateTime()->getTimestamp())->format('Y-m-d H:i:s');
+        }
+        if (isset($value['activated_at'])) {
+            $value['activated_at'] = CarbonImmutable::createFromTimestamp($value['activated_at']->toDateTime()->getTimestamp())->format('Y-m-d H:i:s');
         }
         return $value;
     }

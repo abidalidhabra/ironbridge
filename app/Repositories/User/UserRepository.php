@@ -237,10 +237,8 @@ class UserRepository implements UserRepositoryInterface
 
     public function addPower(int $power)
     {
-        // if ($this->user->power_status['power'] == 100) {
-        //     $this->user->power_status = ['power'=> $power];
-        // }else 
         if(($this->user->power_status['power'] + $power) >= 100) {
+            // $this->user->power_status = ['power'=> 100, 'full_peaked_at'=> new UTCDateTime(now()), 'activated'=> false];
             $this->user->power_status = ['power'=> 100, 'full_peaked_at'=> new UTCDateTime(now())];
         }else if(($this->user->power_status['power'] + $power) < 100) {
             $this->user->power_status = ['power'=> ($this->user->power_status['power'] + $power)];
@@ -261,8 +259,15 @@ class UserRepository implements UserRepositoryInterface
 
     public function powerFreezeTill()
     {
-        $userBoostedAt = (isset($this->user->power_status['full_peaked_at']))?CarbonImmutable::parse($this->user->power_status['full_peaked_at']): false;
-        if ($userBoostedAt) {
+        // $userBoostedAt = (isset($this->user->power_status['full_peaked_at']))?CarbonImmutable::parse($this->user->power_status['full_peaked_at']): false;
+        // if ($userBoostedAt) {
+        //     $freezeThePowerTill = HuntStatistic::select('_id', 'boost_power_till')->first();
+        //     $remainingFreezePowerTill = $userBoostedAt->addSeconds($freezeThePowerTill->boost_power_till);
+        //     $remainingFreezePowerTime = ($remainingFreezePowerTill->gte(now()))? $remainingFreezePowerTill->diffInSeconds(now()): 0;
+        // }
+        // return $remainingFreezePowerTime ?? 0;
+        if (isset($this->user->power_status['full_peaked_at']) && isset($this->user->power_status['activated_at'])) {
+            $userBoostedAt = CarbonImmutable::parse($this->user->power_status['activated_at']);
             $freezeThePowerTill = HuntStatistic::select('_id', 'boost_power_till')->first();
             $remainingFreezePowerTill = $userBoostedAt->addSeconds($freezeThePowerTill->boost_power_till);
             $remainingFreezePowerTime = ($remainingFreezePowerTill->gte(now()))? $remainingFreezePowerTill->diffInSeconds(now()): 0;
@@ -285,5 +290,15 @@ class UserRepository implements UserRepositoryInterface
             $relic->collected_pieces = $relic->hunt_users_reference()->where(['status'=> 'completed', 'user_id'=> $this->user->id])->count();
         }
         return $relic;
+    }
+
+    public function activateThePower()
+    {
+        $updatedPowerStatus = $this->user->power_status;
+        $updatedPowerStatus['power'] = 0;
+        $updatedPowerStatus['activated_at'] = new UTCDateTime();
+        $this->user->power_status = $updatedPowerStatus;
+        $this->user->save();
+        return array_merge($this->user->power_status, ['till'=> $this->powerFreezeTill()]);
     }
 }
