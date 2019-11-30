@@ -141,10 +141,10 @@ class RandomHuntController extends Controller
         $data = (new UserRepository($user))->addPower((int)$request->power);
         return response()->json([
             'message' => 'Power has been boosted.',
-            'power_station'=> [
+            'power_status'=> [
                 'power'=> $data['power'], 
                 // 'till'=> (new UserRepository($user))->powerFreezeTill()
-                'activated'=> $data['activated'] ?? false, 
+                // 'activated'=> $data['activated'] ?? false, 
             ]
         ]);
     }
@@ -155,6 +155,6 @@ class RandomHuntController extends Controller
         if (isset($user->power_status['activated_at'])) {
             return response()->json([ 'message' => 'Power cannot be activate.' ], 422);
         }
-        return response()->json([ 'message' => 'Power has been activated.', 'power_station'=> (new UserRepository($user))->activateThePower() ]);
+        return response()->json([ 'message' => 'Power has been activated.', 'power_status'=> (new UserRepository($user))->activateThePower() ]);
     }
 }

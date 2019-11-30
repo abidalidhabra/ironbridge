@@ -230,7 +230,11 @@ class UserRepository implements UserRepositoryInterface
 
     public function addRelic($relicId)
     {
-        $status = $this->model->where('_id', $this->user->id)->where('relics.id', '!=', $relicId)->push('relics', ['id'=> $relicId, 'status'=> false]);
+        // \DB::connection()->enableQueryLog();
+        $this->user->push('relics', ['id'=> $relicId, 'status'=> false]);
+        // $queries = \DB::getQueryLog();
+        // dd($this->user->relics);
+        // $status = $this->model->where('_id', $this->user->id)->where('relics.id', '!=', $relicId)->push('relics', ['id'=> $relicId, 'status'=> false]);
         (new RelicRepository)->setRelicId($relicId)->addUser($this->user->id);
         return ['_id'=> $relicId, 'status'=> false];
     }
@@ -277,14 +281,22 @@ class UserRepository implements UserRepositoryInterface
 
     public function streamingRelic()
     {
-        $relic = (new RelicRepository)->getModel()->when(($this->user->relics->count() > 0), function($query) {
-                    $query->whereNotIn('_id', $this->user->relics->pluck('id')->toArray());
+        $userRelics = User::find($this->user->id, ['_id', 'relics']);
+        $relic = (new RelicRepository)->getModel()->when(($userRelics->count() > 0), function($query) use ($userRelics) {
+                    $query->whereNotIn('_id', $userRelics->pluck('id')->toArray());
                 })
                 ->active()
-                // ->orderBy('created_at', 'asc')
                 ->orderBy('number', 'asc')
                 ->select('_id', 'name', 'number', 'active', 'pieces')
                 ->first();
+        // $relic = (new RelicRepository)->getModel()->when(($this->user->relics->count() > 0), function($query) {
+        //             $query->whereNotIn('_id', $this->user->relics->pluck('id')->toArray());
+        //         })
+        //         ->active()
+        //         // ->orderBy('created_at', 'asc')
+        //         ->orderBy('number', 'asc')
+        //         ->select('_id', 'name', 'number', 'active', 'pieces')
+        //         ->first();
 
         if ($relic) {
             $relic->collected_pieces = $relic->hunt_users_reference()->where(['status'=> 'completed', 'user_id'=> $this->user->id])->count();
