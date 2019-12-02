@@ -33,6 +33,7 @@ class ActionOnClueRequest extends FormRequest
             'latitude' => ["numeric", "required_if:status,running"],
             'longitude' => ["numeric", "required_if:status,running"],
             'walked' => ["numeric", "required_if:status,running"],
+            'score' => ["numeric", "required_if:status,completed"],
         ];
     }
 

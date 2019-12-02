@@ -60,7 +60,7 @@ class CompleteTheClueRepository implements ClueInterface
         }
 
         // Calculate the time & mark the clue as complete
-        $clueFinishedIn = (new HuntUserDetailRepository)->calculateTheTimer($this->huntUserDetail, 'completed')->finished_in;
+        $clueFinishedIn = (new HuntUserDetailRepository)->calculateTheTimer($this->huntUserDetail, 'completed', $request->only('score'))->finished_in;
 
         $rewardData = null;
         $totalFinishedIn = $clueFinishedIn;
@@ -339,6 +339,7 @@ class CompleteTheClueRepository implements ClueInterface
         $data['game_id'] = $this->huntUserDetail->game_id;
         $data['time'] = $this->huntUserDetail->finished_in;
         $data['complexity'] = $this->huntUserDetail->hunt_user->complexity;
+        $data['score'] = $this->huntUserDetail->score;
         (new MinigameEventFactory('hunt', 'completed', $data))->add();
     }
 

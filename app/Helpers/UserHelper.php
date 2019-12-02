@@ -7,6 +7,8 @@ use App\Models\v1\Game;
 use App\Models\v1\News;
 use App\Models\v1\WidgetItem;
 use App\Repositories\EventRepository;
+use App\Repositories\Game\GameRepository;
+use App\Repositories\MinigameHistoryRepository;
 use App\Repositories\RelicRepository;
 use App\Repositories\User\UserRepository;
 use Auth;
@@ -17,6 +19,8 @@ use Route;
 
 class UserHelper {
 	
+	public $user;
+
 	public static function getPerfixDetails($user = "")
 	{
 
@@ -259,5 +263,42 @@ class UserHelper {
             $user->minigame_tutorials = $minigameTutorial;
             $user->save();
         }
+    }
+
+    public function setUser($user)
+    {
+    	$this->user = $user;
+    	return $this;
+    }
+
+    public function getMinigamesStatistics()
+    {
+    	$gameStatistics = (new MinigameHistoryRepository)->getModel()->raw(function ($collection) {
+	    		return $collection->aggregate(
+	    			[
+	    				[ 
+	    					'$match' => [ 'user_id'=> $this->user->id, 'action'=> 'completed' ]
+	    				],
+	    				[ 
+	    					'$group' => [
+	    						'_id' => '$game_id', 
+	    						'game_id' => ['$last'=> '$game_id'], 
+	    						'completion_times' => [ '$sum'=> 1 ],
+	    						'highest_score'=> ['$max'=> '$score']
+	    					]
+	    				]
+	    			]
+	    		);
+	    	}
+	    );
+
+    	$games = (new GameRepository)->getModel()->whereIn('_id', $gameStatistics->pluck('game_id'))->select('_id', 'name', 'identifier')->get();
+    	$games->map(function($game, $index) use ($gameStatistics) {
+    		$statistics = $gameStatistics->where('game_id', $game->id)->first();
+    		$game->completion_times = $statistics->completion_times;
+    		$game->highest_score = $statistics->highest_score;
+    		return $game;
+    	});
+    	return $games;
     }
 }

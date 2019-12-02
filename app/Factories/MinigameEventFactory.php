@@ -17,12 +17,14 @@ class MinigameEventFactory
     private $actionType;
     private $rawData;
     private $data;
+    private $userId;
 
     public function __construct(string $type, string $actionType, array $rawData)
     {
         $this->type = $type;
         $this->actionType = $actionType;
         $this->rawData = $rawData;
+        $this->userId = auth()->user()->id;
     }
 
     public function add()
@@ -46,12 +48,14 @@ class MinigameEventFactory
         $modelData = new MinigameHistory();
         $modelData->from = $this->type;
         $modelData->action = $this->actionType;
+        $modelData->user_id = $this->userId;
         
         if ($this->type == 'hunt') {
             if ($this->actionType == 'completed') {
                 $modelData->hunt_user_detail_id = $this->rawData['hunt_user_detail_id'];
                 $modelData->game_id = $this->rawData['game_id'];
                 $modelData->time = $this->rawData['time'];
+                $modelData->score = $this->rawData['score'];
                 $modelData->complexity = $this->rawData['complexity'];
             }else{
                 $huntUserDetail = (new HuntUserDetailRepository)->find($this->rawData['hunt_user_details_id'], ['_id', 'game_id', 'complexity','hunt_user_id', 'finished_in']);

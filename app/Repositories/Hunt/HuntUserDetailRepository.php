@@ -17,7 +17,7 @@ class HuntUserDetailRepository
         return HuntUserDetail::where($cond)->update($fields);
     }
 
-    public function calculateTheTimer(HuntUserDetail $huntUserDetail, $action)
+    public function calculateTheTimer(HuntUserDetail $huntUserDetail, $action, $dataToUpdate = [])
     {
         $startdate  = $huntUserDetail->started_at;
         $finishedIn = $huntUserDetail->finished_in + now()->diffInSeconds($startdate);
@@ -25,6 +25,11 @@ class HuntUserDetailRepository
         $huntUserDetail->started_at = null;
         $huntUserDetail->ended_at = null;
         $huntUserDetail->status = $action;
+        if (count($dataToUpdate) > 0) {
+            foreach ($dataToUpdate as $key => $value) {
+                $huntUserDetail->$key = is_numeric($value)? (int)$value: $value;
+            }
+        }
         $huntUserDetail->save();
         return $huntUserDetail;
     }

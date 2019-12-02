@@ -3,14 +3,15 @@
 namespace App\Models\v1;
 
 use App\Models\v2\AgentComplementary;
+use App\Models\v2\MinigameHistory;
 use App\Models\v2\Relic;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Notifications\Notifiable;
 use Jenssegers\Mongodb\Auth\User as Authenticatable;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 use MongoDB\BSON\UTCDateTime;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 // use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements JWTSubject
@@ -259,5 +260,10 @@ class User extends Authenticatable implements JWTSubject
             $value['activated_at'] = CarbonImmutable::createFromTimestamp($value['activated_at']->toDateTime()->getTimestamp())->format('Y-m-d H:i:s');
         }
         return $value;
+    }
+
+    public function minigames_history()
+    {
+        return $this->hasMany(MinigameHistory::class);
     }
 }
