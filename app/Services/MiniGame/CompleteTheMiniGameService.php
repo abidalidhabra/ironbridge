@@ -14,6 +14,7 @@ class CompleteTheMiniGameService
 
 	protected $user;
 	protected $practiceGameUser;
+    protected $request;
 
     public function __construct($user)
     {
@@ -35,14 +36,12 @@ class CompleteTheMiniGameService
         $this->practiceGameUser = (new PracticeGameUserRepository)->findOrFail($request->practice_game_user_id);
         $request->request->add(['game_id'=> $this->practiceGameUser->game_id]);
 
+        $this->request = $request;
         if ($request->type == 'finished') {
             
             // log the action by overriding previous one
             (new MinigameEventFactory('practice', 'completed', $request->all()))->override();
         }else{
-            
-            // log the action
-            (new MinigameEventFactory('practice', 'completed', $request->all()))->add();
 
             // Throw an exception if cooldown period is active
             if ($this->practiceGameUser->completed_at && $this->practiceGameUser->completed_at->diffInHours() <= 24) {
@@ -101,15 +100,17 @@ class CompleteTheMiniGameService
                                     return $query->where('stage', '>', $this->practiceGameUser->last_play['stage']);
                                 })
                                 ->values();
-
         $lastPlay = [];
         $youAreAtHigher = false;
 
         if ($countableTargets->count() > 0) {
             
-            if (!$freezeMode && $countableTargets->first()['stage'] == 1) {
+            // if (!$freezeMode && $countableTargets->first()['stage'] == 1) {
+            if ($this->request->increase_counter == 'true') {
                 /** Increase completion_times only for stage 1 **/
                 $this->addCompletionTimes($this->practiceGameUser);
+                /** log the action **/
+                (new MinigameEventFactory('practice', 'completed', $this->request->all()))->add();
                 /** Mark the minigame as complete and piece as collected **/
                 $this->addCompletedAt($this->practiceGameUser);
             }
@@ -121,7 +122,8 @@ class CompleteTheMiniGameService
 
         /** Status of 2 & 3 Gateways **/
         $xpReward = new stdClass;
-        if ($keyToBeCredit && $youAreAtHigher) {
+        // if ($keyToBeCredit && $youAreAtHigher) {
+        if ($youAreAtHigher) {
             
             // Add last play as proof
             $this->addLastPlay($lastPlay);
@@ -133,7 +135,7 @@ class CompleteTheMiniGameService
                 $pieceToBeUpdate = (($this->user->pieces_collected + 1) == 3)? -2: 1; 
                 $this->user->increment('pieces_collected', $pieceToBeUpdate);
                 
-                if ($pieceToBeUpdate < 0) {
+                if ($keyToBeCredit && $pieceToBeUpdate < 0) {
                     (new UserRepository($this->user))->addSkeletonKeys($keyToBeCredit);
                 }
             }

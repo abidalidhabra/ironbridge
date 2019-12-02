@@ -32,6 +32,7 @@ class PracticeGameFinishRequest extends FormRequest
             'score' => ['required_with:time', 'numeric', 'integer', 'min:1'],
             'time' => ['required_with:score', 'numeric', 'integer', 'min:1'],
             'type' => ['required', 'in:completed,finished'],
+            'increase_counter' => ['required', 'in:true,false'],
         ];
     }
 
