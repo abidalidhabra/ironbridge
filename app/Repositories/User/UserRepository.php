@@ -231,10 +231,10 @@ class UserRepository implements UserRepositoryInterface
     public function addRelic($relicId)
     {
         // \DB::connection()->enableQueryLog();
-        $this->user->push('relics', ['id'=> $relicId, 'status'=> false]);
+        // $this->user->push('relics', ['id'=> $relicId, 'status'=> false]);
         // $queries = \DB::getQueryLog();
         // dd($this->user->relics);
-        // $status = $this->model->where('_id', $this->user->id)->where('relics.id', '!=', $relicId)->push('relics', ['id'=> $relicId, 'status'=> false]);
+        $status = $this->model->where('_id', $this->user->id)->where('relics.id', '!=', $relicId)->push('relics', ['id'=> $relicId, 'status'=> false]);
         (new RelicRepository)->setRelicId($relicId)->addUser($this->user->id);
         return ['_id'=> $relicId, 'status'=> false];
     }
@@ -281,7 +281,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function streamingRelic()
     {
-        $userRelics = User::find($this->user->id, ['_id', 'relics']);
+        $userRelics = User::find($this->user->id, ['_id', 'relics'])->relics;
         $relic = (new RelicRepository)->getModel()->when(($userRelics->count() > 0), function($query) use ($userRelics) {
                     $query->whereNotIn('_id', $userRelics->pluck('id')->toArray());
                 })
