@@ -11,6 +11,7 @@ RUN rm -rf .env
 RUN cp .env.example .env
 RUN composer install
 # RUN php artisan migrate
+RUN php artisan storage:link
 RUN chown -R www-data:www-data /var/www/html
 
 # RUN service apache2 restart
