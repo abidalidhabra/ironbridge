@@ -39,16 +39,6 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        // \App\Models\v2\HuntComplexity::where('created_at','<',today())
-        // ->orderBy('created_at', 'desc')
-        // ->get()
-        // ->map(function($complexity, $index){
-        //     // dd($complexity->created_at);
-        //     $complexity->est_completion = $complexity->est_completion * 60;
-        //     $complexity->save();
-        //     return $complexity; 
-        // });
-        // exit;
        try {
 
             $maintenanceMode = (new AppStatisticRepository)->first();
@@ -122,11 +112,8 @@ class AuthController extends Controller
                 'data' => new stdClass()
             ],500);
        } catch (Exception $e) {
-           return response()->json([
-                'message'=> $e->getMessage(), 
-                'token' => "", 
-                'data' => new stdClass()
-            ],500);
+           // return response()->json(['message'=> $e->getMessage(), 'token' => "", 'data' => new stdClass()],500);
+           return response()->json(['message'=> $e->getMessage()],500);
        }
     }
 

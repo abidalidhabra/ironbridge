@@ -98,8 +98,10 @@ class CompleteTheClueRepository implements ClueInterface
         // unlock the minigame if it is locked in minigame module
         // $this->unlockeMiniGameIfLocked();
 
-        // log the minigame statistic
-        $this->logTheMinigmeHistory();
+        if ($request->filled('score')) {
+            // log the minigame statistic
+            $this->logTheMinigmeHistory();
+        }
 
         //send the response
         return ['huntUserDetail'=> $this->huntUserDetail, 'rewardData'=> $rewardData, 'finishedIn'=> $totalFinishedIn];
