@@ -239,6 +239,16 @@ class UserRepository implements UserRepositoryInterface
         return ['_id'=> $relicId, 'status'=> false];
     }
 
+    public function activateTheRelic($relicId)
+    {
+        $status = $this->model->where(['_id'=> $this->user->id, 'relics.id'=> $relicId, 'relics.status'=> false])->update(['relics.$.status'=> true]);
+        if ($status) {
+            return ['_id'=> $relicId, 'status'=> true];
+        }else{
+            throw new Exception("Relic cannot be activate.");
+        }
+    }
+
     public function addPower(int $power)
     {
         if(($this->user->power_status['power'] + $power) >= 100) {

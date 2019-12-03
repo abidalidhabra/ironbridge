@@ -76,7 +76,9 @@ class CompleteTheClueRepository implements ClueInterface
             
             if ($this->huntUser->relic_id) {
                 $rewardData = $this->generateRelicReward();
-                $rewardData['collected_relic'] = $this->user->relics_info()->where('_id', $this->huntUser->relic_id)->select('_id', 'icon', 'complexity')->first();
+                $rewardData['collected_relic'] = (new AddRelicService)->setUser($this->user)->setRelicId($this->huntUser->relic_id)
+                                                ->activate()->getRelic(['_id', 'complexity','icon', 'number']);
+                // $rewardData['collected_relic'] = $this->user->relics_info()->where('_id', $this->huntUser->relic_id)->select('_id', 'icon', 'complexity')->first();
             }else{
                 // generate the reward
                 $rewardData = $this->generateReward();

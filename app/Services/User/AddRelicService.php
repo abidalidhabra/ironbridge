@@ -36,4 +36,10 @@ class AddRelicService
     {
         return $this->user->relics_info()->where('_id', $this->relicId)->first($fields);
     }
+
+    public function activate()
+    {
+        $this->userRepository->activateTheRelic($this->relicId);
+        return $this;
+    }
 }
