@@ -208,6 +208,7 @@ Route::group(['namespace' => 'Api\Hunt', 'prefix' => 'hunts', 'middleware' => 'j
 	Route::post('map/ARMode', 'RandomHuntController@updateARMode');
 	Route::post('random/boostThePower', 'RandomHuntController@boostThePower');
 	Route::post('random/boostThePower/active', 'RandomHuntController@activateThePower');
+	Route::get('random/cell-data', 'RandomHuntController@getCellData');
 });
 
 Route::group(['namespace' => 'Api\Profile', 'prefix' => 'profile', 'middleware' => 'jwt-auth'], function ($router) {
