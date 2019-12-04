@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Hunt;
 
 use App\Collections\GameCollection;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Hunt\CellDataRequest;
 use App\Http\Requests\Hunt\HuntUserRequest;
 use App\Http\Requests\Hunt\RevokeTheRevealRequest;
 use App\Http\Requests\v1\ParticipateRequest;
@@ -19,7 +20,10 @@ use App\Repositories\Hunt\HuntUserDetailRepository;
 use App\Repositories\Hunt\HuntUserRepository;
 use App\Repositories\Hunt\ParticipationInRandomHuntRepository;
 use App\Repositories\User\UserRepository;
+use App\Services\Hunt\PaybleCellProviderService;
 use Exception;
+use GuzzleHttp\Client;
+use GuzzleHttp\RequestOptions;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -156,5 +160,15 @@ class RandomHuntController extends Controller
             return response()->json([ 'message' => 'Power cannot be activate.' ], 422);
         }
         return response()->json([ 'message' => 'Power has been activated.', 'power_status'=> (new UserRepository($user))->activateThePower() ]);
+    }
+
+    public function getCellData(CellDataRequest $request)
+    {
+        $paybleCellProviderService = new PaybleCellProviderService;
+        return response()->json([
+            'cellID'=> $paybleCellProviderService->getCellID($request->all()),
+            'randomHuntsCells'=> $paybleCellProviderService->getMinigamesCells(),
+            'minigamesCells'=> $paybleCellProviderService->getRandomHuntsCells(),
+        ]);
     }
 }
