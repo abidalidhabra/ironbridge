@@ -1,0 +1,191 @@
+{
+    "areaFilter": {
+        "s2CellId": "CELL2IDPLACE",
+        "pointExclusions": []
+
+    },
+    "criteria": [{
+            "gameObjectType": 0,
+            "filter": {
+                "maxLocationCount": 100,
+                "spacing": {
+                    "minSpacingMeters": 248,
+                    "pointType": 2
+
+                },
+                "contentRating": 1,
+                "accessTypes": [1]
+
+            },
+            "ranking": {
+                "typesProminenceModifier": {},
+                "capacity": {
+                    "capacity": 0
+
+                },
+                "dwellability": {
+                    "dwellability": 0
+                },
+                "artisticallyInteresting": {
+                    "artisticallyInteresting": 0
+                }
+            },
+            "fieldsToReturn": "name,types,snapped_point"
+        },
+        {
+            "gameObjectType": 1,
+            "filter": {
+                "maxLocationCount": 100,
+                "spacing": {
+                    "minSpacingMeters": 151,
+                    "pointType": 2
+                },
+                "contentRating": 1,
+                "accessTypes": [1]
+            },
+            "ranking": {
+                "typesProminenceModifier": {},
+                "capacity": {
+                    "capacity": 0
+                },
+                "dwellability": {
+                    "dwellability": 0
+                },
+                "artisticallyInteresting": {
+                    "artisticallyInteresting": 0
+                }
+            },
+            "fieldsToReturn": "name,snapped_point"
+        }, {
+            "gameObjectType": 2,
+            "filter": {
+                "maxLocationCount": "10",
+                "spacing": {
+                    "minSpacingMeters": "25",
+                    "pointType": 2
+                },
+                "includedTypes": ["atm"],
+                "excludedTypes": ["airport", "amusement_park", "arts", "bank", "name", "beach", "boating", "bridge", "cafe", "campground", "car_rental", "casino", "embassy", "event_space", "farm", "fire_station", "fishing", "garden", "gas_station", "golf_course", "government", "grocery_store", "historic", "hospital", "hot_spring", "indoor", "industrial", "library", "lighthouse", "lodging", "military", "movie", "museum", "park", "parking_lot", "pharmacy", "place_of_worship", "buddhist_temple", "church", "gurdwara", "hindu_temple", "jain_temple", "mormon_temple", "mosque", "shinto_shrine", "synagogue", "police_station", "post_office", "restaurant", "restroom", "rest_stop", "road", "school", "shopping", "sports", "stadium", "tourist_attraction", "town_square", "trailhead", "transit", "university", "winery", "zoo"],
+                "contentRating": 1,
+                "accessTypes": [1]
+            },
+            "ranking": {
+                "typesProminenceModifier": {},
+                "capacity": {
+                    "capacity": 0
+                },
+                "dwellability": {
+                    "dwellability": 0
+                },
+                "artisticallyInteresting": {
+                    "artisticallyInteresting": 0
+                }
+            },
+            "fieldsToReturn": "name,types,snapped_point"
+        }, {
+            "gameObjectType": 3,
+            "filter": {
+                "maxLocationCount": "10",
+                "spacing": {
+                    "minSpacingMeters": "25",
+                    "pointType": 2
+                },
+                "includedTypes": ["library"],
+                "excludedTypes": ["airport", "amusement_park", "arts", "atm", "bank", "name", "beach", "boating", "bridge", "cafe", "campground", "car_rental", "casino", "embassy", "event_space", "farm", "fire_station", "fishing", "garden", "gas_station", "golf_course", "government", "grocery_store", "historic", "hospital", "hot_spring", "indoor", "industrial", "lighthouse", "lodging", "military", "movie", "museum", "park", "parking_lot", "pharmacy", "place_of_worship", "buddhist_temple", "church", "gurdwara", "hindu_temple", "jain_temple", "mormon_temple", "mosque", "shinto_shrine", "synagogue", "police_station", "post_office", "restaurant", "restroom", "rest_stop", "road", "school", "shopping", "sports", "stadium", "tourist_attraction", "town_square", "trailhead", "transit", "university", "winery", "zoo"],
+                "contentRating": 1,
+                "accessTypes": [1]
+            },
+            "ranking": {
+                "typesProminenceModifier": {},
+                "capacity": {
+                    "capacity": 0
+                },
+                "dwellability": {
+                    "dwellability": 0
+                },
+                "artisticallyInteresting": {
+                    "artisticallyInteresting": 0
+                }
+            },
+            "fieldsToReturn": "name,types,snapped_point"
+        }, {
+            "gameObjectType": 4,
+            "filter": {
+                "maxLocationCount": "10",
+                "spacing": {
+                    "minSpacingMeters": "25",
+                    "pointType": 2
+                },
+                "includedTypes": ["post_office"],
+                "excludedTypes": ["airport", "amusement_park", "arts", "atm", "bank", "name", "beach", "boating", "bridge", "cafe", "campground", "car_rental", "casino", "embassy", "event_space", "farm", "fire_station", "fishing", "garden", "gas_station", "golf_course", "government", "grocery_store", "historic", "hospital", "hot_spring", "indoor", "industrial", "library", "lighthouse", "lodging", "military", "movie", "museum", "park", "parking_lot", "pharmacy", "place_of_worship", "buddhist_temple", "church", "gurdwara", "hindu_temple", "jain_temple", "mormon_temple", "mosque", "shinto_shrine", "synagogue", "police_station", "restaurant", "restroom", "rest_stop", "road", "school", "shopping", "sports", "stadium", "tourist_attraction", "town_square", "trailhead", "transit", "university", "winery", "zoo"],
+                "contentRating": 1,
+                "accessTypes": [1]
+            },
+            "ranking": {
+                "typesProminenceModifier": {},
+                "capacity": {
+                    "capacity": 0
+                },
+                "dwellability": {
+                    "dwellability": 0
+                },
+                "artisticallyInteresting": {
+                    "artisticallyInteresting": 0
+                }
+            },
+            "fieldsToReturn": "name,types,snapped_point"
+        }, {
+            "gameObjectType": 5,
+            "filter": {
+                "maxLocationCount": "10",
+                "spacing": {
+                    "minSpacingMeters": "25",
+                    "pointType": 2
+                },
+                "includedTypes": ["cafe"],
+                "excludedTypes": ["airport", "amusement_park", "arts", "atm", "bank", "name", "beach", "boating", "bridge", "campground", "car_rental", "casino", "embassy", "event_space", "farm", "fire_station", "fishing", "garden", "gas_station", "golf_course", "government", "grocery_store", "historic", "hospital", "hot_spring", "indoor", "industrial", "library", "lighthouse", "lodging", "military", "movie", "museum", "park", "parking_lot", "pharmacy", "place_of_worship", "buddhist_temple", "church", "gurdwara", "hindu_temple", "jain_temple", "mormon_temple", "mosque", "shinto_shrine", "synagogue", "police_station", "post_office", "restaurant", "restroom", "rest_stop", "road", "school", "shopping", "sports", "stadium", "tourist_attraction", "town_square", "trailhead", "transit", "university", "winery", "zoo"],
+                "contentRating": 1,
+                "accessTypes": [1]
+            },
+            "ranking": {
+                "typesProminenceModifier": {},
+                "capacity": {
+                    "capacity": 0
+                },
+                "dwellability": {
+                    "dwellability": 0
+                },
+                "artisticallyInteresting": {
+                    "artisticallyInteresting": 0
+                }
+            },
+            "fieldsToReturn": "name,types,snapped_point"
+        }, {
+            "gameObjectType": 6,
+            "filter": {
+                "maxLocationCount": "10",
+                "spacing": {
+                    "minSpacingMeters": "25",
+                    "pointType": 2
+                },
+                "includedTypes": ["arts"],
+                "excludedTypes": ["airport", "amusement_park", "atm", "bank", "name", "beach", "boating", "bridge", "cafe", "campground", "car_rental", "casino", "embassy", "event_space", "farm", "fire_station", "fishing", "garden", "gas_station", "golf_course", "government", "grocery_store", "historic", "hospital", "hot_spring", "indoor", "industrial", "library", "lighthouse", "lodging", "military", "movie", "museum", "park", "parking_lot", "pharmacy", "place_of_worship", "buddhist_temple", "church", "gurdwara", "hindu_temple", "jain_temple", "mormon_temple", "mosque", "shinto_shrine", "synagogue", "police_station", "post_office", "restaurant", "restroom", "rest_stop", "road", "school", "shopping", "sports", "stadium", "tourist_attraction", "town_square", "trailhead", "transit", "university", "winery", "zoo"],
+                "contentRating": 1,
+                "accessTypes": [1]
+            },
+            "ranking": {
+                "typesProminenceModifier": {},
+                "capacity": {
+                    "capacity": 0
+                },
+                "dwellability": {
+                    "dwellability": 0
+                },
+                "artisticallyInteresting": {
+                    "artisticallyInteresting": 0
+                }
+            },
+            "fieldsToReturn": "name,types,snapped_point"
+        }
+    ]
+}

@@ -56,7 +56,7 @@ class PaybleCellProviderService
 		}else{
 			throw new Exception("Invalid type provided for playable locations JSON.");
 		}
-		$fileContents = file_get_contents(storage_path('app/'.$file));
+		$fileContents = file_get_contents(storage_path('app/cell2Files/'.$file));
 		$fileContents = str_replace('CELL2IDPLACE', $this->cell2ID, $fileContents);
 		return $fileContents;
 	}
