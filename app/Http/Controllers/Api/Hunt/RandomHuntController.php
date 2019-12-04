@@ -167,8 +167,8 @@ class RandomHuntController extends Controller
         $paybleCellProviderService = new PaybleCellProviderService;
         return response()->json([
             'cellID'=> $paybleCellProviderService->getCellID($request->all()),
-            'randomHuntsCells'=> $paybleCellProviderService->getMinigamesCells(),
-            'minigamesCells'=> $paybleCellProviderService->getRandomHuntsCells(),
+            'randomHuntsCells'=> $paybleCellProviderService->getRandomHuntsCells(),
+            'minigamesCells'=> $paybleCellProviderService->getMinigamesCells(),
         ]);
     }
 }

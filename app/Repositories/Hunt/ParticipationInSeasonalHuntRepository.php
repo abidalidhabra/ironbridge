@@ -27,6 +27,7 @@ class ParticipationInSeasonalHuntRepository implements HuntParticipationInterfac
         $data = (new GetRelicHuntParticipationRepository)->get($huntUser->id);
 
         return [
+            'relic_info'=> $data['relic_info'],
             'hunt_user'=> $data['hunt_user'],
             'clues_data'=> $data['clues_data'],
         ];
