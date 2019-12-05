@@ -27,6 +27,9 @@
                         <td>{{ $game->highest_score }}</td>
                       </tr>
                       @empty
+                      <tr>
+                        <td colspan="3" class="text-center">No data found</td>
+                      </tr>
                       @endforelse
                     </tbody>
                   </table>
