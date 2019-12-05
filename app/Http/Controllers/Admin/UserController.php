@@ -482,8 +482,25 @@ class UserController extends Controller
         $take = (int)$request->get('length');
         $search = $request->get('search')['value'];
         $userId = $request->user_id;
+        /*print_r($request->status);
+        exit();*/
         $plans = PlanPurchase::select('user_id', 'plan_id', 'country_code', 'gold_value', 'skeleton_keys_amount', 'expandable_skeleton_keys', 'price', 'transaction_id','created_at')
-                                ->where('user_id',$userId);
+                                ->where('user_id',$userId)
+                                ->where(function($query) use ($request){
+                                    if ($request->status == "gold") {
+                                        $query->whereNotNull('gold_value');
+                                    } elseif ($request->status == "skeleton"){
+                                        $query->where(function($query1){
+                                            $query1->orWhere(function($query2){
+                                                $query2->whereNotNull('skeletons_bucket');
+                                            })->orWhere(function($query2){
+                                                $query2->whereNotNull('skeleton_keys_amount');
+                                            })->orWhere(function($query2){
+                                                $query2->whereNotNull('skeleton_keys');
+                                            });
+                                        });
+                                    }
+                                });
 
         $admin = Auth::user();
         if($search != ''){
@@ -507,7 +524,23 @@ class UserController extends Controller
         }
         $plans = $plans->orderBy('created_at','DESC')->skip($skip)->take($take)->get();
         
-        $count = PlanPurchase::where('user_id',$userId)->count();
+        $count = PlanPurchase::where('user_id',$userId)
+                                ->where(function($query) use ($request){
+                                    if ($request->status == "gold") {
+                                        $query->whereNotNull('gold_value');
+                                    } elseif ($request->status == "skeleton"){
+                                        $query->where(function($query1){
+                                            $query1->orWhere(function($query2){
+                                                $query2->whereNotNull('skeletons_bucket');
+                                            })->orWhere(function($query2){
+                                                $query2->whereNotNull('skeleton_keys_amount');
+                                            })->orWhere(function($query2){
+                                                $query2->whereNotNull('skeleton_keys');
+                                            });
+                                        });
+                                    }
+                                })
+                                ->count();
         if($search != ''){
             $count = PlanPurchase::where(function($query) use ($search){
                 $query->where('user_id','like','%'.$search.'%')
@@ -516,6 +549,21 @@ class UserController extends Controller
                 ->orWhere('gold_value','like','%'.$search.'%');
             })
             ->where('user_id',$userId)
+            ->where(function($query) use ($request){
+                if ($request->status == "gold") {
+                    $query->whereNotNull('gold_value');
+                } elseif ($request->status == "skeleton"){
+                    $query->where(function($query1){
+                        $query1->orWhere(function($query2){
+                            $query2->whereNotNull('skeletons_bucket');
+                        })->orWhere(function($query2){
+                            $query2->whereNotNull('skeleton_keys_amount');
+                        })->orWhere(function($query2){
+                            $query2->whereNotNull('skeleton_keys');
+                        });
+                    });
+                }
+            })
             ->count();
         }
         return DataTables::of($plans)
