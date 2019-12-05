@@ -20,19 +20,33 @@
                     <input id="completed" value="completed" name="status" type="radio">
                     <label for="completed">COMPLETED</label>
                 </div>
+                <div class="selection">
+                    <input id="terminated" value="terminated" name="status" type="radio">
+                    <label for="terminated">TERMINATED</label>
+                </div>
+            </div>
+            <div class="custredbtn">
+                <h4>Type : </h4>
+                <div class="selection">
+                    <input id="random" value="random" name="type" type="radio">
+                    <label for="random">RANDOM</label>
+                </div>
+                <div class="selection">
+                    <input id="relic" value="relic" name="type" type="radio">
+                    <label for="relic">RELIC</label>
+                </div>
             </div>
         </div>
         <div class="customdatatable_box">
             <table class="table table-striped table-hover datatables" style="width: 100%;" id="dataTable">
                 <thead>
                     <tr>
-                        <th>Sr.</th>
-                        <th>Hunt Name</th>
+                        <th width="10%">Sr no</th>
+                        <!-- <th>Hunt Name</th> -->
                         <th>Status</th>
-                        <th>Fees</th>
-                        <th>Clues Progress</th>
-                        <th>Distance progress</th>
-                        <th>More</th>
+                        <th>Clue Progress</th>
+                        <!-- <th>Relic Progress</th> -->
+                        <!-- <th>More</th> -->
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -48,12 +62,12 @@
         $(document).ready(function() {
             //GET USER LIST
             var table = $('#dataTable').DataTable({
-                pageLength: 50,
+                pageLength: 10,
                 processing: true,
                 responsive: true,
                 serverSide: true,
                 order: [],
-                lengthMenu: [[50, 100, 200, -1], [50, 100, 200, "All"]],
+                lengthMenu: [[10, 50, 100, -1], [10, 50, 100, "All"]],
                 ajax: {
                     type: "get",
                     url: "{{ route('admin.getTreasureHunts') }}",
@@ -61,6 +75,7 @@
                         d._token = "{{ csrf_token() }}";
                         d.user_id = '{{ $id }}';
                         d.status = $("input[name='status']:checked").val();
+                        d.type = $("input[name='type']:checked").val();
                     },
                     complete:function(){
                         if( $('[data-toggle="tooltip"]').length > 0 )
@@ -69,17 +84,17 @@
                 },
                 columns:[
                     { data:'DT_RowIndex',name:'_id' },
-                    { data:'hunt_name',name:'hunt_name'},
+                    // { data:'hunt_name',name:'hunt_name'},
                     { data:'status',name:'status' },
-                    { data:'fees',name:'fees' },
+                    // { data:'fees',name:'fees' },
                     { data:'clue_progress',name:'clue_progress' },
-                    { data:'distance_progress',name:'distance_progress'},
-                    { data:'view',name:'view'},
+                    // { data:'distance_progress',name:'distance_progress'},
+                    // { data:'view',name:'view'},
                 ],
                 columnDefs: [
                     {
                         orderable: false,
-                        targets: [0,6],
+                        targets: [0],
                     }
                 ],
             });
@@ -90,6 +105,10 @@
                 table.ajax.reload();
             });
             
+            //TYPE
+            $("input[name='type']").change(function(){
+                table.ajax.reload();
+            });
         });
 
     </script>
