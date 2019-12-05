@@ -5,15 +5,12 @@
 @endsection
 @section('content')
 <div class="right_paddingboxpart">
-    <div class="centr_paretboxpart">
-        <div class="signeup_topbox">
-            <div class="signeup_lefttextbox">
-                <p>Plan Purchases</p>
-            </div>
-        </div>
-    </div>      
-    
-    <br/><br/>
+    <div class="backbtn">
+        <a href="{{ route('admin.userList') }}">Back</a>
+    </div>
+    <div class="srfrdbox">
+        <h3>Plan Purchases</h3>
+    </div>
     <div class="customdatatable_box">
         <table class="table table-striped table-hover dt-responsive nowrap" style="width: 100%;" id="dataTable">
             <thead>
