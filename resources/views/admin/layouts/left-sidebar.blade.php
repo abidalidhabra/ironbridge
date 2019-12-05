@@ -8,7 +8,7 @@
 		<div class="nav-offcanvas-menu">
 			<ul>
 
-				@if(Route::currentRouteName() == 'admin.accountInfo' || Route::currentRouteName() == 'admin.treasureHunts' || Route::currentRouteName() == 'admin.userHuntDetails' || Route::currentRouteName() == 'admin.activity' || Route::currentRouteName() == 'admin.eventsUser' || Route::currentRouteName() == 'admin.practiceGameUser' || Route::currentRouteName() == 'admin.user.avatarItems' || Route::currentRouteName() == 'admin.user.planPurchase')
+				@if(Route::currentRouteName() == 'admin.accountInfo' || Route::currentRouteName() == 'admin.treasureHunts' || Route::currentRouteName() == 'admin.userHuntDetails' || Route::currentRouteName() == 'admin.activity' || Route::currentRouteName() == 'admin.eventsUser' || Route::currentRouteName() == 'admin.practiceGameUser' || Route::currentRouteName() == 'admin.user.avatarItems' || Route::currentRouteName() == 'admin.user.planPurchase' || Route::currentRouteName() == 'admin.miniGameStatistics')
 
 					<li  class="@if(Route::currentRouteName() == 'admin.accountInfo') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.accountInfo',$id) }}">Account Info</a>
@@ -30,6 +30,9 @@
 					</li>
 					<li  class="@if(Route::currentRouteName() == 'admin.user.planPurchase') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.user.planPurchase',$id) }}">Plan Purchases</a>
+					</li>
+					<li  class="@if(Route::currentRouteName() == 'admin.miniGameStatistics') {{ 'activelist' }} @endif">
+						<a href="{{ route('admin.miniGameStatistics',$id) }}">Mini-Games Statistics</a>
 					</li>
 				@else
 					@if($admin->hasPermissionTo('Dashboard'))

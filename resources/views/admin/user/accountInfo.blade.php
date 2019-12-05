@@ -75,7 +75,7 @@
                     </div>
                     <div class="accountcerated_text">
                         <p>XP</p>
-                        <h4>{{ $user->agent_status['xp'] }}</h4>
+                        <h4>{{ number_format($user->agent_status['xp']) }}</h4>
                     </div>
                     @endif
                 </div>
@@ -85,9 +85,14 @@
                 <h4>Relics</h4>
                 @forelse($relics as $key => $relic)
                     @php
+                        $percentage = ($relic->collected_pieces/$relic->pieces)*100;
+                        $pieces = $percentage.'%';
                         if($relic->acquired){
                             if($relic->acquired['status'] == true){
                                 $opacity = 1;
+                                if($percentage == 100){
+                                    $pieces = 'Activated';
+                                }
                             } else {
                                 $opacity = 0.8;
                             }
@@ -95,17 +100,16 @@
                             $opacity = 0.4;
                         }
 
-                            $percentage = ($relic->collected_pieces/$relic->pieces)*100;
                         
                     @endphp
                     <div class="avtarimgtextiner boxheightset">
                         <div class="progress">
                             <div class="progress-bar progress-bar-striped @if($percentage != 100) {{'active'}} @endif" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:{{ $percentage }}%">
-                              {{ $percentage }}%
+                              {{ $pieces }}
                             </div>
                         </div>
                         <div  style="opacity: {{ $opacity }}">
-                            <img class="card-img-top" src="{{ ($relic->icon)?$relic->icon:asset('admin_assets/images/no_image.png') }}">
+                            <img class="card-img-top" style="object-fit: scale-down" src="{{ ($relic->icon)?$relic->icon:asset('admin_assets/images/no_image.png') }}">
                             <div class="card-body">
                                 <h5 class="card-title">
                                     {{ $relic->name }}

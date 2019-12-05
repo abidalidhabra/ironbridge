@@ -42,10 +42,10 @@
                 <thead>
                     <tr>
                         <th width="10%">Sr no</th>
-                        <!-- <th>Hunt Name</th> -->
+                        <th>Date</th>
                         <th>Status</th>
                         <th>Clue Progress</th>
-                        <!-- <th>Relic Progress</th> -->
+                        <th>Relic</th>
                         <!-- <th>More</th> -->
                     </tr>
                 </thead>
@@ -84,10 +84,11 @@
                 },
                 columns:[
                     { data:'DT_RowIndex',name:'_id' },
-                    // { data:'hunt_name',name:'hunt_name'},
+                    { data:'created_at',name:'created_at'},
                     { data:'status',name:'status' },
                     // { data:'fees',name:'fees' },
                     { data:'clue_progress',name:'clue_progress' },
+                    { data:'relic',name:'relic' },
                     // { data:'distance_progress',name:'distance_progress'},
                     // { data:'view',name:'view'},
                 ],

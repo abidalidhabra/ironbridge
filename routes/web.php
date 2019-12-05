@@ -70,6 +70,7 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('/planPurchase/{id}','UserController@planPurchase')->name('user.planPurchase');
 	Route::get('getPlanPurchaseList','UserController@getPlanPurchaseList')->name('getPlanPurchaseList');
 	Route::get('/events/{id}','UserController@eventsUser')->name('eventsUser');
+	Route::get('/miniGameStatistics/{id}','UserController@miniGameStatistics')->name('miniGameStatistics');
 	
 
 

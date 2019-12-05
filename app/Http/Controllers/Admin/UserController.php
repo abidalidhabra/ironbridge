@@ -19,6 +19,7 @@ use MongoDB\BSON\ObjectId as MongoDBId;
 use App\Models\v2\EventsUser;
 use App\Models\v2\Relic;
 use App\Repositories\RelicRepository;
+use App\Helpers\UserHelper;
 use Auth;
 
 
@@ -287,6 +288,8 @@ class UserController extends Controller
 
         $huntUser = HuntUser::with([
                                 'hunt_user_details:_id,hunt_user_id,status,finished_in',
+                                'relic:_id,name',
+                                'relic_reference:_id,name',
                             ])
                             ->where('user_id',$userId)
                             ->whereIn('status',$status_value)
@@ -299,7 +302,6 @@ class UserController extends Controller
                             })
                             ->orderBy('created_at','DESC')
                             ->get();
-                                    
 
         return DataTables::of($huntUser)
         ->addIndexColumn()
@@ -308,11 +310,13 @@ class UserController extends Controller
         })
         ->addColumn('status', function($user){
             if ($user->status == 'participated') {
-                return 'Not Started';
+                return '<label class="label label-primary">Not Started</label>';
             } elseif($user->status == 'paused' || $user->status == 'running') {
-                return 'In Progress';
+                return '<label class="label label-primary">In Progress</label>';
             } else if($user->status == 'completed'){
-                return 'Completed';
+                return '<label class="label label-success">Completed</label>';
+            } else if($user->status == 'terminated'){
+                return '<label class="label label-danger">Terminated</label>';
             }
             return ucfirst($user->status);
         })
@@ -325,7 +329,16 @@ class UserController extends Controller
         ->addColumn('view', function($user){
             return '<a href="'.route('admin.userHuntDetails',$user->id).'" >More</a>';
         })
-        ->rawColumns(['view'])
+        ->addColumn('relic', function($user){
+            if($user->relic){
+                return $user->relic->name;
+            } else if($user->relic_reference){
+                return $user->relic_reference->name;
+            } else {
+                return '-';
+            }
+        })
+        ->rawColumns(['view','status'])
         ->order(function ($query) {
                     if (request()->has('created_at')) {
                         $query->orderBy('created_at', 'DESC');
@@ -543,5 +556,11 @@ class UserController extends Controller
         ->setFilteredRecords($count)
         ->skipPaging()
         ->make(true);
+    }
+
+    public function miniGameStatistics($id){
+        $user = User::where('_id',$id)->first();
+        $games = (new UserHelper)->setUser($user)->getMinigamesStatistics();
+        return view('admin.user.mini_game',compact('id','games'));
     }
 }
