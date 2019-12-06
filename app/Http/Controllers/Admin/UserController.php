@@ -454,12 +454,20 @@ class UserController extends Controller
     public function practiceGameUser($id){
         $practiceGames = PracticeGameUser::where('user_id',$id)
                                         ->with('game:_id,name')
-                                        ->get();
-
-        /*echo "<pre>";
-        print_r($practiceGame->toArray());
-        exit();*/
-        
+                                        ->orderBy('completion_times','desc')
+                                        ->get()
+                                        ->map(function($query){
+                                            if (isset($query->favourite)) {
+                                                if($query->favourite == true){
+                                                    $query->favourite = 'true';
+                                                } elseif ($query->favourite == false) {
+                                                    $query->favourite = 'false';
+                                                }
+                                            } else {
+                                                $query->favourite = '';
+                                            }
+                                            return $query;
+                                        });        
         return view('admin.user.partManage',compact('id','practiceGames'));
     }
 
