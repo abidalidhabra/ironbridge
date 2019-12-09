@@ -323,4 +323,17 @@ class UserRepository implements UserRepositoryInterface
         $this->user->save();
         return array_merge($this->user->power_status, ['till'=> $this->powerFreezeTill()]);
     }
+
+    public function createIfNotExist($data, $condition, $whatToCheck = null)
+    {
+        dd($data);
+        $user = $this->model->orWhere($condition)->first(['id', 'email']);
+        if(!$user){
+            return $this->model->create($data);
+        }else if($whatToCheck && !$user->$whatToCheck != $data[$whatToCheck]) {
+            $user->$whatToCheck = $data[$whatToCheck];
+            $user->save();
+        }
+        return $user;
+    }
 }

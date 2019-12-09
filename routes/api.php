@@ -223,3 +223,6 @@ Route::group(['namespace' => 'Api\Relic', 'prefix' => 'relics', 'middleware' => 
 	/** Relic requests **/
 	Route::post('markTheRelicAsComplete', 'RelicController@markTheRelicAsComplete');
 });
+
+Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
+});
