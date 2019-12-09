@@ -3,14 +3,37 @@
 namespace App\Services\User\Authentication;
 
 use App\Repositories\User\UserRepository;
+use stdClass;
 
 class FacebookLogin
 {
 	public function login($request)
 	{
-		$user['name'] = $request->name;
-		$user['email'] = $request->email;
+		$userName = explode(' ', $request->name);
+		$user['first_name'] = $userName[0];
+		$user['last_name'] = $userName[1] ?? "";
+		$user['email'] = strtolower($request->email);
+		$user['password'] = 'ib20171779';
+		$user['last_login_as'] = 'facebook';
 		$user['facebook_id'] = $request->facebook_id;
-        return (new UserRepository)->createIfNotExist($user, ['email'=> $request->email], 'facebook_id');
+		$user['address'] = new stdClass();
+		$user['location'] = [
+			'type' => 'Point',
+			'coordinates' => [(float)$request->longitude, (float)$request->latitude]
+		];
+		$user['device_type'] = $request->device_type;
+		$user['reffered_by'] = $request->reffered_by;
+		$user['firebase_ids'] = [
+			'android_id' => ($request->device_type == 'android')?$request->firebase_id: null,
+			'ios_id'     => ($request->device_type == 'ios')?$request->firebase_id: null,
+		];
+		$user['additional'] = [ 
+			'device_type'=> $request->device_type,
+			'device_id'=> $request->device_id
+		];
+		return [
+    		'user'=> (new UserRepository)->createIfNotExist($user, ['email'=> $user['email']], 'facebook_id'),
+    		'credentials'=> ['email'=> $user['email'], 'password'=> 'ib20171779']
+    	];
 	}
 }

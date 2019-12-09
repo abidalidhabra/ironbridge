@@ -40,7 +40,7 @@ class User extends Authenticatable implements JWTSubject
         'registration_completed',
         'gold_balance',
         'settings',
-        'device_type',
+        // 'device_type',
         'widgets',
         'avatar',
         'skeleton_keys',
@@ -54,6 +54,10 @@ class User extends Authenticatable implements JWTSubject
         'relics',
         'power_status',
         'ar_mode',
+        'last_login_as',
+        'facebook_id',
+        'google_id',
+        'apple_id',
         // 'expnadable_skeleton_keys',
     ];
 
@@ -92,7 +96,7 @@ class User extends Authenticatable implements JWTSubject
             'music_fx' => true,
         ],
         'skeleton_keys' => [],
-        'gold_balance'   => 0,
+        'gold_balance'   => 500,
         'skeletons_bucket' => 5,
         'pieces_collected' => 0,
         'widgets' => [],
@@ -113,6 +117,27 @@ class User extends Authenticatable implements JWTSubject
             'power'=> 0
         ],
         'ar_mode'=> true,
+        'avatar'=> [
+            "avatar_id" => "5c9b66739846f40e807a4498", 
+            "eyes_color" => "#2a5aa1", 
+            "hairs_color" => "#e5db96", 
+            "skin_color" => "#f0cfb6"
+        ],
+        'widgets'=> [
+            ['id'=> "5d246f230b6d7b1a0a232482", 'selected'=> true],
+            ['id'=> "5d246f230b6d7b1a0a23245e", 'selected'=> true],
+            ['id'=> "5d246f230b6d7b1a0a23246a", 'selected'=> true],
+            ['id'=> "5d246f230b6d7b1a0a232453", 'selected'=> true],
+            ['id'=> "5d246f230b6d7b1a0a232476", 'selected'=> true],
+            ['id'=> "5d4424455c60e6147cf181b4", 'selected'=> true],
+            ['id'=> "5d246f0c0b6d7b19fb5ab590", 'selected'=> true],
+            ['id'=> "5d246f0c0b6d7b19fb5ab56d", 'selected'=> true],
+            ['id'=> "5d246f0c0b6d7b19fb5ab562", 'selected'=> true],
+            ['id'=> "5d246f0c0b6d7b19fb5ab578", 'selected'=> true],
+            ['id'=> "5d246f0c0b6d7b19fb5ab584", 'selected'=> true],
+            ['id'=> "5d4423d65c60e6147cf181a6", 'selected'=> true],
+        ],
+        'reffered_by'=> null
         // 'expnadable_skeleton_keys'   => 0,
         // 'user_widgets' => [],
         // 'used_widgets' => [],
@@ -265,5 +290,20 @@ class User extends Authenticatable implements JWTSubject
     public function minigames_history()
     {
         return $this->hasMany(MinigameHistory::class);
+    }
+
+    public function setRefferedIdAttribute($value)
+    {
+        return $this->attributes['reffered_id'] = substr(str_shuffle(str_repeat("0123456789abcdefghijklmnopqrstuvwxyz", 8)), 0, 8);
+    }
+    
+    public function setEmailAttribute($value)
+    {
+        return $this->attributes['email'] = strtolower($value);
+    }
+
+    public function setPasswordAttribute($value)
+    {
+        return $this->attributes['password'] = bcrypt($value);
     }
 }

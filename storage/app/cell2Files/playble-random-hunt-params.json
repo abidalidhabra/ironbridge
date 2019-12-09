@@ -6,7 +6,7 @@
     "criteria": [{
         "gameObjectType": 0,
         "filter": {
-            "maxLocationCount": 100,
+            "maxLocationCount": 1000,
             "spacing": {
                 "minSpacingMeters": 10,
                 "pointType": 1

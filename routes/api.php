@@ -224,5 +224,6 @@ Route::group(['namespace' => 'Api\Relic', 'prefix' => 'relics', 'middleware' => 
 	Route::post('markTheRelicAsComplete', 'RelicController@markTheRelicAsComplete');
 });
 
-Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2'], function ($router) {
+Route::group(['namespace' => 'Api\User', 'prefix' => 'v2'], function ($router) {
+	Route::post('login', 'AuthController@login');
 });

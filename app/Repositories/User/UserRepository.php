@@ -19,7 +19,7 @@ class UserRepository implements UserRepositoryInterface
 	
     protected $user;
     protected $model;
-    public function __construct($user)
+    public function __construct($user = null)
     {
         $this->user = $user;
         $this->model = new User;
@@ -326,14 +326,24 @@ class UserRepository implements UserRepositoryInterface
 
     public function createIfNotExist($data, $condition, $whatToCheck = null)
     {
-        dd($data);
-        $user = $this->model->orWhere($condition)->first(['id', 'email']);
+        $user = $this->model->orWhere($condition)->first();
         if(!$user){
             return $this->model->create($data);
-        }else if($whatToCheck && !$user->$whatToCheck != $data[$whatToCheck]) {
+        }else if($whatToCheck && $user->$whatToCheck != $data[$whatToCheck]) {
+            $user->last_login_as = $data['last_login_as'];
             $user->$whatToCheck = $data[$whatToCheck];
             $user->save();
         }
+
+        // }else if($whatToCheck && !isset($user->additional[$whatToCheck])) {
+        //     $additionalData = $data['additional'];
+        //     $additionalData[$whatToCheck] = $data['additional'][$whatToCheck];
+        //     $user->additional = $additionalData;
+        //     $user->save();
+        // }else if($whatToCheck &&  isset($user->additional[$whatToCheck]) && $user->additional[$whatToCheck] != $data['additional'][$whatToCheck]) {
+        //     $user->additional[$whatToCheck] = $data['additional'][$whatToCheck];
+        //     $user->save();
+        // }
         return $user;
     }
 }
