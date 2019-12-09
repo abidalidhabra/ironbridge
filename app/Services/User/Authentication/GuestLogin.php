@@ -12,6 +12,7 @@ class GuestLogin
     	$name = strtolower(uniqid('ib1779'));
     	$user['first_name'] = $name;
     	$user['username'] = $name;
+        $user['guest_id'] = $name;
     	$user['address'] = new stdClass();
         $user['password'] = 'ib20171779';
 		$user['last_login_as'] = 'guest';

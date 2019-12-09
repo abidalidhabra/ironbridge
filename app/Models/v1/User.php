@@ -58,6 +58,7 @@ class User extends Authenticatable implements JWTSubject
         'facebook_id',
         'google_id',
         'apple_id',
+        'guest_id',
         // 'expnadable_skeleton_keys',
     ];
 
