@@ -17,6 +17,12 @@ use App\Models\v2\PracticeGameUser;
 use App\Models\v2\PlanPurchase;
 use MongoDB\BSON\ObjectId as MongoDBId;
 use App\Models\v2\EventsUser;
+use App\Models\v2\Relic;
+use App\Repositories\RelicRepository;
+use App\Helpers\UserHelper;
+use Auth;
+
+
 
 class UserController extends Controller
 {
@@ -209,14 +215,7 @@ class UserController extends Controller
             $data['widgetsIdSelected'][$value['id']] = ($value['selected'])?true:false;
         }
 
-        $widgetsId =  collect($user->widgets)->pluck('id');
-        
-        $data['widget'] = WidgetItem::select('_id','widget_name','item_name','avatar_id','gold_price','widget_category')
-                                ->whereIn('_id',$widgetsId)
-                                ->orderBy('widget_name','desc')
-                                ->get()
-                                ->groupBy('widget_name');  
-                                            
+        $widgetsId =  collect($user->widgets)->pluck('id');           
         if($user){
             $data['usedGold'] = $user->hunt_user_v1->where('hunt_mode','challenge')->pluck('hunt.fees')->sum();
             $data['currentGold'] = $user->gold_balance;
@@ -224,14 +223,43 @@ class UserController extends Controller
             if($user->skeleton_keys){
                 $userSkKeys = collect($user->skeleton_keys);
                 $availSkKeys = $userSkKeys->where('used_at', null)->count();
-                // $totalKey  = count(array_column($user->skeleton_keys,'used_at'));
-                // $usedKey  = count(array_filter(array_column($user->skeleton_keys,'used_at')));
-                // $data['skeleton'] = $totalKey-$usedKey;
                 $data['skeleton'] = $availSkKeys;
             }
         }
 
-        return view('admin.user.accountInfo',compact('id','user','data'));
+        /*RELIC*/
+        $relics = (new RelicRepository)->getModel()
+                ->active()
+                ->select('_id', 'icon','name', 'complexity','pieces')
+                ->get()
+                ->map(function($relic) use ($user) {
+                    $relic->acquired = $user->relics->where('id', $relic->_id)->first();
+                    $relic->collected_pieces = $relic->hunt_users_reference()->where(['status'=> 'completed', 'user_id'=> $user->id])->count();
+                    return $relic; 
+                });
+                
+        return view('admin.user.accountInfo',compact('id','user','data','relics'));
+    }
+
+    //AVTAR ITEMS
+    public function avatarItems($id){
+
+        $user = User::where('_id',$id)->first(); 
+            
+        $data['widgetsIdSelected'] = [];
+        foreach ($user->widgets as $key => $value) {
+            $data['widgetsIdSelected'][$value['id']] = ($value['selected'])?true:false;
+        }
+
+        $widgetsId =  collect($user->widgets)->pluck('id');
+        
+        $data['widget'] = WidgetItem::select('_id','widget_name','item_name','avatar_id','gold_price','widget_category')
+                                ->whereIn('_id',$widgetsId)
+                                ->orderBy('widget_name','desc')
+                                ->get()
+                                ->groupBy('widget_name');
+
+        return view('admin.user.avatarItems',compact('id','user','data'));
     }
 
     //user treasureHunts
@@ -248,52 +276,49 @@ class UserController extends Controller
         $userId = $request->get('user_id');
         $status = $request->get('status');
         
-        $status_value = ['participated', 'paused', 'running', 'completed'];
+        $status_value = ['participated', 'paused', 'running', 'completed','terminated'];
         if ($status == 'completed') {
             $status_value = ['completed'];
         } else if ($status == 'progress') {
             $status_value = ['participated', 'paused', 'running'];
+        } else if ($status == 'terminated') {
+            $status_value = ['terminated'];
         }
 
-        $huntUser = HuntUser::select('hunt_id','user_id','status','created_at','hunt_complexity_id')
-                            ->with([
+
+        $huntUser = HuntUser::with([
                                 'hunt_user_details:_id,hunt_user_id,status,finished_in',
-                                'hunt_complexities:_id,distance'
+                                'relic:_id,name',
+                                'relic_reference:_id,name',
                             ])
                             ->where('user_id',$userId)
                             ->whereIn('status',$status_value)
+                            ->where(function($query) use ($request){
+                                if ($request->type == 'random') {
+                                    $query->whereNotNull('relic_reference_id');
+                                } elseif ($request->type == 'relic') {
+                                    $query->whereNotNull('relic_id');
+                                }
+                            })
                             ->orderBy('created_at','DESC')
-                            //->skip($skip)
-                            //->take($take)
-                            ->get(); 
-
-        
-        $count = HuntUser::where('user_id',$userId)
-                           ->whereIn('status',$status_value)
-                           ->count();
-        
-        
+                            ->get();
 
         return DataTables::of($huntUser)
         ->addIndexColumn()
-        ->addColumn('hunt_name', function($user){
-            return $user->hunt->name;
-        })
         ->editColumn('created_at', function($user){
             return Carbon::parse($user->created_at)->format('d-M-Y @ h:i A');
         })
         ->addColumn('status', function($user){
             if ($user->status == 'participated') {
-                return 'Not Started';
+                return '<label class="label label-primary">Not Started</label>';
             } elseif($user->status == 'paused' || $user->status == 'running') {
-                return 'In Progress';
+                return '<label class="label label-primary">In Progress</label>';
             } else if($user->status == 'completed'){
-                return 'Completed';
+                return '<label class="label label-success">Completed</label>';
+            } else if($user->status == 'terminated'){
+                return '<label class="label label-danger">Terminated</label>';
             }
             return ucfirst($user->status);
-        })
-        ->addColumn('fees', function($user){
-            return $user->hunt->fees;
         })
         ->addColumn('clue_progress', function($user){
             $completedClue = $user->hunt_user_details()->where('status','completed')->count();
@@ -301,22 +326,19 @@ class UserController extends Controller
             
             return $completedClue.'/'.$totalClue;
         })
-        ->addColumn('distance_progress', function($user){
-                    return 0;
-                    $completedClues = 0;
-                    $completedDist  = 0;
-                    $totalClues = $user->hunt_user_details()->count();
-                    $completedClues = $user->hunt_user_details()->where('status','completed')->count();
-                    $totalDistance = $user->hunt_complexities->distance;
-                    $completedDist = (($user->hunt_complexities->distance / $totalClues) * $completedClues);
-                    
-                    
-                    return $completedDist.' / '.$totalDistance;
-        })
         ->addColumn('view', function($user){
             return '<a href="'.route('admin.userHuntDetails',$user->id).'" >More</a>';
         })
-        ->rawColumns(['view'])
+        ->addColumn('relic', function($user){
+            if($user->relic){
+                return $user->relic->name;
+            } else if($user->relic_reference){
+                return $user->relic_reference->name;
+            } else {
+                return '-';
+            }
+        })
+        ->rawColumns(['view','status'])
         ->order(function ($query) {
                     if (request()->has('created_at')) {
                         $query->orderBy('created_at', 'DESC');
@@ -432,12 +454,20 @@ class UserController extends Controller
     public function practiceGameUser($id){
         $practiceGames = PracticeGameUser::where('user_id',$id)
                                         ->with('game:_id,name')
-                                        ->get();
-
-        /*echo "<pre>";
-        print_r($practiceGame->toArray());
-        exit();*/
-        
+                                        ->orderBy('completion_times','desc')
+                                        ->get()
+                                        ->map(function($query){
+                                            if (isset($query->favourite)) {
+                                                if($query->favourite == true){
+                                                    $query->favourite = 'true';
+                                                } elseif ($query->favourite == false) {
+                                                    $query->favourite = 'false';
+                                                }
+                                            } else {
+                                                $query->favourite = '';
+                                            }
+                                            return $query;
+                                        });        
         return view('admin.user.partManage',compact('id','practiceGames'));
     }
 
@@ -450,6 +480,143 @@ class UserController extends Controller
         return view('admin.user.events',compact('id','eventsUser'));
     }
 
+    /* planPurchase */
+    public function planPurchase($id){
+        return view('admin.user.planPurchase',compact('id'));
+    }
 
+    public function getPlanPurchaseList(Request $request){
+        $skip = (int)$request->get('start');
+        $take = (int)$request->get('length');
+        $search = $request->get('search')['value'];
+        $userId = $request->user_id;
+        /*print_r($request->status);
+        exit();*/
+        $plans = PlanPurchase::select('user_id', 'plan_id', 'country_code', 'gold_value', 'skeleton_keys_amount', 'expandable_skeleton_keys', 'price', 'transaction_id','created_at')
+                                ->where('user_id',$userId)
+                                ->where(function($query) use ($request){
+                                    if ($request->status == "gold") {
+                                        $query->whereNotNull('gold_value');
+                                    } elseif ($request->status == "skeleton"){
+                                        $query->where(function($query1){
+                                            $query1->orWhere(function($query2){
+                                                $query2->whereNotNull('skeletons_bucket');
+                                            })->orWhere(function($query2){
+                                                $query2->whereNotNull('skeleton_keys_amount');
+                                            })->orWhere(function($query2){
+                                                $query2->whereNotNull('skeleton_keys');
+                                            });
+                                        });
+                                    }
+                                });
 
+        $admin = Auth::user();
+        if($search != ''){
+            $plans->where(function($query) use ($search){
+                    $query->where('user_id','like','%'.$search.'%')
+                    ->orWhere('country_code','like','%'.$search.'%')
+                    ->orWhere('transaction_id','like','%'.$search.'%')
+                    ->orWhere('gold_value','like','%'.$search.'%');
+                })
+                /*->with(['plan'=>function($query) use ($search){
+                    $query->where(function($query) use ($search){
+                        $query->orWhere('name','like','%'.$search.'%');
+                    });
+                }])
+                ->with(['user'=>function($query) use ($search){
+                    $query->where(function($query) use ($search){
+                        $query->orWhere('first_name','like','%'.$search.'%')
+                        ->orWhere('last_name','like','%'.$search.'%');
+                    });
+                }])*/;
+        }
+        $plans = $plans->orderBy('created_at','DESC')->skip($skip)->take($take)->get();
+        
+        $count = PlanPurchase::where('user_id',$userId)
+                                ->where(function($query) use ($request){
+                                    if ($request->status == "gold") {
+                                        $query->whereNotNull('gold_value');
+                                    } elseif ($request->status == "skeleton"){
+                                        $query->where(function($query1){
+                                            $query1->orWhere(function($query2){
+                                                $query2->whereNotNull('skeletons_bucket');
+                                            })->orWhere(function($query2){
+                                                $query2->whereNotNull('skeleton_keys_amount');
+                                            })->orWhere(function($query2){
+                                                $query2->whereNotNull('skeleton_keys');
+                                            });
+                                        });
+                                    }
+                                })
+                                ->count();
+        if($search != ''){
+            $count = PlanPurchase::where(function($query) use ($search){
+                $query->where('user_id','like','%'.$search.'%')
+                ->orWhere('country_code','like','%'.$search.'%')
+                ->orWhere('transaction_id','like','%'.$search.'%')
+                ->orWhere('gold_value','like','%'.$search.'%');
+            })
+            ->where('user_id',$userId)
+            ->where(function($query) use ($request){
+                if ($request->status == "gold") {
+                    $query->whereNotNull('gold_value');
+                } elseif ($request->status == "skeleton"){
+                    $query->where(function($query1){
+                        $query1->orWhere(function($query2){
+                            $query2->whereNotNull('skeletons_bucket');
+                        })->orWhere(function($query2){
+                            $query2->whereNotNull('skeleton_keys_amount');
+                        })->orWhere(function($query2){
+                            $query2->whereNotNull('skeleton_keys');
+                        });
+                    });
+                }
+            })
+            ->count();
+        }
+        return DataTables::of($plans)
+        ->addIndexColumn()
+        ->addColumn('created_at', function($plans){
+            return $plans->created_at->format('d-M-Y @ h:i A');
+        })
+        ->addColumn('name', function($plans){
+            return $plans->user->first_name.' '.$plans->user->last_name;
+        })
+        ->addColumn('total_amount', function($plans){
+            return (($plans->plan)?number_format($plans->plan->price,2).' '.$plans->country->currency:'-');
+        })
+        ->editColumn('gold_value',function($plans){
+            return ($plans->gold_value)?$plans->gold_value:'-';
+        })
+        ->addColumn('purchased_plan', function($plans){
+            return (($plans->plan)?$plans->plan->name:'-');
+        })
+        ->addColumn('payment', function($plans){
+            return '-';
+        })
+
+        ->addColumn('action', function($plans) use ($admin){
+            if($admin->hasPermissionTo('View Users')){
+                return '<a href="'.route('admin.accountInfo',$plans->user_id).'" data-toggle="tooltip" title="View" >View</a>';
+            }
+            return '';
+        })
+        
+        ->rawColumns(['action'])
+        ->order(function ($query) {
+            if (request()->has('created_at')) {
+                $query->orderBy('created_at', 'DESC');
+            }
+        })
+        ->setTotalRecords($count)
+        ->setFilteredRecords($count)
+        ->skipPaging()
+        ->make(true);
+    }
+
+    public function miniGameStatistics($id){
+        $user = User::where('_id',$id)->first();
+        $games = (new UserHelper)->setUser($user)->getMinigamesStatistics();
+        return view('admin.user.mini_game',compact('id','games'));
+    }
 }

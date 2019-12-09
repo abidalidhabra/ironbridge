@@ -9,117 +9,33 @@
             <div class="backbtn">
                 <a href="{{ route('admin.userList') }}">Back</a>
             </div>
-            <div class="accounttital_text">
-                <h3>Account Info</h3>
-                <div class="accountinfo_leftbox">
-                    <div class="accountinfo_child">
-                        <div class="accountinfoname_detlis">
-                            <div class="accountinfoname_left">
-                                <p>Name</p>
-                                <h4>{{ $user->first_name.' '.$user->last_name }}</h4>
-                            </div>
-                        </div>
-                        <div class="accountinfoname_detlis">
-                            <div class="accountinfoname_left">
-                                <p>Date of birth</p>
-                                <h4>{{ $user->dob->format('d-M-Y') }}</h4>
-                            </div>
-                            <div class="accountinfoname_left">
-                                <p>Gender</p>
-                                <h4>{{ ($user->gender)?$user->gender:'-' }}</h4>
-                            </div>
-                        </div>
-                         <div class="accountinfoname_detlis">
-                            <div class="accountinfoname_left">
-                                <p>Username</p>
-                                <h4>{{ $user->username }}</h4>
-                            </div>                            
-                        </div>
-
-                    </div>
-                    <div class="accountinfo_child">
-                        <div class="accountinfoname_detlis">
-                            <div class="accountinfoname_left">
-                                <p>Email Address</p>
-                                <h4>{{ $user->email }}</h4>
-                            </div>
-                            <div class="accountinfoname_left">
-                                <p>Available Gold Balance
-                                    <a href="javascript:void(0)" data-action='btnAdd' data-id="{{ $id }}"><i class="fa fa-plus"></i></a>
-                                </p>
-                                <h4 id="currentGold">{{ $data['currentGold'] }}</h4>
-                            </div>                           
-                        </div>
-                        <div class="accountinfoname_detlis">
-                            <div class="accountinfoname_left">
-                                <p>Available Skeleton Keys 
-                                    <a href="javascript:void(0)" data-action="skeleton" data-id="{{ $id }}"><i class="fa fa-plus"></i></a>
-                                </p>
-                                <h4 class="skeleton_text">{{ $data['skeleton'] }}</h4>
-                            </div>                            
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="accountinfo_paretboxone">
-                <h3>Registration info</h3>
-                <div class="accountinfo_rightbox">
-                    <div class="accountcerated_text">
-                        <p>Account Created on</p>
-                        <h4>{{ $user->created_at->format('d-M-Y @ h:i a') }}</h4>
-                    </div>
-                    @if($user->agent_status)
-                    <div class="accountcerated_text">
-                        <p>Agent Level</p>
-                        <h4>{{ $user->agent_status['level'] }}</h4>
-                    </div>
-                    <div class="accountcerated_text">
-                        <p>XP</p>
-                        <h4>{{ number_format($user->agent_status['xp']) }}</h4>
-                    </div>
-                    @endif
-                </div>
-            </div>
         </div>
-        <div class="avtardetailbox">
-                <h4>Relics</h4>
-                @forelse($relics as $key => $relic)
-                    @php
-                        $percentage = ($relic->collected_pieces/$relic->pieces)*100;
-                        $pieces = $percentage.'%';
-                        if($relic->acquired){
-                            if($relic->acquired['status'] == true){
-                                $opacity = 1;
-                                if($percentage == 100){
-                                    $pieces = 'Activated';
-                                }
-                            } else {
-                                $opacity = 0.8;
-                            }
-                        }else{
-                            $opacity = 0.4;
-                        }
-
-                        
-                    @endphp
+            <div class="avtardetailbox">
+                <h4>Avatar Item</h4>
+                @forelse($data['widget'] as $key => $widgetlist)
+                    <h4>{{ $key }}</h4>
+                    @forelse($widgetlist as $widget)
                     <div class="avtarimgtextiner boxheightset">
-                        <div class="progress">
-                            <div class="progress-bar progress-bar-striped @if($percentage != 100) {{'active'}} @endif" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:{{ $percentage }}%">
-                              {{ $pieces }}
-                            </div>
-                        </div>
-                        <div  style="opacity: {{ $opacity }}">
-                            <img class="card-img-top" style="object-fit: scale-down" src="{{ ($relic->icon)?$relic->icon:asset('admin_assets/images/no_image.png') }}">
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    {{ $relic->name }}
-                                </h5>
-                            </div>
+                        @if($data['widgetsIdSelected'][$widget->id] == true)
+                            <span class="selectedtext">selected</span>
+                        @endif
+                        <span class="basdistext">{{ $widget->widget_category }}</span>
+                        <img class="card-img-top" src="{{ asset('admin_assets/widgets/'.$widget->id.'.png') }}">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                @if($widget->gold_price == '0')
+                                    Free gold
+                                @else
+                                    {{ $widget->gold_price }} Gold
+                                @endif
+                            </h5>
                         </div>
                     </div>
+                    @empty
+                    @endforelse
                 @empty
                 @endforelse            
-        </div>
+            </div>
     </div>
 
     <!-- ADD GOLD MODEL -->

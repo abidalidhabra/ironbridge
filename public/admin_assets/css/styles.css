@@ -1445,7 +1445,8 @@ table i.iconsetaddbox{
 }
 .custredbtn .selection label {
     display: inline-block;
-    width: 108px;
+    /*width: 108px;*/
+    width: auto;
     background-color: transparent;
     border-radius: 2px;
     color: #ffffff;

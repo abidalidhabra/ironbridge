@@ -17,8 +17,10 @@
                         <tr>
                             <th>No</th>
                             <th>Game Name</th>
+                            <th>Completion Times</th>
                             <th>Completed Date</th>
-                            <th>Piece Collected</th>
+                            <th>Unlocked Date</th>
+                            <th>Favourite</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -27,8 +29,18 @@
                             <tr>
                                 <th>{{ $i }}</th>
                                 <th>{{ $practice->game->name }}</th>
-                                <th>{{ ($practice->completed_at)?$practice->completed_at->format('d-m-Y'):'-' }}</th>
-                                <th>{{ ($practice->piece_collected)?'Collected':'Not Collected' }}</th>
+                                <th>{{ $practice->completion_times }}</th>
+                                <th>{{ ($practice->completed_at)?$practice->completed_at->format('d-M-Y @ h:i A'):'-' }}</th>
+                                <th>{{ ($practice->unlocked_at)?$practice->unlocked_at->format('d-M-Y @ h:i A'):'-' }}</th>
+                                <th>
+                                    @if($practice->favourite == "true")
+                                        <label class="label label-success">Favourite</label>
+                                    @elseif($practice->favourite == "false")
+                                        <label class="label label-danger">Not favourite</label>
+                                    @else
+                                        -
+                                    @endif
+                                </th>
                             </tr>
                             @php $i++; @endphp
                         @empty

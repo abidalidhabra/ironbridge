@@ -66,7 +66,11 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::post('/addSkeletonKey',[ 'middleware' => ['permission:Add Users'], 'uses' => 'UserController@addSkeletonKey'])->name('addSkeletonKey');
 
 	Route::get('/practiceGameUser/{id}','UserController@practiceGameUser')->name('practiceGameUser');
+	Route::get('/avatarItems/{id}','UserController@avatarItems')->name('user.avatarItems');
+	Route::get('/planPurchase/{id}','UserController@planPurchase')->name('user.planPurchase');
+	Route::get('getPlanPurchaseList','UserController@getPlanPurchaseList')->name('getPlanPurchaseList');
 	Route::get('/events/{id}','UserController@eventsUser')->name('eventsUser');
+	Route::get('/miniGameStatistics/{id}','UserController@miniGameStatistics')->name('miniGameStatistics');
 	
 
 
