@@ -214,10 +214,13 @@ class AuthController extends Controller
             return ['message'=> 'Token invalidated successfully.'];
         } catch ( TokenExpiredException $exception ) {
             // throw new Exception('Token already expired.');
+            return ['message'=> 'Token already expired.'];
         } catch ( TokenInvalidException $exception ) {
-            throw new Exception('Invalid token provided.');
+            // throw new Exception('Invalid token provided.');
+            return ['message'=> 'Invalid token provided.'];
         } catch ( JWTException $exception ) {
-            throw new Exception('Token is missing.');
+            // throw new Exception('Token is missing.');
+            return ['message'=> 'Token is missing.'];
         }
     }
 }

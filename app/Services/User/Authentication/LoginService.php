@@ -6,8 +6,11 @@ use App\Exceptions\AppInMaintenanceException;
 use App\Repositories\AppStatisticRepository;
 use App\Repositories\User\UserRepository;
 use App\Services\User\Authentication\LoginFactory;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use Exception;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class LoginService
 {

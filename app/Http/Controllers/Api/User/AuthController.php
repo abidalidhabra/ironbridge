@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\User;
 
 use App\Exceptions\AppInMaintenanceException;
+use App\Helpers\UserHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\LoginRequest;
 use App\Repositories\MiniGameRepository;
@@ -40,11 +41,13 @@ class AuthController extends Controller
                     $miniGameRepository = (new MiniGameRepository($user))->createIfnotExist();
                 }
 
+                $apiResponse = $this->getPayloadData($request);
+
                 return response()->json([
                     'message'=>'You logged-in successfully.', 
                     'token' => $token, 
-                    // 'data' => $user
-                    'data' => $user->makeHidden(['reffered_by','updated_at','created_at', 'widgets', 'skeleton_keys', 'avatar', 'tutorials', 'additional'])
+                    'data' => $user->makeHidden(['reffered_by','updated_at','created_at', 'widgets', 'skeleton_keys', 'avatar', 'tutorials', 'additional']),
+                    'default_data'  => $apiResponse->original['data']
                 ],200);
             }
             return response()->json(['message'=> ['password'=> ['Sorry! wrong credentials provided.'] ] ], 422);
@@ -53,5 +56,11 @@ class AuthController extends Controller
        }catch (Exception $e) {
            return response()->json(['message'=> $e->getMessage()], 500);
        }
+    }
+
+    public function getPayloadData($request)
+    {
+        $payloadData = UserHelper::getPerfixDetails(auth('api')->user());
+        return response()->json(['data'=> $payloadData, 'message' => 'Payload data has been retrieved successfully.']);
     }
 }
