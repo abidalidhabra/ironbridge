@@ -60,7 +60,8 @@ class ProfileController extends Controller
         $user_id  = Auth::user()->_id;
         $password = $request->get('password');
 
-        User::where('_id',$user_id)->update(['password' => bcrypt($password)]);
+        // User::where('_id',$user_id)->update(['password' => bcrypt($password)]);
+        User::where('_id',$user_id)->update(['password' => $password]);
     	return response()->json(['message'=>'Your password has been updated successfully.']);
 	}
 

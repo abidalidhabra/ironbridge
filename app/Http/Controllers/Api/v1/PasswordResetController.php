@@ -67,7 +67,8 @@ class PasswordResetController extends Controller
 
 		$user = User::where('email', $request->email)->first();
 		
-		$user->password = bcrypt($request->password);
+		// $user->password = bcrypt($request->password);
+		$user->password = $request->password;
 		$user->otp 		= null;
 		$user->save();
 

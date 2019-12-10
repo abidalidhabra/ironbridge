@@ -76,7 +76,8 @@ class UserController extends Controller
         $firsNname  = $request->first_name;
         $lastName   = $request->last_name;
         $email      = $request->email;
-        $password   = bcrypt($request->password);
+        // $password   = bcrypt($request->password);
+        $password   = $request->password;
         $username   = $request->username;
         // $dob         = $request->dob;
         $dob        = new MongoDBDate(Carbon::parse($request->get('dob')));
