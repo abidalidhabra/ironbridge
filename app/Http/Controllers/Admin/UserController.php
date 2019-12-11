@@ -38,7 +38,7 @@ class UserController extends Controller
         $take = (int)$request->get('length');
         $search = $request->get('search')['value'];
 
-    	$user = User::select('first_name','last_name','username', 'email', 'mobile_no', 'gold_balance','created_at','skeleton_keys');
+    	$user = User::select('first_name','last_name','username', 'email', 'mobile_no', 'gold_balance','created_at','skeleton_keys','device_info');
         if($search != ''){
             $user->where(function($query) use ($search){
                 $query->where('first_name','like','%'.$search.'%')
@@ -66,7 +66,33 @@ class UserController extends Controller
         return DataTables::of($user)
         ->addIndexColumn()
         ->addColumn('name', function($user){
-            return '<a href="'.route('admin.accountInfo',$user->id).'">'.$user->first_name.' '.$user->last_name.'</a>';
+            if ($user->first_name) {
+                return '<a href="'.route('admin.accountInfo',$user->id).'">'.$user->first_name.' '.$user->last_name.'</a>';
+            } 
+            return '-';
+        })
+        ->editColumn('username', function($user){
+            if ($user->username) {
+                return $user->username;
+            } 
+            return '-';
+        })
+        ->editColumn('email', function($user){
+            if ($user->email) {
+                return $user->email;
+            } 
+            return '-';
+        })
+        ->addColumn('device', function($user){
+            if($user->device_info['type']){
+                if($user->device_info['type'] == 'android'){
+                    return  'Android';
+                } else {
+                    return  'iOS';
+                }
+            } else {
+                    return  '-';
+            }
         })
         ->editColumn('created_at', function($user){
             return Carbon::parse($user->created_at)->format('d-M-Y @ h:i A');
