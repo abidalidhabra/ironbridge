@@ -60,6 +60,7 @@ class User extends Authenticatable implements JWTSubject
         'apple_id',
         'guest_id',
         'device_info',
+        'nodes_status',
         // 'expnadable_skeleton_keys',
     ];
 
@@ -146,7 +147,12 @@ class User extends Authenticatable implements JWTSubject
             ['id'=> "5d4423d65c60e6147cf181a6", 'selected'=> true],
         ],
         'reffered_by'=> null,
-        'additional'=> []
+        'additional'=> [],
+        'nodes_status'=> [
+            'mg_challange'=> null,
+            'power'=> null,
+            'bonus'=> null
+        ]
         // 'expnadable_skeleton_keys'   => 0,
         // 'user_widgets' => [],
         // 'used_widgets' => [],

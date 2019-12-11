@@ -39,9 +39,9 @@ class AuthController extends Controller
                 
                 $user = $registrationService->getUser();
 
-                if ($user->practice_games()->count() == 0) {
-                    $miniGameRepository = (new MiniGameRepository($user))->createIfnotExist();
-                }
+                (new MiniGameRepository($user))->createIfnotExist();
+
+                UserHelper::minigameTutorials($user);
 
                 $apiResponse = $this->getPayloadData($request);
 
@@ -49,7 +49,8 @@ class AuthController extends Controller
                     'message'=>'You logged-in successfully.', 
                     'token' => $token, 
                     'data' => $user->makeHidden(['reffered_by','updated_at','created_at', 'widgets', 'skeleton_keys', 'avatar', 'tutorials', 'additional', 'device_info']),
-                    'default_data'  => $apiResponse->original['data']
+                    'default_data'  => $apiResponse->original['data'],
+                    'new_registration'  => $registrationService->getNewRegistration()
                 ],200);
             }
             return response()->json(['message'=> ['password'=> ['Sorry! wrong credentials provided.'] ] ], 422);

@@ -77,21 +77,9 @@ class MiniGameRepository implements MiniGameInterface
 
     public function createIfnotExist()
     {
-        if ($this->miniGameParticipation()) {
-            throw new Exception("You already have mini game setup.");
-        }else{
-            
+        if ($this->miniGameParticipation() == 0) {
         	$data = [];
         	$games = Game::active()->get()->map(function($game, $index) use (&$data){
-                
-                // if ($index % 3 == 0) {
-                //     $piece = 1;
-                // }else if($index % 3 == 1){
-                //     $piece = 2;
-                // }else if($index % 3 == 2){
-                //     $piece = 3;
-                // }
-                // $data[] = ['game_id'=> $game->id, 'piece'=> $piece];
                 $data[$index]['game_id'] = $game->id;
                 if ($game->practice_default_active) {
                     $data[$index]['unlocked_at'] = now();
@@ -100,6 +88,7 @@ class MiniGameRepository implements MiniGameInterface
         	$practiceGameData = $this->user->practice_games()->createMany($data);
         	return $practiceGameData;
         }
+        return [];
     }
 
     public function allotKeyIfEligible()
@@ -162,7 +151,8 @@ class MiniGameRepository implements MiniGameInterface
 
     public function miniGameParticipation()
     {
-        return $this->user->practice_games()->first();
+        return $this->user->practice_games()->count();
+        // return $this->user->practice_games()->first();
     }
 
     public function addCompletionTimes($practiceGameUser)

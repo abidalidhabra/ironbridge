@@ -7,6 +7,13 @@ use stdClass;
 
 class AppleLogin
 {
+	protected $userRepository;
+
+	public function __construct()
+	{
+		$this->userRepository = new UserRepository;
+	}
+	
 	public function login($request)
 	{
 		$userName = explode(' ', $request->name);
@@ -38,8 +45,9 @@ class AppleLogin
 			'os'=> $request->device_os
 		];
 		return [
-    		'user'=> (new UserRepository)->createIfNotExist($user, ['email'=> $user['email']], 'apple_id'),
-    		'credentials'=> ['email'=> $user['email'], 'password'=> 'ib20171779']
+    		'user'=> $this->userRepository->createIfNotExist($user, ['email'=> $user['email']], 'apple_id'),
+    		'credentials'=> ['email'=> $user['email'], 'password'=> 'ib20171779'],
+			'new_registration'=> $this->userRepository->created
     	];
 	}
 }

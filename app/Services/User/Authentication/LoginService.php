@@ -18,6 +18,7 @@ class LoginService
     private $request;
     private $serverAppInfo;
     private $credentials;
+    private $newRegistration;
 
     public function __construct()
     {
@@ -47,6 +48,16 @@ class LoginService
     public function getUser()
     {
         return $this->user;
+    }
+
+    public function setNewRegistration($status)
+    {
+        return $this->newRegistration = $status;
+    }
+
+    public function getNewRegistration()
+    {
+        return $this->newRegistration;
     }
 
     public function getToken() 
@@ -115,6 +126,7 @@ class LoginService
     {
         $data = (new LoginFactory)->init($this->request->type)->login($this->request);
         $this->credentials = $data['credentials'];
+        $this->setNewRegistration($data['new_registration']);
         return $this;
     }
 

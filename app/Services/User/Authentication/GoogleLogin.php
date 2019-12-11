@@ -7,6 +7,14 @@ use stdClass;
 
 class GoogleLogin
 {
+
+	protected $userRepository;
+
+	public function __construct()
+	{
+		$this->userRepository = new UserRepository;
+	}
+
 	public function login($request)
 	{
 		$userName = explode(' ', $request->name);
@@ -37,9 +45,11 @@ class GoogleLogin
 			'model'=> $request->device_model,
 			'os'=> $request->device_os
 		];
+
 		return [
-			'user'=> (new UserRepository)->createIfNotExist($user, ['email'=> $user['email']], 'google_id'),
-			'credentials'=> ['email'=> $user['email'], 'password'=> 'ib20171779']
+			'user'=> $this->userRepository->createIfNotExist($user, ['email'=> $user['email']], 'google_id'),
+			'credentials'=> ['email'=> $user['email'], 'password'=> 'ib20171779'],
+			'new_registration'=> $this->userRepository->created
 		];
 	}
 }

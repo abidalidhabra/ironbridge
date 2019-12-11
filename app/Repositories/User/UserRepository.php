@@ -19,8 +19,11 @@ class UserRepository implements UserRepositoryInterface
 	
     protected $user;
     protected $model;
+    public $created;
+    
     public function __construct($user = null)
     {
+        $this->created = false;
         $this->user = $user;
         $this->model = new User;
     }
@@ -205,6 +208,40 @@ class UserRepository implements UserRepositoryInterface
         $this->model->where('_id',$this->user->id)->increment('agent_status.xp', $points);
         $this->setAgentStatus($points);
         return $this->user->agent_status['xp'];
+    }    
+
+    public function addNodes($nodes)
+    {
+
+        $nodesStatus = [ 'mg_challange'=> null, 'power'=> null, 'bonus'=> null ];
+
+        $nodes->map(function($node, $key) {
+            
+            if ($node->action == 'mg_challange') {
+                $nodesStatus['mg_challange'] = new UTCDateTime(now());
+            }
+            
+            if ($node->action == 'power') {
+                $nodesStatus['power'] = new UTCDateTime(now());
+                if ($node->value) {
+                    $this->addPower($node->value);
+                }
+            }
+            
+            if ($node->action == 'bonus') {
+                $nodesStatus['bonus'] = new UTCDateTime(now());
+            }
+           
+            return $node;
+        });
+
+        $this->user->node_status = $nodesStatus;
+        $this->user->save();
+
+        return [
+            'power_status'=> $this->user->power_status,
+            'node_status'=> $this->user->node_status
+        ];
     }
 
     public function allotAgentLevel($levelToBeIncrement)
@@ -328,6 +365,7 @@ class UserRepository implements UserRepositoryInterface
     {
         $user = $this->model->orWhere($condition)->first();
         if(!$user){
+            $this->created = true;
             return $this->model->create($data);
         }else if($whatToCheck && $user->$whatToCheck != $data[$whatToCheck]) {
             $user->last_login_as = $data['last_login_as'];

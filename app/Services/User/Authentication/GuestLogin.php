@@ -7,6 +7,13 @@ use stdClass;
 
 class GuestLogin
 {
+    protected $userRepository;
+
+    public function __construct()
+    {
+        $this->userRepository = new UserRepository;
+    }
+    
     public function login($request)
     {
     	$name = strtolower(uniqid('ib1779'));
@@ -34,8 +41,9 @@ class GuestLogin
             'os'=> $request->device_os
         ];
     	return [
-    		'user'=> (new UserRepository)->createIfNotExist($user, ['device_id'=> $request->device_id]),
-    		'credentials'=> ['device_info.id'=> $request->device_id, 'password'=> 'ib20171779']
+    		'user'=> $this->userRepository->createIfNotExist($user, ['device_id'=> $request->device_id]),
+    		'credentials'=> ['device_info.id'=> $request->device_id, 'password'=> 'ib20171779'],
+            'new_registration'=> $this->userRepository->created
     	];
     }
 }

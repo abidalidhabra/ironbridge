@@ -69,6 +69,28 @@ class AddXPService
                     $response['widgets'] = $widgets;
                 }
             }
+
+            if ($complementaries->nodes) {
+
+                $nodes = collect();
+                
+                if (isset($complementaries->nodes['mg_challange'])) {
+                    $nodes['mg_challange']['action'] = true;
+                }
+
+                if (isset($complementaries->nodes['power'])) {
+                    $nodes['power']['action'] = true;
+                    if (is_numeric($complementaries->nodes['power'])) {
+                        $nodes['power']['value'] = $complementaries->nodes['power'];
+                    }
+                }
+
+                if (isset($complementaries->nodes['bonus'])) {
+                    $nodes['bonus']['action'] = true;
+                }
+
+                $this->userRepository->addNodes($nodes);
+            }
         }
         return $response ?? [];
     }
