@@ -20,7 +20,7 @@ class UserRepository implements UserRepositoryInterface
     protected $user;
     protected $model;
     public $created;
-    
+
     public function __construct($user = null)
     {
         $this->created = false;
@@ -215,33 +215,28 @@ class UserRepository implements UserRepositoryInterface
 
         $nodesStatus = [ 'mg_challange'=> null, 'power'=> null, 'bonus'=> null ];
 
-        $nodes->map(function($node, $key) {
-            
-            if ($node->action == 'mg_challange') {
+        $nodes->map(function($node, $key) use (&$nodesStatus) {
+            if ($key == 'mg_challange') {
                 $nodesStatus['mg_challange'] = new UTCDateTime(now());
-            }
-            
-            if ($node->action == 'power') {
+            }else if ($key == 'power') {
                 $nodesStatus['power'] = new UTCDateTime(now());
-                if ($node->value) {
-                    $this->addPower($node->value);
+                if (isset($node['value'])) {
+                    $this->addPower($node['value']);
                 }
-            }
-            
-            if ($node->action == 'bonus') {
+            }else if ($key == 'bonus') {
                 $nodesStatus['bonus'] = new UTCDateTime(now());
             }
-           
             return $node;
         });
 
         $this->user->node_status = $nodesStatus;
         $this->user->save();
 
-        return [
-            'power_status'=> $this->user->power_status,
-            'node_status'=> $this->user->node_status
-        ];
+        // return [
+        //     'power_status'=> $this->user->power_status,
+        //     'node_status'=> $this->user->node_status
+        // ];
+        return [ 'node_status'=> $this->user->node_status ];
     }
 
     public function allotAgentLevel($levelToBeIncrement)

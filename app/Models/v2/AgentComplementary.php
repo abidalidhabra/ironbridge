@@ -7,5 +7,5 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class AgentComplementary extends Eloquent
 {
-    protected $fillable = ['agent_level', 'xps','minigames','complexity','widgets','bucket_size'];
+    protected $fillable = ['agent_level', 'xps','minigames','complexity','widgets','bucket_size', 'nodes'];
 }

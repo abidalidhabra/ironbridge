@@ -73,23 +73,23 @@ class AddXPService
             if ($complementaries->nodes) {
 
                 $nodes = collect();
-                
+
                 if (isset($complementaries->nodes['mg_challange'])) {
-                    $nodes['mg_challange']['action'] = true;
+                    $nodes->put('mg_challange', collect(['action'=> true]));
                 }
 
                 if (isset($complementaries->nodes['power'])) {
-                    $nodes['power']['action'] = true;
+                    $nodes->put('power', collect(['action'=> true]));
                     if (is_numeric($complementaries->nodes['power'])) {
-                        $nodes['power']['value'] = $complementaries->nodes['power'];
+                        $nodes['power']->put('value', $complementaries->nodes['power']);
                     }
                 }
 
                 if (isset($complementaries->nodes['bonus'])) {
-                    $nodes['bonus']['action'] = true;
+                    $nodes->put('bonus', collect(['action'=> true]));
                 }
 
-                $this->userRepository->addNodes($nodes);
+                $response['nodes'] = $this->userRepository->addNodes($nodes);
             }
         }
         return $response ?? [];
