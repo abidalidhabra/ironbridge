@@ -19,7 +19,7 @@
                         <th>Username</th>
                         <th>Gold</th>
                         <th>Key(s)</th>
-                        <th>Type</th>
+                        <th>Device</th>
                         <!-- <th>Date of birth</th> -->
                         @if(auth()->user()->hasPermissionTo('Add Users'))
                         <th>Action</th>
@@ -116,7 +116,7 @@
                     { data:'username',name:'username' },
                     { data:'gold_balance',name:'gold_balance'},
                     { data:'skeleton_keys',name:'skeleton_keys'},
-                    { data:'type',name:'type'},
+                    { data:'device',name:'device'},
                     // { data:'dob',name:'dob'},
                     @if(auth()->user()->hasPermissionTo('Add Users'))
                     { className : 'details-control', defaultContent : '', data    : null,orderable : false},

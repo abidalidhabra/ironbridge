@@ -84,7 +84,7 @@
                     <h3>Device info</h3>
                     <div class="accountinfo_rightbox">
                         <div class="accountcerated_text">
-                            <p>Type</p>
+                            <p>Device</p>
                             @if($user->device_info['type'] == 'android')
                                 <h4>Android</h4>
                                 <!-- <img src="{{ asset('admin_assets/images/android.png') }}" style="height: 50px"> -->

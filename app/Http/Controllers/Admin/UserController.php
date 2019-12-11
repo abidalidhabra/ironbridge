@@ -83,7 +83,7 @@ class UserController extends Controller
             } 
             return '-';
         })
-        ->addColumn('type', function($user){
+        ->addColumn('device', function($user){
             if($user->device_info['type']){
                 if($user->device_info['type'] == 'android'){
                     return  'Android';
