@@ -22,7 +22,7 @@
                         <div class="accountinfoname_detlis">
                             <div class="accountinfoname_left">
                                 <p>Date of birth</p>
-                                <h4>{{ $user->dob->format('d-M-Y') }}</h4>
+                                <h4>{{ date('d-m-Y',strtotime($user->dob)) }}</h4>
                             </div>
                             <div class="accountinfoname_left">
                                 <p>Gender</p>
@@ -80,6 +80,30 @@
                     @endif
                 </div>
             </div>
+            @if($user->device_info)
+                <div class="accountinfo_paretboxone">
+                    <h3>Device info</h3>
+                    <div class="accountinfo_rightbox">
+                        <div class="accountcerated_text">
+                            <p>Type</p>
+                            <!-- <h4>{{ $user->device_info['type'] }}</h4> -->
+                            @if($user->device_info['type'] == 'android')
+                                <img src="{{ asset('admin_assets/images/android.png') }}" style="height: 50px">
+                            @else
+                                <img src="{{ asset('admin_assets/images/ios.png') }}" style="height: 50px">
+                            @endif
+                        </div>
+                        <div class="accountcerated_text">
+                            <p>Model</p>
+                            <h4>{{ $user->device_info['model'] }}</h4>
+                        </div>
+                        <div class="accountcerated_text">
+                            <p>OS</p>
+                            <h4>{{ $user->device_info['os'] }}</h4>
+                        </div>
+                    </div>
+                </div>
+             @endif
         </div>
         <div class="avtardetailbox">
                 <h4>Relics</h4>
