@@ -10,8 +10,6 @@ class GuestLogin
     public function login($request)
     {
     	$name = strtolower(uniqid('ib1779'));
-    	$user['first_name'] = $name;
-    	$user['username'] = $name;
         $user['guest_id'] = $name;
     	$user['address'] = new stdClass();
         $user['password'] = 'ib20171779';

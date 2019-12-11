@@ -80,9 +80,9 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
-    protected $dates = [
-        'dob',
-    ];
+    // protected $dates = [
+    //     'dob',
+    // ];
     
     /**
      * The model's default values for attributes.
@@ -90,8 +90,14 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $attributes = [
+        'first_name'=> '',
+        'last_name'=> '',
+        'username'=> '',
+        'email'=> '',
+        'dob'=> '',
+
         'registration_completed' => false,
-        'gender' => null,
+        'gender' => 'female',
         'settings'   => [
             'sound_fx' => true,
             'music_fx' => true,
@@ -306,5 +312,23 @@ class User extends Authenticatable implements JWTSubject
     public function setPasswordAttribute($value)
     {
         return $this->attributes['password'] = bcrypt($value);
+    }
+
+    public function getDobAttribute($value)
+    {
+        if (empty($value)) {
+            return '';
+        }else{
+            return CarbonImmutable::createFromTimestamp($value->toDateTime()->getTimestamp())->format('Y-m-d H:i:s');
+        }
+    }
+
+    public function setDobAttribute($value)
+    {
+        if (empty($value)) {
+            return $this->attributes['dob'] = '';
+        }else{
+            return $this->attributes['dob'] = new UTCDateTime(CarbonImmutable::parse($value)->getTimestamp() * 1000);
+        }
     }
 }
