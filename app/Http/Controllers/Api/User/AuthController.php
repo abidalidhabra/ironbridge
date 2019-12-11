@@ -9,6 +9,7 @@ use App\Http\Requests\User\LoginRequest;
 use App\Repositories\MiniGameRepository;
 use App\Services\User\Authentication\LoginService;
 use Illuminate\Http\Request;
+use Exception;
 
 class AuthController extends Controller
 {

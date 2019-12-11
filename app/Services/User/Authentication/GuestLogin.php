@@ -35,7 +35,7 @@ class GuestLogin
         ];
     	return [
     		'user'=> (new UserRepository)->createIfNotExist($user, ['device_id'=> $request->device_id]),
-    		'credentials'=> ['additional.device_id'=> $request->device_id, 'password'=> 'ib20171779']
+    		'credentials'=> ['device_info.id'=> $request->device_id, 'password'=> 'ib20171779']
     	];
     }
 }
