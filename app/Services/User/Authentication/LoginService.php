@@ -131,8 +131,19 @@ class LoginService
     {
         $this->user->additional = [ 
             'token' =>($this->token)?  $this->token: $this->user->additional['token'],
-            'device_type'=> ($this->request->device_type)? $this->request->device_type: $this->user->additional['device_type'],
-            'device_id'=> ($this->request->device_id)? $this->request->device_id: $this->user->additional['device_id']
+            // 'device_type'=> ($this->request->filled('device_type'))? $this->request->device_type: $this->user->additional['device_type'],
+            // 'device_id'=> ($this->request->filled('device_id'))? $this->request->device_id: $this->user->additional['device_id']
+        ];
+        return $this;
+    }    
+
+    public function setDeviceInfo()
+    {
+        $this->user->device_info = [ 
+            'id'=> ($this->request->filled('device_id'))? $this->request->device_id: $this->user->device_info['id'],
+            'type'=> ($this->request->filled('device_type'))? $this->request->device_type: $this->user->device_info['type'],
+            'model'=> ($this->request->filled('device_model'))? $this->request->device_model: $this->user->device_info['model'],
+            'os'=> ($this->request->filled('device_os'))? $this->request->device_os: $this->user->device_info['os'],
         ];
         return $this;
     }

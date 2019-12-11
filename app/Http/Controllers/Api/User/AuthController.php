@@ -31,6 +31,7 @@ class AuthController extends Controller
                                 ->generateAToken()
                                 ->setFirebaseIds()
                                 ->setAdditional()
+                                ->setDeviceInfo()
                                 ->save();
 
             if ($token = $registrationService->getToken()) {
@@ -46,7 +47,7 @@ class AuthController extends Controller
                 return response()->json([
                     'message'=>'You logged-in successfully.', 
                     'token' => $token, 
-                    'data' => $user->makeHidden(['reffered_by','updated_at','created_at', 'widgets', 'skeleton_keys', 'avatar', 'tutorials', 'additional']),
+                    'data' => $user->makeHidden(['reffered_by','updated_at','created_at', 'widgets', 'skeleton_keys', 'avatar', 'tutorials', 'additional', 'device_info']),
                     'default_data'  => $apiResponse->original['data']
                 ],200);
             }

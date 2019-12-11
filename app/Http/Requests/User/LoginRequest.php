@@ -31,7 +31,6 @@ class LoginRequest extends FormRequest
             // 'username'=> ['required', new UsernameRule],
             // 'password'=> ['required', new CheckThePassword($this->username)],
             'type'=> 'required|in:google,facebook,apple,guest',
-            'device_type'=> 'required|in:ios,android',
             'google_id'=> 'required_if:type,google',
             'facebook_id'=> 'required_if:type,facebook',
             'apple_id'=> 'required_if:type,apple',
@@ -39,7 +38,10 @@ class LoginRequest extends FormRequest
             'latitude'=> 'required',
             'longitude'=> 'required',
             'firebase_id'=> 'nullable',
-            'device_id'=> 'required'
+            'device_type'=> 'required|in:ios,android',
+            'device_id'=> 'required',
+            'device_model'=> 'required',
+            'device_os'=> 'required'
         ];
     }
 

@@ -23,11 +23,16 @@ class GuestLogin
     		'android_id' => ($request->device_type == 'android')? $request->firebase_id: null,
     		'ios_id'     => ($request->device_type == 'ios')? $request->firebase_id: null,
     	];
-    	$user['additional'] = [ 
-    		'device_type'=> $request->device_type,
-    		'device_id'=> $request->device_id,
-    	];
-
+    	// $user['additional'] = [ 
+    	// 	'device_type'=> $request->device_type,
+    	// 	'device_id'=> $request->device_id,
+    	// ];
+        $user['device_info'] = [ 
+            'id'=> $request->device_id,
+            'type'=> $request->device_type,
+            'model'=> $request->device_model,
+            'os'=> $request->device_os
+        ];
     	return [
     		'user'=> (new UserRepository)->createIfNotExist($user, ['device_id'=> $request->device_id]),
     		'credentials'=> ['additional.device_id'=> $request->device_id, 'password'=> 'ib20171779']
