@@ -22,7 +22,7 @@
                         <div class="accountinfoname_detlis">
                             <div class="accountinfoname_left">
                                 <p>Date of birth</p>
-                                <h4>{{ date('d-m-Y',strtotime($user->dob)) }}</h4>
+                                <h4>{{ ($user->dob)?date('d-m-Y',strtotime($user->dob)):'-' }}</h4>
                             </div>
                             <div class="accountinfoname_left">
                                 <p>Gender</p>
@@ -35,7 +35,6 @@
                                 <h4>{{ $user->username }}</h4>
                             </div>                            
                         </div>
-
                     </div>
                     <div class="accountinfo_child">
                         <div class="accountinfoname_detlis">
@@ -86,11 +85,12 @@
                     <div class="accountinfo_rightbox">
                         <div class="accountcerated_text">
                             <p>Type</p>
-                            <!-- <h4>{{ $user->device_info['type'] }}</h4> -->
                             @if($user->device_info['type'] == 'android')
-                                <img src="{{ asset('admin_assets/images/android.png') }}" style="height: 50px">
+                                <h4>Android</h4>
+                                <!-- <img src="{{ asset('admin_assets/images/android.png') }}" style="height: 50px"> -->
                             @else
-                                <img src="{{ asset('admin_assets/images/ios.png') }}" style="height: 50px">
+                                <h4>iOS</h4>
+                                <!-- <img src="{{ asset('admin_assets/images/ios.png') }}" style="height: 50px"> -->
                             @endif
                         </div>
                         <div class="accountcerated_text">
