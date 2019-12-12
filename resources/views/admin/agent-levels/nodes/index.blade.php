@@ -40,7 +40,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Add Minigames | Agent Levels</h4>       
+                        <h4 class="modal-title">Add Nodes | Agent Levels</h4>       
                     </div>
                     <form method="post" id="addNodesAgentForm">
                         @csrf
@@ -88,7 +88,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Edit Minigames | Agent Levels</h4>       
+                        <h4 class="modal-title">Edit Nodes | Agent Levels</h4>       
                     </div>
                     <form method="post" id="editAgentForm">
                         
