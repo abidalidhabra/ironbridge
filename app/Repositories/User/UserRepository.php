@@ -213,11 +213,11 @@ class UserRepository implements UserRepositoryInterface
     public function addNodes($nodes)
     {
 
-        $nodesStatus = [ 'mg_challange'=> null, 'power'=> null, 'bonus'=> null ];
+        $nodesStatus = [ 'mg_challenge'=> null, 'power'=> null, 'bonus'=> null ];
 
         $nodes->map(function($node, $key) use (&$nodesStatus) {
-            if ($key == 'mg_challange') {
-                $nodesStatus['mg_challange'] = new UTCDateTime(now());
+            if ($key == 'mg_challenge') {
+                $nodesStatus['mg_challenge'] = new UTCDateTime(now());
             }else if ($key == 'power') {
                 $nodesStatus['power'] = new UTCDateTime(now());
                 if (isset($node['value'])) {
@@ -229,14 +229,14 @@ class UserRepository implements UserRepositoryInterface
             return $node;
         });
 
-        $this->user->node_status = $nodesStatus;
+        $this->user->nodes_status = $nodesStatus;
         $this->user->save();
 
         // return [
         //     'power_status'=> $this->user->power_status,
-        //     'node_status'=> $this->user->node_status
+        //     'nodes_status'=> $this->user->nodes_status
         // ];
-        return [ 'node_status'=> $this->user->node_status ];
+        return [ 'nodes_status'=> $this->user->nodes_status ];
     }
 
     public function allotAgentLevel($levelToBeIncrement)

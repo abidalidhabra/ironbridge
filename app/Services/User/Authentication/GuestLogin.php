@@ -41,7 +41,7 @@ class GuestLogin
             'os'=> $request->device_os
         ];
     	return [
-    		'user'=> $this->userRepository->createIfNotExist($user, ['device_id'=> $request->device_id]),
+    		'user'=> $this->userRepository->createIfNotExist($user, ['device_info.id'=> $request->device_id]),
     		'credentials'=> ['device_info.id'=> $request->device_id, 'password'=> 'ib20171779'],
             'new_registration'=> $this->userRepository->created
     	];

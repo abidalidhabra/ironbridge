@@ -74,14 +74,14 @@ class AddXPService
 
                 $nodes = collect();
 
-                if (isset($complementaries->nodes['mg_challange'])) {
-                    $nodes->put('mg_challange', collect(['action'=> true]));
+                if (isset($complementaries->nodes['mg_challenge'])) {
+                    $nodes->put('mg_challenge', collect(['action'=> true]));
                 }
 
                 if (isset($complementaries->nodes['power'])) {
                     $nodes->put('power', collect(['action'=> true]));
-                    if (is_numeric($complementaries->nodes['power'])) {
-                        $nodes['power']->put('value', $complementaries->nodes['power']);
+                    if (isset($complementaries->nodes['power']['value'])) {
+                        $nodes['power']->put('value', $complementaries->nodes['power']['value']);
                     }
                 }
 
