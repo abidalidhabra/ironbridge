@@ -269,7 +269,8 @@
 								class="fa 
 								@if(Route::currentRouteName() == 'admin.agent-levels.index' || Route::currentRouteName() == 'admin.hunts-agent-levels.index' || Route::currentRouteName() == 'admin.minigames-agent-levels.index' ||
 								Route::currentRouteName() == 'admin.avatar-agent-levels.index' || Route::currentRouteName() == 'admin.avatar-agent-levels.create' || Route::currentRouteName() == 'admin.avatar-agent-levels.edit' || Route::currentRouteName() == 'admin.avatar-agent-levels.show' ||
-								Route::currentRouteName() == 'admin.bucket-sizes.index') 
+								Route::currentRouteName() == 'admin.bucket-sizes.index' || 
+								Route::currentRouteName() == 'admin.nodes-agent-levels.index') 
 									{{ 'fa-minus' }} 
 								@else 
 									{{ 'fa-plus' }} 
@@ -283,7 +284,8 @@
 							class="dropdown-content myDropdown 
 							@if(Route::currentRouteName() == 'admin.agent-levels.index' || Route::currentRouteName() == 'admin.hunts-agent-levels.index' || Route::currentRouteName() == 'admin.minigames-agent-levels.index' ||
 								Route::currentRouteName() == 'admin.avatar-agent-levels.index' || Route::currentRouteName() == 'admin.avatar-agent-levels.create' || Route::currentRouteName() == 'admin.avatar-agent-levels.edit' || Route::currentRouteName() == 'admin.avatar-agent-levels.show' ||
-								Route::currentRouteName() == 'admin.bucket-sizes.index') 
+								Route::currentRouteName() == 'admin.bucket-sizes.index'|| 
+								Route::currentRouteName() == 'admin.nodes-agent-levels.index') 
 								{{ 'show' }} 
 							@endif">
 									@if($admin->hasPermissionTo('View Agent Levels'))
@@ -313,6 +315,14 @@
 									@endif
 									">Minigames / Agent Levels</a>
 									@endif
+
+									<a href="{{ route('admin.nodes-agent-levels.index') }}" 
+									class="
+									@if(Route::currentRouteName() == 'admin.nodes-agent-levels.index') 
+										{{ 'activelistsub' }} 
+									@endif
+									">Nodes / Agent Levels</a>
+									
 
 									@if($admin->hasPermissionTo('View Avatar / Agent Levels'))
 									<a href="{{ route('admin.avatar-agent-levels.index') }}" 
