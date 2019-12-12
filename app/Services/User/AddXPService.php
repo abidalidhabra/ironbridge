@@ -80,7 +80,7 @@ class AddXPService
 
                 if (isset($complementaries->nodes['power'])) {
                     $nodes->put('power', collect(['action'=> true]));
-                    if (isset($complementaries->nodes['power']['value'])) {
+                    if (isset($complementaries->nodes['power']['value']) && ($complementaries->nodes['power']['value'] > 0)) {
                         $nodes['power']->put('value', $complementaries->nodes['power']['value']);
                     }
                 }
