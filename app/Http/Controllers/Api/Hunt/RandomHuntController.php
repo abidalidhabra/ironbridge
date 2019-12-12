@@ -164,11 +164,30 @@ class RandomHuntController extends Controller
 
     public function getCellData(CellDataRequest $request)
     {
+        
+        $user = auth()->user();
+        
         $paybleCellProviderService = new PaybleCellProviderService;
-        return response()->json([
-            'cellID'=> $paybleCellProviderService->getCellID($request->all()),
-            'randomHuntsCells'=> $paybleCellProviderService->getRandomHuntsCells(),
-            'minigamesCells'=> $paybleCellProviderService->getMinigamesCells(),
-        ]);
+        
+        $response = [
+            'cell_id'=> $paybleCellProviderService->getCellID($request->all()),
+            'random_hunt_cell'=> $paybleCellProviderService->getRandomHuntsCells()
+        ];
+        
+        if ($user->nodes_status && (isset($user->nodes_status['mg_challenge']) || isset($user->nodes_status['power']) || isset($user->nodes_status['bonus']))) {
+            $playableRes = $paybleCellProviderService->getMinigamesCells();
+            $playableNodes = collect($playableRes->locationsPerGameObjectType);
+            if (isset($user->nodes_status['power'])) {
+                $response['power_station_node'] = $playableNodes->first();
+            }
+            if (isset($user->nodes_status['mg_challenge'])) {
+                $response['minigame_node'] = $playableNodes->slice(1)->take(1)->first();
+            }
+            if (isset($user->nodes_status['bonus'])) {
+                $response['bonus_nodes'] = $playableNodes->slice(2)->values();
+            }
+        }
+        
+        return response()->json($response);
     }
 }

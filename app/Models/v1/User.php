@@ -125,7 +125,7 @@ class User extends Authenticatable implements JWTSubject
         'power_status'=> [
             'power'=> 0
         ],
-        'ar_mode'=> true,
+        'ar_mode'=> false,
         'avatar'=> [
             "avatar_id" => "5c9b66739846f40e807a4498", 
             "eyes_color" => "#2a5aa1", 
@@ -149,7 +149,7 @@ class User extends Authenticatable implements JWTSubject
         'reffered_by'=> null,
         'additional'=> [],
         'nodes_status'=> [
-            'mg_challange'=> null,
+            'mg_challenge'=> null,
             'power'=> null,
             'bonus'=> null
         ]

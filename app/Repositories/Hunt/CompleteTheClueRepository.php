@@ -389,15 +389,17 @@ class CompleteTheClueRepository implements ClueInterface
                 -> relic field is not null.
                 -> all map pieces have collected.
         **/
-        
-        $xPManagementRepository = new XPManagementRepository;
-        $complexity = $this->huntUser->complexity;
-        $xp = $xPManagementRepository->getModel()->where(['event'=> 'clue_completion', 'complexity'=> $complexity])->first()->xp;
-        if ($treasureCompleted) {
-            $xp += $xPManagementRepository->getModel()->where(['event'=> 'treasure_completion', 'complexity'=> $complexity])->first()->xp;
-            // $xp += $this->huntUserDetail->game->practice_games_targets->targets->sortBy('stage')->first()['xp'];
+        $xpReward = [];
+        if($this->user->tutorials['home']){
+            $xPManagementRepository = new XPManagementRepository;
+            $complexity = $this->huntUser->complexity;
+            $xp = $xPManagementRepository->getModel()->where(['event'=> 'clue_completion', 'complexity'=> $complexity])->first()->xp;
+            if ($treasureCompleted) {
+                $xp += $xPManagementRepository->getModel()->where(['event'=> 'treasure_completion', 'complexity'=> $complexity])->first()->xp;
+                // $xp += $this->huntUserDetail->game->practice_games_targets->targets->sortBy('stage')->first()['xp'];
+            }
+            $xpReward = $this->addXPService->add($xp);
         }
-        $xpReward = $this->addXPService->add($xp);
         return (is_array($xpReward) && count($xpReward))? $xpReward: new stdClass;
     }
 }
