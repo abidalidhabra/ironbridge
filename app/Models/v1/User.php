@@ -111,11 +111,20 @@ class User extends Authenticatable implements JWTSubject
         'widgets' => [],
         'first_login' => true,
         'tutorials'=> [
+            
             'avatar'=> null,
             'store'=> null,
             'profile'=> null,
             'home'=> null,
             'minigames'=> null,
+            'hunts_relic'=> null,
+            'hunts_mg_challenge'=> null,
+            'hunts_power'=> null,
+            // 'hunts'=> [
+            //     'relic'=> null,
+            //     'mg_challenge'=> null,
+            //     'power'=> null,
+            // ],
         ],
         'agent_status'=> [
             'xp'=> 500,

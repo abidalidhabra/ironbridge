@@ -32,7 +32,7 @@ class MarkTutorialAsCompleteRequest extends FormRequest
             'module' => [
                 "required",
                 "string",
-                "in:avatar,store,profile,home,minigames",
+                "in:avatar,store,profile,home,minigames,hunts_relic,hunts_power,hunts_mg_challenge",
                 new MarkTutorialAsCompleteRule($this->ownableUser())
             ]
         ];
