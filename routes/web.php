@@ -250,6 +250,9 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 		Route::get('minigames-agent-levels-list', 'AgentLevel\MinigameAgentLevelController@list')->name('minigames-agent-levels-list');
 	});
 
+	Route::resource('nodes-agent-levels', 'AgentLevel\NodeController');
+	Route::get('nodes-agent-levels-list', 'AgentLevel\NodeController@list')->name('nodes-agent-levels-list');
+
 
 	Route::group(['middleware' => ['permission:View Avatar / Agent Levels']], function () {
 		Route::resource('avatar-agent-levels', 'AgentLevel\AvatarAgentLevelController');
