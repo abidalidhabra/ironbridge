@@ -4,6 +4,8 @@ namespace App\Services\User\Authentication;
 
 use App\Repositories\User\UserRepository;
 use stdClass;
+use MongoDB\BSON\UTCDateTime;
+use MongoDB\BSON\ObjectId;
 
 class FacebookLogin
 {
@@ -44,6 +46,14 @@ class FacebookLogin
 			'type'=> $request->device_type,
 			'model'=> $request->device_model,
 			'os'=> $request->device_os
+		];		
+
+		$user['skeleton_keys'] = [
+			[ 
+				'key' => new ObjectId(),
+				'created_at' => new UTCDateTime(),
+				'used_at' => null
+			]
 		];
 		
 		return [
