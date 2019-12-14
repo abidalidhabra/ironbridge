@@ -133,7 +133,7 @@ class User extends Authenticatable implements JWTSubject
         ],
         'relics'=> [],
         'power_status'=> [
-            'power'=> 0
+            'power'=> 97
         ],
         'ar_mode'=> false,
         'avatar'=> [

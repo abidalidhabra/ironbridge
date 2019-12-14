@@ -10,6 +10,7 @@ use App\Repositories\MiniGameRepository;
 use App\Services\User\Authentication\LoginService;
 use Illuminate\Http\Request;
 use Exception;
+use stdClass;
 
 class AuthController extends Controller
 {
@@ -43,14 +44,18 @@ class AuthController extends Controller
 
                 UserHelper::minigameTutorials($user);
 
-                $apiResponse = $this->getPayloadData($request);
+                $defaultData = new stdClass();
+                if($newRegistration = $registrationService->getNewRegistration()) {
+                    $apiResponse = $this->getPayloadData($request);
+                    $defaultData = $apiResponse->original['data'];
+                }
 
                 return response()->json([
                     'message'=>'You logged-in successfully.', 
                     'token' => $token, 
                     'data' => $user->makeHidden(['reffered_by','updated_at','created_at', 'widgets', 'skeleton_keys', 'avatar', 'tutorials', 'additional', 'device_info']),
-                    'default_data'  => $apiResponse->original['data'],
-                    'new_registration'  => $registrationService->getNewRegistration()
+                    'default_data'  => $defaultData,
+                    'new_registration'  => $newRegistration
                 ],200);
             }
             return response()->json(['message'=> ['password'=> ['Sorry! wrong credentials provided.'] ] ], 422);

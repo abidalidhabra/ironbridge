@@ -28,6 +28,17 @@ class UserRepository implements UserRepositoryInterface
         $this->model = new User;
     }
 
+    public function setCreated(bool $created)
+    {
+        $this->created = $created;
+        return $this;
+    }
+
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
 	public function addSkeletonKeys(int $keysAmount, $additionalFields = null){
 
         for ($i=0; $i < $keysAmount; $i++) { 
@@ -360,7 +371,7 @@ class UserRepository implements UserRepositoryInterface
     {
         $user = $this->model->orWhere($condition)->first();
         if(!$user){
-            $this->created = true;
+            $this->setCreated(true);
             return $this->model->create($data);
         }else if($whatToCheck && $user->$whatToCheck != $data[$whatToCheck]) {
             $user->last_login_as = $data['last_login_as'];
