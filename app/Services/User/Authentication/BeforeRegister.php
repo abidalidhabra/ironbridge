@@ -28,13 +28,14 @@ trait BeforeRegister
 		$this->password = 'ib20171779';
 		$this->type = $request->type;
 
-		$userName = explode(' ', $request->name);
-		$this->user['first_name'] = $userName[0];
-		$this->user['last_name'] = $userName[1] ?? "";
-		$this->user['email'] = $this->email;
+		if ($request->filled('name')) {
+			$userName = explode(' ', $request->name);
+			$this->user['first_name'] = $userName[0];
+			$this->user['last_name'] = $userName[1] ?? "";
+			$this->user['email'] = $this->email;
+		}
 		$this->user['password'] = 'ib20171779';
 		$this->user['last_login_as'] = $this->type;
-		$this->user['apple_id'] = $request->apple_id;
 		$this->user['address'] = new stdClass();
 		$this->user['location'] = [
 			'type' => 'Point',

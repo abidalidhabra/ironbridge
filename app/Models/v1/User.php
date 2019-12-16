@@ -58,6 +58,7 @@ class User extends Authenticatable implements JWTSubject
         'facebook_id',
         'google_id',
         'apple_id',
+        'apple_data',
         'guest_id',
         'device_info',
         'nodes_status',
@@ -121,6 +122,7 @@ class User extends Authenticatable implements JWTSubject
             'hunt_mg_challenge'=> null,
             'hunt_power'=> null,
             'skeleton_key'=> null,
+            'hunt_second'=> null,
             // 'hunts'=> [
             //     'relic'=> null,
             //     'mg_challenge'=> null,
@@ -348,5 +350,10 @@ class User extends Authenticatable implements JWTSubject
         }else{
             return $this->attributes['dob'] = new UTCDateTime(CarbonImmutable::parse($value)->getTimestamp() * 1000);
         }
+    }
+
+    public function setAppleDataAttribute($value)
+    {
+        return $this->attributes['apple_data'] = json_decode($value, true);
     }
 }

@@ -14,9 +14,10 @@ class AppleLogin
 
 		$this->prepare($request);
 		$this->user['apple_id'] = $request->apple_id;
+		$this->user['apple_data'] = $request->apple_data;
 		return [
-    		'user'=> $this->userRepository->createIfNotExist($this->user, ['email'=> $this->email], 'apple_id'),
-    		'credentials'=> ['email'=> $this->email, 'password'=> $this->password],
+    		'user'=> $this->userRepository->createIfNotExist($this->user, ['apple_id'=> $this->user['apple_id']], 'apple_id'),
+    		'credentials'=> ['apple_id'=> $this->user['apple_id'], 'password'=> $this->password],
 			'new_registration'=> $this->userRepository->getCreated()
     	];
 	}
