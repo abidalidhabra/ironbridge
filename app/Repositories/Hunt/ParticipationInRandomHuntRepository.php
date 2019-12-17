@@ -9,6 +9,7 @@ use App\Models\v2\HuntUser;
 use App\Models\v2\HuntUserDetail;
 use App\Models\v2\Relic;
 use App\Repositories\Game\GameRepository;
+use App\Repositories\HuntStatisticRepository;
 use App\Repositories\Hunt\Contracts\HuntParticipationInterface;
 use App\Repositories\Hunt\GetLastParticipatedRandomHuntRepository;
 use App\Repositories\Hunt\TerminateTheLastRandomHuntRepository;
@@ -109,4 +110,12 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
         
         return $userMiniGames->flatten();
     }
+
+    // public function getEpproximatedTime($totalClues)
+    // {
+    //     $data = (new HuntStatisticRepository)->first(['id', 'distances.random_hunt']);
+    //     $distance = $data->distances['random_hunt'] / 1000; // This distance in km.
+    //     $minutesToBeTaken = ((((60 / 4.5) * $distance) + 5) * $totalClues);
+    //     return round($minutesToBeTaken * 60, 2);
+    // }
 }

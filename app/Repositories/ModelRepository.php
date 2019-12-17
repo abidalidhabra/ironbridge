@@ -11,6 +11,11 @@ class ModelRepository
         return  $this->model->findOrFail($id, $columns);
     }
 
+    public function first($columns = ['*'])
+    {
+        return  $this->model->select($columns)->first();
+    }    
+
     public function find($id, $columns = ['*'])
     {
         return  $this->model->find($id, $columns);

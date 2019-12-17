@@ -6,6 +6,7 @@ use App\Models\v1\City;
 use App\Models\v1\Game;
 use App\Models\v1\News;
 use App\Models\v1\WidgetItem;
+use App\Models\v2\HuntStatistic;
 use App\Repositories\EventRepository;
 use App\Repositories\Game\GameRepository;
 use App\Repositories\MinigameHistoryRepository;
@@ -66,6 +67,7 @@ class UserHelper {
 		// 	return $relic; 
 		// });
 		$userRepository = (new UserRepository($user));
+		$huntStatistics = (new HuntStatistic)->first(['id', 'distances', 'refreshable_distances']);
 		return [
 			'avatars' => $avatars,
 			'widgets' => $widgets,
@@ -80,11 +82,7 @@ class UserHelper {
 			// 'available_complexities' => $user->getAvailableComplexities(),
 			'available_complexities' => [1],
 			'agent_stack'=> $userRepository->getAgentStack(),
-			'hunt_statistics'=> [
-				'power_station'=> [
-					'till'=> $userRepository->powerFreezeTill()
-				]
-			],
+			'hunt_statistics'=> array_merge($huntStatistics->toArray(), ['power_station'=> ['till'=> $userRepository->powerFreezeTill()]]),
 			// 'used_widgets' => $user->used_widgets,
 			// 'plans' => $plans,
 			// 'events_data' => $events,

@@ -4,6 +4,7 @@ namespace App\Repositories\Hunt;
 
 use App\Models\v2\HuntUser;
 use App\Models\v2\HuntUserDetail;
+use App\Repositories\HuntStatisticRepository;
 use App\Repositories\Hunt\Contracts\HuntParticipationInterface;
 use App\Repositories\Hunt\ParticipationInRandomHuntRepository;
 use App\Repositories\Hunt\TerminateTheLastRandomHuntRepository;
@@ -84,4 +85,12 @@ class ParticipationInSeasonalHuntRepository implements HuntParticipationInterfac
         $minutesToBeTaken = ((((60 / 4.5) * $distance) + 5) * $totalClues);
         return round($minutesToBeTaken * 60, 2);
     }
+
+    // public function getEpproximatedTime($totalClues)
+    // {
+    //     $data = (new HuntStatisticRepository)->first(['id', 'distances.relic']);
+    //     $distance = $data->distances['relic'] / 1000; // This distance in km.
+    //     $minutesToBeTaken = ((((60 / 4.5) * $distance) + 5) * $totalClues);
+    //     return round($minutesToBeTaken * 60, 2);
+    // }
 }
