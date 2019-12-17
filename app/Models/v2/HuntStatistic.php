@@ -11,6 +11,8 @@ class HuntStatistic extends Eloquent
     	'power_ratio',
     	'gold',
     	'skeleton_keys',
-    	'boost_power_till'
+    	'boost_power_till',
+    	'refreshable_distances',
+    	'distances'
     ];
 }

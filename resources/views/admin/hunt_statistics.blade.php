@@ -37,6 +37,40 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <h4>Refreshable</h4>
+                        <div class="form-group">
+                            <label class="control-label">Refreshable distance of random hunt:
+                                <a data-toggle="tooltip" title="" data-placement="right" data-original-title="Distance should be in meter">?</a>
+                            </label>
+                            <input type="number" name="refreshable_random_hunt" class="form-control" placeholder="Enter the random hunt" value="{{ ($huntStatistic->refreshable_distances)?$huntStatistic->refreshable_distances['random_hunt']:'' }}">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Refreshable distance of nodes:
+                                <a data-toggle="tooltip" title="" data-placement="right" data-original-title="Distance should be in meter">?</a>
+                            </label>
+                            <input type="number" name="nodes" class="form-control" placeholder="Enter the nodes" value="{{ ($huntStatistic->refreshable_distances)?$huntStatistic->refreshable_distances['nodes']:'' }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <h4>Distances</h4>
+                        <div class="form-group">
+                            <label class="control-label">Random hunt distance:
+                                <a data-toggle="tooltip" title="" data-placement="right" data-original-title="Distance should be in meter">?</a>
+                            </label>
+                            <input type="number" name="distances_random_hunt" class="form-control" placeholder="Enter the random hunt" value="{{ ($huntStatistic->distances)?$huntStatistic->distances['random_hunt']:'' }}">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Relic hunt distance:
+                                <a data-toggle="tooltip" title="" data-placement="right" data-original-title="Distance should be in meter">?</a>
+                            </label>
+                            <input type="number" name="relic" class="form-control" placeholder="Enter the relic" value="{{ ($huntStatistic->distances)?$huntStatistic->distances['relic']:'' }}">
+                        </div>
+                    </div>
+                </div>
               <button type="submit" class="btn btn-success">Save</button>
           </div>
         </form>
@@ -47,6 +81,7 @@
 @section('scripts')
 
 <script>
+    $('[data-toggle="tooltip"]').tooltip(); 
     $(document).on('submit', '#updateHuntStatisticForm', function(e) {
         e.preventDefault();
         $.ajax({
