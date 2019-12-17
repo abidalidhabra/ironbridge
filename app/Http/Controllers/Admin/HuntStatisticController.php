@@ -73,10 +73,14 @@ class HuntStatisticController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(),[
-            'power_ratio'      => 'required|numeric',
-            'gold'             => 'required|numeric',
-            'skeleton_keys'    => 'required|numeric',
-            'boost_power_till' => 'required|numeric',
+            'power_ratio'                   => 'required|numeric',
+            'gold'                          => 'required|numeric',
+            'skeleton_keys'                 => 'required|numeric',
+            'boost_power_till'              => 'required|numeric',
+            'refreshable_random_hunt'       => 'required|numeric',
+            'nodes'                         => 'required|numeric',
+            'distances_random_hunt'         => 'required|numeric',
+            'relic'                         => 'required|numeric',
         ]);
 
         if ($validator->fails())
@@ -90,6 +94,14 @@ class HuntStatisticController extends Controller
         $huntStatistic->gold =  (int)$request->gold;
         $huntStatistic->skeleton_keys =  (int)$request->skeleton_keys;
         $huntStatistic->boost_power_till =  (int)$request->boost_power_till;
+        $huntStatistic->refreshable_distances =  (object)[
+                                                    'random_hunt'=>(int)$request->refreshable_random_hunt,
+                                                    'nodes'=>(int)$request->nodes,
+                                                ];
+        $huntStatistic->distances =  (object)[
+                                        'random_hunt'=>(int)$request->distances_random_hunt,
+                                        'relic'=>(int)$request->relic,
+                                    ];
         $huntStatistic->save();
 
         return response()->json([
