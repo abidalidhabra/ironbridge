@@ -9,6 +9,7 @@ use App\Models\v1\WidgetItem;
 use App\Models\v2\HuntStatistic;
 use App\Repositories\EventRepository;
 use App\Repositories\Game\GameRepository;
+use App\Repositories\AgentComplementaryRepository;
 use App\Repositories\MinigameHistoryRepository;
 use App\Repositories\RelicRepository;
 use App\Repositories\User\UserRepository;
@@ -68,6 +69,10 @@ class UserHelper {
 		// });
 		$userRepository = (new UserRepository($user));
 		$huntStatistics = (new HuntStatistic)->first(['id', 'distances', 'refreshable_distances']);
+		$specialAminities = (new AgentComplementaryRepository)
+							->where('nodes', 'exists', true)
+							->get(['id', 'agent_level', 'nodes']);
+
 		return [
 			'avatars' => $avatars,
 			'widgets' => $widgets,
@@ -83,6 +88,7 @@ class UserHelper {
 			'available_complexities' => [1],
 			'agent_stack'=> $userRepository->getAgentStack(),
 			'hunt_statistics'=> array_merge($huntStatistics->toArray(), ['power_station'=> ['till'=> $userRepository->powerFreezeTill()]]),
+			'nodes_enabled_on'=> $specialAminities,
 			// 'used_widgets' => $user->used_widgets,
 			// 'plans' => $plans,
 			// 'events_data' => $events,
@@ -251,6 +257,7 @@ class UserHelper {
             $minigameTutorial = []; 
 
             foreach ($games as $key => $game) {
+                $MGCStatus[] = [ 'game_id' => $game->id, 'completed_at' => null ];
             	if ($game->practice_default_active) {
                 	$minigameTutorial[] = [ 'game_id' => $game->id, 'completed_at' => new UTCDateTime(now()) ];
                 }else{
@@ -258,8 +265,21 @@ class UserHelper {
                 }
             }
 
+            $user->mgc_status = $MGCStatus;
             $user->minigame_tutorials = $minigameTutorial;
             $user->save();
+        }
+        
+        if (!$user->mgc_status->count()) {
+        	$games = Game::where('status',true)->get();
+        	$minigameTutorial = []; 
+
+        	foreach ($games as $key => $game) {
+        		$MGCStatus[] = [ 'game_id' => $game->id, 'completed_at' => null ];
+        	}
+
+        	$user->mgc_status = $MGCStatus;
+        	$user->save();
         }
     }
 
