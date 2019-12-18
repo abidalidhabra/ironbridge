@@ -25,7 +25,7 @@ class MgcController extends Controller
      */
     public function index()
     {
-        $loot = MGCLoot::with('relics_info:_id,name,number,mgc_loot_tables')->get();
+        $loot = MGCLoot::get();
         $loots = $loot->groupBy('reward_type');
         return view('admin.mgc_loots.index',compact('loots','loot'));
     }
@@ -70,12 +70,11 @@ class MgcController extends Controller
      */
     public function edit($id)
     {
-        $loot = MGCLoot::with('relics_info:_id,name,number,mgc_loot_tables')->get();
-        $relics = Relic::where(['active'=>true])->get();
+        $loot = MGCLoot::get();
         $lootReward = $loot->groupBy('reward_type');
         $widgetItem = WidgetItem::groupBy('widget_name')->groupBy('widget_category')->get();
         
-        return view('admin.mgc_loots.edit_rewards',compact('lootReward','widgetItem','loot','relics'));
+        return view('admin.mgc_loots.edit_rewards',compact('lootReward','widgetItem','loot'));
     }
 
     /**
@@ -92,7 +91,6 @@ class MgcController extends Controller
         }
         $validator = Validator::make($request->all(),[
             'status'                  => 'required',
-            'relics'                  => 'required',
             'gold_value.*'            => 'required_if:reward_type,avatar_item_and_gold,gold,skeleton_key_and_gold|numeric',
             //'min_range' => 'required|integer',
             //'max_range' => 'required|integer',
@@ -109,8 +107,6 @@ class MgcController extends Controller
             return response()->json(['status' => false,'message' => $message]);
         }
 
-        $relics = Relic::whereIn('_id',$request->relics)
-                            ->get();
 
         /*foreach ($relics as $key => $relic) {
             if($relic->loot_info->count() > 0){
@@ -196,12 +192,7 @@ class MgcController extends Controller
             }
 
             $value->status = ($request->status=="active")?true:false;
-            if ($value->relics) {
-                Relic::whereIn('_id',$value->relics)->pull('mgc_loot_tables', $value->id);
-            }
-            $value->relics = $request->relics;
             $value->save();
-            Relic::whereIn('_id',$request->relics)->push('mgc_loot_tables', $value->id);
         }
         return response()->json([
             'status' => true,

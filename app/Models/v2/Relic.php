@@ -13,7 +13,7 @@ use Storage;
 class Relic extends Eloquent
 {
 
-    protected $fillable = ['name','icon', 'complexity', 'pieces', 'active', 'users','number','loot_tables','mgc_loot_tables' /* 'game_id', 'game_variation_id'*/];
+    protected $fillable = ['name','icon', 'complexity', 'pieces', 'active', 'users','number','loot_tables' /* 'game_id', 'game_variation_id'*/];
     
     public function getIconAttribute($value)
     {
@@ -83,10 +83,5 @@ class Relic extends Eloquent
     public function loot_info()
     {
         return $this->belongsToMany(Loot::class, null, 'relics','loot_tables');
-    }
-
-    public function mgc_loot_info()
-    {
-        return $this->belongsToMany(MgcLoot::class, null, 'relics','mgc_loots');
     }
 }

@@ -25,17 +25,7 @@
                 @if(auth()->user()->hasPermissionTo('Edit Loot'))
                     <a href="javascript:void(0)" class="btn pull-right edit_reward default-btn" data-id="">Edit</a>
                 @endif
-                    <div class="rewardsbox">
-                        <h4>Relics</h4>
-                        <div class="col-md-3">
-                            <div class="smallrewardbox">
-                                @forelse($loot[0]->relics_info as $key => $relic)
-                                    <p> {{ ($key+1).' - '.$relic->name.'('.$relic->number.')' }}</p>
-                                @empty
-                                @endforelse
-                            </div>
-                        </div>  
-                    </div>
+                    
                 @forelse($loots as $key => $value)
                     <div class="rewardsbox">
                     <h4>{{ ucwords(str_replace('_',' ',$key)) }}</h4>

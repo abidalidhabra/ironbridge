@@ -20,12 +20,5 @@ class MGCLoot extends Eloquent
         'possibility',
         'reward_type',
         'status',
-        'relics'
     ];
-
-
-    public function relics_info()
-    {
-        return $this->belongsToMany(Relic::class, null, 'mgc_loot_tables', 'relics');
-    }
 }

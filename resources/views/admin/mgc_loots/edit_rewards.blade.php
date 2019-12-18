@@ -13,25 +13,7 @@
             </div>
         </div>
     </div>
-    @if($loot[0]->relics_info)
-        @php
-            $relicIds = $loot[0]->relics_info->pluck('id')->toArray(); 
-        @endphp
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label>Relics</label>
-                    <br/>
-                    <select name="relics[]" class="form-control" id="relics" multiple>
-                        @forelse($relics as $relic)
-                            <option value="{{ $relic->id }}" {{ (in_array($relic->id,$relicIds))?'selected': '' }}>{{ $relic->name }}</option>
-                        @empty
-                        @endforelse
-                    </select>
-                </div>
-            </div>
-        </div>
-    @endif
+    
     @forelse($lootReward as $key => $reward)
         <h4>{{ ucwords(str_replace('_',' ',$key)) }}</h4>
         @if($key == 'gold' || $key == 'skeleton_key' || $key == 'avatar_item' || $key == 'avatar_item_and_gold')
