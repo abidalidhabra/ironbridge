@@ -19,7 +19,7 @@
                             <input type="number" name="power_ratio" class="form-control" value="{{ $huntStatistic->power_ratio }}" placeholder="Enter the power ratio">
                         </div>
                         <div class="form-group">
-                            <label class="control-label">Boot Validity Till (Seconds):</label>
+                            <label class="control-label">Boost Validity Till (Seconds):</label>
                             <input type="number" name="boost_power_till" class="form-control" value="{{ $huntStatistic->boost_power_till }}" placeholder="Enter the boot validity till">
                         </div>
                     </div>
