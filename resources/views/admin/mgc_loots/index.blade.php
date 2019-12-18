@@ -13,9 +13,8 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Manage Loot Tables</h3>
+                <h3>Manage MGC Loot Tables</h3>
             </div>
-            <a href="{{ route('admin.loots.index') }}" class="btn pull-right default-btn">Back</a>
         </div>
     </div>
     <br/>
@@ -24,19 +23,9 @@
         <div class="tab-content">
             <div class="tab-pane fade in active">                
                 @if(auth()->user()->hasPermissionTo('Edit Loot'))
-                    <a href="javascript:void(0)" class="btn pull-right edit_reward default-btn" data-id="{{ $id }}">Edit</a>
+                    <a href="javascript:void(0)" class="btn pull-right edit_reward default-btn" data-id="">Edit</a>
                 @endif
-                    <div class="rewardsbox">
-                        <h4>Relics</h4>
-                        <div class="col-md-3">
-                            <div class="smallrewardbox">
-                                @forelse($loot[0]->relics_info as $key => $relic)
-                                    <p> {{ ($key+1).' - '.$relic->number }}</p>
-                                @empty
-                                @endforelse
-                            </div>
-                        </div>  
-                    </div>
+                    
                 @forelse($loots as $key => $value)
                     <div class="rewardsbox">
                     <h4>{{ ucwords(str_replace('_',' ',$key)) }}</h4>
@@ -134,7 +123,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Edit Loot Tables</h4>
+                <h4 class="modal-title">Edit MCG Loot Tables</h4>
             </div>
             <form method="post" id="editrewardForm">
                 
@@ -155,22 +144,18 @@
         @if(Session::has('action') && Session::get('action')=='edit_model')
             editmodel({{$id}});
         @endif
-        /* EDIT MODEL SHOW */
-        $(document).on('click','.edit_reward',function(){
-            var id = $(this).attr('data-id');
-            editmodel(id);
-        });
+        
         /* END EDIT MODEL SHOW */
-        function editmodel(id){
-            var url ='{{ route("admin.loots.edit",':id') }}';
-            url = url.replace(':id',id);
+        $(document).on('click','.edit_reward',function(){
+            var url ='{{ route("admin.mgc_loot.edit",1) }}';
+            // url = url.replace(':id',id);
             $.ajax({
                 type: "GET",
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 url: url,
-                data: {id : id},
+                data: {id : 1},
                 beforeSend: function() {    
                     $('body').css('opacity','0.5');
                 },
@@ -186,12 +171,12 @@
                     }*/
                 }
             });
-        }
+        })
         /* UPDATE REWARDSD */
         $(document).on('submit','#editrewardForm',function(e){
             e.preventDefault();
-            var id = $('#complexity').val();
-            var url ='{{ route("admin.loots.update",':id') }}';
+            var id = 1;
+            var url ='{{ route("admin.mgc_loot.update",':id') }}';
             url = url.replace(':id',id);
             $.ajax({
                 type: "PUT",
@@ -204,7 +189,7 @@
                 {
                     if (response.status == true) {
                         toastr.success(response.message);
-                        window.location.href = '{{ route('admin.loots.index') }}';
+                        window.location.href = '';
                     } else {
                         toastr.warning(response.message);
                     }
