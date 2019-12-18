@@ -255,6 +255,10 @@
 					</li>
 					@endif
 					
+					<li class="@if(Route::currentRouteName() == 'admin.mgc_loot.index') {{ 'activelist' }} @endif">
+						<a href="{{ route('admin.mgc_loot.index') }}">MGC Loot Table</a>
+					</li>
+
 					@if($admin->hasPermissionTo('View Challenge Nodes'))
 					<li class="@if(Route::currentRouteName() == 'admin.treasure_nodes_targets.index' || 
 								Route::currentRouteName() == 'admin.treasure_nodes_targets.edit') {{ 'activelist' }} @endif">
