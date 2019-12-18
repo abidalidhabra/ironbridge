@@ -28,6 +28,6 @@
                 "artisticallyInteresting": 0
             }
         },
-        "fieldsToReturn": "name,center_point"
+        "fieldsToReturn": "name,center_point,snapped_point"
     }]
 }

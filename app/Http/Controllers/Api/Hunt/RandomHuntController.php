@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Hunt;
 use App\Collections\GameCollection;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hunt\CellDataRequest;
+use App\Http\Requests\Hunt\ClaimPrizeForMinigameNodeRequest;
 use App\Http\Requests\Hunt\HuntUserRequest;
 use App\Http\Requests\Hunt\RevokeTheRevealRequest;
 use App\Http\Requests\v1\ParticipateRequest;
@@ -101,11 +102,11 @@ class RandomHuntController extends Controller
 
     public function getMinigamesForNode(Request $request)
     {
-        // \DB::connection()->enableQueryLog();
         $minigames = (new GetRandomizeGamesService)->setUser(auth()->user())->get(10);
-        // $queries = \DB::getQueryLog();
-        // dd($queries);
-        return response()->json(['message' => 'minigame has been retrieved for the node.', 'minigames'=> $minigames->getTreasureNodesTargets()]);
+        return response()->json([
+            'message' => 'minigame has been retrieved for the node.', 
+            'minigames'=> $minigames->setUser(auth()->user())->loadTreasureNodesTargets()->addRemainingSeconds()
+        ]);
     }
 
     public function claimPrizeForBonuseTreasureNode(Request $request)
@@ -117,9 +118,9 @@ class RandomHuntController extends Controller
         return response()->json(['message' => 'prize provided on the behalf of bonuse treasure node.', 'reward'=> $reward]);
     }
 
-    public function claimPrizeForMinigameNode(Request $request)
+    public function claimPrizeForMinigameNode(ClaimPrizeForMinigameNodeRequest $request)
     {
-        $reward = (new ClaimTheMinigameNodePrizeService)->setUser(auth()->user())->do();
+        $reward = (new ClaimTheMinigameNodePrizeService)->setUser(auth()->user())->setGameId($request->game_id)->do();
         return response()->json(['message' => 'prize provided on the behalf of minigame.', 'reward'=> $reward]);
     }
 
@@ -174,19 +175,11 @@ class RandomHuntController extends Controller
             'random_hunt_cell'=> $paybleCellProviderService->getRandomHuntsCells()
         ];
         
-        if ($user->nodes_status && (isset($user->nodes_status['mg_challenge']) || isset($user->nodes_status['power']) || isset($user->nodes_status['bonus']))) {
-            $playableRes = $paybleCellProviderService->getMinigamesCells();
-            $playableNodes = collect($playableRes->locationsPerGameObjectType);
-            if (isset($user->nodes_status['power'])) {
-                $response['power_station_node'] = $playableNodes->first();
-            }
-            if (isset($user->nodes_status['mg_challenge'])) {
-                $response['minigame_node'] = $playableNodes->slice(1)->take(1)->first();
-            }
-            if (isset($user->nodes_status['bonus'])) {
-                $response['bonus_nodes'] = $playableNodes->slice(2)->values();
-            }
-        }
+        $playableRes = $paybleCellProviderService->getMinigamesCells();
+        $playableNodes = collect($playableRes->locationsPerGameObjectType);
+        $response['power_station_node'] = $playableNodes->first();
+        $response['minigame_node'] = $playableNodes->slice(1)->take(1)->first();
+        $response['bonus_nodes'] = $playableNodes->slice(2)->values();
         
         return response()->json($response);
     }

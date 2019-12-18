@@ -62,6 +62,7 @@ class User extends Authenticatable implements JWTSubject
         'guest_id',
         'device_info',
         'nodes_status',
+        'mgc_status',
         // 'expnadable_skeleton_keys',
     ];
 
@@ -341,6 +342,14 @@ class User extends Authenticatable implements JWTSubject
         }else{
             return CarbonImmutable::createFromTimestamp($value->toDateTime()->getTimestamp())->format('Y-m-d H:i:s');
         }
+    }    
+
+    public function getMgcStatusAttribute($miniGames)
+    {
+        return collect($miniGames)->map(function($miniGame){
+            $miniGame['completed_at'] = ($miniGame['completed_at'])? $miniGame['completed_at']->toDateTime()->format('Y-m-d H:i:s'): null;
+            return $miniGame;
+        });
     }
 
     public function setDobAttribute($value)
