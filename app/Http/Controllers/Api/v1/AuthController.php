@@ -54,6 +54,10 @@ class AuthController extends Controller
                             'email' => "required_without:username|exists:users,email",
                             //'password' => ['required', new IsPasswordValid],
                             'password' => ['required', new CheckThePassword($request->username)],
+                            'device_type'=> 'required|in:ios,android',
+                            'device_id'=> 'required',
+                            'device_model'=> 'required',
+                            'device_os'=> 'required'
                         ]);
             
             if ($validator->fails()) {
@@ -79,6 +83,21 @@ class AuthController extends Controller
                     $user->firebase_ids = [
                         'android_id' => ($request->firbase_android_id)?$request->firbase_android_id:$user->firebase_ids['android_id'],
                         'ios_id' => ($request->firbase_ios_id)?$request->firbase_ios_id:$user->firebase_ids['ios_id']
+                    ];
+                }
+
+                if (
+                    $request->filled('device_type') || 
+                    $request->filled('device_type') || 
+                    $request->filled('device_model') || 
+                    $request->filled('device_os')
+                ) {
+                    $wantToSave = true;
+                    $user->device_info = [ 
+                        'id'=> ($request->filled('device_id'))? $request->device_id: $user->device_info['id'],
+                        'type'=> ($request->filled('device_type'))? $request->device_type: $user->device_info['type'],
+                        'model'=> ($request->filled('device_model'))? $request->device_model: $user->device_info['model'],
+                        'os'=> ($request->filled('device_os'))? $request->device_os: $user->device_info['os'],
                     ];
                 }
 

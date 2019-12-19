@@ -88,7 +88,7 @@ class UserHelper {
 			'available_complexities' => [1],
 			'agent_stack'=> $userRepository->getAgentStack(),
 			'hunt_statistics'=> array_merge($huntStatistics->toArray(), ['power_station'=> ['till'=> $userRepository->powerFreezeTill()]]),
-			'nodes_enabled_on'=> $specialAminities,
+			'nodes_enable_on'=> $specialAminities,
 			// 'used_widgets' => $user->used_widgets,
 			// 'plans' => $plans,
 			// 'events_data' => $events,

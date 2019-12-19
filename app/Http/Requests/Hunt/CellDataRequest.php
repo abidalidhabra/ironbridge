@@ -26,8 +26,10 @@ class CellDataRequest extends FormRequest
     public function rules()
     {
         return [
-            'lat'=> "required|numeric",
-            'log'=> "required|numeric",
+            // 'lat'=> "required|numeric",
+            // 'log'=> "required|numeric",
+            // 'level'=> "required|numeric|integer"
+            'coordinates'=> "required|json",
             'level'=> "required|numeric|integer"
         ];
     }

@@ -53,10 +53,13 @@ class UserController extends Controller
                         'dob'        => "required|date_format:d-m-Y",
                         'longitude' => 'required', 
                         'latitude'  => 'required',
-                        'device_type'  => "nullable|string",
+                        'device_type'  => "required|string",
                         'firebase_id'  => "nullable|string",
                         //'reffered_by'  => "nullable|string|exists:users,reffered_id",
                         'reffered_by'  => "nullable|string",
+                        'device_id'=> 'required',
+                        'device_model'=> 'required',
+                        'device_os'=> 'required'
                     ]);
         
         if ($validator->fails()) {
@@ -162,6 +165,12 @@ class UserController extends Controller
                 ['id'=> "5d246f0c0b6d7b19fb5ab584", 'selected'=> true],
                 ['id'=> "5d4423d65c60e6147cf181a6", 'selected'=> true],
             ],
+            'device_info'=> [
+                'id'=> ($request->filled('device_id'))? $request->device_id: $user->device_info['id'],
+                'type'=> ($request->filled('device_type'))? $request->device_type: $user->device_info['type'],
+                'model'=> ($request->filled('device_model'))? $request->device_model: $user->device_info['model'],
+                'os'=> ($request->filled('device_os'))? $request->device_os: $user->device_info['os'],
+            ]
             // 'settings'   => [
             //     'sound_fx' => true,
             //     'music_fx' => true,
