@@ -262,20 +262,27 @@ class User extends Authenticatable implements JWTSubject
 
     public function getFreeOutfitTakenAttribute()
     {
-        if ($this->first_login == true) {
-            return false;
+        if ($this->tutorials['home']) {
+            return true;
         }else{
-            $userWidgets = collect($this->widgets)->pluck('id');
-            $freeOutfeets = WidgetItem::where('free', true)->get()->pluck('_id');
-            $contains = false;
-            foreach ($freeOutfeets as $outfit) {
-                if ($userWidgets->contains($outfit)) {
-                    $contains = true;
-                    break;
-                }
-            }
-            return $contains;
+            return false;
         }
+
+        // if ($this->tutorials['home'] == true) {
+        // if ($this->first_login == true) {
+        //     return false;
+        // }else{
+        //     $userWidgets = collect($this->widgets)->pluck('id');
+        //     $freeOutfeets = WidgetItem::where('free', true)->get()->pluck('_id');
+        //     $contains = false;
+        //     foreach ($freeOutfeets as $outfit) {
+        //         if ($userWidgets->contains($outfit)) {
+        //             $contains = true;
+        //             break;
+        //         }
+        //     }
+        //     return $contains;
+        // }
     }
 
     public function getAvailableComplexities()

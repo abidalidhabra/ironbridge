@@ -175,12 +175,23 @@ class RandomHuntController extends Controller
             'random_hunt_cell'=> $paybleCellProviderService->getRandomHuntsCells()
         ];
         
-        $playableRes = $paybleCellProviderService->getMinigamesCells();
-        $playableNodes = collect($playableRes->locationsPerGameObjectType);
-        $response['power_station_node'] = $playableNodes->first();
-        $response['minigame_node'] = $playableNodes->slice(1)->take(1)->first();
-        $response['bonus_nodes'] = $playableNodes->slice(2)->values();
-        
-        return response()->json($response);
+        if ($user->nodes_status && (isset($user->nodes_status['mg_challenge']) || isset($user->nodes_status['power']) || isset($user->nodes_status['bonus']))) {
+
+            $playableRes = $paybleCellProviderService->getMinigamesCells(); 
+            $playableNodes = collect($playableRes->locationsPerGameObjectType); 
+            
+            if (isset($user->nodes_status['power'])) {  
+                $response['power_station_node'] = $playableNodes->first();  
+            }   
+            
+            if (isset($user->nodes_status['mg_challenge'])) {   
+                $response['minigame_node'] = $playableNodes->slice(1)->take(1)->first();    
+            }
+            if (isset($user->nodes_status['bonus'])) {    
+            
+                $response['bonus_nodes'] = $playableNodes->slice(2)->values();  
+            }   
+        }
+        return response()->json($response); 
     }
 }
