@@ -7,9 +7,10 @@ use App\Repositories\MGCLootRepository;
 use App\Repositories\User\UserRepository;
 use App\Repositories\XPManagementRepository;
 use App\Services\User\AddXPService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use stdClass;
 use MongoDB\BSON\UTCDateTime;
+use stdClass;
 
 class ClaimTheMinigameNodePrizeService
 {
@@ -44,7 +45,7 @@ class ClaimTheMinigameNodePrizeService
         $rewardData['agent_status'] = $this->user->agent_status;
         // $rewardData['reward_data'] = $this->generateRelicReward();
         
-        $this->markMGCAsComplete();
+        $rewardData['mingiame_info'] = $this->markMGCAsComplete();
         
         // get the agent stack
         $rewardData['agent_stack'] = (new UserRepository($this->user))->getAgentStack();
@@ -55,15 +56,24 @@ class ClaimTheMinigameNodePrizeService
     public function markMGCAsComplete()
     {
         $games = $this->user->mgc_status->where('game_id', '!=', $this->gameId);
+        
         $games->push(
-            $this->user->mgc_status->where('game_id', $this->gameId)->map(function($minigame) {
-                $minigame['completed_at'] = new UTCDateTime;
-                return $minigame;
-            })->first()
+            $game = $this->user->mgc_status->where('game_id', $this->gameId)->map(function($minigame) {
+                        $minigame['completed_at'] = new UTCDateTime;
+                        return $minigame;
+                    })->first()
         );
+        
+        $completedAt = Carbon::createFromTimestamp($game['completed_at']->toDateTime()->getTimestamp())->addHours(4);
+        $remainingFreezeTime = ($completedAt->gte(now()))? $completedAt->diffInSeconds(now()): 0;
 
         $this->user->mgc_status = $games->toArray();
         $this->user->save();
+
+        return [
+            'remaining_seconds' => $remainingFreezeTime,
+            'game_id'=> $game['game_id']
+        ];
     }
 
     public function generateRelicReward() {
