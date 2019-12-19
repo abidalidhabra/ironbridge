@@ -81,6 +81,8 @@ class HuntStatisticController extends Controller
             'nodes'                         => 'required|numeric',
             'distances_random_hunt'         => 'required|numeric',
             'relic'                         => 'required|numeric',
+            'power'                         => 'required|numeric',
+            'mgc'                           => 'required|numeric',
         ]);
 
         if ($validator->fails())
@@ -101,6 +103,10 @@ class HuntStatisticController extends Controller
         $huntStatistic->distances =  (object)[
                                         'random_hunt'=>(int)$request->distances_random_hunt,
                                         'relic'=>(int)$request->relic,
+                                    ];
+        $huntStatistic->freeze_till =  (object)[
+                                        'power'=>(int)$request->power,
+                                        'mgc'=>(int)$request->mgc,
                                     ];
         $huntStatistic->save();
 
