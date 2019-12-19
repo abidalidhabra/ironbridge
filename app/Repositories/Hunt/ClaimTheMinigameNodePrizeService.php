@@ -67,7 +67,7 @@ class ClaimTheMinigameNodePrizeService
         $completedAt = Carbon::createFromTimestamp($game['completed_at']->toDateTime()->getTimestamp())->addHours(4);
         $remainingFreezeTime = ($completedAt->gte(now()))? $completedAt->diffInSeconds(now()): 0;
 
-        $this->user->mgc_status = $games->toArray();
+        $this->user->mgc_status = $games->values()->toArray();
         $this->user->save();
 
         return [

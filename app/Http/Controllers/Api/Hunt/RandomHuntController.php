@@ -170,27 +170,71 @@ class RandomHuntController extends Controller
         
         $paybleCellProviderService = new PaybleCellProviderService;
         
-        $response = [
-            'cell_id'=> $paybleCellProviderService->getCellID($request->all()),
-            'random_hunt_cell'=> $paybleCellProviderService->getRandomHuntsCells()
-        ];
+        // $response = [
+        //     'cell_id'=> $paybleCellProviderService->getCellIDs($request, $user),
+        //     'random_hunt_cell'=> $paybleCellProviderService->getRandomHuntsCells()
+        // ];
         
-        if ($user->nodes_status && (isset($user->nodes_status['mg_challenge']) || isset($user->nodes_status['power']) || isset($user->nodes_status['bonus']))) {
+        // if ($user->nodes_status && (isset($user->nodes_status['mg_challenge']) || isset($user->nodes_status['power']) || isset($user->nodes_status['bonus']))) {
 
-            $playableRes = $paybleCellProviderService->getMinigamesCells(); 
-            $playableNodes = collect($playableRes->locationsPerGameObjectType); 
+        //     $playableRes = $paybleCellProviderService->getMinigamesCells(); 
+        //     $playableNodes = collect($playableRes->locationsPerGameObjectType); 
             
-            if (isset($user->nodes_status['power'])) {  
-                $response['power_station_node'] = $playableNodes->first();  
-            }   
+        //     if (isset($user->nodes_status['power'])) {  
+        //         $response['power_station_node'] = $playableNodes->first();  
+        //     }   
             
-            if (isset($user->nodes_status['mg_challenge'])) {   
-                $response['minigame_node'] = $playableNodes->slice(1)->take(1)->first();    
+        //     if (isset($user->nodes_status['mg_challenge'])) {   
+        //         $response['minigame_node'] = $playableNodes->slice(1)->take(1)->first();    
+        //     }
+        //     if (isset($user->nodes_status['bonus'])) {    
+            
+        //         $response['bonus_nodes'] = $playableNodes->slice(2)->values();  
+        //     }   
+        // }
+
+        $response = [];
+
+        foreach (json_decode($request->coordinates, true) as $key => $coordinate) {
+
+            $cell2ID = $paybleCellProviderService->getCellID(
+                            array_merge($coordinate, ['level'=> $request->level])
+                        );
+
+            if (!$paybleCellProviderService->getCell2IDs()->contains('cell2ID', $cell2ID->cell2ID)) {
+
+                $responseToBeGiven = [];
+                $responseToBeGiven['cell2ID'] = $cell2ID->cell2ID;
+                $paybleCellProviderService->addCell2IDs($cell2ID);
+                $responseToBeGiven['random_hunt_cell'] = $paybleCellProviderService->getRandomHuntsCells();
+                
+                if (
+                    $user->nodes_status && 
+                    (   
+                        isset($user->nodes_status['mg_challenge']) || 
+                        isset($user->nodes_status['power']) || 
+                        isset($user->nodes_status['bonus'])
+                    )
+                ) {
+
+                    $playableRes = $paybleCellProviderService->getMinigamesCells(); 
+                    $playableNodes = collect($playableRes->locationsPerGameObjectType); 
+
+                    if (isset($user->nodes_status['power'])) {  
+                        $responseToBeGiven['power_station_node'] = $playableNodes->first();  
+                    }   
+
+                    if (isset($user->nodes_status['mg_challenge'])) {   
+                        $responseToBeGiven['minigame_node'] = $playableNodes->slice(1)->take(1)->first();    
+                    }
+
+                    if (isset($user->nodes_status['bonus'])) {    
+
+                        $responseToBeGiven['bonus_nodes'] = $playableNodes->slice(2)->values();  
+                    }   
+                }
+                $response[] = $responseToBeGiven;
             }
-            if (isset($user->nodes_status['bonus'])) {    
-            
-                $response['bonus_nodes'] = $playableNodes->slice(2)->values();  
-            }   
         }
         return response()->json($response); 
     }

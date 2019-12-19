@@ -15,12 +15,31 @@ class PaybleCellProviderService
 	protected $redis;
 	protected $cell2ID;
 	protected $cacheKeys;
+	protected $cell2IDs;
 
 	public function __construct()
 	{
 		$this->paybleGoogleURL = 'https://playablelocations.googleapis.com/v3:searchPlayableLocations?key='.$this->paybleGoogleKey;
 		$this->client = new Client();
 		$this->redis = Redis::connection();
+		$this->cell2IDs = collect();
+	}
+
+	public function setCell2ID($cell2ID)
+	{
+		$this->cell2ID = $cell2ID;
+		return $this;
+	}
+
+	public function addCell2IDs($cell2ID)
+	{
+        $this->cell2IDs->push($cell2ID);
+		return $this;
+	}
+
+	public function getCell2IDs()
+	{
+        return $this->cell2IDs;
 	}
 
 	public function getContents($result, $wantJSON = true, $wantFromCurl = true)
@@ -32,13 +51,13 @@ class PaybleCellProviderService
 		}
 	}
 
-	public function setCacheKeys()
+	public function setCacheableKeys()
 	{
 		$this->cacheKeys['minigames'] = $this->cell2ID.'.minigames';
 		$this->cacheKeys['random_hunts'] = $this->cell2ID.'.random_hunts';
 	}
 
-	public function setCacheValues($for, $dataToSave)
+	public function setCacheableValues($for, $dataToSave)
 	{
 		if ($for == 'random_hunts' || $for == 'minigames') {
 			$this->redis->set($this->cacheKeys[$for], $dataToSave, 'EX', 900);
@@ -69,7 +88,7 @@ class PaybleCellProviderService
 			throw new Exception("Google Cell ID service is unavailable.");
 		}
 		$this->cell2ID = $cellIDResponseJson->cell2ID;
-		$this->setCacheKeys();
+		$this->setCacheableKeys();
 		return $cellIDResponseJson;
 	}
 
@@ -90,8 +109,49 @@ class PaybleCellProviderService
 		}else{
 			$apiResponse = $this->client->request('POST', $this->paybleGoogleURL, ['body' => $this->getPlayableCellsJSONFile($getLocationsFor)]);
 			$apiContents = $this->getContents($apiResponse, false);
-			$this->setCacheValues($getLocationsFor, $apiContents);
+			$this->setCacheableValues($getLocationsFor, $apiContents);
 			return $this->getContents($apiContents, true, false);
 		}
 	}
+
+	// public function getCellIDs($request, $user)
+	// {
+	// 	$response = [];
+
+	// 	foreach (json_decode($request->coordinates, true) as $coordinate) {
+
+	// 		$cell2ID = $this->getCellID(
+	// 						array_merge($coordinate, ['level'=> $request->level])
+	// 					);
+
+	// 		if (!$this->cell2IDs->contains('cell2ID', $cell2ID->cell2ID)) {
+				
+	// 			$responseToBeGiven = [];
+	// 			$responseToBeGiven['cell2ID'] = $cell2ID;
+	// 			$this->cell2IDs->push($cell2ID);
+	// 			$responseToBeGiven['random_hunt_cell'] = $this->getRandomHuntsCells();
+				
+	// 			if ($user->nodes_status && (isset($user->nodes_status['mg_challenge']) || isset($user->nodes_status['power']) || isset($user->nodes_status['bonus']))) {
+
+	// 				$playableRes = $this->getMinigamesCells(); 
+	// 				$playableNodes = collect($playableRes->locationsPerGameObjectType); 
+
+	// 				if (isset($user->nodes_status['power'])) {  
+	// 					$responseToBeGiven['power_station_node'] = $playableNodes->first();  
+	// 				}   
+
+	// 				if (isset($user->nodes_status['mg_challenge'])) {   
+	// 					$responseToBeGiven['minigame_node'] = $playableNodes->slice(1)->take(1)->first();    
+	// 				}
+	// 				if (isset($user->nodes_status['bonus'])) {    
+
+	// 					$responseToBeGiven['bonus_nodes'] = $playableNodes->slice(2)->values();  
+	// 				}   
+	// 			}
+	// 		}
+
+	// 		$response[] = $responseToBeGiven;
+	// 	}
+	// 	return $response;
+	// }
 }
