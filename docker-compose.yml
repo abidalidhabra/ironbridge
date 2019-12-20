@@ -11,7 +11,7 @@ services:
       - storage:/var/www/html/storage
       - ./irinbridge/log:/var/log/apache2
     ports:
-      - "80:80"
+      - "443:443"
 
   redis:
     image: redis
