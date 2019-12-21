@@ -12,6 +12,7 @@ services:
       - ./irinbridge/log:/var/log/apache2
     ports:
       - "443:443"
+      - "80:80"
 
   redis:
     image: redis
