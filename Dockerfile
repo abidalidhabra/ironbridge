@@ -5,10 +5,12 @@ MAINTAINER Prashant Rajavat <prashant.rajavat1996@gmail.com>
 ENV APP_ENV=dev
 ENV TERM=xterm
 
-COPY . /var/www/html
+# COPY . /var/www/html
+COPY phpinfo.php /var/www/html
+
 WORKDIR /var/www/html
 RUN rm -rf .env
-RUN cp .env.example .env
+# RUN cp .env.example .env
 RUN composer install
 # RUN php artisan migrate
 RUN php artisan storage:link
