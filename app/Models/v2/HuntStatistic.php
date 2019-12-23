@@ -13,6 +13,7 @@ class HuntStatistic extends Eloquent
     	'skeleton_keys',
     	'boost_power_till',
     	'refreshable_distances',
-    	'distances'
+    	'distances',
+    	'freeze_till'
     ];
 }

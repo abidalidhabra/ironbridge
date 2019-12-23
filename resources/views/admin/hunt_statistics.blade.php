@@ -19,7 +19,7 @@
                             <input type="number" name="power_ratio" class="form-control" value="{{ $huntStatistic->power_ratio }}" placeholder="Enter the power ratio">
                         </div>
                         <div class="form-group">
-                            <label class="control-label">Boot Validity Till (Seconds):</label>
+                            <label class="control-label">Boost Validity Till (Seconds):</label>
                             <input type="number" name="boost_power_till" class="form-control" value="{{ $huntStatistic->boost_power_till }}" placeholder="Enter the boot validity till">
                         </div>
                     </div>
@@ -39,7 +39,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-4">
-                        <h4>Refreshable</h4>
+                        <h4>Refreshable Distance</h4>
                         <div class="form-group">
                             <label class="control-label">Refreshable distance of random hunt:
                                 <a data-toggle="tooltip" title="" data-placement="right" data-original-title="Distance should be in meter">?</a>
@@ -68,6 +68,23 @@
                                 <a data-toggle="tooltip" title="" data-placement="right" data-original-title="Distance should be in meter">?</a>
                             </label>
                             <input type="number" name="relic" class="form-control" placeholder="Enter the relic" value="{{ ($huntStatistic->distances)?$huntStatistic->distances['relic']:'' }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <h4>Freeze time</h4>
+                        <div class="form-group">
+                            <label class="control-label">Powe-up freeze time:
+                                <!-- <a data-toggle="tooltip" title="" data-placement="right" data-original-title="Distance should be in meter">?</a> -->
+                            </label>
+                            <input type="number" name="power" class="form-control" placeholder="Enter the power" value="{{ ($huntStatistic->freeze_till)?$huntStatistic->freeze_till['power']:'' }}">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">MGC Freeze time:
+                                <!-- <a data-toggle="tooltip" title="" data-placement="right" data-original-title="Distance should be in meter">?</a> -->
+                            </label>
+                            <input type="number" name="mgc" class="form-control" placeholder="Enter the mgc" value="{{ ($huntStatistic->freeze_till)?$huntStatistic->freeze_till['mgc']:'' }}">
                         </div>
                     </div>
                 </div>
