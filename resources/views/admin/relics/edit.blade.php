@@ -74,12 +74,12 @@
                             <input type="number" name="number" class="form-control" placeholder="Enter the number" value="{{ $relic->number }}">
                         </div>
                          <div class="form-group">
-                            <label>Clue:</label>
-                            <input type="number" name="clue" class="form-control" value="{{ ($relic->completion_xp)?$relic->completion_xp['clue']:'' }}" placeholder="Enter the clue">
+                            <label>Minigame XP:</label>
+                            <input type="number" name="minigame_xp" class="form-control" value="{{ ($relic->completion_xp)?$relic->completion_xp['clue']:'' }}" placeholder="Enter the minigame XP">
                         </div>
                         <div class="form-group">
-                            <label>Treasure:</label>
-                            <input type="number" name="treasure" class="form-control" value="{{ ($relic->completion_xp)?$relic->completion_xp['treasure']:'' }}" placeholder="Enter the treasure">
+                            <label>Hunt XP:</label>
+                            <input type="number" name="hunt_xp" class="form-control" value="{{ ($relic->completion_xp)?$relic->completion_xp['treasure']:'' }}" placeholder="Enter the hunt XP">
                         </div>
                         <div class="form-group">
                             <label>Status:</label>

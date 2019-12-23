@@ -27,6 +27,8 @@
                     <th>Image</th>
                     <th>TH Complexity</th>
                     <th>Relic Map Pieces</th>
+                    <th>Minigame XP</th>
+                    <th>Hunt XP</th>
                     <!-- <th>Created at (UTC)</th> -->
                     <th>Status</th>
                      @if(auth()->user()->hasPermissionTo('Edit Relics') || auth()->user()->hasPermissionTo('Delete Relics'))
@@ -68,6 +70,8 @@
                         { data:'icon',name:'icon'},
                         { data:'complexity',name:'complexity'},
                         { data:'pieces',name:'pieces'},
+                        { data:'minigame_xp',name:'minigame_xp' },
+                        { data:'hunt_xp',name:'hunt_xp' },
                         { data:'active',name:'active' },
                         @if(auth()->user()->hasPermissionTo('Edit Relics') || auth()->user()->hasPermissionTo('Delete Relics'))
                          { data:'action',name:'action' },
