@@ -56,8 +56,8 @@
                             <input type="number" name="number" class="form-control" placeholder="Enter the number">
                         </div>
                         <div class="form-group">
-                            <label>Minigame:</label>
-                            <input type="number" name="minigame" class="form-control" placeholder="Enter the minigame">
+                            <label>Clue:</label>
+                            <input type="number" name="clue" class="form-control" placeholder="Enter the clue">
                         </div>
                         <div class="form-group">
                             <label>Treasure:</label>
