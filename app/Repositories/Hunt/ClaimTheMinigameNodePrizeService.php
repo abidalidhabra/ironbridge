@@ -3,6 +3,7 @@
 namespace App\Repositories\Hunt;
 
 use App\Models\v2\HuntStatistic;
+use App\Repositories\HuntStatisticRepository;
 use App\Repositories\MGCLootRepository;
 use App\Repositories\User\UserRepository;
 use App\Repositories\XPManagementRepository;
@@ -18,9 +19,11 @@ class ClaimTheMinigameNodePrizeService
     private $user;
     private $gameId;
     private $xPManagementRepository;
+    private $huntStatisticRepository;
 
     public function __construct()
     {
+        $this->huntStatisticRepository = (new HuntStatisticRepository)->first(['id', 'freeze_till']);
         $this->xPManagementRepository = (new XPManagementRepository)->where(['event'=> 'clue_completion', 'complexity'=> 1])->first();
     }
 
@@ -64,7 +67,9 @@ class ClaimTheMinigameNodePrizeService
                     })->first()
         );
         
-        $completedAt = Carbon::createFromTimestamp($game['completed_at']->toDateTime()->getTimestamp())->addHours(4);
+        $completedAt = Carbon::createFromTimestamp($game['completed_at']->toDateTime()->getTimestamp())
+                        ->addSeconds($this->huntStatisticRepository->freeze_till['mgc']);
+
         $remainingFreezeTime = ($completedAt->gte(now()))? $completedAt->diffInSeconds(now()): 0;
 
         $this->user->mgc_status = $games->values()->toArray();

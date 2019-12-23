@@ -2,6 +2,7 @@
 
 namespace App\Rules\Hunt;
 
+use App\Repositories\HuntStatisticRepository;
 use App\Repositories\Hunt\HuntUserRepository;
 use Carbon\Carbon;
 use Illuminate\Contracts\Validation\Rule;
@@ -30,9 +31,9 @@ class MGCFreezeRule implements Rule
     public function passes($attribute, $value)
     {
         $data = $this->user->mgc_status->where('game_id', $value)->first();
-
+        $huntStatisticRepository = (new HuntStatisticRepository)->first(['id', 'freeze_till']);
         if ($data && $data['completed_at']) {
-            return (Carbon::parse($data['completed_at'])->diffInHours() < 4)? false: true;
+            return (Carbon::parse($data['completed_at'])->diffInSeconds() < $huntStatisticRepository->freeze_till['mgc'])? false: true;
         }
 
         return true;
