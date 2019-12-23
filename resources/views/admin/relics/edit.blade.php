@@ -73,6 +73,14 @@
                             <label>Number:</label>
                             <input type="number" name="number" class="form-control" placeholder="Enter the number" value="{{ $relic->number }}">
                         </div>
+                         <div class="form-group">
+                            <label>Minigame:</label>
+                            <input type="number" name="minigame" class="form-control" value="{{ ($relic->xp_completion)?$relic->xp_completion['minigame']:'' }}" placeholder="Enter the minigame">
+                        </div>
+                        <div class="form-group">
+                            <label>Treasure:</label>
+                            <input type="number" name="treasure" class="form-control" value="{{ ($relic->xp_completion)?$relic->xp_completion['treasure']:'' }}" placeholder="Enter the treasure">
+                        </div>
                         <div class="form-group">
                             <label>Status:</label>
                             <select name="status" class="form-control">

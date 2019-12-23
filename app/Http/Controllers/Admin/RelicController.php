@@ -62,6 +62,8 @@ class RelicController extends Controller
             'pieces'        => 'required|numeric',
             'number'        => 'required|numeric|integer|unique:relics,number',
             'status'        => 'required|in:active,inactive',
+            'minigame'      => 'required|numeric',
+            'treasure'      => 'required|numeric',
             // 'pieces.*.image'=> 'required|image',
         ]);
 
@@ -87,6 +89,7 @@ class RelicController extends Controller
             'pieces'=> (int)$request->pieces,
             'number'=> (int)$request->number,
             'active'=> ($request->status=='active')?true:false,
+            'xp_completion' => (object)['minigame'=>(int)$request->minigame,'treasure'=>(int)$request->treasure],
             //'pieces'=> $this->allotGameToClueService->allot($request),
         ]);
          
@@ -134,6 +137,8 @@ class RelicController extends Controller
             'pieces'        => 'required|numeric',
             'number'        => 'required|numeric|integer',
             'status'        => 'required|in:active,inactive',
+            'minigame'      => 'required|numeric',
+            'treasure'      => 'required|numeric',
         ]);
 
         if ($validator->fails()) {
@@ -169,8 +174,7 @@ class RelicController extends Controller
         $relic->pieces = (int) $request->pieces;
         $relic->number = (int) $request->number;
         $relic->active = ($request->status=='active')?true:false;
-
-        
+        $relic->xp_completion = (object)['minigame'=>(int)$request->minigame,'treasure'=>(int)$request->treasure];        
         $relic->save();
 
         return response()->json(['status'=> true, 'message'=> 'Relic updated! Please wait we are redirecting you.']);

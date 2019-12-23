@@ -56,6 +56,14 @@
                             <input type="number" name="number" class="form-control" placeholder="Enter the number">
                         </div>
                         <div class="form-group">
+                            <label>Minigame:</label>
+                            <input type="number" name="minigame" class="form-control" placeholder="Enter the minigame">
+                        </div>
+                        <div class="form-group">
+                            <label>Treasure:</label>
+                            <input type="number" name="treasure" class="form-control" placeholder="Enter the treasure">
+                        </div>
+                        <div class="form-group">
                             <label>Status:</label>
                             <select name="status" class="form-control">
                                 <option value="">Please select status</option>
