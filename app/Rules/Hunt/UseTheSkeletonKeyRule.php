@@ -31,26 +31,31 @@ class UseTheSkeletonKeyRule implements Rule
     public function passes($attribute, $value)
     {
         
-        $huntUser = (new HuntUserDetailRepository)->find($value)->hunt_user;
-
-        if ($huntUser) {
-            if ($huntUser->user_id != $this->userId) {
-                $this->message = 'You are not authorized to do action in this clue.';
-                return false;
-            }else if ($huntUser->status == 'completed') {
-                $this->message = 'You cannot use skeleton key in this clue, as it already ended.';
-                return false;
-            }else {
-                $skeletonExists = User::where(['skeleton_keys.used_at' => null, '_id'=> $this->userId])->count();
-                if (!$skeletonExists) {
-                    $this->message = 'You do not have sufficient skeleton keys.';
+        $huntUserDetail = (new HuntUserDetailRepository)->find($value);
+        if ($huntUserDetail) {
+            $huntUser = $huntUserDetail->hunt_user;
+            if ($huntUser) {
+                if ($huntUser->user_id != $this->userId) {
+                    $this->message = 'You are not authorized to do action in this clue.';
                     return false;
+                }else if ($huntUser->status == 'completed') {
+                    $this->message = 'You cannot use skeleton key in this clue, as it already ended.';
+                    return false;
+                }else {
+                    $skeletonExists = User::where(['skeleton_keys.used_at' => null, '_id'=> $this->userId])->count();
+                    if (!$skeletonExists) {
+                        $this->message = 'You do not have sufficient skeleton keys.';
+                        return false;
+                    }
+                    return true;
                 }
-                return true;
+            }else{
+                $this->message = 'Invalid hunt user detail id provided.';
+                return false;
             }
-        }else{
-            $this->message = 'Invalid hunt user detail id provided.';
-            return false;
+        }else {
+           $this->message = 'Invalid hunt user detail id provided.';
+           return false;
         }
     }
 

@@ -288,7 +288,7 @@ class UserRepository implements UserRepositoryInterface
         if ($status) {
             return ['_id'=> $relicId, 'status'=> true];
         }else{
-            throw new Exception("Relic cannot be activate.");
+            // throw new Exception("Relic cannot be activate.");
         }
     }
 
