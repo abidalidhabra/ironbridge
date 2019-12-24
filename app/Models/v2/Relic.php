@@ -13,7 +13,7 @@ use Storage;
 class Relic extends Eloquent
 {
 
-    protected $fillable = ['name','icon', 'complexity', 'pieces', 'active', 'users','number','loot_tables','xp_completion' /* 'game_id', 'game_variation_id'*/];
+    protected $fillable = ['name','icon', 'complexity', 'pieces', 'active', 'users','number','loot_tables','completion_xp' /* 'game_id', 'game_variation_id'*/];
     
     public function getIconAttribute($value)
     {
