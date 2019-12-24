@@ -236,6 +236,7 @@ class RandomHuntController extends Controller
                 $response[] = $responseToBeGiven;
             }
         }
-        return response()->json($response); 
+        // return response()->json($response); 
+        return response()->json(['message'=> 'OK', 'data'=> $response]);
     }
 }
