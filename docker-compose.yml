@@ -12,6 +12,8 @@ services:
     ports:
       - "443:443"
       - "80:80"
+    networks:
+      - network
 
   redis:
     image: redis
@@ -21,7 +23,14 @@ services:
       - redis:/data
     ports:
       - "6379:6379"
+    networks:
+      - network
+
 volumes:
   admin_assests:
   storage:
   redis:
+
+networks:
+  network:
+    driver: bridge
