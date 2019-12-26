@@ -7,11 +7,15 @@ services:
     image: 905666888987.dkr.ecr.us-east-1.amazonaws.com/laravel:latest
     volumes:
       - admin_assests:/var/www/html/public/admin_assets/images
-      - storage:/var/www/html/storage
+      - storage:/var/www/html/storage/app/public
+      - logs:/var/www/html/storage/logs
+      - framework:/var/www/html/storage/framework
       - ./irinbridge/log:/var/log/apache2
     ports:
       - "443:443"
       - "80:80"
+    networks:
+      - network
 
   redis:
     image: redis
@@ -21,7 +25,16 @@ services:
       - redis:/data
     ports:
       - "6379:6379"
+    networks:
+      - network
+
 volumes:
   admin_assests:
   storage:
   redis:
+  logs:
+  framework:
+
+networks:
+  network:
+    driver: bridge
