@@ -236,7 +236,6 @@ class RandomHuntController extends Controller
                 $response[] = $responseToBeGiven;
             }
         }
-        // return response()->json($response); 
-        return response()->json(['message'=> 'OK', 'data'=> $response]);
+        return response()->json(['message'=> 'Cell data has been retrieved.', 'data'=> $response]);
     }
 }

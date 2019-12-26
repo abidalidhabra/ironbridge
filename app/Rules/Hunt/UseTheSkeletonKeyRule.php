@@ -53,9 +53,9 @@ class UseTheSkeletonKeyRule implements Rule
                 $this->message = 'Invalid hunt user detail id provided.';
                 return false;
             }
-        }else{
-            $this->message = 'Invalid hunt user detail id provided.';
-            return false;
+        }else {
+           $this->message = 'Invalid hunt user detail id provided.';
+           return false;
         }
     }
 
