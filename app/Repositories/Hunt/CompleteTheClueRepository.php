@@ -62,7 +62,7 @@ class CompleteTheClueRepository implements ClueInterface
         }
 
         // Calculate the time & mark the clue as complete
-        $clueFinishedIn = (new HuntUserDetailRepository)->calculateTheTimer($this->huntUserDetail, 'completed1', $request->only('score'))->finished_in;
+        $clueFinishedIn = (new HuntUserDetailRepository)->calculateTheTimer($this->huntUserDetail, 'completed', $request->only('score'))->finished_in;
 
         $rewardData = null;
         $totalFinishedIn = $clueFinishedIn;
@@ -73,7 +73,7 @@ class CompleteTheClueRepository implements ClueInterface
             $totalFinishedIn += $huntUserDetails->where('_id', '!=', $this->huntUserDetail->id)->sum('finished_in');
 
             // mark hunt_user as completed and set the ended_at of hunt_user 
-            $dataToBeUpdate = ['status'=> 'completed1', 'ended_at'=> new UTCDateTime(now()), 'finished_in'=> $totalFinishedIn];
+            $dataToBeUpdate = ['status'=> 'completed', 'ended_at'=> new UTCDateTime(now()), 'finished_in'=> $totalFinishedIn];
             (new HuntUserRepository)->update($dataToBeUpdate, ['_id'=> $this->huntUserDetail->hunt_user_id]);
             
             if ($this->huntUser->relic_id) {
@@ -191,7 +191,7 @@ class CompleteTheClueRepository implements ClueInterface
             }
             $this->user->push('skeleton_keys', $skeletons);
             $message[] = 'Skeleton key provided';
-            $rewardData['skeleton_keys'] = $skeletons;
+            $rewardData['skeleton_keys'] = count($skeletons);
         }
 
         if ($selectedReward->gold_value){

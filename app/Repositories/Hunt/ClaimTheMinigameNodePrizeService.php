@@ -7,6 +7,7 @@ use App\Repositories\HuntStatisticRepository;
 use App\Repositories\MGCLootRepository;
 use App\Repositories\User\UserRepository;
 use App\Repositories\XPManagementRepository;
+use App\Services\Hunt\LootDistribution\LootDistributionService;
 use App\Services\User\AddXPService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -46,7 +47,13 @@ class ClaimTheMinigameNodePrizeService
         $xpReward = (new AddXPService)->setUser($this->user)->add(($this->xPManagementRepository->xp * 2));
         $rewardData['xp_reward'] = (is_array($xpReward) && count($xpReward))? $xpReward: new stdClass;
         $rewardData['agent_status'] = $this->user->agent_status;
-        // $rewardData['reward_data'] = $this->generateRelicReward();
+
+        /** Reward system */
+        $loots = (new MGCLootRepository)->all();
+        $lootDistributionService = new LootDistributionService;
+        $reward = $lootDistributionService->setLoots($loots)->spin()->unbox()->setUser($this->user)->open();
+        $rewardData['reward_data'] = $reward->getResponse();
+        /** Reward system */
         
         $rewardData['mingiame_info'] = $this->markMGCAsComplete();
         
@@ -81,34 +88,34 @@ class ClaimTheMinigameNodePrizeService
         ];
     }
 
-    public function generateRelicReward() {
+    // public function generateRelicReward() {
 
-        $loots = (new MGCLootRepository)->first();
-        dd($loots);
-        if ($loot->skeletons){
-            distSkeleton:
-            $skeletons = [];
-            for ($i=0; $i < $loot->skeletons; $i++) { 
-                $skeletons[] = [
-                    'key'       => strtoupper(substr(uniqid(), 0, 10)),
-                    'created_at'=> new UTCDateTime(),
-                    'used_at'   => null
-                ];
-            }
-            $this->user->push('skeleton_keys', $skeletons);
-            $message[] = 'Skeleton key provided';
-            $rewardData['skeleton_keys'] = $skeletons;
-        }
+    //     $loots = (new MGCLootRepository)->first();
+    //     dd($loots);
+    //     if ($loot->skeletons){
+    //         distSkeleton:
+    //         $skeletons = [];
+    //         for ($i=0; $i < $loot->skeletons; $i++) { 
+    //             $skeletons[] = [
+    //                 'key'       => strtoupper(substr(uniqid(), 0, 10)),
+    //                 'created_at'=> new UTCDateTime(),
+    //                 'used_at'   => null
+    //             ];
+    //         }
+    //         $this->user->push('skeleton_keys', $skeletons);
+    //         $message[] = 'Skeleton key provided';
+    //         $rewardData['skeleton_keys'] = $skeletons;
+    //     }
 
-        if ($loot->gold_value){
-            distGold:
-            $this->user->gold_balance += $loot->gold_value;
-            $this->user->save();
-            $message[] = 'Gold provided.';
-            $rewardData['golds'] = $loot->gold_value;
-        }
+    //     if ($loot->gold_value){
+    //         distGold:
+    //         $this->user->gold_balance += $loot->gold_value;
+    //         $this->user->save();
+    //         $message[] = 'Gold provided.';
+    //         $rewardData['golds'] = $loot->gold_value;
+    //     }
         
-        $rewardData['user_id'] = $this->user->id;
-        return [ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData];
-    }
+    //     $rewardData['user_id'] = $this->user->id;
+    //     return [ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData];
+    // }
 }

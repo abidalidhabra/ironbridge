@@ -17,6 +17,7 @@ class LootDistributionService
 		$this->setMagicNumber(
 			rand(1, 1000)
 			// 802
+			// 950
 		);
 
 		$this->setLoot(

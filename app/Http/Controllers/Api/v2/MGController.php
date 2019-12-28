@@ -56,7 +56,7 @@ class MGController extends Controller
                 $response[$index]['game_identifier'] = $game->identifier;
                 $response[$index]['targets'] = $gamePracticeTargets->targets;
                 if ($game->identifier == 'jigsaw' || $game->identifier == 'sliding') {
-                    $response[$index]['variation_image'] = collect($gamePracticeTargets->variation_image)->shuffle()->first();
+                    $response[$index]['variation_image'] = collect($gamePracticeTargets->variation_images)->shuffle()->first();
                 }
             });
             return response()->json(['message'=> 'Target info of each game retrieved successfully.', 'data'=> $response]);
