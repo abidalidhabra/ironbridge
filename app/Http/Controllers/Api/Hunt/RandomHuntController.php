@@ -208,31 +208,31 @@ class RandomHuntController extends Controller
                 $paybleCellProviderService->addCell2IDs($cell2ID);
                 $responseToBeGiven['random_hunt_cell'] = $paybleCellProviderService->getRandomHuntsCells();
                 
-                if (
-                    $user->nodes_status && 
-                    (   
-                        isset($user->nodes_status['mg_challenge']) || 
-                        isset($user->nodes_status['power']) || 
-                        isset($user->nodes_status['bonus'])
-                    )
-                ) {
+                // if (
+                //     $user->nodes_status && 
+                //     (   
+                //         isset($user->nodes_status['mg_challenge']) || 
+                //         isset($user->nodes_status['power']) || 
+                //         isset($user->nodes_status['bonus'])
+                //     )
+                // ) {
 
                     $playableRes = $paybleCellProviderService->getMinigamesCells(); 
                     $playableNodes = collect($playableRes->locationsPerGameObjectType); 
 
-                    if (isset($user->nodes_status['power'])) {  
+                    // if (isset($user->nodes_status['power'])) {  
                         $responseToBeGiven['power_station_node'] = $playableNodes->first();  
-                    }   
+                    // }   
 
-                    if (isset($user->nodes_status['mg_challenge'])) {   
+                    // if (isset($user->nodes_status['mg_challenge'])) {   
                         $responseToBeGiven['minigame_node'] = $playableNodes->slice(1)->take(1)->first();    
-                    }
+                    // }
 
-                    if (isset($user->nodes_status['bonus'])) {    
+                    // if (isset($user->nodes_status['bonus'])) {    
 
                         $responseToBeGiven['bonus_nodes'] = $playableNodes->slice(2)->values();  
-                    }   
-                }
+                    // }   
+                // }
                 $response[] = $responseToBeGiven;
             }
         }

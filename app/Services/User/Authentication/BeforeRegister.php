@@ -71,6 +71,7 @@ trait BeforeRegister
 		$this->type = $request->type;
 
 		$name = strtolower(uniqid('ib1779'));
+		$this->user['first_name'] = $name;
         $this->user['guest_id'] = $name;
     	$this->user['address'] = new stdClass();
         $this->user['password'] = 'ib20171779';
