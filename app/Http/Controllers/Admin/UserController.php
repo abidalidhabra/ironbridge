@@ -38,7 +38,7 @@ class UserController extends Controller
         $take = (int)$request->get('length');
         $search = $request->get('search')['value'];
 
-    	$user = User::select('first_name','last_name','username', 'email', 'mobile_no', 'gold_balance','created_at','skeleton_keys','device_info');
+    	$user = User::select('first_name','last_name','username', 'email', 'mobile_no', 'gold_balance','created_at','skeleton_keys','device_info','guest_id');
         if($search != ''){
             $user->where(function($query) use ($search){
                 $query->where('first_name','like','%'.$search.'%')
@@ -68,8 +68,10 @@ class UserController extends Controller
         ->addColumn('name', function($user){
             if ($user->first_name) {
                 return '<a href="'.route('admin.accountInfo',$user->id).'">'.$user->first_name.' '.$user->last_name.'</a>';
-            } 
-            return '-';
+            }else{
+                return '<a href="'.route('admin.accountInfo',$user->id).'">'.$user->guest_id.'</a>';
+            }
+            // return '-';
         })
         ->editColumn('username', function($user){
             if ($user->username) {
