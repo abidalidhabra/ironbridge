@@ -54,7 +54,7 @@
                 </div>
             </div>
              <div class="customdatatable_box">
-                <div id="map"></div>
+                <div id="map" style="height: 500px;width: 100%;"></div>
             </div>
         </div>
         <br/>
