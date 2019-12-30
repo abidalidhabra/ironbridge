@@ -63,6 +63,8 @@ class Kernel extends HttpKernel
         'jwt-auth' => \App\Http\Middleware\JWTAuthentication::class,
         'permission' => \Maklad\Permission\Middlewares\PermissionMiddleware::class,
         'role'       => \Maklad\Permission\Middlewares\RoleMiddleware::class,
+        'downtime' => \App\Http\Middleware\CheckIfAppInMaintainanceMode::class,
+        'freshapp' => \App\Http\Middleware\CheckIfAppIsNotUpdated::class,
     ];
 
     /**
