@@ -137,7 +137,7 @@
                     <input type="hidden" name="distance" id="distance" value="{{ (count($location->hunt_complexities)>0)?$location->hunt_complexities[0]->distance:'0' }}">
                 </div>
                  <div class="customdatatable_box">
-                    <div id="map"></div>
+                    <div id="map" style="height: 500px;width: 100%;"></div>
                     <br/><br/>
                     <?php if($complexity == 1){ ?>
                         <label>1 Star clues should be 50 meter apart.</label>

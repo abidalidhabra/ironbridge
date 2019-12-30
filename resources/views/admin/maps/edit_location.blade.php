@@ -59,7 +59,7 @@
                         </div>
                         <input type="hidden" name="boundaries_arr" value="" id="boundary_arr"  />
                         <!-- <input type="hidden" name="boundary_box" value="" id="boundary_box"  /> -->
-                        <div id="map"></div>
+                        <div id="map" style="height: 500px;width: 100%;"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
