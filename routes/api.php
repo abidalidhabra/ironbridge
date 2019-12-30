@@ -227,3 +227,5 @@ Route::group(['namespace' => 'Api\Relic', 'prefix' => 'relics', 'middleware' => 
 Route::group(['namespace' => 'Api\User', 'prefix' => 'v2', 'middleware'=> ['downtime']], function ($router) {
 	Route::post('login', 'AuthController@login')->middleware('freshapp');
 });
+
+Route::get('/app/url', 'Api\User\AuthController@getAppURL')->middleware('freshapp', 'downtime');

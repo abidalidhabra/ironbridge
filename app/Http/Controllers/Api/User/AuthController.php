@@ -6,10 +6,11 @@ use App\Exceptions\AppInMaintenanceException;
 use App\Helpers\UserHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\LoginRequest;
+use App\Repositories\AppStatisticRepository;
 use App\Repositories\MiniGameRepository;
 use App\Services\User\Authentication\LoginService;
-use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Http\Request;
 use stdClass;
 
 class AuthController extends Controller
@@ -70,5 +71,15 @@ class AuthController extends Controller
     {
         $payloadData = UserHelper::getPerfixDetails(auth('api')->user());
         return response()->json(['data'=> $payloadData, 'message' => 'Payload data has been retrieved successfully.']);
+    }
+
+    public function getAppURL(Request $request)
+    {
+        if ($request->secret == 'ironbridge1779') {
+            $serverInfo = (new AppStatisticRepository)->first(['id', 'base_url']);
+            return response()->json(['message' => 'you are not authorize to perform this action.', 'url'=> $serverInfo->base_url], 500);
+        }else{
+            return response()->json(['message' => 'you are not authorize to perform this action.'], 500);
+        }
     }
 }
