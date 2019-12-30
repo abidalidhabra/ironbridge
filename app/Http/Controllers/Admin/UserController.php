@@ -647,4 +647,20 @@ class UserController extends Controller
         $games = (new UserHelper)->setUser($user)->getMinigamesStatistics();
         return view('admin.user.mini_game',compact('id','games'));
     }
+
+    public function tutorialsProgress($id){
+        $user = User::where('_id',$id)->select('_id', 'tutorials')->first();
+
+        $tutorials = collect();
+        $user->tutorials->map(function($completed, $module) use (&$tutorials){
+
+            if ($module == 'hunt_mg_challenge') {
+                $module = 'Hunt MGC';
+            }
+            $tutorials[$module] = $completed;
+            return $completed;
+        });
+
+        return view('admin.user.tutorialsProgress',compact('id','tutorials'));        
+    }
 }
