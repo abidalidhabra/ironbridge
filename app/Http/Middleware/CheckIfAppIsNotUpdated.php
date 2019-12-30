@@ -16,8 +16,8 @@ class CheckIfAppIsNotUpdated
 		$this->serverInfo = (new AppStatisticRepository)->first(['id', 'app_versions']);
 		if (
 			!$request->device_type || !$request->app_version ||
-			($request->device_type == 'android' && $this->serverInfo->app_versions['android'] > (float)$request->app_version) ||
-			($request->device_type == 'ios' && $this->serverInfo->app_versions['ios'] > (float)$request->app_version)
+			($request->device_type == 'android' && $this->serverInfo->app_versions['android'] > $request->app_version) ||
+			($request->device_type == 'ios' && $this->serverInfo->app_versions['ios'] > $request->app_version)
 		) {
 			return response()->json(['code'=> 14, 'message' => 'Please update an application.'], 500);
 		}

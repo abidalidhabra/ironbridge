@@ -172,16 +172,12 @@
                                 type: "POST",
                                 url: url,
                                 data: $(this).serialize(),
-                                success: function(response)
-                                {
-                                    if (response.status == true) {
-                                        table.ajax.reload();
-                                        toastr.success(response.message);
-                                        $('#addgoldModel').modal('hide');
-                                        $('#gold , #id').val('');
-                                    } else {
-                                        toastr.warning(response.message);
-                                    }
+                                success: function(response) {
+                                    toastr.success(response.message);
+                                },
+                                error: function(xhr, exception) {
+                                    let error = JSON.parse(xhr.responseText);
+                                    toastr.error(error.message);
                                 }
                             });
                         }

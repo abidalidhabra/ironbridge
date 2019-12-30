@@ -30,7 +30,7 @@ class AppSettingController extends Controller
         $appStatistic = AppStatistic::first();
         $appStatistic->maintenance = filter_var($request->maintenance, FILTER_VALIDATE_BOOLEAN);
         $appStatistic->base_url = $request->base_url;
-        $appStatistic->app_versions = ['android'=> (float)$request->android_version, 'ios'=> (float)$request->ios_version];
+        $appStatistic->app_versions = ['android'=> $request->android_version, 'ios'=> $request->ios_version];
         $appStatistic->save();
         return response()->json(['status'=> true, 'message'=> 'Settings updated successfully.']);
     }
