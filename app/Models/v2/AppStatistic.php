@@ -7,5 +7,5 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class AppStatistic extends Eloquent
 {
-    protected $fillable = ['_id', 'maintenance'];
+    protected $fillable = ['_id', 'maintenance','app_versions','base_url'];
 }

@@ -647,4 +647,42 @@ class UserController extends Controller
         $games = (new UserHelper)->setUser($user)->getMinigamesStatistics();
         return view('admin.user.mini_game',compact('id','games'));
     }
+
+        public function reserTheUser(Request $request, $id)
+    {
+        $user = User::find($id);
+        $default = new User;
+        foreach ($default->getAttributes() as $field => $value) {
+            if (
+                $field == 'nodes_status' ||
+                $field == 'registration_completed' ||
+                $field == 'skeleton_keys' ||
+                $field == 'gold_balance' ||
+                $field == 'skeletons_bucket' ||
+                $field == 'pieces_collected' ||
+                $field == 'widgets' ||
+                $field == 'first_login' ||
+                $field == 'tutorials' ||
+                $field == 'agent_status' ||
+                $field == 'relics' ||
+                $field == 'power_status' ||
+                $field == 'ar_mode' ||
+                $field == 'avatar' ||
+                $field == 'nodes_status'
+            ) {
+                $user->$field = $value;
+            }
+        }
+
+        HuntUser::where('user_id', $id)->get()->map(function($huntUser){
+            $huntUser->hunt_user_details()->delete();
+            $huntUser->delete();
+        });
+        
+        $user->practice_games()->delete();
+        $user->plans_purchases()->delete();
+        $user->events()->delete();
+        $user->save();
+        return response()->json(['message'=> 'Account has been successfully reset.']);
+    }
 }

@@ -26,6 +26,18 @@
                         {{ ($settings->maintenance == false)? 'checked': '' }}>OFF
                   </label>
               </div>
+               <div class="form-group">
+                    <label class="control-label">Android Version:</label>
+                    <input type="number" name="android_version" class="form-control" value="{{ ($settings->app_versions)?$settings->app_versions['android']:'' }}" placeholder="Enter the android version">
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Ios Version:</label>
+                    <input type="number" name="ios_version" class="form-control" value="{{ $settings->app_versions['ios'] }}" placeholder="Enter the ios version">
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Base Url:</label>
+                    <input type="text" name="base_url" class="form-control" value="{{ $settings->base_url }}" placeholder="Enter the base url">
+                </div>
               <button type="submit" class="btn btn-success">Save</button>
           </div>
         </form>
@@ -49,7 +61,8 @@
                     if (response.status == true) {
                         toastr.success(response.message);
                     } else {
-                        toastr.warning('You are not authorized to access this page.');
+                        toastr.warning(response.message);
+                        // toastr.warning('You are not authorized to access this page.');
                     }
                 }
             });

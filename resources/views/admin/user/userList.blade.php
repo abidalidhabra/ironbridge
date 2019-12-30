@@ -138,6 +138,7 @@
                         '<tr>'+'<td class="title">\
                                 <div class="view_td_set"><button type="button" class="btn btn-info" data-id="'+data._id+'" data-action="btnAdd" data-toggle="modal"> Add Gold</button> </div>\
                                 <div class="view_td_set"><a href="javascript:void(0)" class="btn btn-info" data-id="'+data._id+'" data-action="skeleton"> Add Skeleton Key</a> </div>\
+                                <div class="view_td_set"><a href="javascript:void(0)" class="btn btn-info" data-id="'+data._id+'" data-action="reset" data-placement="left" title="Delete" > Reset An Account</a> </div>\
                             </td>'+
                     '</tr>'+
                     '</table>'+
@@ -157,6 +158,34 @@
                     row.child(format(row.data())).show();
                     tr.next('tr').addClass('details-row');
                     tr.addClass('shown');
+
+                    $("a[data-action='reset']").confirmation({
+                        container:"body",
+                        btnOkLabel:"Reset",
+                        btnOkClass:"btn btn-sm btn-success",
+                        btnCancelClass:"btn btn-sm btn-danger",
+                        onConfirm:function(event, element) {
+                            var id = element.attr('data-id');
+                            let url = "{{ route('admin.user.reset',':userId') }}";
+                            url = url.replace(":userId", id);
+                            $.ajax({
+                                type: "POST",
+                                url: url,
+                                data: $(this).serialize(),
+                                success: function(response)
+                                {
+                                    if (response.status == true) {
+                                        table.ajax.reload();
+                                        toastr.success(response.message);
+                                        $('#addgoldModel').modal('hide');
+                                        $('#gold , #id').val('');
+                                    } else {
+                                        toastr.warning(response.message);
+                                    }
+                                }
+                            });
+                        }
+                    }); 
                 }
             });
             
@@ -173,6 +202,8 @@
                 $('#user_id').val(id);
                 $('#addskeletonModel').modal('show');
             }); 
+            
+            
 
 
             //ADD GOLD 

@@ -51,6 +51,7 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('getAvtarDateFilter', 'AnalyticMetricController@getAvtarDateFilter')->name('getAvtarDateFilter');
 	
 	//User List
+	Route::post('/users/{id}/reset', 'UserController@reserTheUser')->name('user.reset');
 	Route::get('/userList', [ 'middleware' => ['permission:View Users'], 'uses' => 'UserController@index' ])->name('userList');
 
 	Route::get('/getUsers', [ 'middleware' => ['permission:View Users'], 'uses' => 'UserController@getUsers' ])->name('getUsers');
