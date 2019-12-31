@@ -81,9 +81,10 @@ class MiniGameRepository implements MiniGameInterface
         	$data = [];
         	$games = Game::active()->get()->map(function($game, $index) use (&$data){
                 $data[$index]['game_id'] = $game->id;
-                if ($game->practice_default_active) {
-                    $data[$index]['unlocked_at'] = now();
-                }
+                // if ($game->practice_default_active) {
+                //     $data[$index]['unlocked_at'] = now();
+                // }
+                $data[$index]['unlocked_at'] = now();
         	});
         	$practiceGameData = $this->user->practice_games()->createMany($data);
         	return $practiceGameData;

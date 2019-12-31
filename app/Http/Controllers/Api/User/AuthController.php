@@ -77,7 +77,7 @@ class AuthController extends Controller
     {
         if ($request->secret == 'ironbridge1779') {
             $serverInfo = (new AppStatisticRepository)->first(['id', 'base_url']);
-            return response()->json(['message' => 'you are not authorize to perform this action.', 'url'=> $serverInfo->base_url], 500);
+            return response()->json(['message' => 'OK.', 'url'=> $serverInfo->base_url], 500);
         }else{
             return response()->json(['message' => 'you are not authorize to perform this action.'], 500);
         }
