@@ -90,7 +90,7 @@ class CompleteTheClueRepository implements ClueInterface
             }
             $huntCompleted = true;
         }
-       
+
         $rewardData['xp_reward'] = $this->addXP($huntCompleted);
         $rewardData['agent_status'] = $this->user->agent_status;
         $rewardData['agent_stack'] = $this->userRepository->getAgentStack();
@@ -278,14 +278,36 @@ class CompleteTheClueRepository implements ClueInterface
         **/
         $xpReward = [];
         if($this->user->tutorials['home']){
-            $xPManagementRepository = new XPManagementRepository;
-            $complexity = $this->huntUser->complexity;
-            $xp = $xPManagementRepository->getModel()->where(['event'=> 'clue_completion', 'complexity'=> $complexity])->first()->xp;
-            if ($treasureCompleted) {
-                $xp += $xPManagementRepository->getModel()->where(['event'=> 'treasure_completion', 'complexity'=> $complexity])->first()->xp;
+
+            if ($this->huntUser->relic_id) {
+                $xp = $this->addXPForRelic($treasureCompleted);
+            }else{
+                $xp = $this->addXPForRandomHunt($treasureCompleted);
             }
+
             $xpReward = $this->addXPService->add($xp);
         }
         return (is_array($xpReward) && count($xpReward))? $xpReward: new stdClass;
+    }
+
+    public function addXPForRelic($treasureCompleted)
+    {
+        $relic = $this->huntUser->relic;
+        $xp = $relic->completion_xp['clue'];
+        if ($treasureCompleted) {
+            $xp += $relic->completion_xp['treasure'];
+        }
+        return $xp;
+    }
+
+    public function addXPForRandomHunt($treasureCompleted)
+    {
+        $xPManagementRepository = new XPManagementRepository;
+        $complexity = $this->huntUser->complexity;
+        $xp = $xPManagementRepository->getModel()->where(['event'=> 'clue_completion', 'complexity'=> $complexity])->first()->xp;
+        if ($treasureCompleted) {
+            $xp += $xPManagementRepository->getModel()->where(['event'=> 'treasure_completion', 'complexity'=> $complexity])->first()->xp;
+        }
+        return $xp;
     }
 }
