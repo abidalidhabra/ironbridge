@@ -67,6 +67,17 @@ class UserHelper {
 		// 	$relic['info'] = $relicsInfo->where('_id', $relic['id'])->first(); 
 		// 	return $relic; 
 		// });
+		
+        $relics = (new RelicRepository)->getModel()
+			        ->active()
+			        ->select('_id', 'icon', 'complexity','game_id','game_variation_id', 'pieces', 'number')
+			        ->get()
+			        ->map(function($relic) use ($user) {
+			            $relic->acquired = $user->relics->where('id', $relic->_id)->first();
+			            $relic->total_clues = 3;
+			            return $relic; 
+			        });
+
 		$userRepository = (new UserRepository($user));
 		$huntStatistics = (new HuntStatistic)->first(['id', 'distances', 'refreshable_distances']);
 		$specialAminities = (new AgentComplementaryRepository)
@@ -82,7 +93,7 @@ class UserHelper {
 			'events_cities' => $eventsCities,
 			'free_outfit_occupied' => $user->free_outfit_taken,
 			'latest_news' => News::latest()->limit(1)->get()->map(function($news) { return $news->setHidden(['valid_till', 'updated_at']); }),
-			// 'relics' => $relics,
+			'relics' => $relics,
 			'streaming_relic' => $userRepository->streamingRelic(),
 			// 'available_complexities' => $user->getAvailableComplexities(),
 			'available_complexities' => [1],

@@ -38,9 +38,6 @@ class ProfileController extends Controller
 
         $relics = (new RelicRepository)->getModel()
                 ->active()
-                ->with(['hunt_users'=> function($query) use ($user) {
-                    $query->where('user_id', $user->id)->select('_id', 'status', 'relic_id', 'complexity');
-                }])
                 ->select('_id', 'icon', 'complexity','game_id','game_variation_id')
                 ->get()
                 ->map(function($relic) use ($user) {
