@@ -70,7 +70,7 @@ class UserHelper {
 		
         $relics = (new RelicRepository)->getModel()
 			        ->active()
-			        ->select('_id', 'icon', 'complexity','game_id','game_variation_id', 'pieces', 'number')
+			        ->select('_id', 'name', 'icon', 'complexity','game_id','game_variation_id', 'pieces', 'number')
 			        ->get()
 			        ->map(function($relic) use ($user) {
 			            $relic->acquired = $user->relics->where('id', $relic->_id)->first();
