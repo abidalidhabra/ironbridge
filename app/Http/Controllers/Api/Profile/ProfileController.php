@@ -36,21 +36,21 @@ class ProfileController extends Controller
 
         $gameStatistics = (new UserHelper)->setUser($user)->getMinigamesStatistics();
 
-        $relics = (new RelicRepository)->getModel()
-                ->active()
-                ->select('_id', 'icon', 'complexity','game_id','game_variation_id')
-                ->get()
-                ->map(function($relic) use ($user) {
-                    $relic->acquired = $user->relics->where('id', $relic->_id)->first();
-                    return $relic; 
-                });
+        // $relics = (new RelicRepository)->getModel()
+        //         ->active()
+        //         ->select('_id', 'icon', 'complexity','game_id','game_variation_id')
+        //         ->get()
+        //         ->map(function($relic) use ($user) {
+        //             $relic->acquired = $user->relics->where('id', $relic->_id)->first();
+        //             return $relic; 
+        //         });
 
         return response()->json([
             'message'=> 'OK', 
             'gold_earned'=> $goldEarned, 
             'km_walked'=> $kmWalked, 
             'game_statistics'=> $gameStatistics,
-            'relics'=> $relics,
+            // 'relics'=> $relics,
             'agent_status'=> $user->agent_status
         ]);
     }
