@@ -42,20 +42,20 @@
                         <h3 id="per_female">{{ $data['per_female'] }}</h3>
                         <p>Total percentage of total female <span data-toggle="tooltip" title="Total number of female avatars">?</span></p>
                     </li>
-                    <li>
+                    <!-- <li>
                         <h3>Pending</h3>
                         <p>Total used random mode <span data-toggle="tooltip" title="Total number of users who have used random mode">?</span></p>
-                    </li>
-                    <li>
+                    </li> -->
+                    <!-- <li>
                         <h3>Pending</h3>
                         <p>Percentage use random mode <span data-toggle="tooltip" title="Percentage of users that use the random mode">?</span></p>
-                    </li>
+                    </li> -->
                     <li>
-                        <h3>Pending</h3>
+                        <h3 id="users_collectable">{{ $data['users_collectable'] }}</h3>
                         <p>Number of users collectable <span data-toggle="tooltip" title="Number of users that have found each collectable">?</span></p>
                     </li>
                     <li>
-                        <h3>Pending</h3>
+                        <h3 id="users_collectibles">{{ $data['users_collectibles'] }}</h3>
                         <p>Total number of collectibles <span data-toggle="tooltip" title="Total number of collectibles for each unique user ie collected/total available (with percentage as well) – will want to know which user collected all 9/10 first in each country/province/city">?</span></p>
                     </li>
                 </ul>
@@ -89,12 +89,12 @@
                         <h3 id="per_completed_hunt_user">{{ $data['per_completed_hunt_user'] }}</h3>
                         <p>Percentage of users complete a hunt <span data-toggle="tooltip" title="Percentage of users that complete a hunt after starting clue #1">?</span></p>
                     </li>
-                    <li>
+                    <!-- <li>
                         <h3 id="average_hunts_completed">{{ $data['average_hunts_completed'] }}</h3>
                         <p>Average hunts completed <span data-toggle="tooltip" title="Average number of hunts completed (per unique user)">?</span></p>
-                    </li>
+                    </li> -->
                 </ul>
-                <ul>
+                <!-- <ul>
                     <li>
                         <h3 id="user_clue_1">{{ $data['user_clue_1'] }}</h3>
                         <p>User of Clue #1 in a hunt <span data-toggle="tooltip" title="Number of users on Clue #1 in a hunt">?</span></p>
@@ -107,8 +107,8 @@
                         <h3 id="user_clue_3">{{ $data['user_clue_3'] }}</h3>
                         <p>User of Clue #3 in a hunt <span data-toggle="tooltip" title="Number of users on Clue #3 in a hunt">?</span></p>
                     </li>
-                </ul>
-                <ul>
+                </ul> -->
+                <!-- <ul>
                     <li>
                         <h3 id="user_clue_today_1">{{ $data['user_clue_today_1'] }}</h3>
                         <p>Clue 1 Not complete at least 24 hours <span data-toggle="tooltip" title="Number of users that have abandoned Clue #1 in a hunt (started but did not complete at least 24 hours later)">?</span></p>
@@ -121,16 +121,16 @@
                         <h3 id="user_clue_today_3">{{ $data['user_clue_today_3'] }}</h3>
                         <p>Clue 3 Not complete at least 24 hours <span data-toggle="tooltip" title="Number of users that have abandoned Clue #3 in a hunt (started but did not complete at least 24 hours later)">?</span></p>
                     </li>
-                </ul>
+                </ul> -->
                 
-                <ul id="complated_clue_day">
+                <!-- <ul id="complated_clue_day">
                     @foreach ($data['hunt_complted_clue'] as $key => $value)
                         <li>
                             <h3>{{ number_format(($value/$data['total_hunt_complated'])*100,2) }}%</h3>
                             <p>Per clue complete day {{ $key+1 }}</p>
                         </li>
                     @endforeach
-                </ul>
+                </ul> -->
                 <div class="hunt_game_box">
                     <div class="col-md-6">
                         <h4>Games get skipped by skeleton key</h4>

@@ -19,6 +19,7 @@ use App\Models\v1\WidgetItem;
 use App\Models\v2\PlanPurchase;
 use App\Models\v2\HuntComplexity;
 use App\Models\v2\HuntUserDetail;
+use App\Models\v2\Relic;
 
 class AnalyticMetricController extends Controller
 {
@@ -50,7 +51,6 @@ class AnalyticMetricController extends Controller
                                 ->whereHas('user')
                                 ->whereHas('event')
                                 ->get();        
-
 
         $data['event_user_start_date'] = $eventUser->first()->created_at;
         $data['event_user_end_date'] = $eventUser->first()->created_at;
@@ -115,6 +115,13 @@ class AnalyticMetricController extends Controller
         $data['total_avtar_user'] = $data['total_male']+$data['total_female'];
         $data['per_male'] = number_format(($data['total_male']/$data['total_avtar_user'])*100,2).'%';
         $data['per_female'] = number_format(($data['total_female']/$data['total_avtar_user'])*100,2).'%';
+        
+        $totalUserRelic = $user->where('relics.0','exits',true)->count();
+        $data['users_collectable'] = number_format(($totalUserRelic/$data['total_avtar_user'])*100,2).'%';
+        $relics = Relic::where('active',true)->count()-1;
+        $relicsUser = User::whereRaw(['$where' => 'this.relics.length >='.$relics])->count();
+        $data['users_collectibles'] = number_format(($relicsUser/$totalUserRelic)*100,2).'%';
+        
         /* END USER */
 
         /* HUNT CLUE */
@@ -450,6 +457,13 @@ class AnalyticMetricController extends Controller
         }
         $data['per_male'] = number_format(($data['total_male']/$totalAvtarUser)*100,2).'%';
         $data['per_female'] = number_format(($data['total_female']/$totalAvtarUser)*100,2).'%';
+        $totalUserRelic = $user->where('relics.0','exits',true)->count();
+        $data['users_collectable'] = number_format(($totalUserRelic/$data['total_avtar_user'])*100,2).'%';
+        $relics = Relic::where('active',true)->count()-1;
+        $relicsUser = User::whereBetween('created_at', [$startAt,$endAt])
+                            ->whereRaw(['$where' => 'this.relics.length >='.$relics])
+                            ->count();
+        $data['users_collectibles'] = number_format(($relicsUser/$totalUserRelic)*100,2).'%';
         /* END USER */
 
         return response()->json([
