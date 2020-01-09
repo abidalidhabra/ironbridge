@@ -119,7 +119,7 @@ class AnalyticMetricController extends Controller
         $totalUserRelic = $user->where('relics.0','exits',true)->count();
         $data['users_collectable'] = number_format(($totalUserRelic/$data['total_avtar_user'])*100,2).'%';
         $relics = Relic::where('active',true)->count()-1;
-        $relicsUser = User::whereRaw(['$where' => 'this.relics.length >='.$relics])->count();
+        $relicsUser = $user->where('relics.'.($relics-1),'exits',true)->count();
         $data['users_collectibles'] = number_format(($relicsUser/$totalUserRelic)*100,2).'%';
         
         /* END USER */
@@ -457,12 +457,12 @@ class AnalyticMetricController extends Controller
         }
         $data['per_male'] = number_format(($data['total_male']/$totalAvtarUser)*100,2).'%';
         $data['per_female'] = number_format(($data['total_female']/$totalAvtarUser)*100,2).'%';
+       
         $totalUserRelic = $user->where('relics.0','exits',true)->count();
         $data['users_collectable'] = number_format(($totalUserRelic/$data['total_avtar_user'])*100,2).'%';
         $relics = Relic::where('active',true)->count()-1;
-        $relicsUser = User::whereBetween('created_at', [$startAt,$endAt])
-                            ->whereRaw(['$where' => 'this.relics.length >='.$relics])
-                            ->count();
+        $relicsUser = $user->where('relics.'.($relics-1),'exits',true)->count();
+        $data['users_collectibles'] = number_format(($relicsUser/$totalUserRelic)*100,2).'%';
         $data['users_collectibles'] = number_format(($relicsUser/$totalUserRelic)*100,2).'%';
         /* END USER */
 
