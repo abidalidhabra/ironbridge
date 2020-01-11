@@ -7,12 +7,13 @@ use App\Models\v1\Game;
 use App\Models\v1\News;
 use App\Models\v1\WidgetItem;
 use App\Models\v2\HuntStatistic;
+use App\Repositories\AgentComplementaryRepository;
 use App\Repositories\EventRepository;
 use App\Repositories\Game\GameRepository;
-use App\Repositories\AgentComplementaryRepository;
 use App\Repositories\MinigameHistoryRepository;
 use App\Repositories\RelicRepository;
 use App\Repositories\User\UserRepository;
+use App\Services\Hunt\ChestService;
 use Auth;
 use MongoDB\BSON\ObjectId as MongoID;
 use MongoDB\BSON\UTCDateTime;
@@ -84,6 +85,7 @@ class UserHelper {
 							->where('nodes', 'exists', true)
 							->get(['id', 'agent_level', 'nodes']);
 
+		$chestMinigame = (new ChestService)->setUser($user)->minigame();
 		return [
 			'avatars' => $avatars,
 			'widgets' => $widgets,
@@ -100,6 +102,7 @@ class UserHelper {
 			'agent_stack'=> $userRepository->getAgentStack(),
 			'hunt_statistics'=> array_merge($huntStatistics->toArray(), ['power_station'=> ['till'=> $userRepository->powerFreezeTill()]]),
 			'nodes_enable_on'=> $specialAminities,
+			'chest_minigame'=> $chestMinigame,
 			// 'used_widgets' => $user->used_widgets,
 			// 'plans' => $plans,
 			// 'events_data' => $events,

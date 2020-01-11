@@ -63,6 +63,7 @@ class User extends Authenticatable implements JWTSubject
         'device_info',
         'nodes_status',
         'mgc_status',
+        'buckets',
         // 'expnadable_skeleton_keys',
     ];
 
@@ -169,6 +170,13 @@ class User extends Authenticatable implements JWTSubject
             'mg_challenge'=> null,
             'power'=> null,
             'bonus'=> null
+        ],
+        'buckets'=> [
+            'chests'=> [
+                'capacity'=> 5,
+                'opened'=> 0,
+                'remaining'=> 0
+            ]
         ]
         // 'expnadable_skeleton_keys'   => 0,
         // 'user_widgets' => [],

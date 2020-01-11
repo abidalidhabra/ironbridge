@@ -15,6 +15,11 @@ class PracticeGameUserRepository extends ModelRepository
         $this->model = new PracticeGameUser;
     }
 
+    public function toModel(array $value)
+    {
+        return new PracticeGameUser($value);
+    }
+
     public function unlockTheGame(Collection $practiceGameUsers)
     {
         $practiceGameUsers->map(function($practiceGameUser) {

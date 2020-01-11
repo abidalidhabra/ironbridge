@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v2;
 
+use App\Exceptions\Profile\ChestBucketCapacityOverflowException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hunt\UseTheSkeletonKeyRequest;
 use App\Http\Requests\v1\ActionOnClueRequest;
@@ -31,11 +32,17 @@ class ClueController extends Controller
 
     public function actionOnClue(ActionOnClueRequest $request){
 
-        $initializeAction = (new ClueFactory)->initializeAction($request->status);
-        $data = $initializeAction->action($request);
-        $rewardData = $data['rewardData'] ?? null;
-        $finishedIn = $data['finishedIn'] ?? 0;
-        return response()->json(['message'=>'Action on clue has been taken successfully.', 'hunt_info'=> $rewardData, 'finished_in'=> $finishedIn]);
+        try {
+            $initializeAction = (new ClueFactory)->initializeAction($request->status);
+            $data = $initializeAction->action($request);
+            $rewardData = $data['rewardData'] ?? null;
+            $finishedIn = $data['finishedIn'] ?? 0;
+            return response()->json(['message'=>'Action on clue has been taken successfully.', 'hunt_info'=> $rewardData, 'finished_in'=> $finishedIn]);
+        } catch (ChestBucketCapacityOverflowException $e) {
+            return response()->json(['message' => $e->getMessage()], 422); 
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500); 
+        }
     }
 
      public function useTheSkeletonKey(UseTheSkeletonKeyRequest $request){

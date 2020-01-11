@@ -13,7 +13,9 @@ use App\Repositories\Hunt\GetRelicHuntParticipationRepository;
 use App\Repositories\RelicRepository;
 use App\Repositories\SeasonRepository;
 use App\Repositories\User\UserRepository;
+use App\Services\Hunt\ChestService;
 use Illuminate\Http\Request;
+use Exception;
 
 class ProfileController extends Controller
 {
@@ -59,5 +61,25 @@ class ProfileController extends Controller
     {
         $data = (new UserRepository(auth()->user()))->markTutorialAsComplete($request->module);
         return response()->json(['message' => 'Tutorial has been marked as complete.']); 
+    }
+
+    public function openTheChest(Request $request)
+    {
+        try {
+            
+            $user = auth()->user();
+            if ($user->buckets['chests']['remaining'] > 0) {
+                $chestService = (new ChestService)->setUser($user)->open();
+                return response()->json([
+                    'message' => 'Chest has been opened successfully.', 
+                    'next_minigame'=> $chestService->minigame(),
+                    'chests_bucket'=> $user->buckets['chests']
+                ]); 
+            }else{
+                return response()->json(['message' => 'You dont have chest in your account to open.'], 422); 
+            }
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500); 
+        }
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Repositories\Hunt;
 
 use App\Collections\GameCollection;
+use App\Repositories\PracticeGameUserRepository;
 
 class GetRandomizeGamesService
 {
@@ -32,5 +33,19 @@ class GetRandomizeGamesService
             }
         }
         return new GameCollection($games);
+    }
+
+    public function first()
+    {
+        $game = $this->user->practice_games()
+                            ->with('game:_id,name,identifier')
+                            ->whereNotNull('unlocked_at')
+                            ->select('_id', 'game_id', 'unlocked_at')
+                            ->get()
+                            ->shuffle()
+                            ->pluck('game')
+                            ->first();
+
+        return $game->load('treasure_nodes_target');
     }
 }
