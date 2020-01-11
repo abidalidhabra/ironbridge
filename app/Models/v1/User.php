@@ -174,8 +174,8 @@ class User extends Authenticatable implements JWTSubject
         'buckets'=> [
             'chests'=> [
                 'capacity'=> 5,
-                'opened'=> 0,
-                'remaining'=> 0
+                'collected'=> 0,
+                'remaining'=> 5
             ]
         ]
         // 'expnadable_skeleton_keys'   => 0,

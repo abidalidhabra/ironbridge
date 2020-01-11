@@ -68,7 +68,7 @@ class ProfileController extends Controller
         try {
             
             $user = auth()->user();
-            if ($user->buckets['chests']['remaining'] > 0) {
+            if ($user->buckets['chests']['collected']) {
                 $chestService = (new ChestService)->setUser($user)->open();
                 return response()->json([
                     'message' => 'Chest has been opened successfully.', 

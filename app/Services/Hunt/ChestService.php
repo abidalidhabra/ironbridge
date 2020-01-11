@@ -17,10 +17,11 @@ class ChestService
 	public function add()
 	{
 		$this->userBuckets = $this->user->buckets;
-		if (($this->userBuckets['chests']['opened'] + $this->userBuckets['chests']['remaining']) >= $this->userBuckets['chests']['capacity']) {
+		if ($this->userBuckets['chests']['collected'] >= $this->userBuckets['chests']['capacity']) {
 			throw new ChestBucketCapacityOverflowException("You don't have enough capacity to hold this chest");
 		}else{
-			$this->userBuckets['chests']['remaining'] += 1;
+			$this->userBuckets['chests']['collected'] += 1;
+			$this->userBuckets['chests']['remaining'] -= 1;
 			$this->save();
 		}
 	}
@@ -29,11 +30,11 @@ class ChestService
 	{
 		$this->userBuckets = $this->user->buckets;
 		
-		$this->userBuckets['chests']['opened'] += 1;
+		$this->userBuckets['chests']['collected'] -= 1;
 		
-		$this->isThisLastChest = ($this->userBuckets['chests']['remaining'] == 1)? true: false;
+		$this->isThisLastChest = ($this->userBuckets['chests']['collected'] == 1)? true: false;
 		
-		$this->userBuckets['chests']['remaining'] -= 1;
+		$this->userBuckets['chests']['remaining'] += 1;
 		
 		$this->save();
 		
