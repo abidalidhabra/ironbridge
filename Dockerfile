@@ -9,8 +9,10 @@ COPY . /var/www/html
 
 WORKDIR /var/www/html
 
-RUN rm -rf .env
+RUN rm -rf .env public/.htaccess
 RUN cp .env.example .env
+RUN cp -r public/htaccess_prod public/.htaccess
+
 
 RUN composer install
 RUN php artisan storage:link
