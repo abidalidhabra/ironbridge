@@ -97,4 +97,15 @@ class ProfileController extends Controller
             ]
         ]);
     }
+
+    public function removeTheChestFromBucket(Request $request)
+    {
+        $chestService = (new ChestService)->setUser($user = auth()->user());
+        $chestService->remove();
+
+        return response()->json([
+            'message'=> 'A chest has been removed from bucket.', 
+            'chests_bucket'=> $user->buckets['chests'],
+        ]);
+    }
 }

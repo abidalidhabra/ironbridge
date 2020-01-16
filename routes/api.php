@@ -218,6 +218,7 @@ Route::group(['namespace' => 'Api\Profile', 'prefix' => 'profile', 'middleware' 
 	Route::post('markTutorialAsComplete', 'ProfileController@markTutorialAsComplete');
 	Route::post('openTheChest', 'ProfileController@openTheChest');
 	Route::post('changeTheChestMG', 'ProfileController@changeTheChestMG');
+	Route::post('removeTheChestFromBucket', 'ProfileController@removeTheChestFromBucket');
 });
 
 Route::group(['namespace' => 'Api\Relic', 'prefix' => 'relics', 'middleware' => ['jwt-auth', 'downtime']], function ($router) {
