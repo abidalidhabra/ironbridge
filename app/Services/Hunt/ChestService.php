@@ -3,7 +3,10 @@
 namespace App\Services\Hunt;
 
 use App\Exceptions\Profile\ChestBucketCapacityOverflowException;
+use App\Repositories\HuntStatisticRepository;
 use App\Repositories\Hunt\GetRandomizeGamesService;
+use App\Repositories\User\UserRepository;
+use App\Services\Hunt\LootDistribution\OldLootService;
 use App\Services\Traits\UserTraits;
 use GuzzleHttp\Client;
 
@@ -12,6 +15,7 @@ class ChestService
 	use UserTraits;
 
 	protected $userBuckets;
+	protected $lootRewards = [];
 
     /**
      * @param mixed $userBuckets
@@ -34,7 +38,7 @@ class ChestService
 		if ($this->userBuckets['chests']['collected'] >= $this->userBuckets['chests']['capacity']) {
 			throw new ChestBucketCapacityOverflowException("You don't have enough capacity to hold this chest");
 		}else{
-			$this->userBuckets['chests']['next_minigame'] = $this->generateMiniGame()->id;
+			$this->userBuckets['chests']['minigame_id'] = $this->generateMiniGame()->id;
 			$this->userBuckets['chests']['collected'] += 1;
 			$this->userBuckets['chests']['remaining'] -= 1;
 			$this->save();
@@ -51,10 +55,14 @@ class ChestService
 		
 		$this->userBuckets['chests']['remaining'] += 1;
 
-		$this->userBuckets['chests']['next_minigame'] = $this->generateMiniGame()->id;
+		$this->userBuckets['chests']['minigame_id'] = $this->generateMiniGame()->id;
 		
 		$this->save();
-		
+
+        $this->setLootRewards(
+        	(new OldLootService)->setUser($this->user)->generate()
+        );
+
 		return $this;
 	}
 
@@ -66,7 +74,7 @@ class ChestService
 
 	public function generateMiniGame()
 	{
-		return (new GetRandomizeGamesService)->setUser(auth()->user())->first();
+		return (new GetRandomizeGamesService)->setUser($this->user)->first();
 	}
 
 	public function getMiniGame()
@@ -77,9 +85,49 @@ class ChestService
 		);
 
 		return (new GetRandomizeGamesService)
-				->setUser(auth()->user())
+				->setUser($this->user)
 				->first(
-					$this->userBuckets['chests']['next_minigame'] ?? null
+					$this->userBuckets['chests']['minigame_id'] ?? null
 				);
 	}
+
+	public function changeChestMiniGame()
+	{
+
+		$this->setUserBuckets(
+			$this->user->buckets
+		);
+
+		$this->userBuckets['chests']['minigame_id'] = $this->generateMiniGame()->id;
+
+		$this->cutTheCharge();
+		
+		$this->save();
+	}
+
+	public function cutTheCharge()
+	{
+		$huntStatistic = (new HuntStatisticRepository)->first(['id', 'retention_hunt']);
+		return (new UserRepository($this->user))->deductGold($huntStatistic->retention_hunt['refresh_mg_charge'] ?? 1);
+	}
+
+    /**
+     * @return mixed
+     */
+    public function getLootRewards()
+    {
+        return $this->lootRewards;
+    }
+
+    /**
+     * @param mixed $lootRewards
+     *
+     * @return self
+     */
+    public function setLootRewards($lootRewards)
+    {
+        $this->lootRewards = $lootRewards;
+
+        return $this;
+    }
 }

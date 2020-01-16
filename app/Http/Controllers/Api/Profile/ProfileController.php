@@ -66,14 +66,15 @@ class ProfileController extends Controller
     public function openTheChest(Request $request)
     {
         try {
-            
+
             $user = auth()->user();
             if ($user->buckets['chests']['collected']) {
                 $chestService = (new ChestService)->setUser($user)->open();
                 return response()->json([
                     'message' => 'Chest has been opened successfully.', 
                     'next_minigame'=> $chestService->getMiniGame(),
-                    'chests_bucket'=> $user->buckets['chests']
+                    'chests_bucket'=> $user->buckets['chests'],
+                    'loot_rewards'=> $chestService->getLootRewards()
                 ]); 
             }else{
                 return response()->json(['message' => 'You dont have chest in your account to open.'], 422); 
@@ -81,5 +82,19 @@ class ProfileController extends Controller
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500); 
         }
+    }
+
+    public function changeTheChestMG(Request $request)
+    {
+        $chestService = (new ChestService)->setUser(auth()->user());
+        $chestService->changeChestMiniGame();
+
+        return response()->json([
+            'message'=> 'mini-game has been changed.', 
+            'data'=> [
+                'available_gold_balance'=> $chestService->getUser()->gold_balance,
+                'minigame'=> $chestService->getMiniGame()
+            ]
+        ]);
     }
 }
