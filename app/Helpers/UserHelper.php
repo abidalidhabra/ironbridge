@@ -85,7 +85,7 @@ class UserHelper {
 							->where('nodes', 'exists', true)
 							->get(['id', 'agent_level', 'nodes']);
 
-		$chestMinigame = (new ChestService)->setUser($user)->minigame();
+		$chestMinigame = (new ChestService)->setUser($user)->getMiniGame();
 		return [
 			'avatars' => $avatars,
 			'widgets' => $widgets,

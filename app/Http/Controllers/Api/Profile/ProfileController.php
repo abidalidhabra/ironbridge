@@ -72,7 +72,7 @@ class ProfileController extends Controller
                 $chestService = (new ChestService)->setUser($user)->open();
                 return response()->json([
                     'message' => 'Chest has been opened successfully.', 
-                    'next_minigame'=> $chestService->minigame(),
+                    'next_minigame'=> $chestService->getMiniGame(),
                     'chests_bucket'=> $user->buckets['chests']
                 ]); 
             }else{
