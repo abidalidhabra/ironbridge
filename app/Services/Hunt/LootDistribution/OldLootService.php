@@ -26,7 +26,7 @@ class OldLootService
 
         // $complexity  = 1;
         // $randNumber  = 921; // widget
-        $randNumber  = 986; // relic
+        // $randNumber  = 986; // relic
         $message = [];
         $selectedReward = $rewards->where('complexity',$complexity)
 						        ->where('min_range', '<=', $randNumber)
