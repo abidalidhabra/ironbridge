@@ -46,9 +46,7 @@ class ChestService
 		
 		$this->userBuckets['chests']['minigame_id'] = $this->generateMiniGame()->id;
 		$this->userBuckets['chests']['collected'] += 1;
-		if ($this->userBuckets['chests']['collected'] <= $this->userBuckets['chests']['capacity']) {
-			$this->userBuckets['chests']['remaining'] -= 1;
-		}
+		$this->userBuckets['chests']['remaining'] -= 1;
 		$this->save();
 	}
 
@@ -145,6 +143,7 @@ class ChestService
 		);
 
 		$this->userBuckets['chests']['collected'] -= 1;
+		$this->userBuckets['chests']['remaining'] += 1;
 		
 		$this->save();
     }

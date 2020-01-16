@@ -77,7 +77,7 @@ class ProfileController extends Controller
                     'loot_rewards'=> $chestService->getLootRewards()
                 ]); 
             }else{
-                return response()->json(['message' => 'You dont have chest in your account to open.'], 422); 
+                return response()->json(['message' => 'You don\'t have chest in your account to open.'], 422); 
             }
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500); 
@@ -100,12 +100,17 @@ class ProfileController extends Controller
 
     public function removeTheChestFromBucket(Request $request)
     {
-        $chestService = (new ChestService)->setUser($user = auth()->user());
-        $chestService->remove();
+        $user = auth()->user();
+        if ($user->buckets['chests']['collected']) {
+            $chestService = (new ChestService)->setUser($user);
+            $chestService->remove();
 
-        return response()->json([
-            'message'=> 'A chest has been removed from bucket.', 
-            'chests_bucket'=> $user->buckets['chests'],
-        ]);
+            return response()->json([
+                'message'=> 'A chest has been removed from bucket.', 
+                'chests_bucket'=> $user->buckets['chests'],
+            ]);
+        }else{
+            return response()->json(['message'=> 'You don\'t have atleast single chest to remove.'], 422);
+        }
     }
 }
