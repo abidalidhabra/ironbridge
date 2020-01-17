@@ -14,6 +14,7 @@ use App\Repositories\MinigameHistoryRepository;
 use App\Repositories\RelicRepository;
 use App\Repositories\User\UserRepository;
 use App\Services\Hunt\ChestService;
+use App\Services\MiniGame\MiniGameInfoService;
 use Auth;
 use MongoDB\BSON\ObjectId as MongoID;
 use MongoDB\BSON\UTCDateTime;
@@ -85,7 +86,8 @@ class UserHelper {
 							->where('nodes', 'exists', true)
 							->get(['id', 'agent_level', 'nodes']);
 
-		$chestMinigame = (new ChestService)->setUser($user)->getMiniGame();
+		// $chestMinigame = (new ChestService)->setUser($user)->getMiniGame();
+		$chestMinigame = (new MiniGameInfoService)->setUser($user)->chestMiniGame();
 		return [
 			'avatars' => $avatars,
 			'widgets' => $widgets,

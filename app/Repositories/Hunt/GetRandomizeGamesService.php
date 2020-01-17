@@ -35,10 +35,14 @@ class GetRandomizeGamesService
         return new GameCollection($games);
     }
 
-    public function first($id = null)
+    public function first($id = null, $excluededIds = [])
     {
+
         $game = $this->user->practice_games()
                 ->with('game:_id,name,identifier')
+                ->when(count($excluededIds), function($query) use ($excluededIds){
+                    $query->whereNotIn('game_id', $excluededIds);
+                })
                 ->when($id, function($query) use ($id){
                     $query->where('game_id', $id);
                 })

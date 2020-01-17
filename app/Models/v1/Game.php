@@ -32,6 +32,11 @@ class Game extends Eloquent
         return $this->hasMany('App\Models\v1\GameVariation','game_id');
     }
 
+    public function single_game_variation()
+    {
+        return $this->hasOne('App\Models\v1\GameVariation','game_id');
+    }
+
     public function complexity_target()
     {
         return $this->hasOne('App\Models\v1\ComplexityTarget','game_id')->select('_id', 'game_id', 'complexity', 'target');

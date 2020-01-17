@@ -7,6 +7,7 @@ use App\Repositories\HuntStatisticRepository;
 use App\Repositories\Hunt\GetRandomizeGamesService;
 use App\Repositories\User\UserRepository;
 use App\Services\Hunt\LootDistribution\OldLootService;
+use App\Services\MiniGame\MiniGameInfoService;
 use App\Services\Traits\UserTraits;
 use GuzzleHttp\Client;
 
@@ -89,11 +90,12 @@ class ChestService
 			$this->user->buckets
 		);
 
-		return (new GetRandomizeGamesService)
-				->setUser($this->user)
-				->first(
-					$this->userBuckets['chests']['minigame_id'] ?? null
-				);
+		// return (new GetRandomizeGamesService)
+		// 		->setUser($this->user)
+		// 		->first(
+		// 			$this->userBuckets['chests']['minigame_id'] ?? null
+		// 		);
+		return (new MiniGameInfoService)->setUser($this->user)->chestMiniGame();
 	}
 
 	public function changeChestMiniGame()
@@ -103,7 +105,7 @@ class ChestService
 			$this->user->buckets
 		);
 
-		$this->userBuckets['chests']['minigame_id'] = $this->generateMiniGame()->id;
+		$this->userBuckets['chests']['minigame_id'] = (new GetRandomizeGamesService)->setUser($this->user)->first(null, [$this->userBuckets['chests']['minigame_id']])->id;
 
 		$this->cutTheCharge();
 		
