@@ -8,9 +8,11 @@
             <div class="col-md-6">
                 <h3>Nodes | Agent Levels</h3>
             </div>
+            @if(auth()->user()->hasPermissionTo('Add Nodes / Agent Levels'))
                 <div class="col-md-6 text-right modalbuttonadd">
                     <button type="button" class="btn btn-info btn-md" data-toggle="modal" data-target="#editNodesAgentLevels">Add</button>
                 </div>
+            @endif
 
         </div>
     </div>
@@ -25,7 +27,9 @@
                     <!-- <th>Power Nodes</th> -->
                     <!-- <th>Bonus Nodes</th> -->
                     <th>Agent Level</th>
+                    @if(auth()->user()->hasPermissionTo('Edit Nodes / Agent Levels') || auth()->user()->hasPermissionTo('Delete Nodes / Agent Levels'))
                     <th>Action</th>
+                    @endif
                 </tr>
             </thead>
             <tbody></tbody>
@@ -129,7 +133,9 @@
                         // { data:'power',name:'power' },
                         // { data:'bonus',name:'bonus' },
                         { data:'agent_level',name:'agent_level'},
+                        @if(auth()->user()->hasPermissionTo('Edit Nodes / Agent Levels') || auth()->user()->hasPermissionTo('Delete Nodes / Agent Levels'))
                         { data:'action',name:'action' },
+                        @endif
                     ],
                     columnDefs: [{
                         orderable: false,

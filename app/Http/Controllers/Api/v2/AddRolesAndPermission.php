@@ -72,6 +72,10 @@ class AddRolesAndPermission extends Controller
 
 		Permission::create(['name' => 'View Hunt Loot Tables','guard_name' => 'admin', 'module'=>'Manage Hunts / Hunt Loot Tables']);
 		Permission::create(['name' => 'Edit Hunt Loot Tables','guard_name' => 'admin', 'module'=>'Manage Hunts / Hunt Loot Tables']);
+
+
+		Permission::create(['name' => 'View MGC Loot Table','guard_name' => 'admin', 'module'=>'MGC Loot Table']);
+		Permission::create(['name' => 'Edit MGC Loot Table','guard_name' => 'admin', 'module'=>'MGC Loot Table']);
 		/*$data = [
 					['name' => 'Practice Games Targets','guard_name' => 'admin', 'module'=>'practiceGamesTargets'],
 					
@@ -115,6 +119,7 @@ class AddRolesAndPermission extends Controller
 						['name' => 'Dashboard','guard_name' => 'admin', 'module'=>'Dashboard'],
 						['name' => 'View Users','guard_name' => 'admin', 'module'=>'Users'],
 						['name' => 'Add Users','guard_name' => 'admin', 'module'=>'Users'],
+						['name' => 'Reset Users','guard_name' => 'admin', 'module'=>'Users'],
 						['name' => 'View News','guard_name' => 'admin', 'module'=>'News'],
 						['name' => 'Add News','guard_name' => 'admin', 'module'=>'News'],
 						['name' => 'Edit News','guard_name' => 'admin', 'module'=>'News'],
@@ -178,6 +183,10 @@ class AddRolesAndPermission extends Controller
 						['name' => 'Add Bucket Size / Agent Levels','guard_name' => 'admin', 'module'=>'Manage Levels / Bucket Size / Agent Levels'],
 						['name' => 'Edit Bucket Size / Agent Levels','guard_name' => 'admin', 'module'=>'Manage Levels / Bucket Size / Agent Levels'],
 						['name' => 'Delete Bucket Size / Agent Levels','guard_name' => 'admin', 'module'=>'Manage Levels / Bucket Size / Agent Levels'],
+						['name' => 'Add Nodes / Agent Levels','guard_name' => 'admin', 'module'=>'Manage Levels / Nodes / Agent Levels'],
+						['name' => 'Edit Nodes / Agent Levels','guard_name' => 'admin', 'module'=>'Manage Levels / Nodes / Agent Levels'],
+						['name' => 'View Nodes / Agent Levels','guard_name' => 'admin', 'module'=>'Manage Levels / Nodes / Agent Levels'],
+						['name' => 'Delete Nodes / Agent Levels','guard_name' => 'admin', 'module'=>'Manage Levels / Nodes / Agent Levels'],
 						['name' => 'View Hunts XP','guard_name' => 'admin', 'module'=>'Manage Hunts / Hunts XP'],
 						['name' => 'Edit Hunts XP','guard_name' => 'admin', 'module'=>'Manage Hunts / Hunts XP'],
 						['name' => 'Add Loot','guard_name' => 'admin', 'module'=>'Manage Loot Table'],
@@ -188,14 +197,16 @@ class AddRolesAndPermission extends Controller
 						['name' => 'Edit Challenge Nodes','guard_name' => 'admin', 'module'=>'Challenge Nodes'],
 						['name' => 'View Hunt Statistics','guard_name' => 'admin', 'module'=>'Hunt Statistics'],
 						['name' => 'Edit Hunt Statistics','guard_name' => 'admin', 'module'=>'Hunt Statistics'],
+						['name' => 'View MGC Loot Table','guard_name' => 'admin', 'module'=>'MGC Loot Table'],
+						['name' => 'Edit MGC Loot Table','guard_name' => 'admin', 'module'=>'MGC Loot Table'],
 						
 					];
 		$admin = Admin::where('email','support@ironbridge1779.com')->first();
 
-		$allPermission = Permission::all()->pluck('module')->toArray();
+		$allPermission = Permission::all()->pluck('name')->toArray();
 		$newPermission = [];
 		foreach ($permission as $key => $value) {
-			if (!in_array($value['module'], $allPermission)) {
+			if (!in_array($value['name'], $allPermission)) {
 				$permissionId =Permission::updateOrCreate(
 											['name' => $value['name'],
 											'guard_name' =>$value['guard_name'],

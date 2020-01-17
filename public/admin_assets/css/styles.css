@@ -2754,7 +2754,12 @@ table i.iconsetaddbox{
     display: inline-block;
 }
 
-
+.view-btn{
+    background: #A5853B;
+    border: 0px;
+    font-size: 15px;
+    font-family: 'Montserrat-Regular';
+}
 
 
 
