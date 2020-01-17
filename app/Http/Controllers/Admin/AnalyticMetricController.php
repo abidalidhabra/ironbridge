@@ -137,8 +137,8 @@ class AnalyticMetricController extends Controller
         }
         /* END Tutorials */
 
-        $data['tutorials1'] = array_slice($data['tutorials'],0,6);
-        $data['tutorials2'] = array_slice($data['tutorials'],7,14);
+        $data['tutorials1'] = array_slice($data['tutorials'],0,5);
+        $data['tutorials2'] = array_slice($data['tutorials'],6,14);
 
 
         return response()->json([

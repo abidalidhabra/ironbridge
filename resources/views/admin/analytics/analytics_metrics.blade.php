@@ -118,7 +118,7 @@
                     <div class="col-md-6">
                         <!-- <h4>Tutorials</h4> -->
                         <div class="row" id="tutorials_box1">
-                            @foreach(array_slice($data['tutorials'],0,6) as $key => $value)
+                            @foreach(array_slice($data['tutorials'],0,5) as $key => $value)
                             <div class="col-md-8">
                                 <p class="text-left">{{ ucfirst(str_replace('_',' ',$key)) }}</p>
                             </div>
@@ -131,7 +131,7 @@
                     <div class="col-md-6">
                         <!-- <h4>Tutorials</h4> -->
                         <div class="row" id="tutorials_box2">
-                            @foreach(array_slice($data['tutorials'],7,14) as $key => $value)
+                            @foreach(array_slice($data['tutorials'],6,14) as $key => $value)
                             <div class="col-md-8">
                                 <p class="text-left">{{ ucfirst(str_replace('_',' ',$key)) }}</p>
                             </div>
