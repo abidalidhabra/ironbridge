@@ -17,6 +17,7 @@ class ChestService
 
 	protected $userBuckets;
 	protected $lootRewards = [];
+	protected $bucketRestored = false;
 
     /**
      * @param mixed $userBuckets
@@ -28,6 +29,16 @@ class ChestService
         $this->userBuckets = $userBuckets;
 
         return $this;
+    }
+
+    public function expand($amount)
+    {
+    	$this->setUserBuckets(
+			$this->user->buckets
+		);
+
+		$this->userBuckets['chests']['capacity'] += $amount;
+		$this->save();
     }
 
 	public function add()
@@ -150,5 +161,40 @@ class ChestService
 		$this->userBuckets['chests']['remaining'] += 1;
 		
 		$this->save();
+    }
+
+    public function sync()
+    {
+    	$this->setUserBuckets(
+			$this->user->buckets
+		);
+
+    	if ($this->userBuckets['chests']['collected'] > $this->userBuckets['chests']['capacity']) {
+			$this->userBuckets['chests']['collected'] = $this->userBuckets['chests']['capacity'];
+			$this->userBuckets['chests']['remaining'] = 0;
+			$this->save();
+			$this->setBucketRestored(true);
+    	}
+    	return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBucketRestored()
+    {
+        return $this->bucketRestored;
+    }
+
+    /**
+     * @param mixed $bucketRestored
+     *
+     * @return self
+     */
+    public function setBucketRestored($bucketRestored)
+    {
+        $this->bucketRestored = $bucketRestored;
+
+        return $this;
     }
 }

@@ -87,7 +87,8 @@ class UserHelper {
 							->get(['id', 'agent_level', 'nodes']);
 
 		// $chestMinigame = (new ChestService)->setUser($user)->getMiniGame();
-		$chestMinigame = (new MiniGameInfoService)->setUser($user)->chestMiniGame();
+		$chestMinigame = (new ChestService)->setUser($user)->sync();
+		$miniGameInfoService = (new MiniGameInfoService)->setUser($user)->chestMiniGame();
 		return [
 			'avatars' => $avatars,
 			'widgets' => $widgets,
@@ -104,7 +105,8 @@ class UserHelper {
 			'agent_stack'=> $userRepository->getAgentStack(),
 			'hunt_statistics'=> array_merge($huntStatistics->toArray(), ['power_station'=> ['till'=> $userRepository->powerFreezeTill()]]),
 			'nodes_enable_on'=> $specialAminities,
-			'chest_minigame'=> $chestMinigame,
+			'chest_minigame'=> $miniGameInfoService,
+			'chest_synced'=> $chestMinigame->getBucketRestored(),
 			// 'used_widgets' => $user->used_widgets,
 			// 'plans' => $plans,
 			// 'events_data' => $events,
