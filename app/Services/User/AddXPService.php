@@ -42,7 +42,7 @@ class AddXPService
         $existingWidgets = collect($this->user->widgets)->pluck('id');
         $widgetsToProvide = collect($ids)->flatten()->filter()->values()->reject(function ($id) use ($existingWidgets) {
                                 return $existingWidgets->contains($id);
-                            });
+                            })->values();
         return $this->userRepository->addWidgets($widgetsToProvide);
     }
 

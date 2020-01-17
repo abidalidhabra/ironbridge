@@ -9,13 +9,14 @@ use App\Models\v2\MinigameHistory;
 use App\Repositories\ComplexityTargetRepository;
 use App\Repositories\Game\GameRepository;
 use App\Repositories\HuntRewardDistributionHistoryRepository;
+use App\Repositories\HuntStatisticRepository;
 use App\Repositories\Hunt\GetRelicHuntParticipationRepository;
 use App\Repositories\RelicRepository;
 use App\Repositories\SeasonRepository;
 use App\Repositories\User\UserRepository;
 use App\Services\Hunt\ChestService;
-use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
@@ -66,20 +67,60 @@ class ProfileController extends Controller
     public function openTheChest(Request $request)
     {
         try {
-            
+
             $user = auth()->user();
             if ($user->buckets['chests']['collected']) {
                 $chestService = (new ChestService)->setUser($user)->open();
                 return response()->json([
                     'message' => 'Chest has been opened successfully.', 
-                    'next_minigame'=> $chestService->minigame(),
-                    'chests_bucket'=> $user->buckets['chests']
+                    'next_minigame'=> $chestService->getMiniGame(),
+                    'chests_bucket'=> $user->buckets['chests'],
+                    'loot_rewards'=> $chestService->getLootRewards()
                 ]); 
             }else{
-                return response()->json(['message' => 'You dont have chest in your account to open.'], 422); 
+                return response()->json(['message' => 'You don\'t have chest in your account to open.'], 422); 
             }
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500); 
+        }
+    }
+
+    public function changeTheChestMG(Request $request)
+    {
+        $user = auth()->user();
+        $huntStatistic = (new HuntStatisticRepository)->first(['id', 'retention_hunt']);
+        if ($user->gold_balance >= $huntStatistic->retention_hunt['refresh_mg_charge']) {
+
+            $chestService = (new ChestService)->setUser($user);
+            $chestService->changeChestMiniGame();
+
+            return response()->json([
+                'message'=> 'mini-game has been changed.', 
+                'data'=> [
+                    'available_gold_balance'=> $chestService->getUser()->gold_balance,
+                    'minigame'=> $chestService->getMiniGame()
+                ]
+            ]);
+        }else{
+            return response()->json([
+                'message'=> 'you don\'t have enough golds to change the minigame.', 
+            ], 422);
+        }
+    }
+
+    public function removeTheChestFromBucket(Request $request)
+    {
+        $user = auth()->user();
+        if ($user->buckets['chests']['collected']) {
+            $chestService = (new ChestService)->setUser($user);
+            $chestService->remove();
+
+            return response()->json([
+                'message'=> 'A chest has been removed from bucket.', 
+                'chests_bucket'=> $user->buckets['chests'],
+            ]);
+        }else{
+            return response()->json(['message'=> 'You don\'t have atleast single chest to remove.'], 422);
         }
     }
 }
