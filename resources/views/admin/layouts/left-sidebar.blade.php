@@ -258,9 +258,11 @@
 					</li>
 					@endif
 					
+					@if($admin->hasPermissionTo('View MGC Loot Table'))
 					<li class="@if(Route::currentRouteName() == 'admin.mgc_loot.index') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.mgc_loot.index') }}">MGC Loot Table</a>
 					</li>
+					@endif
 
 					@if($admin->hasPermissionTo('View Challenge Nodes'))
 					<li class="@if(Route::currentRouteName() == 'admin.treasure_nodes_targets.index' || 
@@ -323,12 +325,14 @@
 									">Minigames / Agent Levels</a>
 									@endif
 
+									@if($admin->hasPermissionTo('View Nodes / Agent Levels'))
 									<a href="{{ route('admin.nodes-agent-levels.index') }}" 
 									class="
 									@if(Route::currentRouteName() == 'admin.nodes-agent-levels.index') 
 										{{ 'activelistsub' }} 
 									@endif
 									">Nodes / Agent Levels</a>
+									@endif
 									
 
 									@if($admin->hasPermissionTo('View Avatar / Agent Levels'))
@@ -453,7 +457,7 @@
 					</li> -->
 					
 					@if($admin->hasPermissionTo('View Analytics'))
-					<li  class="@if(Route::currentRouteName() == 'admin.analyticsMetrics') {{ 'activelist' }} @endif">
+					<li  class="@if(Route::currentRouteName() == 'admin.analyticsMetrics' || Route::currentRouteName() == 'admin.analyticsMetrics.XPList' || Route::currentRouteName() == 'admin.analyticsMetrics.relicsList') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.analyticsMetrics') }}">Analytics</a>
 					</li>
 					@endif

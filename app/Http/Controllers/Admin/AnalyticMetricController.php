@@ -20,499 +20,126 @@ use App\Models\v2\PlanPurchase;
 use App\Models\v2\HuntComplexity;
 use App\Models\v2\HuntUserDetail;
 use App\Models\v2\Relic;
+use Yajra\DataTables\DataTables;
 
 class AnalyticMetricController extends Controller
 {
     public function analyticsMetrics(Request $request){
-        $user = User::get();
-        $startAt = $user->first()->created_at;
-        $endAt = $user->last()->created_at;
-        $data['user_start_date'] = $startAt;
-        $data['user_end_date'] = $endAt;
-        
-        // $user = User::whereBetween('created_at', [$startAt,$endAt])->get();
-        
-        $currentDate = Carbon::now();
+        $user = User::select('id','first_name','last_name','gender','agent_status','relics','tutorials','created_at')
+                    ->get();
 
-        $planPurchase = PlanPurchase::whereHas('user')
-                                        ->get();
+        $huntUser = HuntUser::whereHas('user')->get();
 
-        $data['plan_purchase_start_date'] = $planPurchase->first()->created_at;
-        $data['plan_purchase_end_date'] = $planPurchase->last()->created_at;
-
-        $widgetItem = WidgetItem::get();
-        $huntUser = HuntUser::whereHas('user')
-                                ->get();
-        
+        $data['user_start_date'] = $user->first()->created_at;
+        $data['user_end_date'] = $user->last()->created_at;
         $data['hunt_user_start_date'] = $huntUser->first()->created_at;
         $data['hunt_user_end_date'] = $huntUser->last()->created_at;
-
-        $eventUser = EventsUser::with('event')
-                                ->whereHas('user')
-                                ->whereHas('event')
-                                ->get();        
-
-        $data['event_user_start_date'] = $eventUser->first()->created_at;
-        $data['event_user_end_date'] = $eventUser->first()->created_at;
-
-        /* STORE */
-        $data['total_user'] = $user->count();
-        $data['total_purchase'] =  $planPurchase->count();
-        $data['total_amount_purchase'] =  $planPurchase->sum('price');
-        $totalPurchase = $data['total_amount_purchase'];
-        if ($data['total_purchase'] == 0) {
-            $totalPurchase = 1;
-        }
-        $data['average_amount_purchase'] =  $data['total_amount_purchase']/$totalPurchase;
-        $data['total_coins_purchase'] =  $planPurchase->sum('gold_value');
-        $data['average_revenue'] =  round($planPurchase->count('user_id')/$data['total_user']);
-
-        $totalPlanPurchase = $planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->count();
-        if ($totalPlanPurchase == 0) {
-            $totalPlanPurchase = 1;
-        }
-        $data['average_skeleton_keys_purchased'] =  round($planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->count()/$totalPlanPurchase);
-        $data['total_amount_skeleton_keys_purchased'] =  '$'.number_format($planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->sum('price'),2);
-        $data['total_revenue_google_fees'] =  '$'.number_format((30/100)*$planPurchase->sum('price'),2);
-        $data['total_revenue_apple_fees'] = '-';
         
-        /* END STORE */
-
-
-        /* Avatar */
-        foreach ($user->pluck('widgets.*.id') as $key => $value) {
-            foreach ($value as $key => $widgets) {
-                $widgetsId[] = $widgets;
-            }
-        }
-
-        $totalWidgetsId = array_count_values($widgetsId);
-        arsort($totalWidgetsId);
-        //$data['total_items_purchased'] = $totalWidgetsId;
-        $data['total_items_purchased'] = [];
-        /*foreach ($totalWidgetsId as $key => $value) {
-            if (file_exists(public_path('admin_assets/widgets/'.$key.'.png'))){
-                $data['total_items_purchased'][] = [
-                                                        'image' => asset('admin_assets/widgets/'.$key.'.png'),
-                                                        'total_use'=>$value,
-                                                    ];
-            }
-        }*/
-        $data['average_avatar_items_purchased'] = round(count($widgetsId)/$widgetItem->count());
-
-        $data['total_paid_avatar'] = 0;
-        foreach ($totalWidgetsId as $key => $value) {
-            $widgetItem = WidgetItem::select('item_name','widget_name','gold_price')
-                                    ->where('_id',$key)->first();
-            $data['total_paid_avatar']+= $widgetItem->gold_price*$value;
-        }
-
-        /* END Avatar */
-
+        
         /* USER */
         $data['total_male'] = $user->where('gender','male')->count();
         $data['total_female'] = $user->where('gender','female')->count();
-        $data['total_avtar_user'] = $data['total_male']+$data['total_female'];
-        $data['per_male'] = number_format(($data['total_male']/$data['total_avtar_user'])*100,2).'%';
-        $data['per_female'] = number_format(($data['total_female']/$data['total_avtar_user'])*100,2).'%';
-        
-        $totalUserRelic = $user->where('relics.0','exits',true)->count();
-        $data['users_collectable'] = number_format(($totalUserRelic/$data['total_avtar_user'])*100,2).'%';
-        $relics = Relic::where('active',true)->count()-1;
-        $relicsUser = $user->where('relics.'.($relics-1),'exits',true)->count();
-        $data['users_collectibles'] = number_format(($relicsUser/$totalUserRelic)*100,2).'%';
-        
+        $data['total_user'] = $user->count();
+        $data['per_male'] = number_format(($data['total_male']/$data['total_user'])*100,2).'%';
+        $data['per_female'] = number_format(($data['total_female']/$data['total_user'])*100,2).'%';
+        // $data['highest_xp'] = $user->sortByDesc('agent_status.xp')->take(5)->toArray();
+        $data['highest_xp'] = User::select('id','first_name','last_name','agent_status','created_at')
+                                    ->take(5)
+                                    ->orderBy('agent_status.xp','desc')
+                                    ->get()
+                                    ->toArray();
+        $data['highest_relic'] = User::select('id','first_name','last_name','relics','created_at')
+                                      ->orderBy('relics','desc')
+                                      ->take(5)
+                                      ->get()
+                                      ->toArray();
         /* END USER */
 
-        /* HUNT CLUE */
-        $data['total_hunt_complated'] = $huntUser->count();
-        if ($data['total_hunt_complated'] == 0) {
-            $data['total_hunt_complated'] = 1;
+        /*Tutorials*/
+        $tutorials = $user->first()->tutorials->toArray();
+        foreach ($tutorials as $key => $value) {
+            $data['tutorials'][$key] = number_format(($user->where('tutorials.'.$key,'!=',null)->count()/$data['total_user'])*100,2).'%';
         }
-        $data['per_completed_hunt'] = round(($huntUser->where('status','completed')->count()/$data['total_hunt_complated'])*100).'%';
-        $data['per_completed_hunt_user'] = round(($huntUser->where('status','completed')->count()/$user->count())*100).'%';
-        $data['average_hunts_completed'] = round($huntUser->whereIn('status','completed')->count()/$data['total_hunt_complated']);
+        /* END Tutorials */
+
+        /* HUNTS */
+        $data['played_random_hunts'] = number_format(($huntUser->groupBy('user_id')->count()/$data['total_user'])*100,2).'%';
         
-        $data['user_clue_1'] = $huntUser->where('complexity',1)
-                                        ->where('status','running')
-                                        ->count();
+        $data['completed_random_hunts'] = number_format(($huntUser->where('status','completed')->where('relic_reference_id','!=',null)->groupBy('user_id')->count()/$huntUser->count())*100,2).'%';
 
-        $data['user_clue_2'] = $huntUser->where('complexity',2)
-                                        ->where('status','running')
-                                        ->count();
-
-        $data['user_clue_3'] = $huntUser->where('complexity',3)
-                                        ->where('status','running')
-                                        ->count();
+        $data['played_relic_hunts'] = number_format(($huntUser->where('relic_id','!=',null)->groupBy('user_id')->count()/$data['total_user'])*100,2).'%';
         
-        $data['user_clue_today_1'] = $huntUser
-                                        ->where('started_at', '>', $currentDate)
-                                        ->where('complexity',1)
-                                        ->whereIn('status',['running','paused'])
-                                        ->count();
+        $data['completed_relic_hunts'] = number_format(($huntUser->where('relic_id','!=',null)->where('status','completed')->groupBy('user_id')->count()/$huntUser->count())*100,2).'%';
         
-
-        $data['user_clue_today_2'] = $huntUser
-                                        ->where('started_at', '>', $currentDate)
-                                        ->where('complexity',2)
-                                        ->whereIn('status',['running','paused'])
-                                        ->count();
+        $data['average_of_random_hunts'] = number_format(($huntUser->count()/$data['total_user']));
         
-
-        $data['user_clue_today_3'] = $huntUser
-                                        ->where('started_at', '>', $currentDate)
-                                        ->where('complexity',3)
-                                        ->whereIn('status',['running','paused'])
-                                        ->count();
-
-
-        
-        $data['total_hunt_complated'] = $huntUser->where('status','completed')->count();
-        $huntCompltedClue = [];
-
-        foreach ($huntUser->where('status','completed') as $key => $value) {
-            $start_date = Carbon::parse($value->started_at);
-            $end_date = Carbon::parse($value->ended_at);
-            $huntCompltedClue[] = $start_date->diffInDays($end_date);
-        }
-        asort($huntCompltedClue);
-        $data['hunt_complted_clue'] = array_count_values($huntCompltedClue);
-
-        $huntUserDetail = HuntUserDetail::select('id','hunt_user_id','failures_at','skipped_at','game_id')
-                                        ->where(function($query){
-                                            $query->orWhereNotNull('skipped_at');
-                                            $query->orWhere('failures_at','!=',[]);
-                                        })
-                                        ->whereHas('hunt_user')
-                                        ->with('game:id,name')
-                                        ->get();
-
-        $gamesSkipSkeleton = $huntUserDetail->where('skipped_at','!=','')->groupBy('game_id'); 
-        $gamesFailHunts = $huntUserDetail->where('failures_at','!=',[])->groupBy('game_id'); 
-        $data['games_skip_skeleton'] = [];
-        $data['games_fail_hunts'] = [];
-       
-        foreach ($gamesSkipSkeleton as $key => $value) {
-            $data['games_skip_skeleton'][$value[0]->game->name] = $value->count();
-        }
-
-        foreach ($gamesFailHunts as $key => $value) {
-            $failHunt = 0;
-            foreach($value as $fail){
-                $failHunt += count($fail->failures_at);
-            }
-
-            $data['games_fail_hunts'][$value[0]->game->name] = $failHunt;
-        
-        }
-        arsort($data['games_skip_skeleton']);
-        arsort($data['games_fail_hunts']);
-        /* END HUNT CLUE */
-
-        /* EVENT */
-       
-        $data['user_event_city'] = count(array_unique($eventUser->pluck('event.city.name')->toArray())); 
-        $data['user_event_country'] = count(array_unique($eventUser->pluck('event.city.country.name')->toArray()));
-
-        $data['amount_revenue_event_paid_coins'] = '$'.number_format($eventUser->pluck('event.fees')->sum(),2);
-
-        /* END EVENT */
+        $data['average_of_relic_hunts'] = number_format(($huntUser->where('relic_id','!=',null)->count()/$data['total_user']));
+        /* END HUNTS */
 
         // return $data;
-        return view('admin.analytics_metrics',compact('data'));   
+        return view('admin.analytics.analytics_metrics',compact('data'));   
     }
 
-    public function analyticsMetricsFilter(Request $request){
-        $date = explode('-', $request->get('date'));
-        $startAt = new \DateTime(date('Y-m-d',strtotime(str_replace(' ', '-', trim($date[0])))));
-        $endAt= new \DateTime((date('Y-m-d',strtotime(str_replace(' ', '-', trim($date[1]))))));
-        $endAt->modify('+1 day');
-
-        $user = User::whereBetween('created_at', [$startAt,$endAt])
-                        ->get();
-        $data['start_date'] = $startAt;
-        $data['end_date'] = $endAt;
-        
-        $currentDate = Carbon::now();
-
-        $planPurchase = PlanPurchase::whereHas('user',function($query) use ($startAt,$endAt){
-                                            $query->whereBetween('created_at', [$startAt,$endAt]);
-                                        })
-                                        ->get();
-
-        $widgetItem = WidgetItem::get();
-        $huntUser = HuntUser::whereHas('user',function($query) use ($startAt,$endAt){
-                                    $query->whereBetween('created_at', [$startAt,$endAt]);
-                                })
-                                ->get();
-        $eventUser = EventsUser::with('event')
-                                ->whereHas('user',function($query) use ($startAt,$endAt){
-                                    $query->whereBetween('created_at', [$startAt,$endAt]);
-                                })
-                                ->whereHas('event')
-                                ->get();        
-
-
-        /* STORE */
-        $data['total_user'] = $user->count();
-        
-        $data['total_purchase'] =  $planPurchase->count();
-        $data['total_amount_purchase'] =  $planPurchase->sum('price');
-        $totalPurchase = $data['total_amount_purchase'];
-        if ($data['total_purchase'] == 0) {
-            $totalPurchase = 1;
-        }
-        $data['average_amount_purchase'] =  $data['total_amount_purchase']/$totalPurchase;
-        $data['total_coins_purchase'] =  $planPurchase->sum('gold_value');
-        $data['average_revenue'] =  round($planPurchase->count('user_id')/$data['total_user']);
-
-        $totalPlanPurchase = $planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->count();
-        if ($totalPlanPurchase == 0) {
-            $totalPlanPurchase = 1;
-        }
-        $data['average_skeleton_keys_purchased'] =  round($planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->count()/$totalPlanPurchase);
-        $data['total_amount_skeleton_keys_purchased'] =  '$'.number_format($planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->sum('price'),2);
-        $data['total_revenue_google_fees'] =  '$'.number_format((30/100)*$planPurchase->sum('price'),2);
-        $data['total_revenue_apple_fees'] = '-';
-        
-        /* END STORE */
-
-
-        /* Avatar */
-        foreach ($user->pluck('widgets.*.id') as $key => $value) {
-            foreach ($value as $key => $widgets) {
-                $widgetsId[] = $widgets;
-            }
-        }
-
-        $totalWidgetsId = array_count_values($widgetsId);
-        arsort($totalWidgetsId);
-        //$data['total_items_purchased'] = $totalWidgetsId;
-        $data['total_items_purchased'] = [];
-        foreach ($totalWidgetsId as $key => $value) {
-            if (file_exists(public_path('admin_assets/widgets/'.$key.'.png'))){
-                $data['total_items_purchased'][] = [
-                                                        'image' => asset('admin_assets/widgets/'.$key.'.png'),
-                                                        'total_use'=>$value,
-                                                    ];
-            }
-        }
-        $data['average_avatar_items_purchased'] = round(count($widgetsId)/$widgetItem->count());
-
-        $data['total_paid_avatar'] = 0;
-        foreach ($totalWidgetsId as $key => $value) {
-            $widgetItem = WidgetItem::select('item_name','widget_name','gold_price')
-                                    ->where('_id',$key)->first();
-            $data['total_paid_avatar']+= $widgetItem->gold_price*$value;
-        }
-        /* END Avatar */
-
-        /* USER */
-        $data['total_male'] = $user->where('gender','male')->count();
-        $data['total_female'] = $user->where('gender','female')->count();
-        $data['total_avtar_user'] = $data['total_male']+$data['total_female'];
-        $data['per_male'] = number_format(($data['total_male']/$data['total_avtar_user'])*100,2).'%';
-        $data['per_female'] = number_format(($data['total_female']/$data['total_avtar_user'])*100,2).'%';
-        /* END USER */
-
-        /* HUNT CLUE */
-        $data['total_hunt_complated'] = $huntUser->count();
-        if ($data['total_hunt_complated'] == 0) {
-            $data['total_hunt_complated'] = 1;
-        }
-        $data['per_completed_hunt'] = round(($huntUser->where('status','completed')->count()/$data['total_hunt_complated'])*100).'%';
-        $data['per_completed_hunt_user'] = round(($huntUser->where('status','completed')->count()/$user->count())*100).'%';
-        $data['average_hunts_completed'] = round($huntUser->whereIn('status','completed')->count()/$data['total_hunt_complated']);
-        
-        $data['user_clue_1'] = $huntUser->where('complexity',1)
-                                        ->where('status','running')
-                                        ->count();
-
-        $data['user_clue_2'] = $huntUser->where('complexity',2)
-                                        ->where('status','running')
-                                        ->count();
-
-        $data['user_clue_3'] = $huntUser->where('complexity',3)
-                                        ->where('status','running')
-                                        ->count();
-        
-        $data['user_clue_today_1'] = $huntUser
-                                        ->where('started_at', '>', $currentDate)
-                                        ->where('complexity',1)
-                                        ->whereIn('status',['running','paused'])
-                                        ->count();
-        
-
-        $data['user_clue_today_2'] = $huntUser
-                                        ->where('started_at', '>', $currentDate)
-                                        ->where('complexity',2)
-                                        ->whereIn('status',['running','paused'])
-                                        ->count();
-        
-
-        $data['user_clue_today_3'] = $huntUser
-                                        ->where('started_at', '>', $currentDate)
-                                        ->where('complexity',3)
-                                        ->whereIn('status',['running','paused'])
-                                        ->count();
-        
-        $data['user_clue_today_3'] = $huntUser
-                                        ->where('started_at', '>', $currentDate)
-                                        ->where('complexity',3)
-                                        ->whereIn('status',['running','paused'])
-                                        ->count();
-        
-        $data['total_hunt_complated'] = $huntUser->where('status','completed')->count();
-        $huntCompltedClue = [];
-
-        foreach ($huntUser->where('status','completed') as $key => $value) {
-            $start_date = Carbon::parse($value->started_at);
-            $end_date = Carbon::parse($value->ended_at);
-            $huntCompltedClue[] = $start_date->diffInDays($end_date);
-        }
-        // /echo "<pre>";
-        asort($huntCompltedClue);
-        $data['hunt_complted_clue'] = array_count_values($huntCompltedClue);
-        /* END HUNT CLUE */
-
-        /* EVENT */
-       
-        $data['user_event_city'] = count(array_unique($eventUser->pluck('event.city.name')->toArray())); 
-        $data['user_event_country'] = count(array_unique($eventUser->pluck('event.city.country.name')->toArray())); 
-
-        $data['amount_revenue_event_paid_coins'] = '$'.number_format($eventUser->pluck('event.fees')->sum(),2);
-        /* END EVENT */
-
-        // return $data;
-        return response()->json([
-            'status'  => true,
-            'message' => 'get data successfully',
-            'data'    => $data,
-        ]);
-    }
-
-    public function getStoreDateFilter(Request $request){
-        $user = User::get();
-
-
-        $date = explode('-', $request->get('store_date'));
-        $startAt = new \DateTime(date('Y-m-d',strtotime(str_replace(' ', '-', trim($date[0])))));
-        $endAt= new \DateTime((date('Y-m-d',strtotime(str_replace(' ', '-', trim($date[1]))))));
-        $endAt->modify('+1 day');
-
-
-        $planPurchase = PlanPurchase::whereHas('user')
-                                    ->whereBetween('created_at', [$startAt,$endAt])
-                                    ->get();
-
-        /* STORE */
-        $data['total_user'] = $user->count();
-        $data['total_purchase'] =  $planPurchase->count();
-        $data['total_amount_purchase'] =  $planPurchase->sum('price');
-        $totalPurchase = $data['total_amount_purchase'];
-        if ($data['total_purchase'] == 0) {
-            $totalPurchase = 1;
-        }
-        $data['average_amount_purchase'] =  $data['total_amount_purchase']/$totalPurchase;
-        $data['total_coins_purchase'] =  $planPurchase->sum('gold_value');
-        $data['average_revenue'] =  round($planPurchase->count('user_id')/$data['total_user']);
-
-        $totalPlanPurchase = $planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->count();
-        if ($totalPlanPurchase == 0) {
-            $totalPlanPurchase = 1;
-        }
-        $data['average_skeleton_keys_purchased'] =  round($planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->count()/$totalPlanPurchase);
-        $data['total_amount_skeleton_keys_purchased'] =  '$'.number_format($planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->sum('price'),2);
-        $data['total_revenue_google_fees'] =  '$'.number_format((30/100)*$planPurchase->sum('price'),2);
-        $data['total_revenue_apple_fees'] = '-';
-        
-        /* END STORE */
-
-         return response()->json([
-            'status'  => true,
-            'message' => 'get data successfully',
-            'data'    => $data,
-        ]);
-    }
 
     public function getUserDateFilter(Request $request){
-
         $date = explode('-', $request->get('user_date'));
         $startAt = new \DateTime(date('Y-m-d',strtotime(str_replace(' ', '-', trim($date[0])))));
         $endAt= new \DateTime((date('Y-m-d',strtotime(str_replace(' ', '-', trim($date[1]))))));
         $endAt->modify('+1 day');
+        $user = User::select('id','first_name','last_name','gender','agent_status','relics','tutorials','created_at')
+                      ->whereBetween('created_at', [$startAt,$endAt])
+                      ->get();
 
-        $user = User::whereBetween('created_at', [$startAt,$endAt])
-                        ->get();
-
-        $widgetItem = WidgetItem::get();
-
-        /* USER */
+        /* GET USER DATA  */
         $data['total_male'] = $user->where('gender','male')->count();
         $data['total_female'] = $user->where('gender','female')->count();
-        $data['total_avtar_user'] = $data['total_male']+$data['total_female'];
-        $totalAvtarUser = $data['total_avtar_user'];
-        if ($data['total_avtar_user'] == 0) {
-            $totalAvtarUser = 1;
-        }
-        $data['per_male'] = number_format(($data['total_male']/$totalAvtarUser)*100,2).'%';
-        $data['per_female'] = number_format(($data['total_female']/$totalAvtarUser)*100,2).'%';
-       
-        $totalUserRelic = $user->where('relics.0','exits',true)->count();
-        $data['users_collectable'] = number_format(($totalUserRelic/$data['total_avtar_user'])*100,2).'%';
-        $relics = Relic::where('active',true)->count()-1;
-        $relicsUser = $user->where('relics.'.($relics-1),'exits',true)->count();
-        $data['users_collectibles'] = number_format(($relicsUser/$totalUserRelic)*100,2).'%';
-        $data['users_collectibles'] = number_format(($relicsUser/$totalUserRelic)*100,2).'%';
-        /* END USER */
+        $data['total_user'] = $user->count();
+        $data['per_male'] = number_format(($data['total_male']/$data['total_user'])*100,2).'%';
+        $data['per_female'] = number_format(($data['total_female']/$data['total_user'])*100,2).'%';
+        $data['highest_xp'] = User::select('id','first_name','last_name','agent_status','created_at')
+                                    ->whereBetween('created_at', [$startAt,$endAt])
+                                    ->take(5)
+                                    ->orderBy('agent_status.xp','desc')
+                                    ->get()
+                                    ->toArray();
+        $data['highest_relic'] = User::select('id','first_name','last_name','relics','created_at')
+                                      ->whereBetween('created_at', [$startAt,$endAt])
+                                      ->orderBy('relics','desc')
+                                      ->take(5)
+                                      ->get()
+                                      ->toArray();
+        /* ENND USER DATA  */
 
         return response()->json([
             'status'  => true,
             'message' => 'get data successfully',
             'data'    => $data,
         ]);
-
     }
 
-    public function getAvtarDateFilter(Request $request){
-        $date = explode('-', $request->get('avtar_date'));
+
+
+    public function getTutorialDateFilter(Request $request){
+        $date = explode('-', $request->get('tutorial_date'));
         $startAt = new \DateTime(date('Y-m-d',strtotime(str_replace(' ', '-', trim($date[0])))));
         $endAt= new \DateTime((date('Y-m-d',strtotime(str_replace(' ', '-', trim($date[1]))))));
         $endAt->modify('+1 day');
 
-        $user = User::whereBetween('created_at', [$startAt,$endAt])
-                        ->get();
+        $user = User::select('id','first_name','last_name','gender','agent_status','relics','tutorials','created_at')
+                      ->whereBetween('created_at', [$startAt,$endAt])
+                      ->get();
 
-        $widgetItem = WidgetItem::get();
-
-        /* Avatar */
-        foreach ($user->pluck('widgets.*.id') as $key => $value) {
-            foreach ($value as $key => $widgets) {
-                $widgetsId[] = $widgets;
-            }
+        /*Tutorials*/
+        $tutorials = $user->first()->tutorials->toArray();
+        $data['total_user'] = $user->count();
+        foreach ($tutorials as $key => $value) {
+            $data['tutorials'][ucfirst(str_replace('_', ' ', $key))] = number_format(($user->where('tutorials.'.$key,'!=',null)->count()/$data['total_user'])*100,2).'%';
         }
+        /* END Tutorials */
 
-        $totalWidgetsId = array_count_values($widgetsId);
-        arsort($totalWidgetsId);
-        //$data['total_items_purchased'] = $totalWidgetsId;
-        $data['total_items_purchased'] = [];
-        foreach ($totalWidgetsId as $key => $value) {
-            if (file_exists(public_path('admin_assets/widgets/'.$key.'.png'))){
-                $data['total_items_purchased'][] = [
-                                                        'image' => asset('admin_assets/widgets/'.$key.'.png'),
-                                                        'total_use'=>$value,
-                                                    ];
-            }
-        }
-        $data['average_avatar_items_purchased'] = round(count($widgetsId)/$widgetItem->count());
+        $data['tutorials1'] = array_slice($data['tutorials'],0,6);
+        $data['tutorials2'] = array_slice($data['tutorials'],7,14);
 
-        $data['total_paid_avatar'] = 0;
-        foreach ($totalWidgetsId as $key => $value) {
-            $widgetItem = WidgetItem::select('item_name','widget_name','gold_price')
-                                    ->where('_id',$key)->first();
-            $data['total_paid_avatar']+= $widgetItem->gold_price*$value;
-        }
-        /* END Avatar */
 
         return response()->json([
             'status'  => true,
@@ -520,6 +147,7 @@ class AnalyticMetricController extends Controller
             'data'    => $data,
         ]);
     }
+
 
     public function getHuntDateFilter(Request $request){
         $date = explode('-', $request->get('hunt_date'));
@@ -532,99 +160,26 @@ class AnalyticMetricController extends Controller
         $huntUser = HuntUser::whereHas('user')
                             ->whereBetween('created_at', [$startAt,$endAt])
                             ->get();
+
         $user = User::get();
 
-        /* HUNT CLUE */
-        $data['total_hunt_complated'] = $huntUser->count();
-        if ($data['total_hunt_complated'] == 0) {
-            $data['total_hunt_complated'] = 1;
-        }
-        $data['per_completed_hunt'] = round(($huntUser->where('status','completed')->count()/$data['total_hunt_complated'])*100).'%';
-        $data['per_completed_hunt_user'] = round(($huntUser->where('status','completed')->count()/$user->count())*100).'%';
-        $data['average_hunts_completed'] = round($huntUser->whereIn('status','completed')->count()/$data['total_hunt_complated']);
+        /* HUNTS */
+        $data['completed_random_hunts'] = number_format(($huntUser->where('status','completed')->where('relic_reference_id','!=',null)->count()/$huntUser->count())*100,2).'%';
+
+        $data['completed_relic_hunts'] = number_format(($huntUser->where('relic_id','!=',null)->where('status','completed')->count()/$huntUser->count())*100,2).'%';
+
+        $data['played_random_hunts'] = number_format(($huntUser->groupBy('user_id')->count()/$user->count())*100,2).'%';
         
-        $data['user_clue_1'] = $huntUser->where('complexity',1)
-                                        ->where('status','running')
-                                        ->count();
+        $data['completed_random_hunts'] = number_format(($huntUser->where('status','completed')->where('relic_reference_id','!=',null)->groupBy('user_id')->count()/$huntUser->count())*100,2).'%';
 
-        $data['user_clue_2'] = $huntUser->where('complexity',2)
-                                        ->where('status','running')
-                                        ->count();
-
-        $data['user_clue_3'] = $huntUser->where('complexity',3)
-                                        ->where('status','running')
-                                        ->count();
+        $data['played_relic_hunts'] = number_format(($huntUser->where('relic_id','!=',null)->groupBy('user_id')->count()/$user->count())*100,2).'%';
         
-        $data['user_clue_today_1'] = $huntUser
-                                        ->where('started_at', '>', $currentDate)
-                                        ->where('complexity',1)
-                                        ->whereIn('status',['running','paused'])
-                                        ->count();
+        $data['completed_relic_hunts'] = number_format(($huntUser->where('relic_id','!=',null)->where('status','completed')->groupBy('user_id')->count()/$huntUser->count())*100,2).'%';
         
-
-        $data['user_clue_today_2'] = $huntUser
-                                        ->where('started_at', '>', $currentDate)
-                                        ->where('complexity',2)
-                                        ->whereIn('status',['running','paused'])
-                                        ->count();
+        $data['average_of_random_hunts'] = number_format(($huntUser->count()/$user->count()));
         
-
-        $data['user_clue_today_3'] = $huntUser
-                                        ->where('started_at', '>', $currentDate)
-                                        ->where('complexity',3)
-                                        ->whereIn('status',['running','paused'])
-                                        ->count();
-        
-        $data['user_clue_today_3'] = $huntUser
-                                        ->where('started_at', '>', $currentDate)
-                                        ->where('complexity',3)
-                                        ->whereIn('status',['running','paused'])
-                                        ->count();
-        
-        $data['total_hunt_complated'] = $huntUser->where('status','completed')->count();
-        $huntCompltedClue = [];
-
-        foreach ($huntUser->where('status','completed') as $key => $value) {
-            $start_date = Carbon::parse($value->started_at);
-            $end_date = Carbon::parse($value->ended_at);
-            $huntCompltedClue[] = $start_date->diffInDays($end_date);
-        }
-        asort($huntCompltedClue);
-        $data['hunt_complted_clue'] = array_count_values($huntCompltedClue);
-
-        $huntUserDetail = HuntUserDetail::select('id','hunt_user_id','failures_at','skipped_at','game_id')
-                                        ->whereHas('hunt_user',function($query) use ($startAt,$endAt){
-                                            $query->whereBetween('created_at', [$startAt,$endAt]);
-                                        })
-                                        ->where(function($query){
-                                            $query->orWhereNotNull('skipped_at');
-                                            $query->orWhere('failures_at','!=',[]);
-                                        })
-                                        ->with('game:id,name')
-                                        ->get();
-        $gamesSkipSkeleton = $huntUserDetail->where('skipped_at','!=','')->groupBy('game_id'); 
-        $gamesFailHunts = $huntUserDetail->where('failures_at','!=',[])->groupBy('game_id'); 
-        $data['games_skip_skeleton'] = [];
-        $data['games_fail_hunts'] = [];
-       
-        foreach ($gamesSkipSkeleton as $key => $value) {
-            $data['games_skip_skeleton'][$value[0]->game->name] = $value->count();
-        }
-
-        foreach ($gamesFailHunts as $key => $value) {
-            $failHunt = 0;
-            foreach($value as $fail){
-                $failHunt += count($fail->failures_at);
-            }
-
-            $data['games_fail_hunts'][$value[0]->game->name] = $failHunt;
-        
-        }
-        /*print_r($data['games_skip_skeleton']);
-        exit();*/
-        arsort($data['games_skip_skeleton']);
-        arsort($data['games_fail_hunts']);
-        /* END HUNT CLUE */
+        $data['average_of_relic_hunts'] = number_format(($huntUser->where('relic_id','!=',null)->count()/$user->count()));
+        /* END HUNTS */
 
         return response()->json([
             'status'  => true,
@@ -633,150 +188,90 @@ class AnalyticMetricController extends Controller
         ]);
     }
 
-
-    public function getEventDateFilter(Request $request){
-        $date = explode('-', $request->get('event_date'));
-        $startAt = new \DateTime(date('Y-m-d',strtotime(str_replace(' ', '-', trim($date[0])))));
-        $endAt= new \DateTime((date('Y-m-d',strtotime(str_replace(' ', '-', trim($date[1]))))));
-        $endAt->modify('+1 day');
-
-        $eventUser = EventsUser::with('event')
-                                ->whereHas('user')
-                                ->whereHas('event')
-                                ->whereBetween('created_at', [$startAt,$endAt])
-                                ->get();
-
-        /* EVENT */
-        $data['user_event_city'] = count(array_unique($eventUser->pluck('event.city.name')->toArray())); 
-        $data['user_event_country'] = count(array_unique($eventUser->pluck('event.city.country.name')->toArray()));
-
-        $data['amount_revenue_event_paid_coins'] = '$'.number_format($eventUser->pluck('event.fees')->sum(),2);
-        /* END EVENT */
-
-        return response()->json([
-            'status'  => true,
-            'message' => 'get data successfully',
-            'data'    => $data,
-        ]);
+    public function XPList(Request $request){
+        return view('admin.analytics.xp_list');   
     }
 
-    public function getAnalytic(){
-        $startAt = Carbon::now()->subDays(30);
-        $endAt = Carbon::now();
-        $currentDate = Carbon::now();
+    public function getXPList(Request $request){
+        $skip = (int)$request->get('start');
+        $take = (int)$request->get('length');
+        $search = $request->get('search')['value'];
 
-        $allUser = User::get();
-        $allPlanPurchase = PlanPurchase::get();
-        $user =  $allUser->whereBetween('created_at', [$startAt,$endAt]);
-        $widgetItem = WidgetItem::get();
-        $allHuntUser = HuntUser::get();
-        $huntUser = $allHuntUser->whereBetween('created_at', [$startAt,$endAt]);
-        
+        $users = User::select('id','first_name','last_name', 'agent_status','created_at')
+                        ->when($search != '', function($query) use ($search) {
+                            $query->where('first_name','like','%'.$search.'%')
+                                    ->orWhere('last_name','like','%'.$search.'%')
+                                    ->orWhere('agent_status.xp','like','%'.$search.'%');
+                        })
+                        ->orderBy('agent_status.xp','desc')
+                        ->skip($skip)
+                        ->take($take)
+                        ->get();
 
-        $planPurchase = $allPlanPurchase->whereBetween('created_at', [$startAt,$endAt]);
+        $filterCount = User::select('id','first_name','last_name', 'agent_status','created_at')
+                            ->when($search != '', function($query) use ($search) {
+                                $query->where('first_name','like','%'.$search.'%')
+                                ->orWhere('last_name','like','%'.$search.'%')
+                                ->orWhere('agent_status.xp','like','%'.$search.'%');
+                            })
+                            ->count();
 
-        /* STORE */
-        $data['total_user'] = $allUser->count();
-        $data['total_purchase'] =  $planPurchase->count();
-        $data['total_amount_purchase'] =  $planPurchase->sum('price');
-        $data['average_amount_purchase'] =  $data['total_amount_purchase']/$data['total_purchase'];
-        $data['total_coins_purchase'] =  $planPurchase->sum('gold_value');
-        $data['average_revenue'] =  round($planPurchase->count('user_id')/$data['total_user']);
-        $data['average_skeleton_keys_purchased'] =  $allPlanPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->count()/$planPurchase->where('plan_id','com.ironbridge1779.roguesatlas.gold8')->count();
-        $data['total_revenue']['google'] =  number_format((30/100)*$planPurchase->sum('price'),2);
-        $data['total_revenue']['apple'] = number_format((30/100)*$planPurchase->sum('price'),2);
-        
-        /* END STORE */
-
-
-        /* Avatar */
-        foreach ($user->pluck('widgets.*.id') as $key => $value) {
-            foreach ($value as $key => $widgets) {
-                $widgetsId[] = $widgets;
-            }
-        }
-
-        $totalWidgetsId = array_count_values($widgetsId);
-        arsort($totalWidgetsId);
-        // $data['total_items_purchased'] = $totalWidgetsId;
-        $data['total_items_purchased'] = [];
-        foreach ($totalWidgetsId as $key => $value) {
-            if (file_exists(public_path('admin_assets/widgets/'.$key.'.png'))){
-                $data['total_items_purchased'][] = [
-                                                        'image' => asset('admin_assets/widgets/'.$key.'.png'),
-                                                        'total_use'=>$value,
-                                                    ];
-            }
-        }
-        $data['average_avatar_items_purchased'] = count($widgetsId)/$widgetItem->count();
-
-        $data['total_paid_avatar'] = 0;
-        foreach ($totalWidgetsId as $key => $value) {
-            $widgetItem = WidgetItem::select('item_name','widget_name','gold_price')
-                                    ->where('_id',$key)->first();
-            $data['total_paid_avatar']+= $widgetItem->gold_price*$value;
-        }
-        /* END Avatar */
-
-        /* USER */
-        $data['total_male'] = $user->where('gender','male')->count();
-        $data['total_female'] = $user->where('gender','female')->count();
-        $data['total_avtar_user'] = $data['total_male']+$data['total_female'];
-        $data['per_male'] = ($data['total_male']/$data['total_avtar_user'])*100;
-        $data['per_female'] = ($data['total_female']/$data['total_avtar_user'])*100;
-        /* END USER */
-
-        /* HUNT */
-        $data['per_completed_hunt'] = ($huntUser->where('status','completed')->count()/$huntUser->count())*100;
-        $data['total_hunt_complated'] = $huntUser->count();
-        $data['average_hunts_completed'] = $huntUser
-                                            ->whereIn('status','completed')
-                                            ->count()/$data['total_hunt_complated'];
-        
-        /* END HUNT */
-
-        /* EVENT */
-        $eventUser = EventsUser::with('event')
-                                ->whereBetween('created_at', [$startAt,$endAt])
-                                ->get();
-        $data['user_event_city'] = count(array_unique($eventUser->pluck('event.city.name')->toArray())); 
-        $data['user_event_country'] = count(array_unique($eventUser->pluck('event.city.country.name')->toArray())); 
-        /* END EVENT */
+        $admin = auth()->user();
+        return DataTables::of($users)
+                ->addIndexColumn()
+                ->addColumn('name', function($user){
+                    return '<a href="'. route("admin.accountInfo",$user->_id) .'">'.$user->first_name.' '.$user->last_name.'</a>';
+                })
+                ->addColumn('xp', function($user){
+                    return $user->agent_status['xp'];
+                })
+                ->rawColumns(['name', 'icon'])
+                ->setTotalRecords(User::count())
+                ->setFilteredRecords($filterCount)
+                ->skipPaging()
+                ->make(true);
+    }
 
 
-        /* CLUE */
-        $data['user_clue_1'] = $huntUser->where('complexity',1)
-                                        ->where('status','running')
-                                        ->count();
+    public function relicsList(Request $request){
+        return view('admin.analytics.relics_list');
+    }
 
-        $data['user_clue_2'] = $huntUser->where('complexity',2)
-                                        ->where('status','running')
-                                        ->count();
+    public function getRelicsList(Request $request){
+        $skip = (int)$request->get('start');
+        $take = (int)$request->get('length');
+        $search = $request->get('search')['value'];
 
-        $data['user_clue_3'] = $huntUser->where('complexity',3)
-                                        ->where('status','running')
-                                        ->count();
-        
-        $data['user_clue_today_1'] = $huntUser
-                                        ->where('started_at', '>', $currentDate)
-                                        ->where('complexity',1)
-                                        ->whereIn('status',['running','paused'])
-                                        ->count();
-        
+        $users = User::select('id','first_name','last_name', 'agent_status','relics','created_at')
+                        ->when($search != '', function($query) use ($search) {
+                            $query->where('first_name','like','%'.$search.'%')
+                                    ->orWhere('last_name','like','%'.$search.'%');
+                        })
+                        ->orderBy('relics','desc')
+                        ->skip($skip)
+                        ->take($take)
+                        ->get();
 
-        $data['user_clue_today_2'] = $huntUser
-                                        ->where('started_at', '>', $currentDate)
-                                        ->where('complexity',2)
-                                        ->whereIn('status',['running','paused'])
-                                        ->count();
-        
+        $filterCount = User::select('id','first_name','last_name', 'agent_status','created_at')
+                            ->when($search != '', function($query) use ($search) {
+                                $query->where('first_name','like','%'.$search.'%')
+                                ->orWhere('last_name','like','%'.$search.'%');
+                            })
+                            ->count();
 
-        $data['user_clue_today_3'] = $huntUser
-                                        ->where('started_at', '>', $currentDate)
-                                        ->where('complexity',3)
-                                        ->whereIn('status',['running','paused'])
-                                        ->count();
-
-        return $data;
+        $admin = auth()->user();
+        return DataTables::of($users)
+                ->addIndexColumn()
+                ->addColumn('name', function($user){
+                    return '<a href="'. route("admin.accountInfo",$user->_id) .'">'.$user->first_name.' '.$user->last_name.'</a>';
+                })
+                ->addColumn('relics', function($user){
+                    return $user->relics->count();
+                })
+                ->rawColumns(['name', 'icon'])
+                ->setTotalRecords(User::count())
+                ->setFilteredRecords($filterCount)
+                ->skipPaging()
+                ->make(true);
     }
 }

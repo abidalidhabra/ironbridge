@@ -15,7 +15,7 @@
 	return view('welcome');
 });*/
 Route::get('login',array('as'=>'login',function(){
-    return abort(404);
+	return abort(404);
 }));
 
 Route::group(['prefix'=> 'admin', 'namespace'=>'Admin\Auth','as'=>'admin.'],function(){
@@ -45,13 +45,19 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('analyticsMetricsFilter', 'AnalyticMetricController@analyticsMetricsFilter')->name('analyticsMetricsFilter');
 	Route::get('getStoreDateFilter', 'AnalyticMetricController@getStoreDateFilter')->name('getStoreDateFilter');
 	Route::get('getUserDateFilter', 'AnalyticMetricController@getUserDateFilter')->name('getUserDateFilter');
+	Route::get('getTutorialDateFilter', 'AnalyticMetricController@getTutorialDateFilter')->name('getTutorialDateFilter');
 	Route::get('getHuntDateFilter', 'AnalyticMetricController@getHuntDateFilter')->name('getHuntDateFilter');
 	Route::get('getEventDateFilter', 'AnalyticMetricController@getEventDateFilter')->name('getEventDateFilter');
 	Route::get('getAnalytic', 'AnalyticMetricController@getAnalytic')->name('getAnalytic');
 	Route::get('getAvtarDateFilter', 'AnalyticMetricController@getAvtarDateFilter')->name('getAvtarDateFilter');
+	Route::get('analyticsMetrics/XPList', 'AnalyticMetricController@XPList')->name('analyticsMetrics.XPList');
+	Route::get('analyticsMetrics/getXPList', 'AnalyticMetricController@getXPList')->name('analyticsMetrics.getXPList');
+	Route::get('analyticsMetrics/relicsList', 'AnalyticMetricController@relicsList')->name('analyticsMetrics.relicsList');
+	Route::get('analyticsMetrics/getRelicsList', 'AnalyticMetricController@getRelicsList')->name('analyticsMetrics.getRelicsList');
 	
 	//User List
-	Route::post('/users/{id}/reset', 'UserController@reserTheUser')->name('user.reset');
+	// Route::post('/users/{id}/reset', 'UserController@reserTheUser')->name('user.reset');
+	Route::post('/users/{id}/reset', [ 'middleware' => ['permission:Reset Users'], 'uses' => 'UserController@reserTheUser' ])->name('user.reset');
 	Route::get('/userList', [ 'middleware' => ['permission:View Users'], 'uses' => 'UserController@index' ])->name('userList');
 
 	Route::get('/getUsers', [ 'middleware' => ['permission:View Users'], 'uses' => 'UserController@getUsers' ])->name('getUsers');
@@ -182,7 +188,9 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	});
 	
 	Route::resource('loots', 'LootController');
-	Route::resource('mgc_loot', 'MgcController');
+	Route::group(['middleware' => ['permission:View MGC Loot Table']], function () {
+		Route::resource('mgc_loot', 'MgcController');
+	});
 	Route::resource('hunt_statistics', 'HuntStatisticController');
 	Route::get('goldHTML', 'LootController@goldHTML')->name('loots.goldHTML');
 	Route::get('skeletonHTML', 'LootController@skeletonHTML')->name('loots.skeletonHTML');
@@ -232,7 +240,7 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 		Route::resource('xpManagement', 'XpManagementController');
 		Route::get('getXpManagementList', 'XpManagementController@getXpManagementList')->name('getXpManagementList');
 	});
-		
+	
 	Route::group(['middleware' => ['permission:View Agent Levels']], function () {
 		Route::get('agent-levels/list', 'AgentLevel\AgentLevelController@list')->name('agent-levels.list');
 		Route::resource('agent-levels', 'AgentLevel\AgentLevelController');

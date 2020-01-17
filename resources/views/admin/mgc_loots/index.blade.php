@@ -22,7 +22,7 @@
     <div class="rewardsmainbox">
         <div class="tab-content">
             <div class="tab-pane fade in active">                
-                @if(auth()->user()->hasPermissionTo('Edit Loot'))
+                @if(auth()->user()->hasPermissionTo('Edit MGC Loot Table'))
                     <a href="javascript:void(0)" class="btn pull-right edit_reward default-btn" data-id="">Edit</a>
                 @endif
                     

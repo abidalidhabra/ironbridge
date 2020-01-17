@@ -132,14 +132,16 @@
             });
 
             function format (data) {
-                
+                var reset_asscount = '';
+                @if(auth()->user()->hasPermissionTo('Reset Users'))
+                    reset_asscount = '<div class="view_td_set"><a href="javascript:void(0)" class="btn btn-info" data-id="'+data._id+'" data-action="reset" data-placement="left" title="Delete" > Reset An Account</a> </div>';
+                @endif
                 return '<div class="details-container">'+
                     '<table cellpadding="2" cellspacing="0" border="0" class="details-table">'+
                         '<tr>'+'<td class="title">\
                                 <div class="view_td_set"><button type="button" class="btn btn-info" data-id="'+data._id+'" data-action="btnAdd" data-toggle="modal"> Add Gold</button> </div>\
-                                <div class="view_td_set"><a href="javascript:void(0)" class="btn btn-info" data-id="'+data._id+'" data-action="skeleton"> Add Skeleton Key</a> </div>\
-                                <div class="view_td_set"><a href="javascript:void(0)" class="btn btn-info" data-id="'+data._id+'" data-action="reset" data-placement="left" title="Delete" > Reset An Account</a> </div>\
-                            </td>'+
+                                <div class="view_td_set"><a href="javascript:void(0)" class="btn btn-info" data-id="'+data._id+'" data-action="skeleton"> Add Skeleton Key</a> </div>'+reset_asscount+
+                            '</td>'+
                     '</tr>'+
                     '</table>'+
                 '</div>';
