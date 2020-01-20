@@ -2,6 +2,7 @@
 
 namespace App\Services\MiniGame;
 
+use App\Collections\GameCollection;
 use App\Repositories\Game\GameRepository;
 use App\Services\Traits\UserTraits;
 
@@ -31,14 +32,16 @@ class MiniGameInfoService
 
     public function random($limit)
     {
-        return $this->user->practice_games()
+        return new GameCollection(
+            $this->user->practice_games()
                     ->with('game:_id,name,identifier')
                     ->whereNotNull('unlocked_at')
                     ->select('_id', 'game_id', 'unlocked_at')
                     ->get()
                     ->shuffle()
                     ->pluck('game')
-                    ->take($limit);
+                    ->take($limit)
+        );
     }
 
     public function get($id)
