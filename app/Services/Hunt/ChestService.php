@@ -38,6 +38,7 @@ class ChestService
 		);
 
 		$this->userBuckets['chests']['capacity'] += $amount;
+		$this->userBuckets['chests']['remaining'] += $amount;
 		$this->save();
     }
 
