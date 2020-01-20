@@ -49,9 +49,11 @@ class NotificationController extends Controller
             return response()->json(['status' => false,'message' => $validator->messages()->first()]);
         }
 
-        $receiver = User::select('_id','firebase_ids','first_name','last_name')->get();
-        NotificationHelper::sendPushNotification($receiver,'adminNotification',$request->message,$is_broadcast=true);
         
+        for ($i=0; $i < round(User::count() / 900); $i++) { 
+            $receiver = User::select('_id','firebase_ids','first_name','last_name')->skip($i*900)->take(($i+1)*900)->get();
+            NotificationHelper::sendPushNotification($receiver,'adminNotification',$request->message,$is_broadcast=true);
+        }
 
         return response()->json(['status'=>true,'message' => 'Notification Send Successfully']); 
     }

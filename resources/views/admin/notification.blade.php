@@ -34,6 +34,7 @@
                 {
                     if (response.status == true) {
                         toastr.success(response.message);
+                        $('#addFormNotifation textarea').val('');
                     } else {
                         toastr.warning(response.message);
                         // toastr.warning('You are not authorized to access this page.');
