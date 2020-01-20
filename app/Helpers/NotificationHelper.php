@@ -18,7 +18,7 @@ class NotificationHelper{
 		switch ($tag1) {
 
 			case 'adminNotification':
-			$subject = "Bizbundle";
+			$subject = "ironbridge1779";
 			$message = $msg;
 			$badgecount = $additionalData['notificationcount'];
 			$tag =$tag1;
@@ -34,7 +34,7 @@ class NotificationHelper{
 		$pushData['priority'] = 10;
 		$pushData['icon']  	  = "";
 		$pushData['sound']    = 'mySound';		
-		$pushData['badge'] 	  = (string)$badgecount;
+		// $pushData['badge'] 	  = (string)$badgecount;
 
 		$payLoad 			  = [];
 		$payLoad['title'] 	  = $subject;
@@ -57,7 +57,7 @@ class NotificationHelper{
 		}
 
 		if (count($androidDeviceID) > 0) {
-			$fields = array('registration_ids' => $androidDeviceID,'data'=>$payLoad);
+			$fields = array('registration_ids' => $androidDeviceID,'notification'=> $pushData,'data'=>$payLoad);
 			$response = self::curlNotification($fields);
 			// if ($response->failure) {
 			// 	print_r($response->results);
