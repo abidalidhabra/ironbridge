@@ -270,6 +270,10 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 		Route::get('avatar-agent-levels-list', 'AgentLevel\AvatarAgentLevelController@list')->name('avatar-agent-levels-list');
 	});
 
+
+	/* NOTIFICATION */
+	Route::resource('notifications', 'NotificationController');
+
 });
 
 // Auth::routes();
