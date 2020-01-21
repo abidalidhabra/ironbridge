@@ -2,7 +2,7 @@ FROM 905666888987.dkr.ecr.us-east-1.amazonaws.com/laravel-ssl-base:latest
 
 MAINTAINER Prashant Rajavat <prashant.rajavat1996@gmail.com>
 
-ENV APP_ENV=dev
+ENV APP_ENV=production
 ENV TERM=xterm
 
 COPY . /var/www/html
