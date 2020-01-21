@@ -123,7 +123,7 @@ class EventController extends Controller
                             return response()->json(['status' => false,'message' => 'The variation image size is invalid.']);
                         }
 
-                        if ($gameId == '5b0e304b51b2010ec820fb4e' && $imageSize[0] != '2000' && $imageSize[1] != '1440') {
+                        if ($gameId == '5b0e304b51b2010ec820fb4e' && $imageSize[0] != '1440' && $imageSize[1] != '2000') {
                             return response()->json(['status' => false,'message' => 'The variation image size is invalid.']);
                         }
                     }

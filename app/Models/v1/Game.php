@@ -81,7 +81,8 @@ class Game extends Eloquent
    	/**
     
     	Jigswa Puzzle:
-    	- variation_image : Image Name {H:1440 W:2000}
+    	- variation_image : Image Name {H:1440 W:2000} DEPRICATED
+        - variation_image : Image Name {H:2000 W:1440}
     	- variation_size : [12,35,70,140]
     
     */

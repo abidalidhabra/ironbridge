@@ -2761,7 +2761,13 @@ table i.iconsetaddbox{
     font-family: 'Montserrat-Regular';
 }
 
-
+.headerLabel{
+    display: inline-block;
+    font-size: 16px;
+    font-family: 'Montserrat-SemiBold';
+    color: #ffffff;
+    margin-left: 16px;
+}
 
 
 

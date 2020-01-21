@@ -269,7 +269,8 @@ class GameController extends Controller
         if ($gameId == '5b0e304b51b2010ec820fb4e') {
             $rules = [
                 //'variation_size' => 'required|in:12,35,70,140',   
-                'variation_image.*' => 'mimes:jpeg,jpg,png|dimensions:width=2000,height:1440,1400',                      
+                // 'variation_image.*' => 'mimes:jpeg,jpg,png|dimensions:width=2000,height:1440,1400',                      
+                'variation_image.*' => 'mimes:jpeg,jpg,png|dimensions:width=1440,height:2000',
             ];
         }
 
@@ -321,7 +322,8 @@ class GameController extends Controller
         if ($gameId == '5b0e304b51b2010ec820fb4e') {
             $rules = [
                 //'variation_size' => 'required|in:12,35,70,140',   
-                'variation_image.*' => 'mimes:jpeg,jpg,png|dimensions:width=2000,height=1440',                      
+                // 'variation_image.*' => 'mimes:jpeg,jpg,png|dimensions:width=2000,height=1440',
+                'variation_image.*' => 'mimes:jpeg,jpg,png|dimensions:width=1440,height:2000',
             ];
         }
 

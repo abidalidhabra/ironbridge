@@ -1,9 +1,12 @@
 <header>
     <div class="hamburgerboxdis">
         <a id="offCanvas" class="hamburger"><span> ☰ </span></a>
-    </div>    
+    </div>
     <div class="logo_leftbox">
         <img src="{{ asset('admin_assets/svg/ib-logo.svg') }}">
+        <div class="headerLabel">
+            {{ strtoupper(config('app.env')) . ' SERVER' }}
+        </div>
     </div>
     <div class="logout_rightbox">
         <a href="{{ route('admin.logout') }}" onclick="event.preventDefault();

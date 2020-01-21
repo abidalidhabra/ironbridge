@@ -55,7 +55,8 @@ class GameVariationController extends Controller
         if ($identifier == 'jigsaw') {
             $rules = [
                 'variationSize' => 'required|in:12,35,70,140',   
-                'variation_image.*' => 'required|mimes:jpeg,jpg,png|dimensions:width=2000,height=1440',                      
+                // 'variation_image.*' => 'required|mimes:jpeg,jpg,png|dimensions:width=2000,height=1440',
+                'variation_image.*' => 'required|mimes:jpeg,jpg,png|dimensions:width=1440,height=2000',
             ];
         }
         if ($identifier == 'block') {
@@ -186,7 +187,8 @@ class GameVariationController extends Controller
         if ($identifier == 'jigsaw') {
             $rules = [
                 'variationSize' => 'required|in:12,35,70,140',   
-                'variation_image.*' => 'mimes:jpeg,jpg,png|dimensions:width=2000,height=1440',                      
+                // 'variation_image.*' => 'mimes:jpeg,jpg,png|dimensions:width=2000,height=1440',
+                'variation_image.*' => 'required|mimes:jpeg,jpg,png|dimensions:width=1440,height=2000',
             ];
         }
         if ($identifier == 'block') {
