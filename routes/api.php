@@ -22,6 +22,7 @@ Route::post('addGames', 'Api\v1\PrepareController@addGames');
 Route::post('addWidgets', 'Api\v1\PrepareController@addWidgets');
 Route::get('addRolesAndPermissions', 'Api\v2\AddRolesAndPermission@addRolesAndPermissions');
 Route::get('createPermissions', 'Api\v2\AddRolesAndPermission@createPermissions');
+Route::get('guestCreate', 'Api\v1\UserController@guestCreate');
 
 Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1', 'middleware'=> 'downtime'], function ($router) {
 

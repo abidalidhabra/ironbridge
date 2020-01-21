@@ -475,6 +475,10 @@
 					</li>
 					@endif
 					
+					<li  class="@if(Route::currentRouteName() == 'admin.notifications.index'	) {{ 'activelist' }} @endif">
+						<a href="{{ route('admin.notifications.index') }}">Notifications</a>
+					</li>
+
 					@if($admin->hasPermissionTo('View App Settings'))
 					<li  class="@if(Route::currentRouteName() == 'admin.app.settings.index'	) {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.app.settings.index') }}">App Settings</a>

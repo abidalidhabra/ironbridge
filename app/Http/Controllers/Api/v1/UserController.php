@@ -34,7 +34,7 @@ class UserController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('jwt-auth', ['except' => ['register','getParks','watercheck']]);
+        $this->middleware('jwt-auth', ['except' => ['register','getParks','watercheck','guestCreate']]);
     }
 
     public function register(Request $request){
@@ -493,4 +493,14 @@ class UserController extends Controller
     //     $data = (new UserRepository(auth()->user()))->markTutorialAsComplete($request->module);
     //     return response()->json(['message' => 'Tutorial has been marked as complete.']); 
     // }
+
+    public function guestCreate(){
+        $users = User::select('last_login_as')->where('last_login_as','guest')->get();
+        foreach ($users as $key => $value) {
+            $name = 'guest'.hexdec(uniqid());
+            $value->guest_id = $name;
+            $value->first_name = $name;
+            $value->save();
+        }
+    }
 }
