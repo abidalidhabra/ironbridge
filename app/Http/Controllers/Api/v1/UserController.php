@@ -497,7 +497,9 @@ class UserController extends Controller
     public function guestCreate(){
         $users = User::select('last_login_as')->where('last_login_as','guest')->get();
         foreach ($users as $key => $value) {
-            $value->guest_id = 'guest'.hexdec(uniqid());
+            $name = 'guest'.hexdec(uniqid());
+            $value->guest_id = $name;
+            $value->first_name = $name;
             $value->save();
         }
     }
