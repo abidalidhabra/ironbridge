@@ -75,7 +75,9 @@ class ProfileController extends Controller
                     'message' => 'Chest has been opened successfully.', 
                     'next_minigame'=> $chestService->getMiniGame(),
                     'chests_bucket'=> $user->buckets['chests'],
-                    'loot_rewards'=> $chestService->getLootRewards()
+                    'loot_rewards'=> $chestService->getLootRewards(),
+                    'chest_rewards'=> $chestService->getChestRewards(),
+                    'agent_status'=> $user->agent_status
                 ]); 
             }else{
                 return response()->json(['message' => 'You don\'t have chest in your account to open.'], 422); 

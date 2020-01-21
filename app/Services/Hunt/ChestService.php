@@ -6,6 +6,7 @@ use App\Exceptions\Profile\ChestBucketCapacityOverflowException;
 use App\Repositories\HuntStatisticRepository;
 use App\Repositories\Hunt\GetRandomizeGamesService;
 use App\Repositories\User\UserRepository;
+use App\Services\Hunt\ChestRewardsService;
 use App\Services\Hunt\LootDistribution\OldLootService;
 use App\Services\MiniGame\MiniGameInfoService;
 use App\Services\Traits\UserTraits;
@@ -15,6 +16,7 @@ class ChestService
 {
 	use UserTraits;
 
+	protected $chestRewards;
 	protected $userBuckets;
 	protected $lootRewards = [];
 	protected $bucketRestored = false;
@@ -79,6 +81,10 @@ class ChestService
 
         $this->setLootRewards(
         	(new OldLootService)->setUser($this->user)->generate()
+        );        
+
+        $this->setChestRewards(
+        	(new ChestRewardsService)->setUser($this->user)->get()
         );
 
 		return $this;
@@ -195,6 +201,26 @@ class ChestService
     public function setBucketRestored($bucketRestored)
     {
         $this->bucketRestored = $bucketRestored;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getChestRewards()
+    {
+        return $this->chestRewards;
+    }
+
+    /**
+     * @param mixed $chestRewards
+     *
+     * @return self
+     */
+    public function setChestRewards($chestRewards)
+    {
+        $this->chestRewards = $chestRewards;
 
         return $this;
     }

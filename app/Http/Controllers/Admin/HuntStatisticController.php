@@ -83,6 +83,7 @@ class HuntStatisticController extends Controller
             'relic'                         => 'required|numeric',
             'power'                         => 'required|numeric',
             'mgc'                           => 'required|numeric',
+            'chest_xp'                      => 'required|numeric',
         ]);
 
         if ($validator->fails())
@@ -96,6 +97,7 @@ class HuntStatisticController extends Controller
         $huntStatistic->gold =  (int)$request->gold;
         $huntStatistic->skeleton_keys =  (int)$request->skeleton_keys;
         $huntStatistic->boost_power_till =  (int)$request->boost_power_till;
+        $huntStatistic->chest_xp =  (int)$request->chest_xp;
         $huntStatistic->refreshable_distances =  (object)[
                                                     'random_hunt'=>(int)$request->refreshable_random_hunt,
                                                     'nodes'=>(int)$request->nodes,

@@ -86,6 +86,12 @@
                             </label>
                             <input type="number" name="mgc" class="form-control" placeholder="Enter the mgc" value="{{ ($huntStatistic->freeze_till)?$huntStatistic->freeze_till['mgc']:'' }}">
                         </div>
+
+                        <div class="form-group">
+                            <label class="control-label">Fix XP to provide on chest open:
+                            </label>
+                            <input type="number" name="chest_xp" class="form-control" placeholder="Enter the mgc" value="{{ $huntStatistic->chest_xp }}">
+                        </div>
                     </div>
                 </div>
               <button type="submit" class="btn btn-success">Save</button>
