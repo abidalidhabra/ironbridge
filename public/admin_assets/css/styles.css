@@ -72,20 +72,22 @@ header{
 }
 .logo_leftbox {
     display: inline-block;
-    width: 80%;
+    width: 50%;
     float: left;
 }
 .logo_leftbox img{
     width: 54px;
+    float: left;
 }
 .logout_rightbox {
     display: inline-block;
-    width: 20%;
+    width: 50%;
     float: left;
     text-align: right;
 }   
 .logout_rightbox a{
     display: inline-block;
+    float: right;
 }
 .logout_rightbox h4 {
     margin: 0px;
@@ -2766,11 +2768,35 @@ table i.iconsetaddbox{
     font-size: 16px;
     font-family: 'Montserrat-SemiBold';
     color: #ffffff;
-    margin-left: 16px;
+   
 }
+.headerLabel h5{
+    font-size: 12px;
+    font-family: 'Montserrat-Medium';
+}
+.headerLabel p{
+    font-size: 12px;
+    font-family: 'Montserrat-Medium';
+}
+.left_label{
+    float: left;
+     margin-left: 16px;
+}
+.right_label{
+    float: right;
+     margin-right: 16px;
+}
+.Label_active{
 
-
-
+}
+.headerLabel.Label_active h5{
+    font-size: 14px;
+    font-family: 'Montserrat-Bold';
+}
+.headerLabel.Label_active p{
+    font-size: 14px;
+    font-family: 'Montserrat-Bold';
+}
 
 
 
