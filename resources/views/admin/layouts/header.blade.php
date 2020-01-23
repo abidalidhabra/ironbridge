@@ -12,7 +12,7 @@
         <img src="{{ asset('admin_assets/svg/ib-logo.svg') }}">
         <div class="headerLabel left_label Label_active">
             <h5>{{ strtoupper($env) }} SERVER</h5>
-            <p>{{ $envPath }}</p>
+            <p><a class="links" href="javascript:void(0);">{{ $envPath }}/api</a></p>
         </div>
     </div>
     <div class="logout_rightbox">
@@ -22,7 +22,7 @@
         </a>
         <div class="headerLabel right_label">
             <h5>{{ strtoupper($oppEnv) }} SERVER</h5>
-            <p>{{ $oppEnvPath }}</p>
+            <p><a class="links" href="{{ $oppEnvPath }}/admin/login" target="_blank">{{ $oppEnvPath }}/api</a></p>
         </div>
         
         <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" style="display: none;">

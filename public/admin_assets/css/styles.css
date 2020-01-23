@@ -2798,6 +2798,14 @@ table i.iconsetaddbox{
     font-family: 'Montserrat-Bold';
 }
 
+.links{
+    text-decoration: none;
+    color: #fff;
+}
+
+.links:hover,.links:focus{
+    color: #fff;
+}
 
 
 
