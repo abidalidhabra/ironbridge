@@ -115,6 +115,14 @@
         } else {
             $(this).find("i").addClass("fa-minus").removeClass("fa-plus");
         }
-    })
+    });
+
+    function showTheLoader() {
+        $('#submitBtn').prop('disabled', true).find('i').show();
+    }
+
+    function hideTheLoader() {
+        $('#submitBtn').prop('disabled', false).find('i').hide();
+    }
 </script>
 </html>

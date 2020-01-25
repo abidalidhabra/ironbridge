@@ -41,7 +41,7 @@ class GameVariation extends Eloquent
             $images = [];
             foreach ($value as $key => $image) {
                 if (Storage::disk('public')->has('game_variations/'.$image) && !is_null($image)) {
-                    $images[] = asset('storage/game_variations/').'/'.$image;
+                    $images[$key] = asset('storage/game_variations/').'/'.$image;
                 }
             }
             return $images;

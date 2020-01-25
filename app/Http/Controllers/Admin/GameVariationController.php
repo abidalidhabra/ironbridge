@@ -365,7 +365,10 @@ class GameVariationController extends Controller
         return DataTables::of($gameVariation)
         ->addIndexColumn()
         ->editColumn('game_name', function($query){
-            return $query->game->name;
+            return ucfirst($query->game->name);
+        })
+        ->editColumn('variation_name', function($query){
+            return ucfirst($query->variation_name);
         })
         ->editColumn('variation_complexity', function($query){
             return ucfirst($query->variation_complexity);
@@ -418,20 +421,16 @@ class GameVariationController extends Controller
 
     //DELETE IMAGE
     public function deleteImage(Request $request){
+        
         $id = $request->get('id');
         $index = $request->get('index');
-
-        //$gameVariation = GameVariation::where('_id',$id)->first();
-        $gameVariation = \DB::table('game_variations')->where('_id',$id)->first();
         
-        echo "<pre>";
-        print_r($gameVariation['variation_image'][1]);
-        exit();
-        GameVariation::where('_id',$id)->pull('variation_image', $gameVariation->variation_image[0]);
-        print_r($id);
-        print_r($index);
-        print_r($gameVariation->variation_image);
-        exit();
-
+        $variation = GameVariation::where('_id',$id)->first();
+        if (count($variation->variation_image) == 1) {
+            return response()->json(['message'=>'There atleast single image should be present.'], 422);
+        }else{
+            $variation->unset('variation_image.'.$index);
+            return response()->json(['status'=>true, 'message'=>'Variation image has been deleted successfully.']);
+        }
     }
 }

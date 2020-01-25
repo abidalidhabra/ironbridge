@@ -22,10 +22,16 @@ class MiniGameInfoService
         $game = $game->load(['complexity_target'=> function($query) {
                     $query->where('complexity', 1);
                 },'single_game_variation'=> function($query) {
-                    $query->limit(1)->select('_id','variation_name','variation_complexity','target','no_of_balls','bubble_level_id','game_id','variation_size','row','column');
+                    $query->limit(1)->select('_id','variation_name','variation_complexity','target','no_of_balls','bubble_level_id','game_id','variation_size','variation_image','row','column');
                 }])
                 ->first();
-        $game->game_variation = $game->single_game_variation;
+
+        if ($game->single_game_variation->variation_image) {
+            $variation = $game->single_game_variation->toArray();
+            $image = collect($variation['variation_image'])->values()->shuffle()->first();
+            $variation['variation_image'] = $image;
+        }
+        $game->game_variation = $variation ?? $game->single_game_variation;
         unset($game->single_game_variation);
         return $game;
     }

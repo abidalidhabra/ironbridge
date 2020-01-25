@@ -8,6 +8,7 @@ use App\Services\HuntReward\LogTheHuntRewardService;
 use App\Services\Traits\UserTraits;
 use Illuminate\Support\Facades\Log;
 use stdClass;
+use MongoDB\BSON\UTCDateTime;
 
 class OldLootService
 {

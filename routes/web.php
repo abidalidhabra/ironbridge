@@ -128,7 +128,7 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::group(['middleware' => ['permission:View Game Variations']], function () {
 		Route::resource('gameVariation', 'GameVariationController');
 		Route::get('getGameVariationList', 'GameVariationController@getGameVariationList')->name('getGameVariationList');
-		Route::get('deleteImage', 'GameVariationController@deleteImage')->name('deleteImage');
+		Route::delete('deleteImage', 'GameVariationController@deleteImage')->name('deleteImage');
 	});
 
 

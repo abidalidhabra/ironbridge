@@ -3,7 +3,7 @@
 	<input type="text"  name="variationSize" id="variationSize" class="form-control">
 </div>
 <div class="form-group col-md-6">
-	<label class="form-label">Variation Image <small class="form-text text-muted">must be 2000*1440 dimension</small></</label>
+	<label class="form-label">Variation Image <small class="form-text text-muted">must be 1440*2000 dimension</small></</label>
 	<input type="file"  name="variation_image[]" class="form-control" id="variation_image" multiple>
 </div>
 

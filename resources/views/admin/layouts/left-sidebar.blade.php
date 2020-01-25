@@ -67,7 +67,7 @@
 									@endif
 
 									@if($admin->hasPermissionTo('Add Practice Games'))
-										<a href="{{ route('admin.practiceGame.index') }}" class="@if(Route::currentRouteName() == 'admin.practiceGame.index' || Route::currentRouteName() == 'admin.practiceGame.edit' || Route::currentRouteName() == 'admin.practiceGame.show') {{ 'activelistsub' }} @endif" >Mini Games XP/Score</a>
+										<a href="{{ route('admin.practiceGame.index') }}" class="@if(Route::currentRouteName() == 'admin.practiceGame.index' || Route::currentRouteName() == 'admin.practiceGame.edit' || Route::currentRouteName() == 'admin.practiceGame.show') {{ 'activelistsub' }} @endif" >Practice MG Settings</a>
 									@endif
 
 								</div>
