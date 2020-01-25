@@ -8,7 +8,7 @@
         "filter": {
             "maxLocationCount": 1000,
             "spacing": {
-                "minSpacingMeters": 10,
+                "minSpacingMeters": 25,
                 "pointType": 1
             },
             "includedTypes": ["airport", "amusement_park", "arts", "atm", "bank", "name", "beach", "boating", "bridge", "cafe", "campground", "car_rental", "casino", "embassy", "event_space", "farm", "fire_station", "fishing", "garden", "gas_station", "golf_course", "government", "grocery_store", "historic", "hospital", "hot_spring", "indoor", "industrial", "library", "lighthouse", "lodging", "military", "movie", "museum", "park", "parking_lot", "pharmacy", "place_of_worship", "buddhist_temple", "church", "gurdwara", "hindu_temple", "jain_temple", "mormon_temple", "mosque", "shinto_shrine", "synagogue", "police_station", "post_office", "restaurant", "restroom", "rest_stop", "road", "school", "shopping", "sports", "stadium", "tourist_attraction", "town_square", "trailhead", "transit", "university", "winery", "zoo"],
