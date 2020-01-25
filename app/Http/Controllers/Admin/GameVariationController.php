@@ -430,6 +430,7 @@ class GameVariationController extends Controller
             return response()->json(['message'=>'There atleast single image should be present.'], 422);
         }else{
             $variation->unset('variation_image.'.$index);
+            Storage::disk('public')->delete('game_variations/'.$variation->getOriginal('variation_image')[$index]);
             return response()->json(['status'=>true, 'message'=>'Variation image has been deleted successfully.']);
         }
     }
