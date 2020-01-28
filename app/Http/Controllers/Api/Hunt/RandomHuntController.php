@@ -20,6 +20,7 @@ use App\Repositories\Hunt\GetRelicHuntParticipationRepository;
 use App\Repositories\Hunt\HuntUserDetailRepository;
 use App\Repositories\Hunt\HuntUserRepository;
 use App\Repositories\Hunt\ParticipationInRandomHuntRepository;
+use App\Repositories\Hunt\TerminateTheLastRandomHuntRepository;
 use App\Repositories\User\UserRepository;
 use App\Services\Hunt\PaybleCellProviderService;
 use Exception;
@@ -91,6 +92,24 @@ class RandomHuntController extends Controller
     //     $hunt_user->hunt_user_details()->where('status', '!=', 'completed')->update(['status'=> 'terminated']);
     //     return response()->json(['message' => 'Hunt is successfully terminated.']);
     // }
+
+    public function terminate(Request $request)
+    {
+
+        $validator = Validator::make($request->all(),[
+            'relic_hunt'  => 'required|in:true,false',
+        ]);
+
+        if ($validator->fails()){
+            return response()->json(['message' => $validator->messages()->first()], 422);
+        }
+
+        (new TerminateTheLastRandomHuntRepository)
+            ->terminate(
+                ($request->relic_hunt == 'true')? true: false
+            );
+        return response()->json(['message' => 'Hunt is successfully terminated.']);
+    }
 
     public function revokeTheReveal(RevokeTheRevealRequest $request)
     {
