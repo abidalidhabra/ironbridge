@@ -318,13 +318,13 @@ class UserController extends Controller
         $huntUser = HuntUser::with([
                                 'hunt_user_details:_id,hunt_user_id,status,finished_in',
                                 'relic:_id,name',
-                                'relic_reference:_id,name',
+                                // 'relic_reference:_id,name',
                             ])
                             ->where('user_id',$userId)
                             ->whereIn('status',$status_value)
                             ->where(function($query) use ($request){
                                 if ($request->type == 'random') {
-                                    $query->whereNotNull('relic_reference_id');
+                                    $query->whereNull('relic_id');
                                 } elseif ($request->type == 'relic') {
                                     $query->whereNotNull('relic_id');
                                 }
