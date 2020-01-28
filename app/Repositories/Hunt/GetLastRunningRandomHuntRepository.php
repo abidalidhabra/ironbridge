@@ -19,7 +19,7 @@ class GetLastRunningRandomHuntRepository
                     ->whereIn('status', ['participated', 'running', 'paused'])
                     ->whereNull('relic_id')
                     ->latest()
-                    ->select('_id', 'user_id', 'status', 'complexity', 'relic_reference_id')
+                    ->select('_id', 'user_id', 'status', 'complexity')
                     ->first();
 
         if ($huntUser) {

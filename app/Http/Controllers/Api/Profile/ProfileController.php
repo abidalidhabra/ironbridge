@@ -77,7 +77,8 @@ class ProfileController extends Controller
                     'chests_bucket'=> $user->buckets['chests'],
                     'loot_rewards'=> $chestService->getLootRewards(),
                     'chest_rewards'=> $chestService->getChestRewards(),
-                    'agent_status'=> $user->agent_status
+                    'agent_status'=> $user->agent_status,
+                    'relic_info'=> $chestService->getRelicInfo(),
                 ]); 
             }else{
                 return response()->json(['message' => 'You don\'t have chest in your account to open.'], 422); 

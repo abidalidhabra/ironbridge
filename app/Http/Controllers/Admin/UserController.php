@@ -262,7 +262,8 @@ class UserController extends Controller
                 ->get()
                 ->map(function($relic) use ($user) {
                     $relic->acquired = $user->relics->where('id', $relic->_id)->first();
-                    $relic->collected_pieces = $relic->hunt_users_reference()->where(['status'=> 'completed', 'user_id'=> $user->id])->count();
+                    // $relic->collected_pieces = $relic->hunt_users_reference()->where(['status'=> 'completed', 'user_id'=> $user->id])->count();
+                    $relic->collected_pieces = 0;
                     return $relic; 
                 });
                 

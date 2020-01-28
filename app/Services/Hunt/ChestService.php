@@ -8,6 +8,7 @@ use App\Repositories\Hunt\GetRandomizeGamesService;
 use App\Repositories\User\UserRepository;
 use App\Services\Hunt\ChestRewardsService;
 use App\Services\Hunt\LootDistribution\OldLootService;
+use App\Services\Hunt\RelicService;
 use App\Services\MiniGame\MiniGameInfoService;
 use App\Services\Traits\UserTraits;
 use GuzzleHttp\Client;
@@ -20,18 +21,7 @@ class ChestService
 	protected $userBuckets;
 	protected $lootRewards = [];
 	protected $bucketRestored = false;
-
-    /**
-     * @param mixed $userBuckets
-     *
-     * @return self
-     */
-    public function setUserBuckets($userBuckets)
-    {
-        $this->userBuckets = $userBuckets;
-
-        return $this;
-    }
+	protected $relicInfo;
 
     public function expand($amount)
     {
@@ -87,6 +77,10 @@ class ChestService
         	(new ChestRewardsService)->setUser($this->user)->get()
         );
 
+        $this->setRelicInfo(
+        	(new RelicService)->setUser($this->user)->addMapPiece()
+        );
+
 		return $this;
 	}
 
@@ -138,27 +132,7 @@ class ChestService
 		// }
 	}
 
-    /**
-     * @return mixed
-     */
-    public function getLootRewards()
-    {
-        return $this->lootRewards;
-    }
-
-    /**
-     * @param mixed $lootRewards
-     *
-     * @return self
-     */
-    public function setLootRewards($lootRewards)
-    {
-        $this->lootRewards = $lootRewards;
-
-        return $this;
-    }
-
-    public function remove()
+	public function remove()
     {
     	$this->setUserBuckets(
 			$this->user->buckets
@@ -183,6 +157,38 @@ class ChestService
 			$this->setBucketRestored(true);
     	}
     	return $this;
+    }
+
+	/**
+     * @param mixed $userBuckets
+     *
+     * @return self
+     */
+    public function setUserBuckets($userBuckets)
+    {
+        $this->userBuckets = $userBuckets;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLootRewards()
+    {
+        return $this->lootRewards;
+    }
+
+    /**
+     * @param mixed $lootRewards
+     *
+     * @return self
+     */
+    public function setLootRewards($lootRewards)
+    {
+        $this->lootRewards = $lootRewards;
+
+        return $this;
     }
 
     /**
@@ -221,6 +227,26 @@ class ChestService
     public function setChestRewards($chestRewards)
     {
         $this->chestRewards = $chestRewards;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRelicInfo()
+    {
+        return $this->relicInfo;
+    }
+
+    /**
+     * @param mixed $relicInfo
+     *
+     * @return self
+     */
+    public function setRelicInfo($relicInfo)
+    {
+        $this->relicInfo = $relicInfo;
 
         return $this;
     }

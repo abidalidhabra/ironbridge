@@ -14,7 +14,7 @@ class GetHuntParticipationDetailRepository
         // get hunt user info
         $huntUser = (new HuntUserRepository)
                     ->where('_id', $huntUserId)
-                    ->select('_id', 'user_id', 'status', 'complexity', 'estimated_time', 'relic_reference_id')
+                    ->select('_id', 'user_id', 'status', 'complexity', 'estimated_time')
                     ->first();
             
             // get clues info

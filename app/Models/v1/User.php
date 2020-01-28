@@ -5,6 +5,7 @@ namespace App\Models\v1;
 use App\Models\v2\AgentComplementary;
 use App\Models\v2\MinigameHistory;
 use App\Models\v2\Relic;
+use App\Models\v2\UserRelicMapPiece;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -383,5 +384,10 @@ class User extends Authenticatable implements JWTSubject
     public function setAppleDataAttribute($value)
     {
         return $this->attributes['apple_data'] = json_decode($value, true);
+    }
+
+    public function user_relic_map_pieces()
+    {
+        return $this->hasMany(UserRelicMapPiece::class);
     }
 }

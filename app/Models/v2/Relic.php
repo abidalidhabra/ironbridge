@@ -6,6 +6,7 @@ use App\Models\v2\HuntRewardDistributionHistory;
 use App\Models\v2\HuntUser;
 use App\Models\v2\Loot;
 use App\Models\v2\Season;
+use App\Models\v2\UserRelicMapPiece;
 use Illuminate\Database\Eloquent\Model;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 use Storage;
@@ -75,13 +76,18 @@ class Relic extends Eloquent
         return $this->hasMany(HuntUser::class);
     }    
 
-    public function hunt_users_reference()
-    {
-        return $this->hasMany(HuntUser::class, 'relic_reference_id');
-    }
+    // public function hunt_users_reference()
+    // {
+    //     return $this->hasMany(HuntUser::class, 'relic_reference_id');
+    // }
 
     public function loot_info()
     {
         return $this->belongsToMany(Loot::class, null, 'relics','loot_tables');
+    }
+
+    public function map_pieces()
+    {
+        return $this->hasMany(UserRelicMapPiece::class);
     }
 }

@@ -335,24 +335,17 @@ class UserRepository implements UserRepositoryInterface
     public function streamingRelic()
     {
         $userRelics = User::find($this->user->id, ['_id', 'relics'])->relics;
-        $relic = (new RelicRepository)->getModel()->when(($userRelics->count() > 0), function($query) use ($userRelics) {
+        $relic = (new RelicRepository)->getModel()
+                ->when(($userRelics->count() > 0), function($query) use ($userRelics) {
                     $query->whereNotIn('_id', $userRelics->pluck('id')->toArray());
                 })
                 ->active()
                 ->orderBy('number', 'asc')
-                ->select('_id', 'name', 'number', 'active', 'pieces')
+                ->select('_id', 'name', 'number', 'active', 'pieces', 'icon')
                 ->first();
-        // $relic = (new RelicRepository)->getModel()->when(($this->user->relics->count() > 0), function($query) {
-        //             $query->whereNotIn('_id', $this->user->relics->pluck('id')->toArray());
-        //         })
-        //         ->active()
-        //         // ->orderBy('created_at', 'asc')
-        //         ->orderBy('number', 'asc')
-        //         ->select('_id', 'name', 'number', 'active', 'pieces')
-        //         ->first();
 
         if ($relic) {
-            $relic->collected_pieces = $relic->hunt_users_reference()->where(['status'=> 'completed', 'user_id'=> $this->user->id])->count();
+            $relic->collected_pieces = $relic->map_pieces()->where(['user_id'=> $this->user->id])->count();
         }
         return $relic;
     }

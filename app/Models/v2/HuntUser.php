@@ -24,7 +24,7 @@ class HuntUser extends Eloquent
         'estimated_time',
         'relic_id',
         'collected_piece',
-        'relic_reference_id',
+        // 'relic_reference_id',
     ];
 
     protected $dates = [
@@ -80,8 +80,8 @@ class HuntUser extends Eloquent
         return $this->belongsTo(Relic::class, 'relic_id', '_id');
     }
 
-    public function relic_reference()
-    {
-        return $this->belongsTo(Relic::class, 'relic_reference_id', '_id');
-    }
+    // public function relic_reference()
+    // {
+    //     return $this->belongsTo(Relic::class, 'relic_reference_id', '_id');
+    // }
 }

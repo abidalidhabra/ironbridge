@@ -47,7 +47,7 @@ class CompleteTheClueRepository implements ClueInterface
 
         // get single hunt user detail
         $this->huntUserDetail = (new HuntUserDetailRepository)->find($request->hunt_user_details_id);
-        $this->huntUser   = $this->huntUserDetail->hunt_user()->select('_id', 'complexity', 'user_id', 'relic_reference_id', 'relic_id')->first();
+        $this->huntUser   = $this->huntUserDetail->hunt_user()->select('_id', 'complexity', 'user_id', 'relic_id')->first();
         $huntUserDetails  = $this->huntUserDetail->hunt_user->hunt_user_details()->get();
 
         // check if hunt is completed
@@ -81,17 +81,11 @@ class CompleteTheClueRepository implements ClueInterface
             
             if ($this->huntUser->relic_id) {
                 $rewardData = $this->generateRelicReward();
-                $rewardData['collected_relic'] = (new AddRelicService)->setUser($this->user)->setRelicId($this->huntUser->relic_id)
-                                                ->activate()->getRelic(['_id', 'complexity','icon', 'number']);
+                $rewardData['collected_relic'] = (new AddRelicService)->setUser($this->user)->setRelicId($this->huntUser->relic_id)->activate()->getRelic(['_id', 'complexity','icon', 'number']);
             }else{
                 
-                // Add Map Piece OR Provide XP REWARDS
                 (new ChestService)->setUser($this->user)->add();
-                $data = $this->addMapPiece();
-                $rewardData = array_merge(
-                    ['chests_bucket'=> $this->user->buckets['chests']], $data
-                );
-                // $rewardData = array_merge($rewardData, $data);
+                $rewardData['chests_bucket'] = $this->user->buckets['chests'];
             }
             $huntCompleted = true;
         }
@@ -135,39 +129,39 @@ class CompleteTheClueRepository implements ClueInterface
         (new MinigameEventFactory('hunt', 'completed', $data))->add();
     }
 
-    public function addPiece($pieceRemaining)
-    {
-        $this->huntUser->collected_piece = $pieceRemaining;
-        $this->huntUser->save();
-        return $pieceRemaining;
-    }
+    // public function addPiece($pieceRemaining)
+    // {
+    //     $this->huntUser->collected_piece = $pieceRemaining;
+    //     $this->huntUser->save();
+    //     return $pieceRemaining;
+    // }
 
-    public function addMapPiece()
-    {
-        /**
-            -> Add relic in user's account IF:
-                -> relic field is not null.
-                -> all map pieces have collected.
-        **/
-        $data = [ 'collected_piece'=> 0, 'collected_relic'=> new stdClass ];
-        $relic = $this->huntUser->relic_reference()->select('_id', 'pieces')->first();
-        if ($relic) {
-            $totalTreasureCompleted = $this->user->hunt_user_v1()
-                                        ->where(['relic_reference_id'=> $this->huntUser->relic_reference_id, 'status'=> 'completed'])
-                                        ->count();
+    // public function addMapPiece()
+    // {
+    //     /**
+    //         -> Add relic in user's account IF:
+    //             -> relic field is not null.
+    //             -> all map pieces have collected.
+    //     **/
+    //     $data = [ 'collected_piece'=> 0, 'collected_relic'=> new stdClass ];
+    //     $relic = $this->huntUser->relic_reference()->select('_id', 'pieces')->first();
+    //     if ($relic) {
+    //         $totalTreasureCompleted = $this->user->hunt_user_v1()
+    //                                     ->where(['relic_reference_id'=> $this->huntUser->relic_reference_id, 'status'=> 'completed'])
+    //                                     ->count();
                                         
-            $totalPiecesRemaining = $relic->pieces - $totalTreasureCompleted;
-            if ($totalPiecesRemaining <= 0) {
-                $data['collected_relic'] = (new AddRelicService)->setUser($this->user)->setRelicId($this->huntUser->relic_reference_id)->add()->getRelic(['_id', 'complexity','icon', 'number']);
-                $data['collected_piece'] = $this->addPiece($totalTreasureCompleted);
-                $data['streaming_relic'] = $this->userRepository->streamingRelic();
-                return $data;
-            }else {
-                $data['collected_piece'] = $this->addPiece($totalTreasureCompleted);
-            }
-        }
-        return $data;
-    }
+    //         $totalPiecesRemaining = $relic->pieces - $totalTreasureCompleted;
+    //         if ($totalPiecesRemaining <= 0) {
+    //             $data['collected_relic'] = (new AddRelicService)->setUser($this->user)->setRelicId($this->huntUser->relic_reference_id)->add()->getRelic(['_id', 'complexity','icon', 'number']);
+    //             $data['collected_piece'] = $this->addPiece($totalTreasureCompleted);
+    //             $data['streaming_relic'] = $this->userRepository->streamingRelic();
+    //             return $data;
+    //         }else {
+    //             $data['collected_piece'] = $this->addPiece($totalTreasureCompleted);
+    //         }
+    //     }
+    //     return $data;
+    // }
 
     // public function addXP($treasureCompleted)
     // {

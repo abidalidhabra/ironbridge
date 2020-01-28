@@ -2,216 +2,89 @@
 
 namespace App\Services\Hunt;
 
+use App\Repositories\User\UserRepository;
+use App\Services\User\AddRelicService;
+use stdClass;
+
 class RelicService
 {
-	use UserTraits;
 
-	protected $chestRewards;
-	protected $userBuckets;
-	protected $lootRewards = [];
-	protected $bucketRestored = false;
+	public $user;
+	public $relic;
+	public $dataToReturn;
+	public $userRepository;
 
-    /**
-     * @param mixed $userBuckets
-     *
-     * @return self
-     */
-    public function setUserBuckets($userBuckets)
-    {
-        $this->userBuckets = $userBuckets;
-
-        return $this;
-    }
-
-    public function expand($amount)
-    {
-    	$this->setUserBuckets(
-			$this->user->buckets
-		);
-
-		$this->userBuckets['chests']['capacity'] += $amount;
-		$this->userBuckets['chests']['remaining'] += $amount;
-		$this->save();
-    }
-
-	public function add()
+	public function __construct()
 	{
-		$this->setUserBuckets(
-			$this->user->buckets
-		);
-
-		// if ($this->userBuckets['chests']['collected'] >= $this->userBuckets['chests']['capacity']) {
-		// 	throw new ChestBucketCapacityOverflowException("You don't have enough capacity to hold this chest");
-		// }else{
-		// 	$this->userBuckets['chests']['minigame_id'] = $this->generateMiniGame()->id;
-		// 	$this->userBuckets['chests']['collected'] += 1;
-		// 	$this->userBuckets['chests']['remaining'] -= 1;
-		// 	$this->save();
-		// }
-		
-		$this->userBuckets['chests']['minigame_id'] = $this->generateMiniGame()->id;
-		$this->userBuckets['chests']['collected'] += 1;
-		$this->userBuckets['chests']['remaining'] -= 1;
-		$this->save();
+        $dataToReturn = [ 'collected_piece'=> 0, 'collected_relic'=> new stdClass ];
 	}
 
-	public function open()
+	public function relic()
 	{
-		$this->setUserBuckets(
-			$this->user->buckets
-		);
-		
-		$this->userBuckets['chests']['collected'] -= 1;
-		
-		$this->userBuckets['chests']['remaining'] += 1;
-
-		$this->userBuckets['chests']['minigame_id'] = $this->generateMiniGame()->id;
-		
-		$this->save();
-
-        $this->setLootRewards(
-        	(new OldLootService)->setUser($this->user)->generate()
-        );        
-
-        $this->setChestRewards(
-        	(new ChestRewardsService)->setUser($this->user)->get()
+        $this->setRelic(
+        	$this->userRepository->streamingRelic()
         );
-
-		return $this;
 	}
 
-	public function save()
-	{
-		$this->user->buckets = $this->userBuckets;
-		$this->user->save();
-	}
-
-	public function generateMiniGame()
-	{
-		return (new GetRandomizeGamesService)->setUser($this->user)->first();
-	}
-
-	public function getMiniGame()
-	{
-		
-		$this->setUserBuckets(
-			$this->user->buckets
-		);
-
-		// return (new GetRandomizeGamesService)
-		// 		->setUser($this->user)
-		// 		->first(
-		// 			$this->userBuckets['chests']['minigame_id'] ?? null
-		// 		);
-		return (new MiniGameInfoService)->setUser($this->user)->chestMiniGame();
-	}
-
-	public function changeChestMiniGame()
-	{
-
-		$this->setUserBuckets(
-			$this->user->buckets
-		);
-
-		$this->userBuckets['chests']['minigame_id'] = (new GetRandomizeGamesService)->setUser($this->user)->first(null, [$this->userBuckets['chests']['minigame_id']])->id;
-
-		$this->cutTheCharge();
-		
-		$this->save();
-	}
-
-	public function cutTheCharge()
-	{
-		$huntStatistic = (new HuntStatisticRepository)->first(['id', 'retention_hunt']);
-		// if ($user->gold_balance >= $huntStatistic->retention_hunt['refresh_mg_charge']) {
-			return (new UserRepository($this->user))->deductGold($huntStatistic->retention_hunt['refresh_mg_charge'] ?? 1);
-		// }
-	}
-
-    /**
-     * @return mixed
-     */
-    public function getLootRewards()
+	public function addMapPiece()
     {
-        return $this->lootRewards;
+    	
+    	$this->relic();
+
+        if ($this->relic) {
+            
+            $collected = $this->collectedPieces();
+            $totalPiecesRemaining = $this->relic->pieces - $collected;
+            if ($totalPiecesRemaining <= 1) {
+                $this->dataToReturn['collected_relic'] = $this->addRelic();
+                $this->dataToReturn['streaming_relic'] = $this->userRepository->streamingRelic();
+            }
+            $this->dataToReturn['collected_piece'] = $this->addPiece();
+        }
+        return $this->dataToReturn;
+    }
+
+    public function addRelic()
+    {
+    	return (new AddRelicService)
+    			->setUser($this->user)
+    			->setRelicId($this->relic->id)
+    			->add()
+    			->getRelic(['_id', 'complexity','icon', 'number']);
+    }
+
+    public function addPiece()
+    {
+    	$this->user->user_relic_map_pieces()->create(['relic_id'=> $this->relic->id]);
+    	return $this->collectedPieces();
+    }
+
+    public function collectedPieces()
+    {
+    	return $this->user->user_relic_map_pieces()->where(['relic_id'=> $this->relic->id])->count();
     }
 
     /**
-     * @param mixed $lootRewards
+     * @param mixed $relic
      *
      * @return self
      */
-    public function setLootRewards($lootRewards)
+    public function setRelic($relic)
     {
-        $this->lootRewards = $lootRewards;
-
-        return $this;
-    }
-
-    public function remove()
-    {
-    	$this->setUserBuckets(
-			$this->user->buckets
-		);
-
-		$this->userBuckets['chests']['collected'] -= 1;
-		$this->userBuckets['chests']['remaining'] += 1;
-		
-		$this->save();
-    }
-
-    public function sync()
-    {
-    	$this->setUserBuckets(
-			$this->user->buckets
-		);
-
-    	if ($this->userBuckets['chests']['collected'] > $this->userBuckets['chests']['capacity']) {
-			$this->userBuckets['chests']['collected'] = $this->userBuckets['chests']['capacity'];
-			$this->userBuckets['chests']['remaining'] = 0;
-			$this->save();
-			$this->setBucketRestored(true);
-    	}
-    	return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getBucketRestored()
-    {
-        return $this->bucketRestored;
-    }
-
-    /**
-     * @param mixed $bucketRestored
-     *
-     * @return self
-     */
-    public function setBucketRestored($bucketRestored)
-    {
-        $this->bucketRestored = $bucketRestored;
+        $this->relic = $relic;
 
         return $this;
     }
 
     /**
-     * @return mixed
-     */
-    public function getChestRewards()
-    {
-        return $this->chestRewards;
-    }
-
-    /**
-     * @param mixed $chestRewards
+     * @param mixed $user
      *
      * @return self
      */
-    public function setChestRewards($chestRewards)
+    public function setUser($user)
     {
-        $this->chestRewards = $chestRewards;
-
+        $this->user = $user;
+		$this->userRepository = new UserRepository($this->user);
         return $this;
     }
 }
