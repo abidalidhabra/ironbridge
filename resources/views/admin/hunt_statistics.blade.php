@@ -5,7 +5,7 @@
 <div class="right_paddingboxpart">
     <div class="customdatatable_box" id="formContainer">
         <div class="users_datatablebox">
-            <h3>Hunt Statistics</h3>
+            <h3>Distance and XP</h3>
         </div>
         <form method="POST" id="updateHuntStatisticForm" class="appstbboxcover" action="{{ route('admin.app.settings.update') }}">
             @csrf

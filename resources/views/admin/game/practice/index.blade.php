@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | Mini Games XP/Score')
+@section('title','Ironbridge1779 | Practice Targets')
 @extends('admin.layouts.admin-app')
 @section('styles')
 <!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->
@@ -8,7 +8,7 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Mini Games XP/Score</h3>
+                <h3>Practice Targets</h3>
             </div>
         </div>
     </div>

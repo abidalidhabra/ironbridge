@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | NEWS')
+@section('title','Ironbridge1779 | Random Hunt Variations')
 @extends('admin.layouts.admin-app')
 @section('styles')
 <!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->
@@ -8,7 +8,7 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Game Variations</h3>
+                <h3>Random Hunt Variations</h3>
             </div>
             @if(auth()->user()->hasPermissionTo('Add Game Variations'))
             <div class="col-md-6 text-right modalbuttonadd">
