@@ -65,7 +65,7 @@ class AnalyticMetricController extends Controller
         /* HUNTS */
         $data['played_random_hunts'] = number_format(($huntUser->groupBy('user_id')->count()/$data['total_user'])*100,2).'%';
         
-        $data['completed_random_hunts'] = number_format(($huntUser->where('status','completed')->where('relic_reference_id','!=',null)->groupBy('user_id')->count()/$huntUser->count())*100,2).'%';
+        $data['completed_random_hunts'] = number_format(($huntUser->where('status','completed')->where('relic_id','==',null)->groupBy('user_id')->count()/$huntUser->count())*100,2).'%';
 
         $data['played_relic_hunts'] = number_format(($huntUser->where('relic_id','!=',null)->groupBy('user_id')->count()/$data['total_user'])*100,2).'%';
         
@@ -164,13 +164,13 @@ class AnalyticMetricController extends Controller
         $user = User::get();
 
         /* HUNTS */
-        $data['completed_random_hunts'] = number_format(($huntUser->where('status','completed')->where('relic_reference_id','!=',null)->count()/$huntUser->count())*100,2).'%';
+        $data['completed_random_hunts'] = number_format(($huntUser->where('status','completed')->where('relic_id','==',null)->count()/$huntUser->count())*100,2).'%';
 
         $data['completed_relic_hunts'] = number_format(($huntUser->where('relic_id','!=',null)->where('status','completed')->count()/$huntUser->count())*100,2).'%';
 
         $data['played_random_hunts'] = number_format(($huntUser->groupBy('user_id')->count()/$user->count())*100,2).'%';
         
-        $data['completed_random_hunts'] = number_format(($huntUser->where('status','completed')->where('relic_reference_id','!=',null)->groupBy('user_id')->count()/$huntUser->count())*100,2).'%';
+        $data['completed_random_hunts'] = number_format(($huntUser->where('status','completed')->where('relic_id','==',null)->groupBy('user_id')->count()/$huntUser->count())*100,2).'%';
 
         $data['played_relic_hunts'] = number_format(($huntUser->where('relic_id','!=',null)->groupBy('user_id')->count()/$user->count())*100,2).'%';
         
