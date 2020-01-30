@@ -15,6 +15,7 @@ class HuntStatistic extends Eloquent
     	'refreshable_distances',
     	'distances',
     	'freeze_till',
-    	'chest_xp'
+    	'chest_xp',
+        'mg_change_charge'
     ];
 }

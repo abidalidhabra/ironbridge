@@ -7,8 +7,8 @@ use App\Helpers\UserHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\LoginRequest;
 use App\Repositories\AppStatisticRepository;
-use App\Repositories\MiniGameRepository;
 use App\Services\User\Authentication\LoginService;
+use App\Services\User\PostRegisterService;
 use Exception;
 use Illuminate\Http\Request;
 use stdClass;
@@ -41,9 +41,7 @@ class AuthController extends Controller
                 
                 $user = $registrationService->getUser();
 
-                (new MiniGameRepository($user))->createIfnotExist();
-
-                UserHelper::minigameTutorials($user);
+                (new PostRegisterService)->setUser($user)->configure();
 
                 $defaultData = new stdClass();
                 if($newRegistration = $registrationService->getNewRegistration()) {

@@ -86,11 +86,21 @@
                             </label>
                             <input type="number" name="mgc" class="form-control" placeholder="Enter the mgc" value="{{ ($huntStatistic->freeze_till)?$huntStatistic->freeze_till['mgc']:'' }}">
                         </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <h4>Chest Settings</h4>
+                        <div class="form-group">
+                            <label class="control-label">Fix XP to provide on chest opening:
+                            </label>
+                            <input type="number" name="chest_xp" class="form-control" placeholder="Enter the XP" value="{{ $huntStatistic->chest_xp }}">
+                        </div>
 
                         <div class="form-group">
-                            <label class="control-label">Fix XP to provide on chest open:
+                            <label class="control-label">Golds to cut if user change MG for chest:
                             </label>
-                            <input type="number" name="chest_xp" class="form-control" placeholder="Enter the mgc" value="{{ $huntStatistic->chest_xp }}">
+                            <input type="number" name="mg_change_charge" class="form-control" placeholder="Enter the Gold amount to cut if user change MG for chest" value="{{ $huntStatistic->mg_change_charge }}">
                         </div>
                     </div>
                 </div>
