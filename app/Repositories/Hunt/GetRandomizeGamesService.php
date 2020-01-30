@@ -55,6 +55,10 @@ class GetRandomizeGamesService
                 ->pluck('game')
                 ->first();
 
+        if (!$game) {
+            $game = $this->get(0)->first();
+        }
+
         return $game->load('treasure_nodes_target');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Profile;
 use App\Helpers\UserHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Profile\MarkTutorialAsCompleteRequest;
+use App\Http\Requests\User\ChangeTheChestMGRequest;
 use App\Models\v2\MinigameHistory;
 use App\Repositories\ComplexityTargetRepository;
 use App\Repositories\Game\GameRepository;
@@ -88,14 +89,14 @@ class ProfileController extends Controller
         }
     }
 
-    public function changeTheChestMG(Request $request)
+    public function changeTheChestMG(ChangeTheChestMGRequest $request)
     {
         $user = auth()->user();
         $huntStatistic = (new HuntStatisticRepository)->first(['id', 'retention_hunt']);
         if ($user->gold_balance >= $huntStatistic->retention_hunt['refresh_mg_charge']) {
 
             $chestService = (new ChestService)->setUser($user);
-            $chestService->changeChestMiniGame();
+            $chestService->changeChestMiniGame($request->minigames_ids);
 
             return response()->json([
                 'message'=> 'mini-game has been changed.', 

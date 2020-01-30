@@ -110,14 +110,16 @@ class ChestService
 		return (new MiniGameInfoService)->setUser($this->user)->chestMiniGame();
 	}
 
-	public function changeChestMiniGame()
+	public function changeChestMiniGame($MGIds)
 	{
 
 		$this->setUserBuckets(
 			$this->user->buckets
 		);
 
-		$this->userBuckets['chests']['minigame_id'] = (new GetRandomizeGamesService)->setUser($this->user)->first(null, [$this->userBuckets['chests']['minigame_id']])->id;
+        $this->userBuckets['chests']['minigame_id'] = (new GetRandomizeGamesService)->setUser($this->user)->first(
+            null, $MGIds
+        )->id;
 
 		$this->cutTheCharge();
 		
