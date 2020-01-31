@@ -107,6 +107,7 @@ class UserHelper {
 			'nodes_enable_on'=> $specialAminities,
 			'chest_minigame'=> $miniGameInfoService,
 			'chest_synced'=> $chestMinigame->getBucketRestored(),
+			'hat_selected'=> $user->hat_selected,
 			// 'used_widgets' => $user->used_widgets,
 			// 'plans' => $plans,
 			// 'events_data' => $events,

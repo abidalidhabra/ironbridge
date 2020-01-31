@@ -399,6 +399,7 @@ class UserController extends Controller
             'hairs_color' => $hairColor,
             'skin_color' => $skinColors,
         ];
+        $user->hat_selected = filter_var($request->hat_selected, FILTER_VALIDATE_BOOLEAN);
         $user->save();
 
         /*********************************************************************************************************/
@@ -433,13 +434,13 @@ class UserController extends Controller
         ]);
         /*********************************************************************************************************/
 
-        // if (!$hairsProvided) {
-        //     if ($user->gender == 'female') {
-        //         $widgets[] = '5d4424455c60e6147cf181b4';
-        //     }else{
-        //         $widgets[] = '5d4423d65c60e6147cf181a6';
-        //     }
-        // }
+        if (!$hairsProvided) {
+            if ($user->gender == 'female') {
+                $widgets[] = '5d4424455c60e6147cf181b4';
+            }else{
+                $widgets[] = '5d4423d65c60e6147cf181a6';
+            }
+        }
         User::where('_id',$user->id)
             ->update(['widgets.$[identifier].selected'=> true],[
                 'arrayFilters'=> [ 
@@ -447,10 +448,10 @@ class UserController extends Controller
                 ]
             ]);
         
-        $user = User::where('_id', $userId)->select('_id', 'avatar', 'widgets')->first();
+        $user = User::where('_id', $userId)->select('_id', 'avatar', 'widgets', 'hat_selected')->first();
         return response()->json([
             'message' => 'Your avatar has been updated successfully.', 
-            'data'=> $user
+            'data'=> $user,
         ]);
     }
 

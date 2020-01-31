@@ -34,6 +34,7 @@ class SetMyAvatarRequest extends FormRequest
             'skin_color'  => "required|string",
             'widgets'     => "required|array",
             'widgets.*' => "required|string|exists:widget_items,_id",
+            'hat_selected' => "required|string|in:true,false",
         ];
     }
 }
