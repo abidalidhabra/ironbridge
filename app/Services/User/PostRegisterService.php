@@ -15,6 +15,11 @@ class PostRegisterService
     {
         $this->addMinigameTutorialsForUser();
         $this->addPracticeGameUser();
+        return $this;
+    }
+
+    public function configureForNewRegistration()
+    {
         $this->giveMapPiece();
         return $this;
     }

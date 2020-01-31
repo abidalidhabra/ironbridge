@@ -669,7 +669,8 @@ class UserController extends Controller
                 $field == 'power_status' ||
                 $field == 'ar_mode' ||
                 $field == 'avatar' ||
-                $field == 'nodes_status'
+                $field == 'nodes_status' ||
+                $field == 'buckets'
             ) {
                 $user->$field = $value;
             }

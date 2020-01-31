@@ -41,10 +41,12 @@ class AuthController extends Controller
                 
                 $user = $registrationService->getUser();
 
-                (new PostRegisterService)->setUser($user)->configure();
+                $postRegisterService = (new PostRegisterService)->setUser($user);
+                $postRegisterService->configure();
 
                 $defaultData = new stdClass();
                 if($newRegistration = $registrationService->getNewRegistration()) {
+                    $postRegisterService->configureForNewRegistration();
                     $apiResponse = $this->getPayloadData($request);
                     $defaultData = $apiResponse->original['data'];
                 }
