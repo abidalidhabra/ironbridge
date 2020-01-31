@@ -684,7 +684,9 @@ class UserController extends Controller
         $user->practice_games()->delete();
         $user->plans_purchases()->delete();
         $user->events()->delete();
-        $user->user_relic_map_pieces()->delete();
+        $user->user_relic_map_pieces()->orderBy('created_at', 'asc')->skip(1)->get()->each(function($row){ 
+            $row->delete(); 
+        });
         $user->save();
         return response()->json(['message'=> 'Account has been successfully reset.']);
     }
