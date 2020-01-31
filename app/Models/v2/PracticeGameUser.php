@@ -4,6 +4,7 @@ namespace App\Models\v2;
 
 // use Illuminate\Database\Eloquent\Model;
 use App\Collections\MiniGameCollection;
+use App\Models\v1\User;
 use App\Models\v2\MinigameHistory;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 use MongoDB\BSON\UTCDateTime;
@@ -30,6 +31,11 @@ class PracticeGameUser extends Eloquent
     public function setCompletedAtAttribute($value)
     {
     	$this->attributes['completed_at'] = new UTCDateTime($value);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function game()
