@@ -9,7 +9,7 @@
             @method('PUT')
             <div class="appstbboxin">
                 <h4>App Settings</h4>
-                <div class="form-group">
+               <!--  <div class="form-group">
                     <label class="control-label">Maintenance Mode:</label>
                     <label class="radio-inline">
                         <input 
@@ -25,7 +25,7 @@
                         value="false" 
                         {{ ($settings->maintenance == false)? 'checked': '' }}>OFF
                   </label>
-                </div>
+                </div> -->
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">

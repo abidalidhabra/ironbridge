@@ -16,14 +16,18 @@ class CheckIfAppInMaintainanceMode
 	{
 		$this->serverAppInfo = (new AppStatisticRepository)->first(['id', 'maintenance', 'maintenance_time']);
 		if (
-			$this->serverAppInfo->maintenance || 
+			// $this->serverAppInfo->maintenance || 
 			(
 				$this->serverAppInfo->maintenance_time && 
 				Carbon::parse($this->serverAppInfo->maintenance_time['start']->toDateTime()) <= now() && 
 				Carbon::parse($this->serverAppInfo->maintenance_time['end']->toDateTime()) >= now()
 			)
 		) {
-			return response()->json(['message' => 'Server is under maintenance mode.'], 503);
+			return response()->json([
+				'message' => 'Server is under maintenance mode.', 
+				'start'=> $this->serverAppInfo->maintenance_time['start']->toDateTime()->format('Y-m-d H:i:s'),
+				'end'=> $this->serverAppInfo->maintenance_time['end']->toDateTime()->format('Y-m-d H:i:s')
+			], 503);
 		}
         return $next($request);
 	}
