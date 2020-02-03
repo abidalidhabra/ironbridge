@@ -68,10 +68,13 @@
 @section('scripts')
 
 <script>
+    let startDate = "{{ $settings->maintenance_time['start']->toDateTime()->format('d-m-Y h:i A') ?? now()->format('D-M-Y h:i A') }}";
+    let endDate = "{{ $settings->maintenance_time['end']->toDateTime()->format('d-m-Y h:i A') ?? now()->format('D-M-Y h:i A') }}";
     /*$('.datepicker').datetimepicker({
         format: 'DD-MM-YYYY hh:mm A'
     });*/
-
+    console.log(moment().utc().format('MMMM Do YYYY, h:mm:ss a'));
+    console.log(startDate);
     $('input[name="maintenance_time"]').daterangepicker({
         timePicker: true,
         // startDate: moment().startOf('hour'),
@@ -79,7 +82,8 @@
         locale: {
           format: 'DD-MM-YYYY hh:mm A'
         },
-        minDate: moment().utc(),
+        startDate: startDate,
+        endDate: endDate,
       });
 
     /*$('#startdate').datetimepicker({
