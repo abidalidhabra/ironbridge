@@ -79,7 +79,7 @@
         locale: {
           format: 'DD-MM-YYYY hh:mm A'
         },
-        minDate: moment()
+        minDate: moment().utc(),
       });
 
     /*$('#startdate').datetimepicker({
