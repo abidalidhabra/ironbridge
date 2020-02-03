@@ -25,14 +25,34 @@
                         value="false" 
                         {{ ($settings->maintenance == false)? 'checked': '' }}>OFF
                   </label>
-              </div>
-               <div class="form-group">
-                    <label class="control-label">Android Version:</label>
-                    <input type="text" name="android_version" class="form-control" value="{{ ($settings->app_versions)?$settings->app_versions['android']:'' }}" placeholder="Enter the android version">
                 </div>
-                <div class="form-group">
-                    <label class="control-label">Ios Version:</label>
-                    <input type="text" name="ios_version" class="form-control" value="{{ $settings->app_versions['ios'] }}" placeholder="Enter the ios version">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">Maintenance Start Time(UTC):</label>
+                            <input type="text" name="start" class="form-control datepicker" value="{{ ($settings->maintenance_time)?$settings->maintenance_time['start']->toDateTime()->format('d-m-Y h:i A'):'' }}" placeholder="Enter the start"  autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">Maintenance End Time(UTC):</label>
+                            <input type="text" name="end" class="form-control datepicker" value="{{ ($settings->maintenance_time)?$settings->maintenance_time['end']->toDateTime()->format('d-m-Y h:i A'):'' }}" placeholder="Enter the end" autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">Android Version:</label>
+                            <input type="text" name="android_version" class="form-control" value="{{ ($settings->app_versions)?$settings->app_versions['android']:'' }}" placeholder="Enter the android version">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">Ios Version:</label>
+                            <input type="text" name="ios_version" class="form-control" value="{{ $settings->app_versions['ios'] }}" placeholder="Enter the ios version">
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label">Base Url:</label>
@@ -48,6 +68,9 @@
 @section('scripts')
 
 <script>
+    $('.datepicker').datetimepicker({
+        format: 'DD-MM-YYYY hh:mm A'
+    });
     $(document).on('submit', '#updateAppSettings', function(e) {
         e.preventDefault();
         // if(validate()) {
