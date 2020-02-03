@@ -29,16 +29,16 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="control-label">Maintenance Start Time(UTC):</label>
-                            <input type="text" name="start" class="form-control datepicker" value="{{ ($settings->maintenance_time)?$settings->maintenance_time['start']->toDateTime()->format('d-m-Y h:i A'):'' }}" placeholder="Enter the start"  autocomplete="off">
+                            <label class="control-label">Maintenance Time(UTC):</label>
+                            <input type="text" name="maintenance_time" class="form-control datepicker" value="{{ ($settings->maintenance_time)?$settings->maintenance_time['start']->toDateTime()->format('d-m-Y h:i A').' - '.$settings->maintenance_time['end']->toDateTime()->format('d-m-Y h:i A'):'' }}" placeholder="Enter the start"  autocomplete="off" id="startdate">
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <!-- <div class="col-md-6">
                         <div class="form-group">
                             <label class="control-label">Maintenance End Time(UTC):</label>
-                            <input type="text" name="end" class="form-control datepicker" value="{{ ($settings->maintenance_time)?$settings->maintenance_time['end']->toDateTime()->format('d-m-Y h:i A'):'' }}" placeholder="Enter the end" autocomplete="off">
+                            <input type="text" name="end" class="form-control datepicker" value="{{ ($settings->maintenance_time)?$settings->maintenance_time['end']->toDateTime()->format('d-m-Y h:i A'):'' }}" placeholder="Enter the end" autocomplete="off" id="enddate">
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="row">
                     <div class="col-md-6">
@@ -68,9 +68,37 @@
 @section('scripts')
 
 <script>
-    $('.datepicker').datetimepicker({
+    /*$('.datepicker').datetimepicker({
         format: 'DD-MM-YYYY hh:mm A'
+    });*/
+
+    $('input[name="maintenance_time"]').daterangepicker({
+        timePicker: true,
+        // startDate: moment().startOf('hour'),
+        // endDate: moment().startOf('hour').add(32, 'hour'),
+        locale: {
+          format: 'DD-MM-YYYY hh:mm A'
+        },
+        minDate: moment()
+      });
+
+    /*$('#startdate').datetimepicker({
+        minDate: new Date(),
+        format: "DD-MM-YYYY hh:mm A",
+        // defaultDate : new Date(),
     });
+    $('#enddate').datetimepicker({
+        minDate: new Date(),
+        format: "DD-MM-YYYY hh:mm A",
+    });
+
+    $("#startdate").on("dp.change", function (e) {
+        $('#enddate').data("DateTimePicker").setMinDate(e.date);
+    });
+    $("#enddate").on("dp.change", function (e) {
+        $('#startdate').data("DateTimePicker").setMaxDate(e.date);
+    });*/
+
     $(document).on('submit', '#updateAppSettings', function(e) {
         e.preventDefault();
         // if(validate()) {

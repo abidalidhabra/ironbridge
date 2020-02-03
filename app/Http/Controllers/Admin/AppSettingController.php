@@ -20,8 +20,8 @@ class AppSettingController extends Controller
     {
          $validator = Validator::make($request->all(),[
             'android_version'  => 'required',
-            'start'      => 'required',
-            'end'      => 'required',
+            'maintenance_time'      => 'required',
+            // 'end'      => 'required',
             'ios_version'      => 'required',
             'base_url'         => 'required|url',
         ]);
@@ -32,13 +32,14 @@ class AppSettingController extends Controller
             return response()->json(['status' => false, 'message' => $message]);
         }
         
+        $maintenanceTime = explode(' - ',$request->maintenance_time);
         $appStatistic = AppStatistic::first();
         $appStatistic->maintenance = filter_var($request->maintenance, FILTER_VALIDATE_BOOLEAN);
         $appStatistic->base_url = $request->base_url;
         $appStatistic->app_versions = ['android'=> $request->android_version, 'ios'=> $request->ios_version];
         $appStatistic->maintenance_time = [
-            'start'=> new UTCDateTime(Carbon::parse($request->start)),
-            'end'=> new UTCDateTime(Carbon::parse($request->end))
+            'start'=> new UTCDateTime(Carbon::parse($maintenanceTime[0])),
+            'end'=> new UTCDateTime(Carbon::parse($maintenanceTime[1]))
         ];
         $appStatistic->save();
         return response()->json(['status'=> true, 'message'=> 'Settings updated successfully.']);
