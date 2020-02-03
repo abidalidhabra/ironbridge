@@ -128,9 +128,9 @@ class ChestService
 
 	public function cutTheCharge()
 	{
-		$huntStatistic = (new HuntStatisticRepository)->first(['id', 'retention_hunt']);
+		$huntStatistic = (new HuntStatisticRepository)->first(['id', 'mg_change_charge']);
 		// if ($user->gold_balance >= $huntStatistic->retention_hunt['refresh_mg_charge']) {
-			return (new UserRepository($this->user))->deductGold($huntStatistic->retention_hunt['mg_change_charge'] ?? 1);
+			return (new UserRepository($this->user))->deductGold($huntStatistic->mg_change_charge ?? 1);
 		// }
 	}
 

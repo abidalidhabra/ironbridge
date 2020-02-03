@@ -92,8 +92,8 @@ class ProfileController extends Controller
     public function changeTheChestMG(ChangeTheChestMGRequest $request)
     {
         $user = auth()->user();
-        $huntStatistic = (new HuntStatisticRepository)->first(['id', 'retention_hunt']);
-        if ($user->gold_balance >= $huntStatistic->retention_hunt['refresh_mg_charge']) {
+        $huntStatistic = (new HuntStatisticRepository)->first(['id', 'mg_change_charge']);
+        if ($user->gold_balance >= $huntStatistic->mg_change_charge) {
 
             $chestService = (new ChestService)->setUser($user);
             $chestService->changeChestMiniGame($request->minigames_ids);
