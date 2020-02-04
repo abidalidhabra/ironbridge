@@ -68,8 +68,8 @@
 @section('scripts')
 
 <script>
-    let startDate = "{{ $settings->maintenance_time['start']->toDateTime()->format('d-m-Y h:i A') ?? now()->format('D-M-Y h:i A') }}";
-    let endDate = "{{ $settings->maintenance_time['end']->toDateTime()->format('d-m-Y h:i A') ?? now()->format('D-M-Y h:i A') }}";
+    let startDate = "{{ (isset($settings->maintenance_time['start']))?$settings->maintenance_time['start']->toDateTime()->format('d-m-Y h:i A'): now()->format('D-M-Y h:i A') }}";
+    let endDate = "{{ (isset($settings->maintenance_time['end']))?$settings->maintenance_time['end']->toDateTime()->format('d-m-Y h:i A'): now()->format('D-M-Y h:i A') }}";
     /*$('.datepicker').datetimepicker({
         format: 'DD-MM-YYYY hh:mm A'
     });*/

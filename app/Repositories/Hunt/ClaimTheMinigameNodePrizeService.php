@@ -65,7 +65,12 @@ class ClaimTheMinigameNodePrizeService
 
     public function markMGCAsComplete()
     {
-        $games = $this->user->mgc_status->where('game_id', '!=', $this->gameId);
+        $games = $this->user->mgc_status->where('game_id', '!=', $this->gameId)->map(function($minigame) {
+                        if ($minigame['completed_at']) {
+                            $minigame['completed_at'] = new UTCDateTime;
+                        }
+                        return $minigame;
+                    });
         
         $games->push(
             $game = $this->user->mgc_status->where('game_id', $this->gameId)->map(function($minigame) {
