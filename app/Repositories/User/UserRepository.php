@@ -41,15 +41,17 @@ class UserRepository implements UserRepositoryInterface
 
 	public function addSkeletonKeys(int $keysAmount, $additionalFields = null){
 
-        for ($i=0; $i < $keysAmount; $i++) { 
-            if ($additionalFields) {
-                $skeletonKey[$i] = $additionalFields;
+        if ($keysAmount > 0) {
+            for ($i=0; $i < $keysAmount; $i++) { 
+                if ($additionalFields) {
+                    $skeletonKey[$i] = $additionalFields;
+                }
+                $skeletonKey[$i]['key'] = new ObjectId();
+                $skeletonKey[$i]['created_at'] = new UTCDateTime();
+                $skeletonKey[$i]['used_at'] = null;
             }
-            $skeletonKey[$i]['key'] = new ObjectId();
-            $skeletonKey[$i]['created_at'] = new UTCDateTime();
-            $skeletonKey[$i]['used_at'] = null;
+            $this->user->push('skeleton_keys', $skeletonKey);
         }
-        $this->user->push('skeleton_keys', $skeletonKey);
 
         return $this->user->available_skeleton_keys;
 	}
