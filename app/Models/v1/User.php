@@ -6,6 +6,7 @@ use App\Models\v2\AgentComplementary;
 use App\Models\v2\MinigameHistory;
 use App\Models\v2\Relic;
 use App\Models\v2\UserRelicMapPiece;
+use App\ReportedLocation;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -391,5 +392,10 @@ class User extends Authenticatable implements JWTSubject
     public function user_relic_map_pieces()
     {
         return $this->hasMany(UserRelicMapPiece::class);
+    }
+
+    public function reported_locations()
+    {
+        return $this->hasMany(ReportedLocation::class);
     }
 }

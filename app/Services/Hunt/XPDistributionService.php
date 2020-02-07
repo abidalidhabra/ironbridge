@@ -58,7 +58,7 @@ class XPDistributionService
             if ($this->huntUser->relic_id) {
                 $xp = $this->addXPForRelic($treasureCompleted);
             }else{
-                $xp = $this->addXPForRandomHunt($treasureCompleted);
+                $xp = $this->addXPForRandomHunt();
             }
 
             $xpReward = $this->addXPService->add($xp);
@@ -76,13 +76,13 @@ class XPDistributionService
         return $xp;
     }
 
-    public function addXPForRandomHunt($treasureCompleted)
+    public function addXPForRandomHunt()
     {
         $complexity = $this->huntUser->complexity;
         $xp = $this->xPManagementRepository->getModel()->where(['event'=> 'clue_completion', 'complexity'=> $complexity])->first()->xp;
-        if ($treasureCompleted) {
-            $xp += $this->xPManagementRepository->getModel()->where(['event'=> 'treasure_completion', 'complexity'=> $complexity])->first()->xp;
-        }
+        // if ($treasureCompleted) {
+        //     $xp += $this->xPManagementRepository->getModel()->where(['event'=> 'treasure_completion', 'complexity'=> $complexity])->first()->xp;
+        // }
         return $xp;
     }
 }

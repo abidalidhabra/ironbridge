@@ -196,7 +196,7 @@
 						<a href="javascript:void(0)" class="plusbttnbox myBtn">Manage Agent Levels
 							<i 
 								class="fa 
-								@if(Route::currentRouteName() == 'admin.agent-levels.index' || Route::currentRouteName() == 'admin.hunts-agent-levels.index' || Route::currentRouteName() == 'admin.minigames-agent-levels.index' ||
+								@if(Route::currentRouteName() == 'admin.agent-levels.index' || Route::currentRouteName() == 'admin.minigames-agent-levels.index' ||
 								Route::currentRouteName() == 'admin.avatar-agent-levels.index' || Route::currentRouteName() == 'admin.avatar-agent-levels.create' || Route::currentRouteName() == 'admin.avatar-agent-levels.edit' || Route::currentRouteName() == 'admin.avatar-agent-levels.show' ||
 								Route::currentRouteName() == 'admin.bucket-sizes.index' || 
 								Route::currentRouteName() == 'admin.nodes-agent-levels.index') 
@@ -212,7 +212,7 @@
 							<div  
 							class="dropdown-content myDropdown 
 							@if(Route::currentRouteName() == 'admin.agent-levels.index' || Route::currentRouteName() == 'admin.hunts-agent-levels.index' || Route::currentRouteName() == 'admin.minigames-agent-levels.index' ||
-								Route::currentRouteName() == 'admin.avatar-agent-levels.index' || Route::currentRouteName() == 'admin.avatar-agent-levels.create' || Route::currentRouteName() == 'admin.avatar-agent-levels.edit' || Route::currentRouteName() == 'admin.avatar-agent-levels.show' ||
+								Route::currentRouteName() == 'admin.avatar-agent-levels.create' || Route::currentRouteName() == 'admin.avatar-agent-levels.edit' || Route::currentRouteName() == 'admin.avatar-agent-levels.show' ||
 								Route::currentRouteName() == 'admin.bucket-sizes.index'|| 
 								Route::currentRouteName() == 'admin.nodes-agent-levels.index') 
 								{{ 'show' }} 
@@ -225,16 +225,6 @@
 									@endif
 									">Agent Levels</a>
 									@endif
-
-<!-- 									@if($admin->hasPermissionTo('View Hunt / Agent Levels'))
-									<a 
-									href="{{ route('admin.hunts-agent-levels.index') }}" 
-									class="
-									@if(Route::currentRouteName() == 'admin.hunts-agent-levels.index') 
-										{{ 'activelistsub' }} 
-									@endif
-									">Hunt / Agent Levels</a>
-									@endif -->
 
 									@if($admin->hasPermissionTo('View Minigames / Agent Levels'))
 									<a href="{{ route('admin.minigames-agent-levels.index') }}" 

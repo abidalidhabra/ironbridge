@@ -210,6 +210,7 @@ Route::group(['namespace' => 'Api\Hunt', 'prefix' => 'hunts', 'middleware' => ['
 	Route::post('random/boostThePower', 'RandomHuntController@boostThePower');
 	Route::post('random/boostThePower/active', 'RandomHuntController@activateThePower');
 	Route::get('random/cell-data', 'RandomHuntController@getCellData');
+	Route::post('random/reportTheLocation', 'RandomHuntController@reportTheLocation');
 });
 
 Route::group(['namespace' => 'Api\Profile', 'prefix' => 'profile', 'middleware' => ['jwt-auth', 'downtime']], function ($router) {

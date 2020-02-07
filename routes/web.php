@@ -252,7 +252,7 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	});
 
 	Route::group(['middleware' => ['permission:View Hunt / Agent Levels']], function () {
-		Route::resource('hunts-agent-levels', 'AgentLevel\HuntAgentLevelController');
+		Route::resource('hunts-agent-levels', 'AgentLevel\HuntAgentLevelController')->except('index', 'store');
 		Route::get('hunts-agent-levels-list', 'AgentLevel\HuntAgentLevelController@list')->name('hunts-agent-levels-list');
 	});
 

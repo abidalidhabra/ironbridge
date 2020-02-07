@@ -10,6 +10,7 @@ use App\Http\Requests\Hunt\HuntUserRequest;
 use App\Http\Requests\Hunt\RevokeTheRevealRequest;
 use App\Http\Requests\v1\ParticipateRequest;
 use App\Models\v2\HuntStatistic;
+use App\ReportedLocation;
 use App\Repositories\Hunt\ClaimTheBonusTreasurePrizeService;
 use App\Repositories\Hunt\ClaimTheMinigameNodePrizeService;
 use App\Repositories\Hunt\Factory\HuntFactory;
@@ -28,6 +29,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Http\Request;
 use Validator;
+use stdClass;
 
 class RandomHuntController extends Controller
 {
@@ -256,5 +258,59 @@ class RandomHuntController extends Controller
             }
         }
         return response()->json(['message'=> 'Cell data has been retrieved.', 'data'=> $response]);
+    }
+
+    public function reportTheLocation(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(),[
+                'locationName'=> 'required',
+                'reasons'   => 'required|array',
+                'reasons.*' => 'required|in:BAD_LOCATION_REASON_UNSPECIFIED,OTHER,NOT_PEDESTRIAN_ACCESSIBLE,NOT_OPEN_TO_PUBLIC,PERMANENTLY_CLOSED,TEMPORARILY_INACCESSIBLE',
+                'reasonDetails'  => 'required'
+            ]);
+
+            if ($validator->fails()){
+                return response()->json(['message' => $validator->messages()->first()], 422);
+            }
+
+            auth()->user()->reported_locations()->create($request->all());
+            $locations = ReportedLocation::notSended()->get();
+
+            if ($locations->count() >= 5) {
+                
+                $loc = $locations->map(function($data) {
+                    $data->languageCode = "en-US";
+                    unset($data->_id, $data->user_id, $data->sent, $data->created_at, $data->updated_at);
+                    return $data;
+                });
+
+                $requestId = uniqid();
+                $client = new Client();
+                $apiResponse = $client->request('POST', 
+                    "https://playablelocations.googleapis.com/v3:logPlayerReports?key=AIzaSyA_01wAGuFb4lEYCF2CO3zkKcFdDv2NORQ", 
+                    [
+                        'json' => ["playerReports"=> $loc->toArray(), 'requestId'=> $requestId],
+                        'http_errors'=> false
+                    ]
+                );
+
+                $locations->each(function($location) use ($requestId){
+                    $location->sent = true;
+                    $location->requestId = $requestId;
+                    $location->save();
+                });
+
+                $response = json_decode($apiResponse->getBody()->getContents());
+            }
+            return response()->json([
+                'message'=> 'Location has been reported successfully.', 
+                'google_response'=> $response ?? new stdClass(),
+                'code'=> (isset($response))? $apiResponse->getStatusCode(): 0,
+                'reason'=> (isset($response))? $apiResponse->getReasonPhrase(): "",
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['message'=> $e->getMessage()]);
+        }
     }
 }
