@@ -151,9 +151,14 @@
 						$route == 'admin.loots.index' || 
 						$route == 'admin.loots.show' || 
 						$route == 'admin.loots.create'
+						)? true:false;						
+
+						$huntXPMngmnt = (
+						$route == 'admin.xpManagement.index' || 
+						$route == 'admin.xpManagement.edit'
 						)? true:false;
 						
-						$showIcon = ($chestLoot || $MGCLoot || $relicLootBind)? 'fa-minus': 'fa-plus';
+						$showIcon = ($chestLoot || $MGCLoot || $relicLootBind || $huntXPMngmnt)? 'fa-minus': 'fa-plus';
 					@endphp
 					<li>
 						
@@ -177,6 +182,10 @@
 
 								@if($admin->hasPermissionTo('View Loot'))
 								<a href="{{ route('admin.loots.index') }}" class="@if($relicLootBind) {{ 'activelistsub' }} @endif">Relic Loots</a>
+								@endif
+
+								@if($admin->hasPermissionTo('View Hunts XP'))
+									<a href="{{ route('admin.xpManagement.index') }}" class="@if($huntXPMngmnt) {{ 'activelistsub' }} @endif">XP on RH Completion</a>
 								@endif
 							</div>
 						</div>
@@ -217,7 +226,7 @@
 									">Agent Levels</a>
 									@endif
 
-									@if($admin->hasPermissionTo('View Hunt / Agent Levels'))
+<!-- 									@if($admin->hasPermissionTo('View Hunt / Agent Levels'))
 									<a 
 									href="{{ route('admin.hunts-agent-levels.index') }}" 
 									class="
@@ -225,7 +234,7 @@
 										{{ 'activelistsub' }} 
 									@endif
 									">Hunt / Agent Levels</a>
-									@endif
+									@endif -->
 
 									@if($admin->hasPermissionTo('View Minigames / Agent Levels'))
 									<a href="{{ route('admin.minigames-agent-levels.index') }}" 

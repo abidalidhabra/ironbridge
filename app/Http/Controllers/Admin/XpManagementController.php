@@ -136,7 +136,9 @@ class XpManagementController extends Controller
             ->orWhere('complexity','like','%'.$search.'%')
             ->orWhere('xp','like','%'.$search.'%');
         })
-        ->orderBy('created_at','DESC')
+        ->orderBy('complexity','ASC')
+        ->where('complexity', 1)
+        // ->orderBy('created_at','DESC')
         ->skip($skip)
         ->take($take)
         ->get();
@@ -148,6 +150,7 @@ class XpManagementController extends Controller
             ->orWhere('complexity','like','%'.$search.'%')
             ->orWhere('xp','like','%'.$search.'%');
         })
+        ->where('complexity', 1)
         ->count();
                 
         $admin = Auth::User();
