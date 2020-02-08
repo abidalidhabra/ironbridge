@@ -120,7 +120,7 @@
                         <div class="row" id="tutorials_box1">
                             @foreach(array_slice($data['tutorials'],0,5) as $key => $value)
                             <div class="col-md-8">
-                                <p class="text-left">{{ ucfirst(str_replace('_',' ',$key)) }}</p>
+                                <p class="text-left">{{ ucfirst(str_replace('_',' ',$key)) . '-> '. $key }}</p>
                             </div>
                             <div class="col-md-4">
                                 <p class="text-right">{{ $value }}</p>
@@ -133,7 +133,7 @@
                         <div class="row" id="tutorials_box2">
                             @foreach(array_slice($data['tutorials'],6,14) as $key => $value)
                             <div class="col-md-8">
-                                <p class="text-left">{{ ucfirst(str_replace('_',' ',$key)) }}</p>
+                                <p class="text-left">{{ ucfirst(str_replace('_',' ',$key)). '-> '. $key }}</p>
                             </div>
                             <div class="col-md-4">
                                 <p class="text-right">{{ $value }}</p>

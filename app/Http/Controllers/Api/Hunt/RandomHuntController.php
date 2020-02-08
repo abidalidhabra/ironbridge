@@ -277,7 +277,7 @@ class RandomHuntController extends Controller
             auth()->user()->reported_locations()->create($request->all());
             $locations = ReportedLocation::notSended()->get();
 
-            if ($locations->count() >= 5) {
+            if ($locations->count() >= 25) {
                 
                 $loc = $locations->map(function($data) {
                     $data->languageCode = "en-US";
