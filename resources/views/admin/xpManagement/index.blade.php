@@ -49,7 +49,7 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <h4>MG Nodes <span data-toggle="tooltip" title="" data-original-title="Fix XP to provide on minigame challenge node completion">?</span></h4>
+                    <h4>MGC Nodes <span data-toggle="tooltip" title="" data-original-title="Fix XP to provide on minigame challenge node completion">?</span></h4>
                     <div class="form-group">
                         <input type="number" name="mgc_xp" class="form-control" placeholder="Enter the MGC XP" value="{{ $hunt_statistic->mgc_xp ?? '' }}">
                     </div>

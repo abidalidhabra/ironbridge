@@ -90,12 +90,12 @@
                 </div>
                 <div class="row">
                     <div class="col-md-4">
-                        <h4>Chest Settings</h4>
+<!--                         <h4>Chest Settings</h4>
                         <div class="form-group">
                             <label class="control-label">Fix XP to provide on chest opening:
                             </label>
                             <input type="number" name="chest_xp" class="form-control" placeholder="Enter the XP" value="{{ $huntStatistic->chest_xp }}">
-                        </div>
+                        </div> -->
 
                         <div class="form-group">
                             <label class="control-label">Golds to cut if user change MG for chest:
