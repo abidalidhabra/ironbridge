@@ -185,7 +185,7 @@
 								@endif
 
 								@if($admin->hasPermissionTo('View Hunts XP'))
-									<a href="{{ route('admin.xpManagement.index') }}" class="@if($huntXPMngmnt) {{ 'activelistsub' }} @endif">XP on RH Completion</a>
+									<a href="{{ route('admin.xpManagement.index') }}" class="@if($huntXPMngmnt) {{ 'activelistsub' }} @endif">XP rewards</a>
 								@endif
 							</div>
 						</div>

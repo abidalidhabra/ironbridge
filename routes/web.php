@@ -237,8 +237,9 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('practiceGame/clues/html', 'PracticeGameController@targerHTML')->name('practiceGame.clue.html');
 
 	Route::group(['middleware' => ['permission:View Hunts XP']], function () {
-		Route::resource('xpManagement', 'XpManagementController');
 		Route::get('getXpManagementList', 'XpManagementController@getXpManagementList')->name('getXpManagementList');
+		Route::post('updateDistanceXp', 'XpManagementController@updateDistanceXp')->name('xpManagement.updateDistanceXp');
+		Route::resource('xpManagement', 'XpManagementController');
 	});
 	
 	Route::group(['middleware' => ['permission:View Agent Levels']], function () {

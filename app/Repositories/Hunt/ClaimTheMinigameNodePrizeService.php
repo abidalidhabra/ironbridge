@@ -19,13 +19,13 @@ class ClaimTheMinigameNodePrizeService
 
     private $user;
     private $gameId;
-    private $xPManagementRepository;
+    // private $xPManagementRepository;
     private $huntStatisticRepository;
 
     public function __construct()
     {
-        $this->huntStatisticRepository = (new HuntStatisticRepository)->first(['id', 'freeze_till']);
-        $this->xPManagementRepository = (new XPManagementRepository)->where(['event'=> 'clue_completion', 'complexity'=> 1])->first();
+        $this->huntStatisticRepository = (new HuntStatisticRepository)->first(['id', 'freeze_till', 'mgc_xp']);
+        // $this->xPManagementRepository = (new XPManagementRepository)->where(['event'=> 'clue_completion', 'complexity'=> 1])->first();
     }
 
     public function setUser($user)
@@ -44,7 +44,7 @@ class ClaimTheMinigameNodePrizeService
     {
         
         // add the xp in users account
-        $xpReward = (new AddXPService)->setUser($this->user)->add(($this->xPManagementRepository->xp * 2));
+        $xpReward = (new AddXPService)->setUser($this->user)->add($this->huntStatisticRepository->mgc_xp);
         $rewardData['xp_reward'] = (is_array($xpReward) && count($xpReward))? $xpReward: new stdClass;
         $rewardData['agent_status'] = $this->user->agent_status;
 
