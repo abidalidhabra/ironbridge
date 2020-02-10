@@ -20,7 +20,8 @@ class ReportLocationController extends Controller
     public function index()
     {
         return view('admin.reported_locations.index', [
-            'totalSubmitted'=> ReportedLocation::sent()->count(),
+            'totalSubmitted'=> ReportedLocation::notSended()->count(),
+            'totalSubmittedToGoogle'=> ReportedLocation::sent()->count(),
             'huntStatistics'=> HuntStatistic::first(['_id', 'reported_loc_count'])
         ]);
     }
@@ -135,19 +136,22 @@ class ReportLocationController extends Controller
             }
             return '<a href="javascript:void(0)">'.$name.'</a>';
         })
+        ->editColumn('reasons', function($relic){
+            return implode(',', $relic->reasons);
+        })
         ->editColumn('reasonDetails', function($relic){
             return '<a href="javascript:void(0)" data-toggle="tooltip" data-placement="bottom" title="'.$relic->reasonDetails.'">'.str::limit($relic->reasonDetails, 20).'</a>';
            return ;
         })
-        ->editColumn('requestId', function($relic){
-            return $relic->requestId ?? '--';
-        })
+        // ->editColumn('requestId', function($relic){
+        //     return $relic->requestId ?? '--';
+        // })
         ->editColumn('created_at', function($relic){
             return $relic->created_at->format('d-M-Y @ h:i A');
         })
-        ->editColumn('sent_at', function($relic){
-            return ($relic->sent_at)? '<span class="badge badge-success">'.$relic->sent_at->format('d-M-Y @ h:i A').'</span>':  '<span class="badge badge-warning">Not sent</span>';
-        })
+        // ->editColumn('sent_at', function($relic){
+        //     return ($relic->sent_at)? '<span class="badge badge-success">'.$relic->sent_at->format('d-M-Y @ h:i A').'</span>':  '<span class="badge badge-warning">Not sent</span>';
+        // })
         ->rawColumns(['locationName', 'reasonDetails', 'sent_at'])
         ->setTotalRecords(ReportedLocation::count())
         ->setFilteredRecords($filterCount)

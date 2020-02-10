@@ -324,7 +324,7 @@
 								<a href="{{ route('admin.adminManagement.index') }}" class="@if($userAccessRoute) {{ 'activelistsub' }} @endif">User Access</a>
 								@endif
 								
-								<a href="{{ route('admin.reported-locations.index') }}" class="@if($reportLocations) {{ 'activelistsub' }} @endif">Report Google Locations</a>
+								<a href="{{ route('admin.reported-locations.index') }}" class="@if($reportLocations) {{ 'activelistsub' }} @endif">Reported Google Locations</a>
 
 							</div>
 						</div>

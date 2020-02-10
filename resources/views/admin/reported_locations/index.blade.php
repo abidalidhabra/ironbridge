@@ -6,34 +6,43 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Reported Locations</h3>
+                <h3>Reported Google Locations</h3>
             </div>
         </div>
     </div>
     <div class="verified_detlisbox">
             <ul>
                 <h3 class="text-center">Google Reported Locations Statistics</h3>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <li>
                         <img src="{{ asset('admin_assets/svg/news.svg') }}">
                         <a href="javascript:void(0)">
                             <h3>{{ $totalSubmitted }}</h3>
-                            <p>Total submission</p>
+                            <p>Total Submission</p>
                         </a>
                     </li>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
+                    <li>
+                        <img src="{{ asset('admin_assets/svg/news.svg') }}">
+                        <a href="javascript:void(0)">
+                            <h3>{{ $totalSubmittedToGoogle }}</h3>
+                            <p>Total Submission to Google</p>
+                        </a>
+                    </li>
+                </div>
+                <div class="col-md-6">
                     <li>
                         <img class="rotimg" src="{{ asset('admin_assets/svg/earth.svg') }}">
-                        <button id="submitReportsToGoogle" class="btn btn-success">SEND</button class="btn">
+                        <button id="submitReportsToGoogle" class="ibbtn">SEND</button>
                         <p>Send the batch to Google</p>
                     </li>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <li>
                         <img src="{{ asset('admin_assets/svg/news.svg') }}">
                         <input type="text" class="form-controls" name="reported_loc_count" value="{{$huntStatistics->reported_loc_count}}">
-                        <button id="updateBunchSize" class="btn btn-success">UPDATE</button class="btn">
+                        <button id="updateBunchSize" class="ibbtn">UPDATE</button>
                         <p>Bunch Size</p>
                     </li>
                 </div>
@@ -45,12 +54,10 @@
             <thead>
                 <tr>
                     <th>Sr.</th>
+                    <th>Date</th>
                     <th>Location Name</th>
                     <th>Reasons</th>
-                    <th>Reason Details</th>
-                    <th>Request ID</th>
-                    <th>Status</th>
-                    <th>created_at</th>
+                    <th>Description</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -77,17 +84,15 @@
                         complete:function(){
                             initializeDeletePopup();
                             if( $('[data-toggle="tooltip"]').length > 0 )
-                                $('[data-toggle="tooltip"]').tooltip({container: $('#selLocationName')});
+                                $('[data-toggle="tooltip"]').tooltip();
                         }
                     },
                     columns:[
                         { data:'DT_RowIndex',name:'_id' },
+                        { data:'created_at',name:'created_at'},
                         { data:'locationName',name:'locationName'},
                         { data:'reasons',name:'reasons'},
                         { data:'reasonDetails',name:'reasonDetails'},
-                        { data:'requestId',name:'requestId'},
-                        { data:'sent_at',name:'sent_at'},
-                        { data:'created_at',name:'created_at'},
                     ],
                     columnDefs: [{
                         orderable: false,
