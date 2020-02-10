@@ -274,7 +274,10 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 
 	/* NOTIFICATION */
 	Route::resource('notifications', 'NotificationController');
-
+	Route::post('reported-locations/submit', 'ReportLocationController@submit')->name('reported-locations.submit');
+	Route::post('reported-locations/updateIt', 'ReportLocationController@updateIt')->name('reported-locations.updateIt');
+	Route::get('reported-locations/list', 'ReportLocationController@list')->name('reported-locations.list');
+	Route::resource('reported-locations', 'ReportLocationController');
 });
 
 // Auth::routes();

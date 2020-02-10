@@ -286,12 +286,14 @@
 						$notificationsRoute = ($route == 'admin.notifications.index')? true:false;
 						$couponRoute = ($route == 'admin.discounts.index')? true:false;
 						$paymentRoute = ($route == 'admin.payment.index')? true:false;
+						$reportLocations = ($route == 'admin.reported-locations.index')? true:false;
 						
 						$showIcon = (
 						$userAccessRoute || 
 						$appSettingsRoute || 
 						$notificationsRoute || 
 						$paymentRoute || 
+						$reportLocations || 
 						$couponRoute)? 'fa-minus': 'fa-plus';
 					@endphp
 					<li>
@@ -321,6 +323,8 @@
 								@if($admin->hasRole('Super Admin'))
 								<a href="{{ route('admin.adminManagement.index') }}" class="@if($userAccessRoute) {{ 'activelistsub' }} @endif">User Access</a>
 								@endif
+								
+								<a href="{{ route('admin.reported-locations.index') }}" class="@if($reportLocations) {{ 'activelistsub' }} @endif">Report Google Locations</a>
 
 							</div>
 						</div>

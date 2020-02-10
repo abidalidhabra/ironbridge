@@ -18,6 +18,7 @@ class HuntStatistic extends Eloquent
     	'chest_xp',
         'mg_change_charge',
         'mgc_xp',
-        'relic_xp'
+        'relic_xp',
+        'reported_loc_count',
     ];
 }

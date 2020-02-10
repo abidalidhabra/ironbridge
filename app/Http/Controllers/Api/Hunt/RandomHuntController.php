@@ -276,12 +276,13 @@ class RandomHuntController extends Controller
 
             auth()->user()->reported_locations()->create($request->all());
             $locations = ReportedLocation::notSended()->get();
+            $huntStatistic = HuntStatistic::first(['_id', 'reported_loc_count']);
 
-            if ($locations->count() >= 25) {
+            if ($locations->count() >= $huntStatistic->reported_loc_count) {
                 
                 $loc = $locations->map(function($data) {
                     $data->languageCode = "en-US";
-                    unset($data->_id, $data->user_id, $data->sent, $data->created_at, $data->updated_at);
+                    unset($data->_id, $data->user_id, $data->sent_at, $data->created_at, $data->updated_at);
                     return $data;
                 });
 
@@ -296,7 +297,7 @@ class RandomHuntController extends Controller
                 );
 
                 $locations->each(function($location) use ($requestId){
-                    $location->sent = true;
+                    $location->sent_at = now();
                     $location->requestId = $requestId;
                     $location->save();
                 });

@@ -9,12 +9,17 @@ class ReportedLocation extends Model
 {
     protected $fillable = ['locationName', 'user_id', 'reasons', 'reasonDetails', 'languageCode', 'sent', 'requestId'];
 
-    protected $attributes = [
-    	'sent'=> false,
+    protected $dates = [
+    	'sent_at',
     ];
 
     public function scopeNotSended($query)
     {
-    	return $query->where('sent', false);
+    	return $query->whereNull('sent_at');
+    }    
+
+    public function scopeSent($query)
+    {
+    	return $query->whereNotNull('sent_at');
     }
 }
