@@ -69,7 +69,7 @@ class ClueController extends Controller
             $huntUserDetail->save();
 
             // return the response to client
-            return response()->json(['message'=> 'Clue Timer has been ended successfully.', 'hunt_action'=> $huntFinished->original, 'available_skeleton_keys'=> $freshUser->available_skeleton_keys]);
+            return response()->json(['message'=> 'Clue Timer has been ended successfully.', 'data'=> $huntFinished->original['data'], 'available_skeleton_keys'=> $freshUser->available_skeleton_keys]);
         } catch (Exception $e) {
             return response()->json(['message'=> $e->getMessage()], 500);
         }
