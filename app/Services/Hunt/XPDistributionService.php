@@ -61,9 +61,11 @@ class XPDistributionService
                 $xp = $this->addXPForRandomHunt();
             }
 
-            $xpReward = $this->addXPService->add($xp);
+            // $xpReward = $this->addXPService->add($xp);
+            $this->addXPService->add($xp);
         }
-        return (is_array($xpReward) && count($xpReward))? $xpReward: new stdClass;
+        // return (is_array($xpReward) && count($xpReward))? $xpReward: new stdClass;
+        return (isset($this->addXPService))?$this->addXPService->response(): new stdClass;
     }
 
     public function addXPForRelic($treasureCompleted)

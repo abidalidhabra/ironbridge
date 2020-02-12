@@ -72,15 +72,16 @@ class ProfileController extends Controller
             $user = auth()->user();
             if ($user->buckets['chests']['collected']) {
                 $chestService = (new ChestService)->setUser($user)->open();
-                return response()->json([
-                    'message' => 'Chest has been opened successfully.', 
-                    'next_minigame'=> $chestService->getMiniGame(),
-                    'chests_bucket'=> $user->buckets['chests'],
-                    'loot_rewards'=> $chestService->getLootRewards(),
-                    'chest_rewards'=> $chestService->getChestRewards(),
-                    'agent_status'=> $user->agent_status,
-                    'relic_info'=> $chestService->getRelicInfo(),
-                ]); 
+                // return response()->json([
+                //     'message' => 'Chest has been opened successfully.', 
+                //     'next_minigame'=> $chestService->getMiniGame(),
+                //     'chests_bucket'=> $user->buckets['chests'],
+                //     'loot_rewards'=> $chestService->getLootRewards(),
+                //     'chest_rewards'=> $chestService->getChestRewards(),
+                //     'agent_status'=> $user->agent_status,
+                //     'relic_info'=> $chestService->getRelicInfo(),
+                // ]); 
+                return response()->json(['message' => 'Chest has been opened successfully.', 'data'=> $chestService->response()]); 
             }else{
                 return response()->json(['message' => 'You don\'t have chest in your account to open.'], 422); 
             }

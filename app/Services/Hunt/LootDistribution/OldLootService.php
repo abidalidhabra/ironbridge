@@ -40,7 +40,7 @@ class OldLootService
 
         $rewardData['type'] = $selectedReward->reward_type;
         // $rewardData['hunt_user_id'] = $this->huntUser->id;
-        $rewardData['random_number'] = $randNumber;
+        // $rewardData['random_number'] = $randNumber;
 
         if ($selectedReward->widgets_order && is_array($selectedReward->widgets_order)) {
 
@@ -116,6 +116,7 @@ class OldLootService
         unset($selectedReward->min_range, $selectedReward->max_range);
         unset($rewardData['user_id'], $rewardData['type']);
         Log::info([ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData]);
-        return [ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData];
+        // return [ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData];
+        return $rewardData;
     }
 }
