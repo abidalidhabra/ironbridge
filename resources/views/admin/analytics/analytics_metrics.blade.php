@@ -122,9 +122,9 @@
                             <div class="col-md-8">
                                 <p class="text-left">
                                     @if($key == 'home')
-                                        {{ 'Intro' }}
+                                        {{ 'Intro'. '-> '. $key }}
                                     @elseif($key == 'skeleton_key')
-                                        {{ 'MG Refresh' }}
+                                        {{ 'MG Refresh'. '-> '. $key }}
                                     @else
                                         {{ ucfirst(str_replace('_',' ',$key)) . '-> '. $key }}
                                     @endif
@@ -143,9 +143,9 @@
                             <div class="col-md-8">
                                 <p class="text-left">
                                     @if($key == 'home')
-                                        {{ 'Intro' }}
+                                        {{ 'Intro'. '-> '. $key }}
                                     @elseif($key == 'skeleton_key')
-                                        {{ 'MG Refresh' }}
+                                        {{ 'MG Refresh'. '-> '. $key }}
                                     @else
                                         {{ ucfirst(str_replace('_',' ',$key)) . '-> '. $key }}
                                     @endif
