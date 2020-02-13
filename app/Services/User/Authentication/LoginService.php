@@ -143,6 +143,7 @@ class LoginService
     {
         $this->user->additional = [ 
             'token' =>($this->token)?  $this->token: $this->user->additional['token'],
+            'app_version' =>(!isset($this->user->additional['app_version']) || $this->user->additional['app_version'] !== $this->request->app_version)?  $this->request->app_version: $this->user->additional['app_version'],
             // 'device_type'=> ($this->request->filled('device_type'))? $this->request->device_type: $this->user->additional['device_type'],
             // 'device_id'=> ($this->request->filled('device_id'))? $this->request->device_id: $this->user->additional['device_id']
         ];
@@ -163,6 +164,18 @@ class LoginService
     public function save()
     {
         $this->user->save();
+        return $this;
+    }
+
+    public function throwIfAppNotUpdated()
+    {
+        if (
+            ($this->request->device_type == 'android' && $this->serverAppInfo->app_versions['android'] > $this->request->app_version) ||
+            ($this->request->device_type == 'ios' && $this->serverAppInfo->app_versions['ios'] > $this->request->app_version)
+        ) {
+            return response()->json(['code'=> 14, 'message' => 'Please update an application.'], 500);
+        }
+
         return $this;
     }
 }

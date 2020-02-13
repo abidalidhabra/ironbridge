@@ -35,7 +35,8 @@ class AuthController extends Controller
                                 ->setFirebaseIds()
                                 ->setAdditional()
                                 ->setDeviceInfo()
-                                ->save();
+                                ->save()
+                                ->throwIfAppNotUpdated();
 
             if ($token = $registrationService->getToken()) {
                 
