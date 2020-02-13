@@ -3,6 +3,7 @@
 namespace App\Services\User\Authentication;
 
 use App\Exceptions\AppInMaintenanceException;
+use App\Exceptions\AppNotUpdatedException;
 use App\Repositories\AppStatisticRepository;
 use App\Repositories\User\UserRepository;
 use App\Services\User\Authentication\LoginFactory;
@@ -89,7 +90,7 @@ class LoginService
 
     public function checkMaintenanceMode()
     {
-        $this->serverAppInfo = (new AppStatisticRepository)->first(['id', 'maintenance', 'android_version', 'ios_version']);
+        $this->serverAppInfo = (new AppStatisticRepository)->first(['id', 'maintenance', 'app_versions']);
         if ($this->serverAppInfo->maintenance) {
             throw new AppInMaintenanceException("Application currently is under maintenance mode.");
         }
@@ -169,11 +170,12 @@ class LoginService
 
     public function throwIfAppNotUpdated()
     {
+        $serverAppInfo = $this->getServerAppInfo();
         if (
-            ($this->request->device_type == 'android' && $this->serverAppInfo->app_versions['android'] > $this->request->app_version) ||
-            ($this->request->device_type == 'ios' && $this->serverAppInfo->app_versions['ios'] > $this->request->app_version)
+            ($this->request->device_type == 'android' && $serverAppInfo->app_versions['android'] > $this->request->app_version) ||
+            ($this->request->device_type == 'ios' && $serverAppInfo->app_versions['ios'] > $this->request->app_version)
         ) {
-            return response()->json(['code'=> 14, 'message' => 'Please update an application.'], 500);
+            throw (new AppNotUpdatedException('Please update an application.'))->setExceptionCode(14);
         }
 
         return $this;

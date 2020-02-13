@@ -24,9 +24,12 @@ Route::get('addRolesAndPermissions', 'Api\v2\AddRolesAndPermission@addRolesAndPe
 Route::get('createPermissions', 'Api\v2\AddRolesAndPermission@createPermissions');
 Route::get('guestCreate', 'Api\v1\UserController@guestCreate');
 
+Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1', 'middleware'=> ['downtime']], function ($router) {
+	Route::post('login', 'AuthController@login');
+});
+
 Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1', 'middleware'=> ['downtime', 'freshapp']], function ($router) {
 
-	Route::post('login', 'AuthController@login');
 	Route::post('checkUsernameEmail', 'AuthController@checkUsernameEmail');
 	Route::post('register', 'UserController@register');
 	// Route::get('checkMyBalance', 'UserController@checkMyBalance');
@@ -229,8 +232,8 @@ Route::group(['namespace' => 'Api\Relic', 'prefix' => 'relics', 'middleware' => 
 	Route::post('markTheRelicAsComplete', 'RelicController@markTheRelicAsComplete');
 });
 
-Route::group(['namespace' => 'Api\User', 'prefix' => 'v2', 'middleware'=> ['downtime', 'freshapp']], function ($router) {
+Route::group(['namespace' => 'Api\User', 'prefix' => 'v2', 'middleware'=> ['downtime']], function ($router) {
 	Route::post('login', 'AuthController@login');
 });
 
-Route::get('/app/url', 'Api\User\AuthController@getAppURL')->middleware('freshapp', 'downtime');
+Route::get('/app/url', 'Api\User\AuthController@getAppURL')->middleware('downtime');
