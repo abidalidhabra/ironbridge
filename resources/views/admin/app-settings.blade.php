@@ -54,6 +54,26 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="control-label">Google Web API Key:</label>
+                            <input type="text" name="google_keys[web]" class="form-control" value="{{ ($settings->google_keys)?$settings->google_keys['web']:'' }}" placeholder="Enter the web key">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="control-label">Google Android API Key:</label>
+                            <input type="text" name="google_keys[android]" class="form-control" value="{{ ($settings->google_keys)?$settings->google_keys['android']:'' }}" placeholder="Enter the android key">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="control-label">Google IOS API Key:</label>
+                            <input type="text" name="google_keys[ios]" class="form-control" value="{{ ($settings->google_keys)?$settings->google_keys['ios']:'' }}" placeholder="Enter the ios key">
+                        </div>
+                    </div>
+                </div>
                 <div class="form-group">
                     <label class="control-label">Base Url:</label>
                     <input type="text" name="base_url" class="form-control" value="{{ $settings->base_url }}" placeholder="Enter the base url">

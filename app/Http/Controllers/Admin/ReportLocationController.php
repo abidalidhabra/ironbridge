@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\v2\HuntStatistic;
 use App\ReportedLocation;
+use App\Repositories\AppStatisticRepository;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -174,10 +175,11 @@ class ReportLocationController extends Controller
                 return $data;
             });
 
+            $paybleGoogleKey = (new AppStatisticRepository)->first(['_id', 'google_keys.web'])->google_keys['web'];
             $requestId = uniqid();
             $client = new Client();
             $apiResponse = $client->request('POST', 
-                "https://playablelocations.googleapis.com/v3:logPlayerReports?key=AIzaSyA_01wAGuFb4lEYCF2CO3zkKcFdDv2NORQ", 
+                "https://playablelocations.googleapis.com/v3:logPlayerReports?key=".$paybleGoogleKey, 
                 [
                     'json' => ["playerReports"=> $loc->toArray(), 'requestId'=> $requestId],
                     'http_errors'=> false

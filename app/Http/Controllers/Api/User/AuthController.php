@@ -82,8 +82,8 @@ class AuthController extends Controller
         if ($request->secret == 'ironbridge1779') {
             try {
                 (new LoginService)->setRequest($request)->throwIfAppNotUpdated();
-                $serverInfo = (new AppStatisticRepository)->first(['id', 'base_url']);
-                return response()->json(['message' => 'OK.', 'url'=> $serverInfo->base_url], 500);
+                $serverInfo = (new AppStatisticRepository)->first(['id', 'base_url', 'google_keys']);
+                return response()->json(['message' => 'OK.', 'url'=> $serverInfo->base_url, 'google_keys'=> $serverInfo->google_keys], 500);
             } catch (AppInMaintenanceException $e) {
                 return response()->json(['message'=> $e->getMessage()], 503);
             }catch (AppNotUpdatedException $e) {

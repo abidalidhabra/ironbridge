@@ -11,6 +11,7 @@ use App\Http\Requests\Hunt\RevokeTheRevealRequest;
 use App\Http\Requests\v1\ParticipateRequest;
 use App\Models\v2\HuntStatistic;
 use App\ReportedLocation;
+use App\Repositories\AppStatisticRepository;
 use App\Repositories\Hunt\ClaimTheBonusTreasurePrizeService;
 use App\Repositories\Hunt\ClaimTheMinigameNodePrizeService;
 use App\Repositories\Hunt\Factory\HuntFactory;
@@ -279,6 +280,7 @@ class RandomHuntController extends Controller
             $huntStatistic = HuntStatistic::first(['_id', 'reported_loc_count']);
 
             if ($locations->count() >= $huntStatistic->reported_loc_count) {
+                $paybleGoogleKey = (new AppStatisticRepository)->first(['_id', 'google_keys.web'])->google_keys['web'];
                 
                 $loc = $locations->map(function($data) {
                     $data->languageCode = "en-US";
@@ -289,7 +291,7 @@ class RandomHuntController extends Controller
                 $requestId = uniqid();
                 $client = new Client();
                 $apiResponse = $client->request('POST', 
-                    "https://playablelocations.googleapis.com/v3:logPlayerReports?key=AIzaSyA_01wAGuFb4lEYCF2CO3zkKcFdDv2NORQ", 
+                    "https://playablelocations.googleapis.com/v3:logPlayerReports?key=".$paybleGoogleKey, 
                     [
                         'json' => ["playerReports"=> $loc->toArray(), 'requestId'=> $requestId],
                         'http_errors'=> false

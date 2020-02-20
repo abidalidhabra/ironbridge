@@ -2,6 +2,7 @@
 
 namespace App\Services\Hunt;
 
+use App\Repositories\AppStatisticRepository;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Redis;
 
@@ -9,7 +10,8 @@ class PaybleCellProviderService
 {
 	
 	protected $cellIDServerURL = 'http://54.152.124.171:8080/CELL2IDAPP/rest/json/metallica/get';
-	protected $paybleGoogleKey = 'AIzaSyA_01wAGuFb4lEYCF2CO3zkKcFdDv2NORQ';
+	// protected $paybleGoogleKey = 'AIzaSyA_01wAGuFb4lEYCF2CO3zkKcFdDv2NORQ';
+	protected $paybleGoogleKey;
 	protected $paybleGoogleURL;
 	protected $client;
 	protected $redis;
@@ -19,6 +21,7 @@ class PaybleCellProviderService
 
 	public function __construct()
 	{
+		$this->paybleGoogleKey = (new AppStatisticRepository)->first(['_id', 'google_keys.web'])->google_keys['web'];
 		$this->paybleGoogleURL = 'https://playablelocations.googleapis.com/v3:searchPlayableLocations?key='.$this->paybleGoogleKey;
 		$this->client = new Client();
 		$this->redis = Redis::connection();
