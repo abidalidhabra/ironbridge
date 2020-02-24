@@ -4,7 +4,9 @@ namespace App\Services\Hunt;
 
 use App\Repositories\AppStatisticRepository;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Redis;
+use Exception;
 
 class PaybleCellProviderService
 {
@@ -110,10 +112,21 @@ class PaybleCellProviderService
 		if ($cacheContents = $this->redis->get($this->cacheKeys[$getLocationsFor])) {
 			return $this->getContents($cacheContents, true, false);;
 		}else{
-			$apiResponse = $this->client->request('POST', $this->paybleGoogleURL, ['body' => $this->getPlayableCellsJSONFile($getLocationsFor)]);
-			$apiContents = $this->getContents($apiResponse, false);
-			$this->setCacheableValues($getLocationsFor, $apiContents);
-			return $this->getContents($apiContents, true, false);
+			try {
+				$apiResponse = $this->client->request('POST', $this->paybleGoogleURL, ['body' => $this->getPlayableCellsJSONFile($getLocationsFor)]);
+				$apiContents = $this->getContents($apiResponse, false);
+				$this->setCacheableValues($getLocationsFor, $apiContents);
+				return $this->getContents($apiContents, true, false);
+			} catch (RequestException $e) {
+				if ($e->hasResponse()) {
+					$response = $e->getResponse();
+					$responseBodyAsString = $response->getBody()->getContents();
+					$errorMessage = json_decode($responseBodyAsString)->error->message;
+					throw new Exception($errorMessage);
+				}else{
+					throw new Exception("Error occured while requesting to google.");
+				}
+			}
 		}
 	}
 
