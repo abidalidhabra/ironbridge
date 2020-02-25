@@ -273,7 +273,9 @@
 						<a href="{{ route('admin.analyticsMetrics') }}">Analytics</a>
 					</li>
 					@endif
-					
+					<li  class="@if($route == 'admin.plans.index') {{ 'activelist' }} @endif">
+						<a href="{{ route('admin.plans.index') }}">Plans</a>
+					</li>
 					@if($admin->hasPermissionTo('View Avatars'))
 						<li  class="@if($route == 'admin.avatar.index' || $route == 'admin.avatarDetails'	) {{ 'activelist' }} @endif">
 							<a href="{{ route('admin.avatar.index') }}">Avatars</a>
