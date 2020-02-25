@@ -153,7 +153,7 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v1', 'middleware' => ['jwt-a
 	Route::post('unlockWidgetItem', 'WidgetItemController@unlockWidgetItem');
 });
 
-Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2', 'middleware'=> ['downtime', 'freshapp']], function ($router) {
+Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2', 'middleware'=> ['jwt-auth', 'downtime', 'freshapp']], function ($router) {
 	
 	Route::group(['middleware' => 'jwt-auth'], function ($router) {
 

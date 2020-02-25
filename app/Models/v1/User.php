@@ -67,6 +67,7 @@ class User extends Authenticatable implements JWTSubject
         'mgc_status',
         'buckets',
         'hat_selected',
+        'compasses',
         // 'expnadable_skeleton_keys',
     ];
 
@@ -181,7 +182,8 @@ class User extends Authenticatable implements JWTSubject
                 'remaining'=> 5
             ]
         ],
-        'hat_selected'=> true
+        'hat_selected'=> true,
+        'compasses'=> []
         // 'expnadable_skeleton_keys'   => 0,
         // 'user_widgets' => [],
         // 'used_widgets' => [],
