@@ -151,9 +151,14 @@
 						$route == 'admin.loots.index' || 
 						$route == 'admin.loots.show' || 
 						$route == 'admin.loots.create'
+						)? true:false;						
+
+						$huntXPMngmnt = (
+						$route == 'admin.xpManagement.index' || 
+						$route == 'admin.xpManagement.edit'
 						)? true:false;
 						
-						$showIcon = ($chestLoot || $MGCLoot || $relicLootBind)? 'fa-minus': 'fa-plus';
+						$showIcon = ($chestLoot || $MGCLoot || $relicLootBind || $huntXPMngmnt)? 'fa-minus': 'fa-plus';
 					@endphp
 					<li>
 						
@@ -178,6 +183,10 @@
 								@if($admin->hasPermissionTo('View Loot'))
 								<a href="{{ route('admin.loots.index') }}" class="@if($relicLootBind) {{ 'activelistsub' }} @endif">Relic Loots</a>
 								@endif
+
+								@if($admin->hasPermissionTo('View Hunts XP'))
+									<a href="{{ route('admin.xpManagement.index') }}" class="@if($huntXPMngmnt) {{ 'activelistsub' }} @endif">XP rewards</a>
+								@endif
 							</div>
 						</div>
 					</li>
@@ -187,7 +196,7 @@
 						<a href="javascript:void(0)" class="plusbttnbox myBtn">Manage Agent Levels
 							<i 
 								class="fa 
-								@if(Route::currentRouteName() == 'admin.agent-levels.index' || Route::currentRouteName() == 'admin.hunts-agent-levels.index' || Route::currentRouteName() == 'admin.minigames-agent-levels.index' ||
+								@if(Route::currentRouteName() == 'admin.agent-levels.index' || Route::currentRouteName() == 'admin.minigames-agent-levels.index' ||
 								Route::currentRouteName() == 'admin.avatar-agent-levels.index' || Route::currentRouteName() == 'admin.avatar-agent-levels.create' || Route::currentRouteName() == 'admin.avatar-agent-levels.edit' || Route::currentRouteName() == 'admin.avatar-agent-levels.show' ||
 								Route::currentRouteName() == 'admin.bucket-sizes.index' || 
 								Route::currentRouteName() == 'admin.nodes-agent-levels.index') 
@@ -203,7 +212,7 @@
 							<div  
 							class="dropdown-content myDropdown 
 							@if(Route::currentRouteName() == 'admin.agent-levels.index' || Route::currentRouteName() == 'admin.hunts-agent-levels.index' || Route::currentRouteName() == 'admin.minigames-agent-levels.index' ||
-								Route::currentRouteName() == 'admin.avatar-agent-levels.index' || Route::currentRouteName() == 'admin.avatar-agent-levels.create' || Route::currentRouteName() == 'admin.avatar-agent-levels.edit' || Route::currentRouteName() == 'admin.avatar-agent-levels.show' ||
+								Route::currentRouteName() == 'admin.avatar-agent-levels.create' || Route::currentRouteName() == 'admin.avatar-agent-levels.edit' || Route::currentRouteName() == 'admin.avatar-agent-levels.show' ||
 								Route::currentRouteName() == 'admin.bucket-sizes.index'|| 
 								Route::currentRouteName() == 'admin.nodes-agent-levels.index') 
 								{{ 'show' }} 
@@ -215,16 +224,6 @@
 										{{ 'activelistsub' }} 
 									@endif
 									">Agent Levels</a>
-									@endif
-
-									@if($admin->hasPermissionTo('View Hunt / Agent Levels'))
-									<a 
-									href="{{ route('admin.hunts-agent-levels.index') }}" 
-									class="
-									@if(Route::currentRouteName() == 'admin.hunts-agent-levels.index') 
-										{{ 'activelistsub' }} 
-									@endif
-									">Hunt / Agent Levels</a>
 									@endif
 
 									@if($admin->hasPermissionTo('View Minigames / Agent Levels'))
@@ -289,12 +288,14 @@
 						$notificationsRoute = ($route == 'admin.notifications.index')? true:false;
 						$couponRoute = ($route == 'admin.discounts.index')? true:false;
 						$paymentRoute = ($route == 'admin.payment.index')? true:false;
+						$reportLocations = ($route == 'admin.reported-locations.index')? true:false;
 						
 						$showIcon = (
 						$userAccessRoute || 
 						$appSettingsRoute || 
 						$notificationsRoute || 
 						$paymentRoute || 
+						$reportLocations || 
 						$couponRoute)? 'fa-minus': 'fa-plus';
 					@endphp
 					<li>
@@ -324,6 +325,8 @@
 								@if($admin->hasRole('Super Admin'))
 								<a href="{{ route('admin.adminManagement.index') }}" class="@if($userAccessRoute) {{ 'activelistsub' }} @endif">User Access</a>
 								@endif
+								
+								<a href="{{ route('admin.reported-locations.index') }}" class="@if($reportLocations) {{ 'activelistsub' }} @endif">Reported Google Locations</a>
 
 							</div>
 						</div>

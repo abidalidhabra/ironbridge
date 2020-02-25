@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\User;
 
 use App\Exceptions\AppInMaintenanceException;
+use App\Exceptions\AppNotUpdatedException;
 use App\Helpers\UserHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\LoginRequest;
@@ -35,7 +36,8 @@ class AuthController extends Controller
                                 ->setFirebaseIds()
                                 ->setAdditional()
                                 ->setDeviceInfo()
-                                ->save();
+                                ->save()
+                                ->throwIfAppNotUpdated();
 
             if ($token = $registrationService->getToken()) {
                 
@@ -62,6 +64,8 @@ class AuthController extends Controller
             return response()->json(['message'=> ['password'=> ['Sorry! wrong credentials provided.'] ] ], 422);
        }catch (AppInMaintenanceException $e) {
            return response()->json(['message'=> $e->getMessage()], 503);
+       }catch (AppNotUpdatedException $e) {
+           return response()->json(['code'=> $e->getExceptionCode(), 'message'=> $e->getMessage()], 500);
        }catch (Exception $e) {
            return response()->json(['message'=> $e->getMessage()], 500);
        }
@@ -76,8 +80,17 @@ class AuthController extends Controller
     public function getAppURL(Request $request)
     {
         if ($request->secret == 'ironbridge1779') {
-            $serverInfo = (new AppStatisticRepository)->first(['id', 'base_url']);
-            return response()->json(['message' => 'OK.', 'url'=> $serverInfo->base_url], 500);
+            try {
+                (new LoginService)->setRequest($request)->throwIfAppNotUpdated();
+                $serverInfo = (new AppStatisticRepository)->first(['id', 'base_url', 'google_keys']);
+                return response()->json(['message' => 'OK.', 'url'=> $serverInfo->base_url, 'google_keys'=> $serverInfo->google_keys], 500);
+            } catch (AppInMaintenanceException $e) {
+                return response()->json(['message'=> $e->getMessage()], 503);
+            }catch (AppNotUpdatedException $e) {
+                return response()->json(['code'=> $e->getExceptionCode(), 'message'=> $e->getMessage()], 500);
+            }catch (Exception $e) {
+                return response()->json(['message'=> $e->getMessage()], 500);
+            }
         }else{
             return response()->json(['message' => 'you are not authorize to perform this action.'], 500);
         }

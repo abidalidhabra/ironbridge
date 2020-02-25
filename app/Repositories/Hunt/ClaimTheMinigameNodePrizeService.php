@@ -19,13 +19,13 @@ class ClaimTheMinigameNodePrizeService
 
     private $user;
     private $gameId;
-    private $xPManagementRepository;
+    // private $xPManagementRepository;
     private $huntStatisticRepository;
 
     public function __construct()
     {
-        $this->huntStatisticRepository = (new HuntStatisticRepository)->first(['id', 'freeze_till']);
-        $this->xPManagementRepository = (new XPManagementRepository)->where(['event'=> 'clue_completion', 'complexity'=> 1])->first();
+        $this->huntStatisticRepository = (new HuntStatisticRepository)->first(['id', 'freeze_till', 'mgc_xp']);
+        // $this->xPManagementRepository = (new XPManagementRepository)->where(['event'=> 'clue_completion', 'complexity'=> 1])->first();
     }
 
     public function setUser($user)
@@ -44,21 +44,22 @@ class ClaimTheMinigameNodePrizeService
     {
         
         // add the xp in users account
-        $xpReward = (new AddXPService)->setUser($this->user)->add(($this->xPManagementRepository->xp * 2));
-        $rewardData['xp_reward'] = (is_array($xpReward) && count($xpReward))? $xpReward: new stdClass;
-        $rewardData['agent_status'] = $this->user->agent_status;
+        $xpReward = (new AddXPService)->setUser($this->user)->add($this->huntStatisticRepository->mgc_xp)->response();
+        $rewardData['xp_state'] = (is_array($xpReward) && count($xpReward))? $xpReward: new stdClass;
+        // $rewardData['agent_status'] = $this->user->agent_status;
 
         /** Reward system */
         $loots = (new MGCLootRepository)->all();
         $lootDistributionService = new LootDistributionService;
         $reward = $lootDistributionService->setLoots($loots)->spin()->unbox()->setUser($this->user)->open();
-        $rewardData['reward_data'] = $reward->getResponse();
+        $rewardData['loot_rewards'] = $reward->getResponse();
+        // $rewardData['reward_data'] = $reward->getResponse();
         /** Reward system */
         
         $rewardData['mingiame_info'] = $this->markMGCAsComplete();
         
         // get the agent stack
-        $rewardData['agent_stack'] = (new UserRepository($this->user))->getAgentStack();
+        // $rewardData['agent_stack'] = (new UserRepository($this->user))->getAgentStack();
         
         return $rewardData;
     }

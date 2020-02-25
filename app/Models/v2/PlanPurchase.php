@@ -7,7 +7,7 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class PlanPurchase extends Eloquent
 {
-    protected $fillable = ['user_id', 'plan_id', 'country_code', 'gold_price', 'price', 'transaction_id'];
+    protected $fillable = ['user_id', 'plan_id', 'country_code', 'gold_price', 'price', 'transaction_id', 'compasses'];
 
     public function plan()
     {

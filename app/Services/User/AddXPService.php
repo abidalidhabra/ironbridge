@@ -6,11 +6,14 @@ use App\Models\v2\AgentComplementary;
 use App\Repositories\PracticeGameUserRepository;
 use App\Repositories\User\UserRepository;
 use App\Repositories\WidgetItemRepository;
+use stdClass;
 
 class AddXPService
 {
 
-	private $user;
+	private $xp;
+    private $data;
+    private $user;
     private $userRepository;
 
     public function setUser($user) {
@@ -92,14 +95,28 @@ class AddXPService
                 $response['nodes'] = $this->userRepository->addNodes($nodes);
             }
         }
-        return $response ?? [];
+        return $response ?? new stdClass;
     }
 
     public function add($points) {
+        $this->xp = $points;
         $this->userRepository->addXp($points);
-        $data = $this->hikeAgent();
+        $this->data = $this->hikeAgent();
+
+        // $data = $this->hikeAgent();
         // $this->userRepository->allotAgentLevel(-1); // static
         // $this->userRepository->addXp(($points * -1)); // static
-        return $data;
+        return $this;
+        // return $data;
+    }
+
+    public function response()
+    {
+        return [
+            'xp_provided'=> $this->xp,
+            'xp_rewards'=> $this->data,
+            'agent_stack'=> $this->userRepository->getAgentStack(),
+            'agent_status'=> $this->user->agent_status,
+        ];
     }
 }

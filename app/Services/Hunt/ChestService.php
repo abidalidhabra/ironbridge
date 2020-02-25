@@ -252,4 +252,15 @@ class ChestService
 
         return $this;
     }
+
+    public function response()
+    {
+        return [
+            'xp_state'=> $this->getChestRewards(),
+            'next_minigame'=> $this->getMiniGame(),
+            'loot_rewards'=> $this->getLootRewards(),
+            'chests_bucket'=> $this->user->buckets['chests'],
+            'relic_info'=> $this->getRelicInfo()
+        ];
+    }
 }

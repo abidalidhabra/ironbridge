@@ -54,6 +54,20 @@
 
     <style>
         @yield('styles')
+/*        .tooltip-inner{
+            word-wrap: break-word;
+            text-align: center;
+            white-space: pre-line;
+            max-width: 100% !important;
+        }*/
+        .badge-success {
+            color: #fff;
+            background-color: #28a745;
+        } 
+        .badge-warning {
+            color: #fff;
+            background-color: #ffc107;
+        }
     </style>
 </head>
 

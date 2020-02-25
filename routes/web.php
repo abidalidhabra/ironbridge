@@ -237,8 +237,9 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('practiceGame/clues/html', 'PracticeGameController@targerHTML')->name('practiceGame.clue.html');
 
 	Route::group(['middleware' => ['permission:View Hunts XP']], function () {
-		Route::resource('xpManagement', 'XpManagementController');
 		Route::get('getXpManagementList', 'XpManagementController@getXpManagementList')->name('getXpManagementList');
+		Route::post('updateDistanceXp', 'XpManagementController@updateDistanceXp')->name('xpManagement.updateDistanceXp');
+		Route::resource('xpManagement', 'XpManagementController');
 	});
 	
 	Route::group(['middleware' => ['permission:View Agent Levels']], function () {
@@ -252,7 +253,7 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	});
 
 	Route::group(['middleware' => ['permission:View Hunt / Agent Levels']], function () {
-		Route::resource('hunts-agent-levels', 'AgentLevel\HuntAgentLevelController');
+		Route::resource('hunts-agent-levels', 'AgentLevel\HuntAgentLevelController')->except('index', 'store');
 		Route::get('hunts-agent-levels-list', 'AgentLevel\HuntAgentLevelController@list')->name('hunts-agent-levels-list');
 	});
 
@@ -275,7 +276,10 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::resource('plans', 'PlanController');
 	/* NOTIFICATION */
 	Route::resource('notifications', 'NotificationController');
-
+	Route::post('reported-locations/submit', 'ReportLocationController@submit')->name('reported-locations.submit');
+	Route::post('reported-locations/updateIt', 'ReportLocationController@updateIt')->name('reported-locations.updateIt');
+	Route::get('reported-locations/list', 'ReportLocationController@list')->name('reported-locations.list');
+	Route::resource('reported-locations', 'ReportLocationController');
 });
 
 // Auth::routes();

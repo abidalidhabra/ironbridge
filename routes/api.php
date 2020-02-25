@@ -24,11 +24,14 @@ Route::get('addRolesAndPermissions', 'Api\v2\AddRolesAndPermission@addRolesAndPe
 Route::get('createPermissions', 'Api\v2\AddRolesAndPermission@createPermissions');
 Route::get('guestCreate', 'Api\v1\UserController@guestCreate');
 
-Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1', 'middleware'=> 'downtime'], function ($router) {
+Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1', 'middleware'=> ['downtime']], function ($router) {
+	Route::post('login', 'AuthController@login');
+});
 
-	Route::post('login', 'AuthController@login')->middleware('freshapp');
+Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1', 'middleware'=> ['downtime', 'freshapp']], function ($router) {
+
 	Route::post('checkUsernameEmail', 'AuthController@checkUsernameEmail');
-	Route::post('register', 'UserController@register')->middleware('freshapp');
+	Route::post('register', 'UserController@register');
 	// Route::get('checkMyBalance', 'UserController@checkMyBalance');
 	Route::get('getParks', 'UserController@getParks');
 	Route::get('watercheck/{lat}/{long}', 'UserController@watercheck');
@@ -124,7 +127,7 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1', 'middleware'=> 'downtim
 
 // Route::get('/v1/updatedWidgetData', 'Api\v2\WidgetItemController@updatedWidgetData');
 
-Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1', 'middleware' => ['jwt-auth', 'downtime']], function ($router) {
+Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1', 'middleware' => ['jwt-auth', 'downtime', 'freshapp']], function ($router) {
 
 	/** Profile requests **/
 	Route::post('changePassword', 'ProfileController@changePassword');
@@ -144,13 +147,13 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1', 'middleware' => ['jwt-a
 	Route::post('getPayloadData', 'UserController@getPayloadData');
 });
 
-Route::group(['namespace' => 'Api\v2', 'prefix' => 'v1', 'middleware' => ['jwt-auth', 'downtime']], function ($router) {
+Route::group(['namespace' => 'Api\v2', 'prefix' => 'v1', 'middleware' => ['jwt-auth', 'downtime', 'freshapp']], function ($router) {
 
 	/** Widget Items requests **/
 	Route::post('unlockWidgetItem', 'WidgetItemController@unlockWidgetItem');
 });
 
-Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2', 'middleware'=> 'downtime'], function ($router) {
+Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2', 'middleware'=> ['jwt-auth', 'downtime', 'freshapp']], function ($router) {
 	
 	Route::group(['middleware' => 'jwt-auth'], function ($router) {
 
@@ -195,7 +198,7 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2', 'middleware'=> 'downtim
 	});
 });
 
-Route::group(['namespace' => 'Api\Hunt', 'prefix' => 'hunts', 'middleware' => ['jwt-auth', 'downtime']], function ($router) {
+Route::group(['namespace' => 'Api\Hunt', 'prefix' => 'hunts', 'middleware' => ['jwt-auth', 'downtime', 'freshapp']], function ($router) {
 
 	/** Hunt requests **/
 	Route::post('random/participate', 'RandomHuntController@participate');
@@ -210,9 +213,10 @@ Route::group(['namespace' => 'Api\Hunt', 'prefix' => 'hunts', 'middleware' => ['
 	Route::post('random/boostThePower', 'RandomHuntController@boostThePower');
 	Route::post('random/boostThePower/active', 'RandomHuntController@activateThePower');
 	Route::get('random/cell-data', 'RandomHuntController@getCellData');
+	Route::post('random/reportTheLocation', 'RandomHuntController@reportTheLocation');
 });
 
-Route::group(['namespace' => 'Api\Profile', 'prefix' => 'profile', 'middleware' => ['jwt-auth', 'downtime']], function ($router) {
+Route::group(['namespace' => 'Api\Profile', 'prefix' => 'profile', 'middleware' => ['jwt-auth', 'downtime', 'freshapp']], function ($router) {
 
 	/** Hunt requests **/
 	Route::get('getRelicsData', 'ProfileController@getRelics');
@@ -222,14 +226,14 @@ Route::group(['namespace' => 'Api\Profile', 'prefix' => 'profile', 'middleware' 
 	Route::post('removeTheChestFromBucket', 'ProfileController@removeTheChestFromBucket');
 });
 
-Route::group(['namespace' => 'Api\Relic', 'prefix' => 'relics', 'middleware' => ['jwt-auth', 'downtime']], function ($router) {
+Route::group(['namespace' => 'Api\Relic', 'prefix' => 'relics', 'middleware' => ['jwt-auth', 'downtime', 'freshapp']], function ($router) {
 
 	/** Relic requests **/
 	Route::post('markTheRelicAsComplete', 'RelicController@markTheRelicAsComplete');
 });
 
 Route::group(['namespace' => 'Api\User', 'prefix' => 'v2', 'middleware'=> ['downtime']], function ($router) {
-	Route::post('login', 'AuthController@login')->middleware('freshapp');
+	Route::post('login', 'AuthController@login');
 });
 
-Route::get('/app/url', 'Api\User\AuthController@getAppURL')->middleware('freshapp', 'downtime');
+Route::get('/app/url', 'Api\User\AuthController@getAppURL')->middleware('downtime');

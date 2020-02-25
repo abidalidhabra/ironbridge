@@ -2,25 +2,26 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
+use App\Helpers\UserHelper;
 use App\Http\Controllers\Controller;
-use Yajra\Datatables\Datatables;
-use Yajra\DataTables\EloquentDataTable;
-use MongoDB\BSON\UTCDateTime as MongoDBDate;
-use Carbon\Carbon;
+use App\Models\v1\Game;
 use App\Models\v1\User;
+use App\Models\v1\WidgetItem;
+use App\Models\v2\EventsUser;
 use App\Models\v2\HuntUser;
 use App\Models\v2\HuntUserDetail;
-use App\Models\v1\WidgetItem;
-use Validator;
-use App\Models\v2\PracticeGameUser;
 use App\Models\v2\PlanPurchase;
-use MongoDB\BSON\ObjectId as MongoDBId;
-use App\Models\v2\EventsUser;
+use App\Models\v2\PracticeGameUser;
 use App\Models\v2\Relic;
 use App\Repositories\RelicRepository;
-use App\Helpers\UserHelper;
 use Auth;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use MongoDB\BSON\ObjectId as MongoDBId;
+use MongoDB\BSON\UTCDateTime as MongoDBDate;
+use Validator;
+use Yajra\DataTables\EloquentDataTable;
+use Yajra\Datatables\Datatables;
 
 
 
@@ -687,6 +688,17 @@ class UserController extends Controller
         $user->user_relic_map_pieces()->orderBy('created_at', 'asc')->skip(1)->get()->each(function($row){ 
             $row->delete(); 
         });
+
+        /** MGC & Minigame Tutorial Games */
+        $games = Game::where('status',true)->get();
+        $MGCStatus = []; 
+        $minigameTutorial = []; 
+        foreach ($games as $key => $game) {
+            $MGCStatus[] = [ 'game_id' => $game->id, 'completed_at' => null ];
+            $minigameTutorial[] = [ 'game_id' => $game->id, 'completed_at' => null ];
+        }
+        $user->mgc_status = $MGCStatus;
+        $user->minigame_tutorials = $minigameTutorial;
         $user->save();
         return response()->json(['message'=> 'Account has been successfully reset.']);
     }

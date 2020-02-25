@@ -323,7 +323,7 @@ class GameController extends Controller
             $rules = [
                 //'variation_size' => 'required|in:12,35,70,140',   
                 // 'variation_image.*' => 'mimes:jpeg,jpg,png|dimensions:width=2000,height=1440',
-                'variation_image.*' => 'mimes:jpeg,jpg,png|dimensions:width=1440,height:2000',
+                'variation_image.*' => 'mimes:jpeg,jpg,png|dimensions:width=738,height:1024',
             ];
         }
 

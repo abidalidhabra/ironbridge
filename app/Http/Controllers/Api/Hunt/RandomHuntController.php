@@ -10,6 +10,8 @@ use App\Http\Requests\Hunt\HuntUserRequest;
 use App\Http\Requests\Hunt\RevokeTheRevealRequest;
 use App\Http\Requests\v1\ParticipateRequest;
 use App\Models\v2\HuntStatistic;
+use App\ReportedLocation;
+use App\Repositories\AppStatisticRepository;
 use App\Repositories\Hunt\ClaimTheBonusTreasurePrizeService;
 use App\Repositories\Hunt\ClaimTheMinigameNodePrizeService;
 use App\Repositories\Hunt\Factory\HuntFactory;
@@ -28,6 +30,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Http\Request;
 use Validator;
+use stdClass;
 
 class RandomHuntController extends Controller
 {
@@ -184,77 +187,136 @@ class RandomHuntController extends Controller
 
     public function getCellData(CellDataRequest $request)
     {
+        try {
+            $user = auth()->user();
         
-        $user = auth()->user();
-        
-        $paybleCellProviderService = new PaybleCellProviderService;
-        
-        // $response = [
-        //     'cell_id'=> $paybleCellProviderService->getCellIDs($request, $user),
-        //     'random_hunt_cell'=> $paybleCellProviderService->getRandomHuntsCells()
-        // ];
-        
-        // if ($user->nodes_status && (isset($user->nodes_status['mg_challenge']) || isset($user->nodes_status['power']) || isset($user->nodes_status['bonus']))) {
-
-        //     $playableRes = $paybleCellProviderService->getMinigamesCells(); 
-        //     $playableNodes = collect($playableRes->locationsPerGameObjectType); 
+            $paybleCellProviderService = new PaybleCellProviderService;
             
-        //     if (isset($user->nodes_status['power'])) {  
-        //         $response['power_station_node'] = $playableNodes->first();  
-        //     }   
+            // $response = [
+            //     'cell_id'=> $paybleCellProviderService->getCellIDs($request, $user),
+            //     'random_hunt_cell'=> $paybleCellProviderService->getRandomHuntsCells()
+            // ];
             
-        //     if (isset($user->nodes_status['mg_challenge'])) {   
-        //         $response['minigame_node'] = $playableNodes->slice(1)->take(1)->first();    
-        //     }
-        //     if (isset($user->nodes_status['bonus'])) {    
-            
-        //         $response['bonus_nodes'] = $playableNodes->slice(2)->values();  
-        //     }   
-        // }
+            // if ($user->nodes_status && (isset($user->nodes_status['mg_challenge']) || isset($user->nodes_status['power']) || isset($user->nodes_status['bonus']))) {
 
-        $response = [];
-
-        foreach (json_decode($request->coordinates, true) as $key => $coordinate) {
-
-            $cell2ID = $paybleCellProviderService->getCellID(
-                            array_merge($coordinate, ['level'=> $request->level])
-                        );
-
-            if (!$paybleCellProviderService->getCell2IDs()->contains('cell2ID', $cell2ID->cell2ID)) {
-
-                $responseToBeGiven = [];
-                $responseToBeGiven['cell2ID'] = $cell2ID->cell2ID;
-                $paybleCellProviderService->addCell2IDs($cell2ID);
-                $responseToBeGiven['random_hunt_cell'] = $paybleCellProviderService->getRandomHuntsCells();
+            //     $playableRes = $paybleCellProviderService->getMinigamesCells(); 
+            //     $playableNodes = collect($playableRes->locationsPerGameObjectType); 
                 
-                // if (
-                //     $user->nodes_status && 
-                //     (   
-                //         isset($user->nodes_status['mg_challenge']) || 
-                //         isset($user->nodes_status['power']) || 
-                //         isset($user->nodes_status['bonus'])
-                //     )
-                // ) {
+            //     if (isset($user->nodes_status['power'])) {  
+            //         $response['power_station_node'] = $playableNodes->first();  
+            //     }   
+                
+            //     if (isset($user->nodes_status['mg_challenge'])) {   
+            //         $response['minigame_node'] = $playableNodes->slice(1)->take(1)->first();    
+            //     }
+            //     if (isset($user->nodes_status['bonus'])) {    
+                
+            //         $response['bonus_nodes'] = $playableNodes->slice(2)->values();  
+            //     }   
+            // }
 
-                    $playableRes = $paybleCellProviderService->getMinigamesCells(); 
-                    $playableNodes = collect($playableRes->locationsPerGameObjectType); 
+            $response = [];
 
-                    // if (isset($user->nodes_status['power'])) {  
-                        $responseToBeGiven['power_station_node'] = $playableNodes->first();  
-                    // }   
+            foreach (json_decode($request->coordinates, true) as $key => $coordinate) {
 
-                    // if (isset($user->nodes_status['mg_challenge'])) {   
-                        $responseToBeGiven['minigame_node'] = $playableNodes->slice(1)->take(1)->first();    
+                $cell2ID = $paybleCellProviderService->getCellID(
+                                array_merge($coordinate, ['level'=> $request->level])
+                            );
+
+                if (!$paybleCellProviderService->getCell2IDs()->contains('cell2ID', $cell2ID->cell2ID)) {
+
+                    $responseToBeGiven = [];
+                    $responseToBeGiven['cell2ID'] = $cell2ID->cell2ID;
+                    $paybleCellProviderService->addCell2IDs($cell2ID);
+                    $responseToBeGiven['random_hunt_cell'] = $paybleCellProviderService->getRandomHuntsCells();
+                    
+                    // if (
+                    //     $user->nodes_status && 
+                    //     (   
+                    //         isset($user->nodes_status['mg_challenge']) || 
+                    //         isset($user->nodes_status['power']) || 
+                    //         isset($user->nodes_status['bonus'])
+                    //     )
+                    // ) {
+
+                        $playableRes = $paybleCellProviderService->getMinigamesCells(); 
+                        $playableNodes = collect($playableRes->locationsPerGameObjectType); 
+
+                        // if (isset($user->nodes_status['power'])) {  
+                            $responseToBeGiven['power_station_node'] = $playableNodes->first();  
+                        // }   
+
+                        // if (isset($user->nodes_status['mg_challenge'])) {   
+                            $responseToBeGiven['minigame_node'] = $playableNodes->slice(1)->take(1)->first();    
+                        // }
+
+                        // if (isset($user->nodes_status['bonus'])) {    
+
+                            // $responseToBeGiven['bonus_nodes'] = $playableNodes->slice(2)->values();  
+                        // }   
                     // }
-
-                    // if (isset($user->nodes_status['bonus'])) {    
-
-                        // $responseToBeGiven['bonus_nodes'] = $playableNodes->slice(2)->values();  
-                    // }   
-                // }
-                $response[] = $responseToBeGiven;
+                    $response[] = $responseToBeGiven;
+                }
             }
+            return response()->json(['message'=> 'Cell data has been retrieved.', 'data'=> $response]);
+        } catch (Exception $e) {
+            return response()->json(['message'=> $e->getMessage()], 500);
         }
-        return response()->json(['message'=> 'Cell data has been retrieved.', 'data'=> $response]);
+    }
+
+    public function reportTheLocation(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(),[
+                'locationName'=> 'required',
+                'reasons'   => 'required|array',
+                'reasons.*' => 'required|in:BAD_LOCATION_REASON_UNSPECIFIED,OTHER,NOT_PEDESTRIAN_ACCESSIBLE,NOT_OPEN_TO_PUBLIC,PERMANENTLY_CLOSED,TEMPORARILY_INACCESSIBLE',
+                'reasonDetails'  => 'required'
+            ]);
+
+            if ($validator->fails()){
+                return response()->json(['message' => $validator->messages()->first()], 422);
+            }
+
+            auth()->user()->reported_locations()->create($request->all());
+            $locations = ReportedLocation::notSended()->get();
+            $huntStatistic = HuntStatistic::first(['_id', 'reported_loc_count']);
+
+            if ($locations->count() >= $huntStatistic->reported_loc_count) {
+                $paybleGoogleKey = (new AppStatisticRepository)->first(['_id', 'google_keys.web'])->google_keys['web'];
+                
+                $loc = $locations->map(function($data) {
+                    $data->languageCode = "en-US";
+                    unset($data->_id, $data->user_id, $data->sent_at, $data->created_at, $data->updated_at);
+                    return $data;
+                });
+
+                $requestId = uniqid();
+                $client = new Client();
+                $apiResponse = $client->request('POST', 
+                    "https://playablelocations.googleapis.com/v3:logPlayerReports?key=".$paybleGoogleKey, 
+                    [
+                        'json' => ["playerReports"=> $loc->toArray(), 'requestId'=> $requestId],
+                        'http_errors'=> false
+                    ]
+                );
+
+                $locations->each(function($location) use ($requestId){
+                    $location->sent_at = now();
+                    $location->requestId = $requestId;
+                    $location->save();
+                });
+
+                $response = json_decode($apiResponse->getBody()->getContents());
+            }
+            return response()->json([
+                'message'=> 'Location has been reported successfully.', 
+                'google_response'=> $response ?? new stdClass(),
+                'code'=> (isset($response))? $apiResponse->getStatusCode(): 0,
+                'reason'=> (isset($response))? $apiResponse->getReasonPhrase(): "",
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['message'=> $e->getMessage()]);
+        }
     }
 }
