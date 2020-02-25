@@ -11,6 +11,7 @@ use App\Repositories\AgentComplementaryRepository;
 use App\Repositories\EventRepository;
 use App\Repositories\Game\GameRepository;
 use App\Repositories\MinigameHistoryRepository;
+use App\Repositories\PlanRepository;
 use App\Repositories\RelicRepository;
 use App\Repositories\User\UserRepository;
 use App\Services\Hunt\ChestService;
@@ -108,6 +109,7 @@ class UserHelper {
 			'chest_minigame'=> $miniGameInfoService,
 			'chest_synced'=> $chestMinigame->getBucketRestored(),
 			'hat_selected'=> $user->hat_selected,
+			'plans'=> (new PlanRepository)->all(),
 			// 'used_widgets' => $user->used_widgets,
 			// 'plans' => $plans,
 			// 'events_data' => $events,

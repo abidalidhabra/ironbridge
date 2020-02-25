@@ -183,7 +183,10 @@ class User extends Authenticatable implements JWTSubject
             ]
         ],
         'hat_selected'=> true,
-        'compasses'=> []
+        'compasses'=> [
+            'utilized'=> 0,
+            'remaining'=> 0,
+        ]
         // 'expnadable_skeleton_keys'   => 0,
         // 'user_widgets' => [],
         // 'used_widgets' => [],
