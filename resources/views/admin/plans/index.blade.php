@@ -25,10 +25,14 @@
             <div class="col-md-6">
                 <li>
                     <img src="{{ asset('admin_assets/svg/news.svg') }}">
-                    <a href="javascript:void(0)"  data-id="{{ $plan->id }}" data-action="edit" >
-                        <h3>{{ $plan->name }}</h3>
-                        <p>{{ ucfirst(str_replace('_',' ',$plan->type)) }}</p>
-                    </a>
+                    @if($plan->id == "com.ironbridge1779.roguesatlas.gold1" || $plan->id == "com.ironbridge1779.roguesatlas.gold2" || $plan->id == "com.ironbridge1779.roguesatlas.gold3" || $plan->id == "com.ironbridge1779.roguesatlas.gold4")
+                        <a href="javascript:void(0)">
+                    @else
+                        <a href="javascript:void(0)" data-id="{{ $plan->id }}" data-action="edit" >
+                    @endif
+                            <h3>{{ $plan->name }}</h3>
+                            <p>{{ ucfirst(str_replace('_',' ',$plan->type)) }}</p>
+                        </a>
                     <!-- <a href="javascript::void(0);" data-id="{{ $plan->id }}" data-action="edit" class="btn btn-primary edit_plans">Edit</a> -->
                 </li>
             </div>
