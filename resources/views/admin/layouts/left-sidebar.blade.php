@@ -89,6 +89,31 @@
 
 
 					@php 
+						$eventRoutes = (
+						$route == 'admin.events.index' || 
+						$route == 'admin.events.create' || 
+						$route == 'admin.events.edit' || 
+						$route == 'admin.events.show'
+						)? true:false;
+
+
+						$showIcon = ($eventRoutes)? 'fa-minus': 'fa-plus';
+					@endphp
+					<li>
+						
+						<a href="javascript:void(0)" class="plusbttnbox myBtn">
+							Events<i class="fa {{ $showIcon }}" aria-hidden="true"></i>
+						</a>
+
+						<div class="dropdown custmenbox">
+							<div class="dropdown-content myDropdown {{ ($showIcon == 'fa-minus')? 'show': '' }}">
+								<a href="{{ route('admin.events.index') }}" class="@if($eventRoutes) {{ 'activelistsub' }} @endif">Events</a>
+							</div>
+						</div>
+					</li>
+
+
+					@php 
 						
 						$chestTargets = ($route == 'admin.complexityTarget.index')? true:false;
 						

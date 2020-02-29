@@ -133,6 +133,7 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1', 'middleware' => ['jwt-a
 	Route::post('changePassword', 'ProfileController@changePassword');
 	Route::post('updateProfile', 'ProfileController@updateProfile');
 	Route::post('updateSetting', 'ProfileController@updateSetting');
+	Route::post('updateUserHomeCity', 'ProfileController@updateUserHomeCity');
 	Route::post('logout', 'AuthController@logout');
 	Route::post('refresh', 'AuthController@refresh');
 	Route::post('me', 'AuthController@me');
@@ -186,11 +187,12 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2', 'middleware'=> ['jwt-au
 		Route::post('markMiniGameAsUncomplete', 'MGController@markMiniGameAsUncomplete');
 		
 		/** Event **/
-		Route::get('getEventsCities', 'EventController@getEventsCities');
-		Route::get('getEventsInCity', 'EventController@getEventsInCity');
-		Route::post('participateInEvent', 'EventsUserController@participateInEvent');
-		Route::post('markTheEventMGAsComplete', 'EventsMiniGameController@markTheEventMGAsComplete');
-		Route::get('getPresentDayEventDetail', 'EventsUserController@getPresentDayEventDetail');
+		Route::get('getLeadersBoard', 'EventController@getLeadersBoard');
+		// Route::get('getEventsCities', 'EventController@getEventsCities');
+		// Route::get('getEventsInCity', 'EventController@getEventsInCity');
+		// Route::post('participateInEvent', 'EventsUserController@participateInEvent');
+		// Route::post('markTheEventMGAsComplete', 'EventsMiniGameController@markTheEventMGAsComplete');
+		// Route::get('getPresentDayEventDetail', 'EventsUserController@getPresentDayEventDetail');
 	
 		/** DISCOUNT COUPON */
 		//Route::get('getDiscountCoupon', 'DiscountCouponController@getDiscountCoupon');

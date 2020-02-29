@@ -6,6 +6,9 @@ use App\Models\v2\AgentComplementary;
 use App\Models\v2\MinigameHistory;
 use App\Models\v2\Relic;
 use App\Models\v2\UserRelicMapPiece;
+use App\Models\v3\AssetsLog;
+use App\Models\v3\City;
+use App\Models\v3\EventUser;
 use App\ReportedLocation;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
@@ -68,6 +71,7 @@ class User extends Authenticatable implements JWTSubject
         'buckets',
         'hat_selected',
         'compasses',
+        'city_id',
         // 'expnadable_skeleton_keys',
     ];
 
@@ -223,7 +227,12 @@ class User extends Authenticatable implements JWTSubject
      */
     public function events()
     {
-        return $this->hasMany('App\Models\v2\EventsUser');
+        return $this->hasMany(EventUser::class);
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class);
     }
 
     public function balance_sheet()
@@ -402,5 +411,10 @@ class User extends Authenticatable implements JWTSubject
     public function reported_locations()
     {
         return $this->hasMany(ReportedLocation::class);
+    }
+
+    public function assets()
+    {
+        return $this->hasMany(AssetsLog::class);
     }
 }

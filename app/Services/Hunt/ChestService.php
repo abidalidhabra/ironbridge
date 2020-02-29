@@ -7,6 +7,7 @@ use App\Repositories\HuntStatisticRepository;
 use App\Repositories\Hunt\GetRandomizeGamesService;
 use App\Repositories\User\UserRepository;
 use App\Services\Hunt\ChestRewardsService;
+use App\Services\Hunt\CompassesLootService;
 use App\Services\Hunt\LootDistribution\OldLootService;
 use App\Services\Hunt\RelicService;
 use App\Services\MiniGame\MiniGameInfoService;
@@ -22,6 +23,7 @@ class ChestService
 	protected $lootRewards = [];
 	protected $bucketRestored = false;
 	protected $relicInfo;
+    protected $compassRewards;
 
     public function expand($amount)
     {
@@ -79,6 +81,10 @@ class ChestService
 
         $this->setRelicInfo(
         	(new RelicService)->setUser($this->user)->addMapPiece()
+        );
+
+        $this->setCompassRewards(
+            (new CompassesLootService)->setUser($this->user)->spin()->generate()
         );
 
 		return $this;
@@ -253,7 +259,28 @@ class ChestService
         return $this;
     }
 
+    /**
+     * @param mixed $compassRewards
+     *
+     * @return self
+     */
+    public function setCompassRewards($compassRewards)
+    {
+        $this->compassRewards = $compassRewards;
+
+        return $this;
+    }
+
     public function response()
+    {
+        $response = $this->treasureChestLootResponse();
+        if ($compassRewards = $this->compassRewards->getResponse()) {
+            $response['compass_rewards'] = $this->compassRewards->getResponse();
+        }
+        return $response;
+    }
+
+    public function treasureChestLootResponse()
     {
         return [
             'xp_state'=> $this->getChestRewards(),
@@ -261,6 +288,6 @@ class ChestService
             'loot_rewards'=> $this->getLootRewards(),
             'chests_bucket'=> $this->user->buckets['chests'],
             'relic_info'=> $this->getRelicInfo()
-        ];
+        ]; 
     }
 }

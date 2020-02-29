@@ -76,7 +76,6 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('/avatarItems/{id}','UserController@avatarItems')->name('user.avatarItems');
 	Route::get('/planPurchase/{id}','UserController@planPurchase')->name('user.planPurchase');
 	Route::get('getPlanPurchaseList','UserController@getPlanPurchaseList')->name('getPlanPurchaseList');
-	Route::get('/events/{id}','UserController@eventsUser')->name('eventsUser');
 	Route::get('/miniGameStatistics/{id}','UserController@miniGameStatistics')->name('miniGameStatistics');
 	Route::get('/tutorialsProgress/{id}','UserController@tutorialsProgress')->name('tutorialsProgress');
 	
@@ -155,7 +154,9 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 
 
 	//EVENTS
-	Route::resource('event', 'EventController');
+	Route::get('events/list', 'EventController@list')->name('events.list');
+	Route::resource('events', 'EventController');
+	// Route::get('/events/{id}','UserController@eventsUser')->name('eventsUser');
 	Route::get('basicDetails/{id?}', [ 'middleware' => ['permission:Add Event'], 'uses' => 'EventController@basicDetails' ])->name('event.basicDetails');
 	Route::post('addBasicStore', [ 'middleware' => ['permission:Add Event'], 'uses' => 'EventController@addBasicStore' ])->name('event.addBasicStore');
 	Route::get('miniGame/{id}', [ 'middleware' => ['permission:Add Event'], 'uses' => 'EventController@miniGame' ])->name('event.miniGame');
