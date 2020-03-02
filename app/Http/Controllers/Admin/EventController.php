@@ -63,6 +63,10 @@ class EventController extends Controller
             return response()->json(['message' => $validator->messages()->first()], 422);
         }
 
+        $city = City::find($request->city_id);
+        $startDate = $this->localTOUTC($request->start_time, $city->timezone);
+        $endDate = $this->localTOUTC($request->end_time, $city->timezone);
+
         $event = Event::create([
             'name'=> $request->name,
             'city_id'=> $request->city_id,
@@ -75,8 +79,8 @@ class EventController extends Controller
             'weekly_max_compasses'=> (int) $request->weekly_max_compasses,
             'deductable_radius'=> (int) $request->deductable_radius,
             'time'=> [
-                'start'=> new UTCDateTime($request->start_time),
-                'end'=> new UTCDateTime($request->end_time)
+                'start'=> $startDate,
+                'end'=> $endDate
             ]
         ]);
 
@@ -136,12 +140,14 @@ class EventController extends Controller
         }
 
         $city = City::find($request->city_id);
-        $startDate = new DateTime($request->start_time, new DateTimeZone($city->timezone));
-        $startDate = $startDate->setTimezone(new DateTimeZone('UTC'));
-        $startDate = new UTCDateTime($startDate->format('U') * 1000);
-        $endDate = new DateTime($request->end_time, new DateTimeZone($city->timezone));
-        $endDate = $endDate->setTimezone(new DateTimeZone('UTC'));
-        $endDate = new UTCDateTime($endDate->format('U') * 1000);
+        $startDate = $this->localTOUTC($request->start_time, $city->timezone);
+        $endDate = $this->localTOUTC($request->end_time, $city->timezone);
+        // $startDate = new DateTime($request->start_time, new DateTimeZone($city->timezone));
+        // $startDate = $startDate->setTimezone(new DateTimeZone('UTC'));
+        // $startDate = new UTCDateTime($startDate->format('U') * 1000);
+        // $endDate = new DateTime($request->end_time, new DateTimeZone($city->timezone));
+        // $endDate = $endDate->setTimezone(new DateTimeZone('UTC'));
+        // $endDate = new UTCDateTime($endDate->format('U') * 1000);
         // dd($startDate->toDateTime()->format('Y-m-d h:i:s A'), $endDate->toDateTime()->format('Y-m-d h:i:s A'));
         Event::where('_id', $id)->update([
             'name'=> $request->name,
@@ -241,5 +247,13 @@ class EventController extends Controller
         ->setFilteredRecords($count)
         ->skipPaging()
         ->make(true);
+    }
+
+    public function localTOUTC($datetime, $tz)
+    {
+        $date = new DateTime($datetime, new DateTimeZone($tz));
+        $date = $date->setTimezone(new DateTimeZone('UTC'));
+        $date = new UTCDateTime($date->format('U') * 1000);
+        return $date;
     }
 }
