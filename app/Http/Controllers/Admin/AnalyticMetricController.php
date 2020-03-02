@@ -94,6 +94,9 @@ class AnalyticMetricController extends Controller
         $data['total_male'] = $user->where('gender','male')->count();
         $data['total_female'] = $user->where('gender','female')->count();
         $data['total_user'] = $user->count();
+        if($data['total_user'] == 0){
+            $data['total_user'] = 1;
+        }
         $data['per_male'] = number_format(($data['total_male']/$data['total_user'])*100,2).'%';
         $data['per_female'] = number_format(($data['total_female']/$data['total_user'])*100,2).'%';
         $data['highest_xp'] = User::select('id','first_name','last_name','agent_status','created_at')
