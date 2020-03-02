@@ -95,7 +95,7 @@
                 processing: true,
                 responsive: true,
                 serverSide: true,
-                order:[],
+                // order:[],
                 lengthMenu: [[10, 50, 100, -1], [10, 50, 100, "All"]],
                 ajax: {
                     type: "get",
@@ -125,7 +125,7 @@
                 columnDefs: [
                     {
                         orderable: false,
-                        targets: [0],
+                        targets: [6,7],
                     }
                 ],
 
