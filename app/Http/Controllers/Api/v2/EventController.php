@@ -4,39 +4,29 @@ namespace App\Http\Controllers\Api\v2;
 
 use App\Helpers\ResponseHelpers;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\v2\GetEventsInCityRequest;
-use App\Models\v1\City;
-use App\Models\v2\Event;
+use App\Models\v3\Event;
+use App\Repositories\User\UserRepository;
 use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
-    private $user;
-
-    public function __construct()
+    
+    public function getLeadersBoard(Request $request)
     {
-        $this->middleware(function ($request, $next) {
-            $this->user = auth()->user();
-            return $next($request);
-        });
-    }
-
-    public function getEventsCities(Request $request)
-    {
-        $cities = City::select('_id','name')->havingActiveEvents()->get();
-
-        return ResponseHelpers::successResponse($cities);
-    }
-
-    public function getEventsInCity(GetEventsInCityRequest $request)
-    {
-        $events = Event::soonActivatedOrParticipated(auth()->user()->id)
-                    ->havingCity($request->city_id)
-                    ->withWinningPrize()
-                    ->withParticipation($this->user->id)
-                    ->select('_id', 'name', 'fees', 'description', 'starts_at', 'ends_at', 'discount', 'discount_amount', 'city_id', 'play_countdown', 'discount_countdown', 'status')
-                    ->get();
-                    
-        return ResponseHelpers::successResponse($events);
+    	$event = Event::running()
+    			->whereHas('participations', function($query){
+	    			$query->where('user_id', auth()->user()->id);
+	    		})
+	    		->select('id', 'name')
+	    		->first();
+    	if ($event) {
+    		$data = (new UserRepository)->getModel()->whereHas('events', function($query) use ($event){
+    			$query->where('event_id', $event->id);
+    		})
+    		->select('_id', 'first_name', 'last_name', 'compasses')
+    		->orderBy('compasses.remaining', 1)
+    		->get();
+    	}
+        return ResponseHelpers::successResponse($data ?? []);
     }
 }

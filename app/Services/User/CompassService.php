@@ -2,6 +2,7 @@
 
 namespace App\Services\User;
 
+// use App\Services\AssetsLogService;
 use App\Services\Traits\UserTraits;
 
 class CompassService
@@ -9,16 +10,23 @@ class CompassService
     use UserTraits;
 
     protected $userCompasses;
+    protected $added;
 
     public function add(int $size)
     {
+        
+        // (new AssetsLogService('compass', 'loot'))->setUser($this->user)->compasses($size)->save();
+
         $this->setUserCompasses(
             $this->user->compasses
         );
+        
         $this->userCompasses = [
             'remaining'=> $this->userCompasses['remaining'] + $size,
             'utilized'=> $this->userCompasses['utilized']
         ];
+        
+        $this->added = $size;
         $this->save();
         return $this;
     }
@@ -51,6 +59,9 @@ class CompassService
 
     public function response()
     {
+        if ($this->added) {
+            $this->userCompasses['added'] = $this->added;
+        }
         return $this->userCompasses;
     }
 }

@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\v1\User;
-use Carbon\Carbon;
-use Validator;
-use Auth;
 use App\Rules\IsPasswordValid;
+use App\Rules\User\UpdateHomeCity;
+use Auth;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use MongoDB\BSON\UTCDateTime as MongoDBDate;
+use Validator;
 
 
 
@@ -86,5 +87,21 @@ class ProfileController extends Controller
 		$user->save();
 
 		return response()->json(['message' => 'Profile setting successfully updated.','data'=>$user->settings]);
+	}
+
+	public function updateUserHomeCity(Request $request)
+	{
+		$validator = Validator::make($request->all(),[
+						'city_id'=>['required', 'exists:cities,_id', new UpdateHomeCity],
+					]);
+
+		if ($validator->fails()) {
+			return response()->json(['message' => $validator->messages()->first()],422);
+		}
+
+		$user = auth()->user();
+		$user->city_id = $request->city_id;
+		$user->save();
+		return response()->json(['message' => 'Your home city has been updated successfully.']);
 	}
 }

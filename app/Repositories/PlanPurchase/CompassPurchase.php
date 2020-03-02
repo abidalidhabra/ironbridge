@@ -5,8 +5,11 @@ namespace App\Repositories\PlanPurchase;
 use App\Models\v2\PlanPurchase;
 use App\Repositories\PlanPurchase\Purchase;
 use App\Repositories\User\UserRepository;
-use App\Services\Hunt\ChestService;
+use App\Services\AssetsLogService;
+use App\Services\Event\EventService;
+use App\Services\Event\UserEventService;
 use App\Services\User\CompassService;
+use Exception;
 
 class CompassPurchase implements Purchase
 {
@@ -21,6 +24,9 @@ class CompassPurchase implements Purchase
 
     public function create($planData)
     {
+
+        /** Log this purchase **/
+        (new AssetsLogService('compass', 'store'))->setUser($this->user)->compasses($this->plan->compasses)->save();
 
     	/** Add purchase in the database **/
     	$planPurchase 				  = new PlanPurchase();
