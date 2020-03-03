@@ -30,10 +30,8 @@ class CitiesController extends Controller
      */
     public function index()
     {
-        
-        
         $country = Country::get();
-        return view('admin.city.index',compact('country','timezone'));
+        return view('admin.city.index',compact('country'));
     }
 
     /**

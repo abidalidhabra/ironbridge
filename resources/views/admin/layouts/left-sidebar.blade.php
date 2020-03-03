@@ -315,9 +315,10 @@
 						$couponRoute = ($route == 'admin.discounts.index')? true:false;
 						$paymentRoute = ($route == 'admin.payment.index')? true:false;
 						$reportLocations = ($route == 'admin.reported-locations.index')? true:false;
-						$cityRoute = ($route == 'admin.city')? true:false;
-						$countryRoute = ($route == 'admin.country')? true:false;
-						$stateRoute = ($route == 'admin.state')? true:false;
+						$cityRoute = ($route == 'admin.city.index')? true:false;
+					
+						$countryRoute = ($route == 'admin.country.index')? true:false;
+						$stateRoute = ($route == 'admin.state.index')? true:false;
 
 						$eventNotificationRoute = ($route == 'admin.event-notifications.index')? true:false;
 						
