@@ -454,6 +454,7 @@ class UserController extends Controller
         return response()->json([
             'message' => 'Your avatar has been updated successfully.', 
             'data'=> $user,
+            'avatar'=> asset('storage/avatars/'.$user->id.'.jpg')
         ]);
     }
 

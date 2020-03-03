@@ -129,40 +129,28 @@ class LeaderBoardService
 	{
 		// $this->response['toppers'] = $this->toppers();
 		// if ($me = $this->me()) {
-			// $this->response['me'] = $me = $this->me();
+		// 	$this->response['me'] = $me = $this->me();
 		// }
-		// $this->response['before'] = $this->more('up', $me->rank);
-		// $this->response['after'] = $this->more('down', $me->rank);
-		$this->response['before'] = $this->more('up', 50);
-		$this->response['after'] = $this->more('down', 50);
+		$this->response['before'] = $this->more('up', 52);
+		$this->response['after'] = $this->more('down', 52);
 		return $this->response();
 	}
+
+  public function next($direction, $cursor)
+  {
+
+    $this->response = $this->more($direction, $cursor);
+    return $this->response();
+  }
 
 	public function more($direction, $cursor)
 	{
 
-    for ($i=0; $i < 50; $i++) { 
+    for ($i=0; $i < 150; $i++) { 
       $digits[] = $i+1;
     }
-    // $data = collect($digits)->slice($skip)->take($limit)->values();
-  //   $data = collect($digits);
-		// $total = $data->count();
-		// $data = new Paginator($data, $total, 25, [
-  //           'path'  => 'bhula',
-  //           'query'  => 'query bhula'
-  //       ]);
-  //   dd($data);
     $paginate = 25;
 		if ($direction == 'up') {
-			// if ($cursor <= $paginate) {
-			// 	$nextCursor = 0;
-			// 	$skip = 3;
-			// 	$limit = ($cursor - 1);
-			// }else{
-			// 	$toBeSkip = ($cursor - 1 - $paginate);
-			// 	$skip = $toBeSkip;
-			// 	$limit = $paginate;
-			// }
       $limit = (($cursor - 1) == 0)? 0: ($cursor - 1);
       if ($limit > $paginate) {
         $limit = $paginate;
@@ -176,103 +164,24 @@ class LeaderBoardService
 		}
 
 		// dd($skip, $limit, $cursor, $paginate);
-    $data = collect($digits)->slice($skip)->take($limit)->values();
-		// $data = (new UserRepository)->getModel()->whereHas('events', function($query){
-		// 	$query->where('event_id', $this->event->id);
-		// })
-		// ->select('_id', 'first_name', 'last_name', 'compasses', 'widgets')
-		// ->orderBy('compasses.remaining', 1)
-		// ->skip($skip)
-		// ->limit($limit)
-		// ->get();
+    // $data = collect($digits)->slice($skip)->take($limit)->values();
+		$data = (new UserRepository)->getModel()->whereHas('events', function($query){
+			$query->where('event_id', $this->event->id);
+		})
+		->select('_id', 'first_name', 'last_name', 'compasses', 'widgets')
+		->orderBy('compasses.remaining', 1)
+		->skip($skip)
+		->limit($limit)
+		->get()
+    ->map(function($user){
+      $user->avatar = asset('storage/avatars/'.$user->id.'.jpg');
+      return $user;
+    });
 
 		if ($direction == 'down' && ($data->count() == 0 || $data->count() < $paginate)) {
 			$nextCursor = 0;
 		}
-		return [$direction=> $data, $direction.'_cursor'=> $nextCursor];
-		// $userRank = (new UserRepository)->getModel()->raw(function($collection) use ($skip, $limit){
-  //               return $collection->aggregate([
-  //                   [
-  //                       '$addFields'=> [
-  //                           'str_usr_id'=> [ '$toString'=> '$_id' ]
-  //                       ]
-  //                   ],
-  //                   [
-  //                       '$lookup' => [
-  //                           'from' => 'event_users',
-  //                           'let'=> [ 'str_usr_id'=> '$str_usr_id'],
-  //                           'pipeline'=> [
-  //                               [
-  //                                   '$match'=> [ 
-  //                                       '$expr'=> [ 
-  //                                           '$and'=> [
-  //                                              [ '$eq'=> [ '$user_id',  '$$str_usr_id' ] ],
-  //                                              [ '$eq'=> [ '$event_id',  $this->event->id ] ],
-  //                                           ]
-  //                                       ]
-  //                                   ]
-  //                               ],
-  //                              [
-  //                               '$limit'=> 1
-  //                              ]
-  //                           ],
-  //                           'as' => 'event_users'
-  //                       ]
-  //                   ],
-  //                   [
-  //                       '$unwind' => '$event_users'
-  //                   ],
-  //                   [
-  //                       '$sort'=> ['compasses.remaining'=> 1]
-  //                   ],
-  //                   [
-  //                       '$project'=> [
-  //                           '_id'=> true,
-  //                           'name'=> true,
-  //                           'compasses'=> true,
-  //                           'widgets'=> true,
-  //                       ]
-  //                   ],
-  //                   [
-  //                       '$group' => [
-  //                           '_id'   => null,
-  //                           'items' => [
-  //                               '$push'  => '$$ROOT'
-  //                           ]
-  //                       ]
-  //                   ],
-  //                   [
-  //                       '$unwind' => [
-  //                           'path'=> '$items',
-  //                           'includeArrayIndex'=> 'rank',
-  //                       ]
-  //                   ],
-  //               ]);
-  //           });
-
-		return $userRank;
-	}
-
-	public function up($cursor, $pagination)
-	{
-		$nextCursor = $cursor - $pagination;
-
-		// if data is not enough to pagination, then return whole data
-		if ($cursor <= $pagination) {
-			$nextCursor = 0;
-			$skip = 3;
-			$limit = ($cursor - 1);
-		}else{
-			// if data is more than pagination, then return whole data
-			$toBeSkip = ($cursor - 1 - $pagination);
-			$skip = $toBeSkip;
-			$limit = $pagination;
-		}
-	}
-
-	public function after($value='')
-	{
-		# code...
+		return [$direction.'_data'=> $data, 'cursor'=> ($nextCursor)? $nextCursor+1: 0];
 	}
 
 	public function response()
