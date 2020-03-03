@@ -127,19 +127,32 @@
 
          var startdate = '{{ $event->time["start"] }}';
          var enddate = '{{ $event->time["end"] }}';
-            console.log(startdate, enddate);
+        console.log(startdate, enddate);
          $('.startDate').datetimepicker({
-            format: "MM/DD/YYYY HH:mm A",
-            minDate: moment(startdate),
+            format: "MM/DD/YYYY hh:mm A",
+            minDate: moment(),
             defaultDate: moment(startdate),
             autoclose: true,
         });
 
          $('.endDate').datetimepicker({
-            format: "MM/DD/YYYY HH:mm A",
-            minDate: moment(enddate),
+            format: "MM/DD/YYYY hh:mm A",
             defaultDate: moment(enddate),
             autoclose: true,
+        });
+
+         $('.startDate').datetimepicker().on('dp.change', function (e) {
+            var incrementDay = moment(new Date(e.date));
+            incrementDay.add(1, 'days');
+            $('.endDate').data('DateTimePicker').setMinDate(incrementDay);
+            $(this).data("DateTimePicker").hide();
+        });
+
+         $('.endDate').datetimepicker().on('dp.change', function (e) {
+            var decrementDay = moment(new Date(e.date));
+            decrementDay.subtract(1, 'days');
+            $('.startDate').data('DateTimePicker').setMaxDate(decrementDay);
+            $(this).data("DateTimePicker").hide();
         });
 
         // let abc = $('#clock_hou').jClocksGMT({
