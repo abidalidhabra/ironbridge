@@ -314,11 +314,17 @@
 						$couponRoute = ($route == 'admin.discounts.index')? true:false;
 						$paymentRoute = ($route == 'admin.payment.index')? true:false;
 						$reportLocations = ($route == 'admin.reported-locations.index')? true:false;
+						$cityRoute = ($route == 'admin.city')? true:false;
+						$countryRoute = ($route == 'admin.country')? true:false;
+						$stateRoute = ($route == 'admin.state')? true:false;
 						
 						$showIcon = (
 						$userAccessRoute || 
 						$appSettingsRoute || 
 						$notificationsRoute || 
+						$cityRoute || 
+						$countryRoute || 
+						$stateRoute || 					
 						$paymentRoute || 
 						$reportLocations || 
 						$couponRoute)? 'fa-minus': 'fa-plus';
@@ -350,7 +356,12 @@
 								@if($admin->hasRole('Super Admin'))
 								<a href="{{ route('admin.adminManagement.index') }}" class="@if($userAccessRoute) {{ 'activelistsub' }} @endif">User Access</a>
 								@endif
-								
+								<a href="{{ route('admin.country.index') }}" class="@if($countryRoute) {{ 'activelistsub' }} @endif">Country</a>
+
+								<a href="{{ route('admin.state.index') }}" class="@if($stateRoute) {{ 'activelistsub' }} @endif">State</a>
+
+								<a href="{{ route('admin.city.index') }}" class="@if($cityRoute) {{ 'activelistsub' }} @endif">Cities</a>
+
 								<a href="{{ route('admin.reported-locations.index') }}" class="@if($reportLocations) {{ 'activelistsub' }} @endif">Reported Google Locations</a>
 
 							</div>

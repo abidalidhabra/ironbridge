@@ -272,6 +272,21 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 		Route::get('avatar-agent-levels-list', 'AgentLevel\AvatarAgentLevelController@list')->name('avatar-agent-levels-list');
 	});
 
+	// Country
+
+
+	Route::resource('country', 'CountryController');
+	Route::get('getCountryList', 'CountryController@getCountryList')->name('getCountryList');	
+
+	Route::resource('state', 'StateController');
+	Route::get('getStateList', 'StateController@getStateList')->name('getStateList');	
+
+
+	//Cities
+	//Route::get('city', 'CitiesController@index')->name('city');
+	Route::get('getCityList', 'CitiesController@getCityList')->name('getCityList');	
+	Route::resource('city', 'CitiesController');
+	Route::get('city.getTimezone', 'CitiesController@getTimezone')->name('city.getTimezone');	
 
 	Route::get('plans/list', 'PlanController@list')->name('plans.list');
 	Route::resource('plans', 'PlanController');
