@@ -94,6 +94,9 @@ class AnalyticMetricController extends Controller
         $data['total_male'] = $user->where('gender','male')->count();
         $data['total_female'] = $user->where('gender','female')->count();
         $data['total_user'] = $user->count();
+        if($data['total_user'] == 0){
+            $data['total_user'] = 1;
+        }
         $data['per_male'] = number_format(($data['total_male']/$data['total_user'])*100,2).'%';
         $data['per_female'] = number_format(($data['total_female']/$data['total_user'])*100,2).'%';
         $data['highest_xp'] = User::select('id','first_name','last_name','agent_status','created_at')
@@ -189,7 +192,13 @@ class AnalyticMetricController extends Controller
     }
 
     public function XPList(Request $request){
-        return view('admin.analytics.xp_list');   
+        $user = User::select('id','first_name','last_name', 'agent_status','created_at')
+                    ->get();
+
+        $data['user_start_date'] = $user->first()->created_at;
+        $data['user_end_date'] = $user->last()->created_at;
+
+        return view('admin.analytics.xp_list',compact('data'));   
     }
 
     public function getXPList(Request $request){
@@ -197,12 +206,18 @@ class AnalyticMetricController extends Controller
         $take = (int)$request->get('length');
         $search = $request->get('search')['value'];
 
+        $date = explode('-', $request->get('user_date'));
+        $startAt = new \DateTime(date('Y-m-d',strtotime(str_replace(' ', '-', trim($date[0])))));
+        $endAt= new \DateTime((date('Y-m-d',strtotime(str_replace(' ', '-', trim($date[1]))))));
+        $endAt->modify('+1 day');
+
         $users = User::select('id','first_name','last_name', 'agent_status','created_at')
                         ->when($search != '', function($query) use ($search) {
                             $query->where('first_name','like','%'.$search.'%')
                                     ->orWhere('last_name','like','%'.$search.'%')
                                     ->orWhere('agent_status.xp','like','%'.$search.'%');
                         })
+                        ->whereBetween('created_at', [$startAt,$endAt])
                         ->orderBy('agent_status.xp','desc')
                         ->skip($skip)
                         ->take($take)
@@ -214,6 +229,7 @@ class AnalyticMetricController extends Controller
                                 ->orWhere('last_name','like','%'.$search.'%')
                                 ->orWhere('agent_status.xp','like','%'.$search.'%');
                             })
+                            ->whereBetween('created_at', [$startAt,$endAt])
                             ->count();
 
         $admin = auth()->user();
@@ -226,7 +242,7 @@ class AnalyticMetricController extends Controller
                     return $user->agent_status['xp'];
                 })
                 ->rawColumns(['name', 'icon'])
-                ->setTotalRecords(User::count())
+                ->setTotalRecords($filterCount)
                 ->setFilteredRecords($filterCount)
                 ->skipPaging()
                 ->make(true);
@@ -234,7 +250,13 @@ class AnalyticMetricController extends Controller
 
 
     public function relicsList(Request $request){
-        return view('admin.analytics.relics_list');
+        $user = User::select('id','first_name','last_name', 'agent_status','relics','created_at')
+                    ->get();
+
+        $data['user_start_date'] = $user->first()->created_at;
+        $data['user_end_date'] = $user->last()->created_at;
+
+        return view('admin.analytics.relics_list',compact('data'));
     }
 
     public function getRelicsList(Request $request){
@@ -242,11 +264,17 @@ class AnalyticMetricController extends Controller
         $take = (int)$request->get('length');
         $search = $request->get('search')['value'];
 
+        $date = explode('-', $request->get('user_date'));
+        $startAt = new \DateTime(date('Y-m-d',strtotime(str_replace(' ', '-', trim($date[0])))));
+        $endAt= new \DateTime((date('Y-m-d',strtotime(str_replace(' ', '-', trim($date[1]))))));
+        $endAt->modify('+1 day');
+
         $users = User::select('id','first_name','last_name', 'agent_status','relics','created_at')
                         ->when($search != '', function($query) use ($search) {
                             $query->where('first_name','like','%'.$search.'%')
                                     ->orWhere('last_name','like','%'.$search.'%');
                         })
+                        ->whereBetween('created_at', [$startAt,$endAt])
                         ->orderBy('relics','desc')
                         ->skip($skip)
                         ->take($take)
@@ -257,6 +285,7 @@ class AnalyticMetricController extends Controller
                                 $query->where('first_name','like','%'.$search.'%')
                                 ->orWhere('last_name','like','%'.$search.'%');
                             })
+                            ->whereBetween('created_at', [$startAt,$endAt])
                             ->count();
 
         $admin = auth()->user();
@@ -269,7 +298,7 @@ class AnalyticMetricController extends Controller
                     return $user->relics->count();
                 })
                 ->rawColumns(['name', 'icon'])
-                ->setTotalRecords(User::count())
+                ->setTotalRecords($filterCount)
                 ->setFilteredRecords($filterCount)
                 ->skipPaging()
                 ->make(true);

@@ -7,7 +7,8 @@
 		</button>
 		<div class="nav-offcanvas-menu">
 			<ul>
-				@if(Route::currentRouteName() == 'admin.accountInfo' || Route::currentRouteName() == 'admin.treasureHunts' || Route::currentRouteName() == 'admin.userHuntDetails' || Route::currentRouteName() == 'admin.activity' || Route::currentRouteName() == 'admin.practiceGameUser' || Route::currentRouteName() == 'admin.user.avatarItems' || Route::currentRouteName() == 'admin.user.planPurchase' || Route::currentRouteName() == 'admin.miniGameStatistics' || Route::currentRouteName() == 'admin.tutorialsProgress')
+
+				@if(Route::currentRouteName() == 'admin.accountInfo' || Route::currentRouteName() == 'admin.treasureHunts' || Route::currentRouteName() == 'admin.userHuntDetails' || Route::currentRouteName() == 'admin.activity' || Route::currentRouteName() == 'admin.practiceGameUser' || Route::currentRouteName() == 'admin.user.avatarItems' || Route::currentRouteName() == 'admin.user.planPurchase' || Route::currentRouteName() == 'admin.miniGameStatistics' || Route::currentRouteName() == 'admin.tutorialsProgress' || Route::currentRouteName() == 'admin.chestInverntory')
 
 					<li  class="@if(Route::currentRouteName() == 'admin.accountInfo') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.accountInfo',$id) }}">Account Info</a>
@@ -32,6 +33,9 @@
 					</li>
 					<li  class="@if(Route::currentRouteName() == 'admin.miniGameStatistics') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.miniGameStatistics',$id) }}">Mini-Games Statistics</a>
+					</li>
+					<li  class="@if(Route::currentRouteName() == 'admin.chestInverntory') {{ 'activelist' }} @endif">
+						<a href="{{ route('admin.chestInverntory',$id) }}">Chest Inverntory</a>
 					</li>
 				@else
 					@if($admin->hasPermissionTo('Dashboard'))

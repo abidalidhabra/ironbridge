@@ -108,7 +108,7 @@
                 beforeSend:function(){},
                 success:function(response) {
                     toastr.success(response.message);
-                    // window.location.href = '{{ route("admin.events.index")}}';
+                    window.location.href = '{{ route("admin.events.index")}}';
                 },
                 complete:function(){},
                 error:function(jqXHR, textStatus, errorThrown){
