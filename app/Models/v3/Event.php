@@ -48,6 +48,11 @@ class Event extends Eloquent
     	return $query->where('time.start', '<=', new UTCDateTime())->whereNull('started_at')->whereNull('ended_at');
     }
 
+    // public function scopeUpcoming($query)
+    // {
+    //     return $query->where('time.start', '>', new UTCDateTime())->whereNull('started_at')->whereNull('ended_at');
+    // }
+
     public function scopeRunning($query)
     {
         return $query->where('time.start', '<=', new UTCDateTime())->where('time.end', '>=', new UTCDateTime());

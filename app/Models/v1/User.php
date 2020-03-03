@@ -417,4 +417,18 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(AssetsLog::class);
     }
+
+    /**
+     * Specifies the user's FCM token
+     *
+     * @return string
+     */
+    public function routeNotificationForFcm()
+    {
+        if ($this->device_info['type'] == 'android') {
+            return $this->firebase_ids['android_id'];
+        }else if($this->device_info['type'] == 'ios') {
+            return $this->firebase_ids['ios_id'];
+        }
+    }
 }

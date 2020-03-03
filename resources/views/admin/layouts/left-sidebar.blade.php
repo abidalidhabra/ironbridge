@@ -315,6 +315,7 @@
 						$couponRoute = ($route == 'admin.discounts.index')? true:false;
 						$paymentRoute = ($route == 'admin.payment.index')? true:false;
 						$reportLocations = ($route == 'admin.reported-locations.index')? true:false;
+						$eventNotificationRoute = ($route == 'admin.event-notifications.index')? true:false;
 						
 						$showIcon = (
 						$userAccessRoute || 
@@ -322,6 +323,7 @@
 						$notificationsRoute || 
 						$paymentRoute || 
 						$reportLocations || 
+						$eventNotificationRoute || 
 						$couponRoute)? 'fa-minus': 'fa-plus';
 					@endphp
 					<li>
@@ -343,6 +345,7 @@
 								@endif
 
 								<a href="{{ route('admin.notifications.index') }}" class="@if($notificationsRoute) {{ 'activelistsub' }} @endif">Notifications</a>
+								<a href="{{ route('admin.event-notifications.index') }}" class="@if($eventNotificationRoute) {{ 'activelistsub' }} @endif">Event Notifications</a>
 
 								@if($admin->hasPermissionTo('View App Settings'))
 								<a href="{{ route('admin.app.settings.index') }}" class="@if($appSettingsRoute) {{ 'activelistsub' }} @endif">App Settings</a>
