@@ -391,6 +391,8 @@ class UserController extends Controller
         $skinColors = $request->skin_color;
         $widgets    = $request->widgets;
         
+        $request->file('thumb')->storeAs('avatars', $userId.'.jpg', 'public');
+
         $primaryAvatar = Avatar::where('_id',$avatarId)->select('_id','gender')->first();
         $user->gender = $primaryAvatar->gender;
         $user->avatar = [
@@ -452,6 +454,7 @@ class UserController extends Controller
         return response()->json([
             'message' => 'Your avatar has been updated successfully.', 
             'data'=> $user,
+            'avatar'=> asset('storage/avatars/'.$user->id.'.jpg')
         ]);
     }
 

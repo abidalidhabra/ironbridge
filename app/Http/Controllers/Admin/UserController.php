@@ -35,7 +35,7 @@ class UserController extends Controller
     //GET USER
     public function getUsers(Request $request)
     {	
-        $skip = (int)$request->get('start');
+        /*$skip = (int)$request->get('start');
         $take = (int)$request->get('length');
         $search = $request->get('search')['value'];
 
@@ -63,7 +63,55 @@ class UserController extends Controller
                 ->orWhere('dob','like','%'.$search.'%')
                 ->orWhere('created_at','like','%'.$search.'%');
             })->count();
+        }*/
+
+        $columns = array( 
+                            0 => '_id', 
+                            1 => 'created_at',
+                            2 => 'first_name',
+                            3 => 'email',
+                            4 => 'username',
+                            5 => 'gold_balance',
+                            6 => 'available_skeleton_keys',
+                            // 7 => 'device.type',
+                        );
+
+        $skip = (int)$request->get('start');
+        $take = (int)$request->get('length');
+        $order = $columns[$request->input('order.0.column')];
+        $search = $request->get('search')['value'];
+        $status = $request->status;
+        
+        if(!empty($request->input('search.value')) || $request->input('order.0.column') != 0){
+            $dir = $request->input('order.0.dir');
+        } else {
+            $dir = 'desc';
         }
+
+        $user = User::select('first_name','last_name','username', 'email', 'mobile_no', 'gold_balance','created_at','skeleton_keys','device_info','guest_id')
+                    ->when($search != '', function($query) use ($search) {
+                                $active = ($search == 'true' || $search == 'Active')? true: false;
+                                $query->orWhere('first_name', 'LIKE',"%{$search}%")
+                                       ->orWhere('last_name', 'LIKE',"%{$search}%")
+                                       ->orWhere('email', 'LIKE',"%{$search}%")
+                                       ->orWhere('username', 'LIKE',"%{$search}%")
+                                       ->orWhere('gold_balance', 'LIKE',"%{$search}%")
+                                       ->orWhere('created_at', 'LIKE',"%{$search}%");
+                            })
+                    ->orderBy($order,$dir)
+                    ->skip($skip)
+                    ->take($take)
+                    ->get();
+        $filterCount = User::when($search != '', function($query) use ($search) {
+                                $active = ($search == 'true' || $search == 'Active')? true: false;
+                                $query->orWhere('first_name', 'LIKE',"%{$search}%")
+                                       ->orWhere('last_name', 'LIKE',"%{$search}%")
+                                       ->orWhere('email', 'LIKE',"%{$search}%")
+                                       ->orWhere('username', 'LIKE',"%{$search}%")
+                                       ->orWhere('gold_balance', 'LIKE',"%{$search}%")
+                                       ->orWhere('created_at', 'LIKE',"%{$search}%");
+                            })->count();
+
         return DataTables::of($user)
         ->addIndexColumn()
         ->addColumn('name', function($user){
@@ -116,8 +164,8 @@ class UserController extends Controller
                     }
                     
                 })
-        ->setTotalRecords($count)
-        ->setFilteredRecords($count)
+        ->setTotalRecords($filterCount)
+        ->setFilteredRecords($filterCount)
         ->skipPaging()
         ->make(true);
     }
@@ -716,5 +764,12 @@ class UserController extends Controller
             return $completed;
         });
         return view('admin.user.tutorialsProgress',compact('id','tutorials'));        
+    }
+
+    public function chestInverntory($id){
+        $user = User::where('_id',$id)->select('_id', 'buckets')->first();
+        $chests = $user->buckets['chests'];
+        $chests['mini_game'] = ($chests['minigame_id'])?Game::where('_id',$chests['minigame_id'])->first()->name:'-';
+        return view('admin.user.chestInverntory',compact('id','chests'));           
     }
 }
