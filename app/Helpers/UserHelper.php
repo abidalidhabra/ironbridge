@@ -133,6 +133,7 @@ class UserHelper {
 	public static function prepareDateForEvent($user)
 	{
 		$userEventService = (new UserEventService)->setUser($user);
+		// dd((new EventService)->participate());
 		$response = [];
 		if ($city = $user->city) {
 			$response['user_city'] = $user->city;
@@ -142,7 +143,7 @@ class UserHelper {
 			$response['running_event'] = $event->makeHidden(['time', 'started_at', 'created_at', 'updated_at']);
 			$response['total_earned_compasses'] = $userEventService->totalEarnedCompasses();
 			$response['this_week_earned_compasses'] = $userEventService->thisWeekEarnedCompasses();
-			$response['compass_plan_coccupied_this_week'] = (new UserRepository($user))->compassPlanOccupiedThisWeek($event);
+			$response['compass_plan_occupied_this_week'] = (new UserRepository($user))->compassPlanOccupiedThisWeek($event);
 		}
 		return $response;
 	}
