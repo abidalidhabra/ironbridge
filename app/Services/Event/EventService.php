@@ -38,7 +38,7 @@ class EventService
 	{
 		$this->users = User::whereIn('city_id', $this->cities->pluck('_id')->toArray())
 						->whereNotNull('dob')
-						// ->where('dob', '', )
+						->where('dob', '<', new UTCDateTime(now()->subYears(18)))
 						->doesntHave('events', function($query){
 							$query->whereIn('event_id', $this->events->pluck('_id')->toArray());
 						})

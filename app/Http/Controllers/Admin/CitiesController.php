@@ -13,6 +13,7 @@ use App\Models\v3\Country;
 use Validator;
 use Auth;
 use Session;
+use DateTimeZone;
 use Yajra\Datatables\Datatables;
 use Yajra\DataTables\EloquentDataTable;
 
@@ -33,7 +34,8 @@ class CitiesController extends Controller
     {
         $country = Country::get();
         $state = State::get();
-        return view('admin.city.index',compact('country','state'));
+        $tz = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
+        return view('admin.city.index',compact('country','state', 'tz'));
     }
 
     /**

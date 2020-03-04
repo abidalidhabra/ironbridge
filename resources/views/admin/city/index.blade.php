@@ -351,24 +351,8 @@
   $( function() {
     
     $( "#timezone" ).autocomplete({
-      source: function( request, response ) {
-        $.ajax({
-          url: '{{ route("admin.city.getTimezone","") }}',
-          dataType: "json",
-          data: {
-            q: request.term
-          },
-          success: function( data ) { 
-           response($.map(data.timezone, function (item) {
-            console.log(item.timezone);
-            return {
-                label: item.timezone,
-                value: item.timezone
-            };
-        }));
-          }
-        });
-      },change: function(event, ui){
+      source: @json($tz)
+      ,change: function(event, ui){
             if(ui.item){
               //user select an item
             }
@@ -378,34 +362,46 @@
       appendTo: $('.cityInsForm')
     });
 
-     $( "#timezoneedit" ).autocomplete({
-      source: function( request, response ) {
-        $.ajax({
-          url: '{{ route("admin.city.getTimezone","") }}',
-          dataType: "json",
-          data: {
-            q: request.term
-          },
-          success: function( data ) { 
-           response($.map(data.timezone, function (item) {
-            console.log(item.timezone);
-            return {
-                label: item.timezone,
-                value: item.timezone
-            };
-        }));
-          }
-        });
-      },change: function(event, ui){
+    $( "#timezoneedit" ).autocomplete({
+        source: @json($tz),
+        change: function(event, ui){
             if(ui.item){
-              //user select an item
+                //user select an item
+            }else{
+                jQuery('#timezoneedit').val('');
             }
-            else{
-            jQuery('#timezoneedit').val('');
-            }},
-      appendTo: $('.cityInsFormEdit')
+        },
+        appendTo: $('.cityInsFormEdit')
     });
-  } );
+});
+  //    $( "#timezoneedit" ).autocomplete({
+  //     source: function( request, response ) {
+  //       $.ajax({
+  //         url: '{{ route("admin.city.getTimezone","") }}',
+  //         dataType: "json",
+  //         data: {
+  //           q: request.term
+  //         },
+  //         success: function( data ) { 
+  //          response($.map(data.timezone, function (item) {
+  //           console.log(item.timezone);
+  //           return {
+  //               label: item.timezone,
+  //               value: item.timezone
+  //           };
+  //       }));
+  //         }
+  //       });
+  //     },change: function(event, ui){
+  //           if(ui.item){
+  //             //user select an item
+  //           }
+  //           else{
+  //           jQuery('#timezoneedit').val('');
+  //           }},
+  //     appendTo: $('.cityInsFormEdit')
+  //   });
+  // } );
 
     function getstateByCountry(country_id,id){
 
