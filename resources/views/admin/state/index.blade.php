@@ -27,6 +27,7 @@
                 <tr>
                     <th width="7%">Sr.</th>
                     <th>State Name</th>
+                    <th>Code</th>
                     <th>Country</th>
                     <th width="5%">Action</th>
                     
@@ -52,7 +53,8 @@
                             <div class="modalbodysetbox">
                                 <div class="newstitlebox_inputbox">
                                     <div class="form-group">
-                                        <select name="country_id" class="form-control">
+                                       <label class="form-label">Country</label>
+                                       <select name="country_id" class="form-control">
                                           <option value="">Select Contry</option>
                                           @foreach($country as $cnt)
                                           <option value="{{ $cnt->id }}">{{ $cnt->name }}</option>
@@ -62,10 +64,18 @@
                                 </div>      
                                 <div class="newstitlebox_inputbox">
                                     <div class="form-group">
+                                        <label class="form-label">State Name</label>
                                         <input type="text" class="" name="name" placeholder="State Name" autocomplete="off">
                                         
                                     </div>
-                                </div>       
+                                </div>  
+                                   <div class="newstitlebox_inputbox">
+                                    <div class="form-group">
+                                         <label class="form-label">Code</label>
+                                        <input type="text" class="" name="code" placeholder="Code" autocomplete="off">
+                                        
+                                    </div>
+                                </div>     
                                 
                             </div>
                         </div>
@@ -93,6 +103,7 @@
                             <div class="modalbodysetbox">
                                 <div class="newstitlebox_inputbox">
                                     <div class="form-group">
+                                         <label class="form-label">Country</label>
                                         <select name="country_id" class="form-control">
                                           <option value="">Select Contry</option>
                                           @foreach($country as $cnt)
@@ -104,7 +115,15 @@
                                 </div>
                                 <div class="newstitlebox_inputbox">
                                     <div class="form-group">
+                                         <label class="form-label">State Name</label>
                                         <input type="text" class="" name="name" placeholder="State Name" autocomplete="off">
+                                        
+                                    </div>
+                                </div>
+                                 <div class="newstitlebox_inputbox">
+                                    <div class="form-group">
+                                         <label class="form-label">Code</label>
+                                        <input type="text" class="" name="code" placeholder="Code" autocomplete="off">
                                         
                                     </div>
                                 </div>
@@ -150,6 +169,7 @@
                 columns:[
                 { data:'DT_RowIndex',name:'_id' },
                 { data:'name',name:'name'},
+                { data:'code',name:'code' },
                 { data:country_name,name:'country_name' },
                 { data:'action',name:'action' },
                 ],
@@ -191,7 +211,7 @@
                         {
                             if (response.status == true) {
                                 toastr.success(response.message);
-                                $('input[name="name"] ,select[name="country_id"]').val('');
+                                $('input[name="name"] ,input[name="code"] ,select[name="country_id"]').val('');
                                 $('.preview-content').attr('src',' ')
                                 $('#addState').modal('hide');
                                 table.ajax.reload();
@@ -246,6 +266,7 @@
             $(document).on('click', '.edit_company', function(){
                 $("#editState input[name='state_id']").val($(this).data('id'));
                 $("#editState input[name='name']").val($(this).data('cityname'));
+                $("#editState input[name='code']").val($(this).data('code'));
                 $("#editState select[name='country_id']").val($(this).data('country'));
                 
                 
@@ -282,7 +303,7 @@
                         {
                             if (response.status == true) {
                                 toastr.success(response.message);
-                                $('input[name="name"] , select[name="country_id"]').val('');
+                                $('input[name="name"] , input[name="code"] ,select[name="country_id"]').val('');
                                 $('.preview-content').attr('src',' ')
                                 $('#editState').modal('hide');
                                 table.ajax.reload();

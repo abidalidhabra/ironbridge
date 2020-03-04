@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use MongoDB\BSON\UTCDateTime as MongoDBDate;
 use App\Models\v3\Timezone;
 use App\Models\v3\City;
+use App\Models\v3\State;
 use App\Models\v3\Country;
 use Validator;
 use Auth;
@@ -31,7 +32,8 @@ class CitiesController extends Controller
     public function index()
     {
         $country = Country::get();
-        return view('admin.city.index',compact('country'));
+        $state = State::get();
+        return view('admin.city.index',compact('country','state'));
     }
 
     /**
@@ -59,8 +61,9 @@ class CitiesController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(),[
-            'name'     => 'required',
+            'name'     => 'required|unique:cities,name',
             'country_id' => 'required',
+            'state_id' => 'required',
             'timezone'  => 'required',
         ]);
         
@@ -73,30 +76,12 @@ class CitiesController extends Controller
 
         
         $data = $request->all();
-        $data['valid_till'] = date('Y-m-d H:i:s',strtotime($request->get('valid_till')));
-
-        if($request->hasfile('image')){
-            $image = $request->file('image');
-            if(!File::exists(storage_path('app/public/news/'))){
-                $directoryPath = storage_path('app/public/news/');
-                File::makeDirectory($directoryPath,0755,true);
-            }            
-            $extension = $image->getClientOriginalExtension();
-            $img = Image::make($image);
-            $height = $img->height();
-            $width = $img->width();
-            
-            $imageUniqueName = uniqid(uniqid(true).'_').'.'.$extension;
-            $img->save(storage_path('app/public/news/'.$imageUniqueName));
-            $data['image'] = $imageUniqueName;
-            
-        }
-        
+         
         City::create($data);
         
         return response()->json([
             'status' => true,
-            'message'=>'News has been added successfully.',
+            'message'=>'City has been added successfully.',
         ]);
     }
 
@@ -134,6 +119,7 @@ class CitiesController extends Controller
         $data = [
             'name'     => $request->get('name'),
             'country_id' => $request->get('country_id'),
+            'state_id'  => $request->get('state_id'),
             'timezone'  => $request->get('timezone'),
           //  '_id'     => $request->get('city_id'),
         ];
@@ -148,14 +134,9 @@ class CitiesController extends Controller
             $message = $validator->messages()->first();
             return response()->json(['status' => false,'message' => $message]);
         }
-        $data['valid_till'] = date('Y-m-d H:i:s',strtotime($request->get('valid_till')));
-
+        //$data['valid_till'] = date('Y-m-d H:i:s',strtotime($request->get('valid_till')));
         $city = City::where('_id',$request->get('city_id'))->first();
-
-       
-
         $city->update($data);
-
         return response()->json([
             'status' => true,
             'message'=>'City has been updated successfully.',
@@ -178,14 +159,14 @@ class CitiesController extends Controller
     }
 
     public function getCityList(Request $request){
-        $city = City::select('country_id','name','timezone')->with('country')->get();
+        $city = City::select('country_id','state_id','name','timezone')->with('country')->with('state')->get();
        // $admin = Auth::user();
 
         return DataTables::of($city)
         ->addIndexColumn()
         ->addColumn('action', function($city){
             $data = '';
-                $data .=  '<a href="javascript:void(0)" class="edit_company" data-action="edit" data-id="'.$city->id.'" data-cityname="'.$city->name.'" data-timezone="'.$city->timezone.'" data-country="'.$city->country_id.'"  data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+                $data .=  '<a href="javascript:void(0)" class="edit_company" data-action="edit" data-id="'.$city->id.'" data-cityname="'.$city->name.'" data-timezone="'.$city->timezone.'" data-country="'.$city->country_id.'"  data-state="'.$city->state_id.'"  data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
            
                 $data .=  '<a href="javascript:void(0)" class="delete_company" data-action="delete" data-placement="left" data-id="'.$city->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>
                 </a>';
@@ -214,5 +195,15 @@ class CitiesController extends Controller
             'status' => true,
             'timezone'=> $timezone,
         ]);
+    }
+
+    public function countryState(Request $request){
+      $cid = $request->country_id;
+     $state = State::where('country_id',$cid)->get(); 
+     //return $state;
+     return response()->json([
+            'status' => true,
+            'state'=> $state,
+        ]);   
     }
 }

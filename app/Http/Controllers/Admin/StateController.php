@@ -63,9 +63,9 @@ class StateController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(),[
-            'name'     => 'required',
+            'name'     => 'required|unique:states,name',
             'country_id' => 'required',
-           
+            
         ]);
         
         if ($validator->fails())
@@ -120,7 +120,7 @@ class StateController extends Controller
         $data = [
             'name'     => $request->get('name'),
             'country_id' => $request->get('country_id'),
-          
+            'code'=> $request->get('code'),
           //  '_id'     => $request->get('city_id'),
         ];
 
@@ -163,14 +163,20 @@ class StateController extends Controller
     }
 
     public function getStateList(Request $request){
-        $State = State::select('country_id','name')->with('country')->get();
+        $State = State::select('country_id','name','code')->with('country')->get();
        // $admin = Auth::user();
 
         return DataTables::of($State)
         ->addIndexColumn()
+        ->editColumn('code', function($State){
+            if ($State->code!="") {
+                return $State->code;
+            }
+            return '';
+        })
         ->addColumn('action', function($State){
             $data = '';
-                $data .=  '<a href="javascript:void(0)" class="edit_company" data-action="edit" data-id="'.$State->id.'" data-cityname="'.$State->name.'" data-country="'.$State->country_id.'"  data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
+                $data .=  '<a href="javascript:void(0)" class="edit_company" data-action="edit" data-id="'.$State->id.'" data-cityname="'.$State->name.'" data-country="'.$State->country_id.'" data-code="'.$State->code.'"  data-toggle="tooltip" title="Edit" ><i class="fa fa-pencil iconsetaddbox"></i></a>';
            
                 $data .=  '<a href="javascript:void(0)" class="delete_company" data-action="delete" data-placement="left" data-id="'.$State->id.'"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash iconsetaddbox"></i>
                 </a>';

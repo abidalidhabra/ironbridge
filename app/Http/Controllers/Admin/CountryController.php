@@ -58,7 +58,7 @@ class CountryController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(),[
-            'name'     => 'required',
+            'name'     => 'required|unique:countries,name',
             'currency_full_name' => 'required',
             'currency' => 'required',
             'currency_symbol' => 'required',

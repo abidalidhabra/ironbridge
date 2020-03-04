@@ -8,7 +8,7 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class State extends Eloquent
 {
-    protected $fillable = ['name', 'country_id'];
+    protected $fillable = ['name', 'country_id','code'];
 
 	public function country()
     {

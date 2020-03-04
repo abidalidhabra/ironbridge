@@ -27,6 +27,7 @@
                 <tr>
                     <th width="7%">Sr.</th>
                     <th>City Name</th>
+                    <th>State Name</th>
                     <th>Country</th>
                     <th>Timezone</th>
                     <th width="5%">Action</th>
@@ -53,22 +54,34 @@
                             <div class="modalbodysetbox">
                                 <div class="newstitlebox_inputbox">
                                     <div class="form-group">
-                                        <select name="country_id" class="form-control">
+                                        <label class="form-label">Country</label>
+                                        <select onchange="getstateByCountry(this.value,'addStasteData')" name="country_id" class="form-control">
                                           <option value="">Select Contry</option>
                                           @foreach($country as $cnt)
                                           <option value="{{ $cnt->id }}">{{ $cnt->name }}</option>
                                           @endforeach
                                         </select>
                                     </div>
+                                </div>   
+                                <div class="newstitlebox_inputbox">
+                                    <div class="form-group">
+                                        <label class="form-label">State</label>
+                                        <select name="state_id" id="addStasteData" class="form-control">
+                                          <option value="">Select State</option>
+                                           
+                                        </select>
+                                    </div>
                                 </div>      
                                 <div class="newstitlebox_inputbox">
                                     <div class="form-group">
+                                        <label class="form-label">City Name</label>
                                         <input type="text" class="" name="name" placeholder="City Name" autocomplete="off">
                                         
                                     </div>
                                 </div>       
                                 <div class="newstitlebox_inputbox">
-                                    <div class="form-group">                  
+                                    <div class="form-group">     
+                                       <label class="form-label">Timezone</label>
                                         <input type="text" class="form-control" id="timezone" name="timezone" placeholder="Timezone" data-class="cityInsForm"  autocomplete="off">
                                         <div class="cityInsForm"></div>
                                     </div>
@@ -106,23 +119,35 @@
                             <div class="modalbodysetbox">
                                 <div class="newstitlebox_inputbox">
                                     <div class="form-group">
-                                        <select name="country_id" class="form-control">
+                                         <label class="form-label">Country</label>
+                                        <select onchange="getstateByCountry(this.value,'editStasteData')" name="country_id" class="form-control">
                                           <option value="">Select Contry</option>
                                           @foreach($country as $cnt)
                                           <option value="{{ $cnt->id }}">{{ $cnt->name }}</option>
                                           @endforeach
                                         </select>
                                     </div>
-                                </div>             
+                                </div>  
+                                 <div class="form-group">
+                                     <label class="form-label">State</label>
+                                        <select id="editStasteData" name="state_id" class="form-control">
+                                          <option value="">Select State</option>
+                                          @foreach($state as $st)
+                                          <option value="{{ $st->id }}">{{ $st->name }}</option>
+                                          @endforeach
+                                        </select>
+                                    </div>           
                                 </div>
                                 <div class="newstitlebox_inputbox">
                                     <div class="form-group">
+                                         <label class="form-label">City</label>
                                         <input type="text" class="" name="name" placeholder="City Name" autocomplete="off">
                                         
                                     </div>
                                 </div>
                                 <div class="newstitlebox_inputbox">
-                                    <div class="form-group">                  
+                                    <div class="form-group">      
+                                        <label class="form-label">Timezone</label>            
                                         <input type="text" class="form-control" id="timezoneedit" name="timezone" placeholder="Timezone" data-class="cityInsFormEdit" autocomplete="off">
                                          <div class="cityInsFormEdit"></div>
                                     </div>
@@ -169,6 +194,7 @@
                 columns:[
                 { data:'DT_RowIndex',name:'_id' },
                 { data:'name',name:'name'},
+                { data:state_name,name:'state_name' },
                 { data:country_name,name:'country_name' },
                 { data:'timezone',name:'timezone' },
                 { data:'action',name:'action' },
@@ -204,11 +230,12 @@
                         processData:false,
                         cache:false,
                         contentType: false,
+                        dataType: "json",
                         success: function(response)
                         {
                             if (response.status == true) {
                                 toastr.success(response.message);
-                                $('input[name="name"] , textarea[name="timezone"],select[name="country_id"]').val('');
+                                $('input[name="name"] , textarea[name="timezone"],select[name="state_id"] ,select[name="country_id"]').val('');
                                 $('.preview-content').attr('src',' ')
                                 $('#addCity').modal('hide');
                                 table.ajax.reload();
@@ -222,6 +249,14 @@
             function country_name(data){
                      if(data.country){
                     return data.country.name;    
+                    }
+                    else{
+                        return '';
+                    }
+                 }
+                 function state_name(data){
+                     if(data.state){
+                    return data.state.name;    
                     }
                     else{
                         return '';
@@ -264,6 +299,8 @@
                 $("#editCity input[name='city_id']").val($(this).data('id'));
                 $("#editCity input[name='name']").val($(this).data('cityname'));
                 $("#editCity select[name='country_id']").val($(this).data('country'));
+                $("#editCity select[name='state_id']").val($(this).data('state'));
+                
                 $("#editCity input[name='timezone']").val($(this).data('timezone'));
                 
                 $('#editCity').modal('show');
@@ -299,7 +336,7 @@
                         {
                             if (response.status == true) {
                                 toastr.success(response.message);
-                                $('input[name="name"] , select[name="country_id"] , input[name="timezone"]').val('');
+                                $('input[name="name"] , select[name="country_id"] ,select[name="state_id"] ,  input[name="timezone"]').val('');
                                 $('.preview-content').attr('src',' ')
                                 $('#editCity').modal('hide');
                                 table.ajax.reload();
@@ -331,7 +368,13 @@
         }));
           }
         });
-      },
+      },change: function(event, ui){
+            if(ui.item){
+              //user select an item
+            }
+            else{
+            jQuery('#timezone').val('');
+            }},
       appendTo: $('.cityInsForm')
     });
 
@@ -353,11 +396,38 @@
         }));
           }
         });
-      },
+      },change: function(event, ui){
+            if(ui.item){
+              //user select an item
+            }
+            else{
+            jQuery('#timezoneedit').val('');
+            }},
       appendTo: $('.cityInsFormEdit')
     });
   } );
 
-  
+    function getstateByCountry(country_id,id){
+
+        $.ajax({
+                type: "POST",
+                url: '{{ route("admin.countryState") }}',
+                data: {country_id:country_id},
+               
+                success: function(response)
+                {  jQuery('#'+id).html('');
+                    if (response.status == true) {
+                        $.each(response.state, function(key, value) {
+                             jQuery('#'+id)
+                             .append($('<option>', { value : value._id })
+                                  .text(value.name));
+                        });
+
+                    } else {
+                        toastr.warning(response.message);
+                    }
+                }
+            });
+    }
     </script>
     @endsection

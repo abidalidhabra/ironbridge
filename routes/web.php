@@ -287,6 +287,8 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	//Route::get('city', 'CitiesController@index')->name('city');
 	Route::get('getCityList', 'CitiesController@getCityList')->name('getCityList');	
 	Route::resource('city', 'CitiesController');
+	Route::post('countryState', 'CitiesController@countryState')->name('countryState');	
+	
 	Route::get('city.getTimezone', 'CitiesController@getTimezone')->name('city.getTimezone');	
 
 	Route::get('plans/list', 'PlanController@list')->name('plans.list');
