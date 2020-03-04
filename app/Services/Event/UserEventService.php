@@ -16,6 +16,12 @@ class UserEventService
 
 	public $event;
 	public $earnedCompasses;
+
+	public function setEvent($event)
+	{
+		$this->event = $event;
+		return $this;
+	}
 	
 	public function running(array $fields = ['*'])
 	{
@@ -42,13 +48,35 @@ class UserEventService
 			$this->running();
 		}
 
-		$startDate = new DateTimeImmutable($this->event->getOriginal('time')['start']->toDateTime()->format('Y-m-d H:i:s'));
-		$weekLater = $startDate->add(new DateInterval('P7D'));
+		$dates = $this->getWeekDates();
 		$this->thisWeekEarnedCompasses = $this->user->assets()->compasses()
 										->where('event_id', $this->event->id)
-										->where('created_at', '>=', new UTCDateTime($startDate))
-										->where('created_at', '<=', new UTCDateTime($weekLater))
+										->where('created_at', '>=', new UTCDateTime($dates['start']))
+										->where('created_at', '<=', new UTCDateTime($dates['end']))
 										->sum('compasses');
 		return $this->thisWeekEarnedCompasses;
+	}
+
+	public function getWeekDates()
+	{
+
+		$startDate = new DateTimeImmutable($this->event->getOriginal('time')['start']->toDateTime()->format('Y-m-d H:i:s'));
+		$endDate = new DateTimeImmutable($this->event->getOriginal('time')['end']->toDateTime()->format('Y-m-d H:i:s'));
+
+		$totalWeeks = ceil($endDate->diff($startDate)->days/7);
+
+		$weekStartDate = $startDate;
+		$weekEndDate = $weekStartDate->add(new DateInterval('P7D'));
+		$intervals = [];
+		for ($i=0; $i < $totalWeeks; $i++) { 
+			$intervals[$i]['start'] = $weekStartDate;
+			$intervals[$i]['end'] = $weekEndDate;
+
+			$weekStartDate = $weekEndDate;
+			$weekEndDate = $weekStartDate->add(new DateInterval('P7D'));
+		}
+		$now =  new DateTimeImmutable();
+		$dates = collect($intervals)->where('start', '<=', $now)->where('end', '>', $now)->first();
+		return $dates;
 	}
 }

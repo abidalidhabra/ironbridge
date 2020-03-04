@@ -55,7 +55,7 @@ class Event extends Eloquent
 
     public function scopeRunning($query)
     {
-        return $query->where('time.start', '<=', new UTCDateTime())->where('time.end', '>=', new UTCDateTime());
+        return $query->where('time.start', '<=', new UTCDateTime())->where('time.end', '>', new UTCDateTime());
     }
 
     public function scopeFinished($query)
