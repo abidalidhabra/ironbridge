@@ -57,7 +57,7 @@ class EventService
 					$dataToBeCreate->push(['user_id'=> $user->id, 'event_id'=> $event->id, 'status'=> 'running']);
 				});
 				if ($dataToBeCreate->count()) {
-					EventUser::create($dataToBeCreate);
+					EventUser::insert($dataToBeCreate->toArray());
 				}
 				$this->markAsStarted($event, $city);
 			});

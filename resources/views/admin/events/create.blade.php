@@ -57,11 +57,11 @@
                     </div>
                     <div class="form-group col-md-3">
                         <label class="form-label">Start Date</label>
-                        <input type="text" name="start_time" class="form-control datetimepicker startDate" placeholder="Enter the start date">
+                        <input type="text" name="start_time" class="form-control datetimepicker startDate" placeholder="Enter the start date" readonly="">
                     </div>
                     <div class="form-group col-md-3">
                         <label class="form-label">End Date</label>
-                        <input type="text" name="end_time" class="form-control datetimepicker endDate" placeholder="Enter the date">
+                        <input type="text" name="end_time" class="form-control datetimepicker endDate" placeholder="Enter the date" readonly="">
                     </div>
                     <div class="form-group col-md-3">
                         <label class="form-label">City</label>

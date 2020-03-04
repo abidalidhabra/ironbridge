@@ -58,11 +58,11 @@
                     </div>
                     <div class="form-group col-md-3">
                         <label class="form-label">Start Date</label>
-                        <input type="text" name="start_time" class="form-control datetimepicker startDate" placeholder="Enter the start date">
+                        <input type="text" name="start_time" class="form-control datetimepicker startDate" placeholder="Enter the start date" readonly="">
                     </div>
                     <div class="form-group col-md-3">
                         <label class="form-label">End Date</label>
-                        <input type="text" name="end_time" class="form-control datetimepicker endDate" placeholder="Enter the date">
+                        <input type="text" name="end_time" class="form-control datetimepicker endDate" placeholder="Enter the date" readonly="">
                     </div>
                     <!-- <div id="clock_hou"></div> -->
                     <div class="form-group col-md-3">
@@ -132,13 +132,13 @@
             format: "MM/DD/YYYY hh:mm A",
             minDate: moment(),
             defaultDate: moment(startdate),
-            autoclose: true,
+            // autoclose: true,
         });
 
          $('.endDate').datetimepicker({
             format: "MM/DD/YYYY hh:mm A",
             defaultDate: moment(enddate),
-            autoclose: true,
+            // autoclose: true,
         });
 
          $('.startDate').datetimepicker().on('dp.change', function (e) {
