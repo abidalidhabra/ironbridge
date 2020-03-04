@@ -390,7 +390,7 @@ class UserController extends Controller
         $hairColor  = $request->hairs_color;
         $skinColors = $request->skin_color;
         $widgets    = $request->widgets;
-        
+        $widgets    = json_decode($request->widgets);
         $request->file('thumb')->storeAs('avatars', $userId.'.jpg', 'public');
 
         $primaryAvatar = Avatar::where('_id',$avatarId)->select('_id','gender')->first();

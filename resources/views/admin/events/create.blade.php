@@ -57,11 +57,11 @@
                     </div>
                     <div class="form-group col-md-3">
                         <label class="form-label">Start Date</label>
-                        <input type="text" name="start_time" class="form-control datetimepicker" placeholder="Enter the start date">
+                        <input type="text" name="start_time" class="form-control datetimepicker startDate" placeholder="Enter the start date">
                     </div>
                     <div class="form-group col-md-3">
                         <label class="form-label">End Date</label>
-                        <input type="text" name="end_time" class="form-control datetimepicker" placeholder="Enter the date">
+                        <input type="text" name="end_time" class="form-control datetimepicker endDate" placeholder="Enter the date">
                     </div>
                     <div class="form-group col-md-3">
                         <label class="form-label">City</label>
@@ -90,8 +90,27 @@
     <script type="text/javascript">
 
         /* DATE TIME PICKER */
-        $('.datetimepicker').datetimepicker({
-            format: "MM/DD/YYYY HH:mm A"
+        $('.startDate').datetimepicker({
+            format: "MM/DD/YYYY hh:mm A",
+            minDate: moment(),
+        });
+
+        $('.endDate').datetimepicker({
+            format: "MM/DD/YYYY hh:mm A",
+        });
+
+        $('.startDate').datetimepicker().on('dp.change', function (e) {
+            var incrementDay = moment(new Date(e.date));
+            incrementDay.add(1, 'days');
+            $('.endDate').data('DateTimePicker').setMinDate(incrementDay);
+            $(this).data("DateTimePicker").hide();
+        });
+
+        $('.endDate').datetimepicker().on('dp.change', function (e) {
+            var decrementDay = moment(new Date(e.date));
+            decrementDay.subtract(1, 'days');
+            $('.startDate').data('DateTimePicker').setMaxDate(decrementDay);
+            $(this).data("DateTimePicker").hide();
         });
 
         /* SUBMIT FORM */

@@ -32,8 +32,9 @@ class SetMyAvatarRequest extends FormRequest
             'eyes_color'  => "required|string",
             'hairs_color' => "required|string",
             'skin_color'  => "required|string",
-            'widgets'     => "required|array",
-            'widgets.*' => "required|string|exists:widget_items,_id",
+            'widgets'     => "required|json",
+            // 'widgets'     => "required|array",
+            // 'widgets.*' => "required|string|exists:widget_items,_id",
             'hat_selected' => "required|string|in:true,false",
             'thumb' => "required|image",
         ];

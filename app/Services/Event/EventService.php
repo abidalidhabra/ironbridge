@@ -37,6 +37,8 @@ class EventService
 	public function users()
 	{
 		$this->users = User::whereIn('city_id', $this->cities->pluck('_id')->toArray())
+						->whereNotNull('dob')
+						// ->where('dob', '', )
 						->doesntHave('events', function($query){
 							$query->whereIn('event_id', $this->events->pluck('_id')->toArray());
 						})
