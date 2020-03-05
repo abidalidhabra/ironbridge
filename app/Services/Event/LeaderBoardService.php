@@ -26,6 +26,7 @@ class LeaderBoardService
 	public $response;
     public $userIds;
     public $users;
+    public $myRank;
 
 	public function __construct()
 	{
@@ -43,8 +44,8 @@ class LeaderBoardService
 	{
         $this->toppers();
         $this->me();
-		$this->more('up', 52);
-		$this->more('down', 52);
+		$this->more('up', $this->myRank);
+		$this->more('down', $this->myRank);
         $this->getUsers();
         $this->map();
 		return $this->response();
@@ -62,7 +63,7 @@ class LeaderBoardService
         if ($this->event) {
             $this->toppers = EventUser::where('event_id', $this->event->id)
             ->select('_id', 'user_id', 'event_id', 'compasses')
-            ->orderBy('compasses.remaining', 1)
+            ->orderBy('compasses.remaining', 'desc')
             ->limit(3)
             ->get();
         }
@@ -81,7 +82,7 @@ class LeaderBoardService
                         ]
                     ],
                     [
-                        '$sort'=> ['compasses.remaining'=> 1]
+                        '$sort'=> ['compasses.remaining'=> -1]
                     ],
                     [
                         '$project'=> [
@@ -113,6 +114,7 @@ class LeaderBoardService
             if ($me->rank > 3) {
                 unset($me->items->widgets);
             }
+            $this->myRank = $me->rank;
             return $this->me = collect([$me]);
         }
     }
@@ -141,7 +143,7 @@ class LeaderBoardService
         // $data = collect($digits)->slice($skip)->take($limit)->values();
 		$data = EventUser::where('event_id', $this->event->id)
         		->select('_id', 'event_id', 'user_id', 'compasses')
-        		->orderBy('compasses.remaining', 1)
+        		->orderBy('compasses.remaining', 'desc')
         		->skip($skip)
         		->limit($limit)
         		->get();
@@ -150,6 +152,12 @@ class LeaderBoardService
 		if ($direction == 'down' && ($data->count() == 0 || $data->count() < $paginate)) {
 			$nextCursor = 0;
 		}
+
+        if ($direction == 'up') {
+            $this->before = $data;
+        }else{
+            $this->after = $data;
+        }
 		return [$direction.'_data'=> $data, 'cursor'=> ($nextCursor)? $nextCursor+1: 0];
 	}
 
@@ -170,22 +178,34 @@ class LeaderBoardService
     {
         $users = collect($this->users);
         $this->response['toppers'] = $this->toppers->map(function($user) use ($users){
-            $user->datas = $users->where('_id', $user->user_id)->values();
+            $temp = $users->where('_id', $user->user_id)->values()->first();
+            $user->first_name = $temp['first_name'];
+            $user->last_name = $temp['last_name'];
+            $user->avatar = $temp['avatar'];
             return $user;
         });
 
         $this->response['me'] = $this->me->map(function($user) use ($users){
-            $user->datas = $users->where('_id', $user->participations->user_id)->values();
+            $temp = $users->where('_id', $user->participations->user_id)->values()->first();
+            $user->first_name = $temp['first_name'];
+            $user->last_name = $temp['last_name'];
+            $user->avatar = $temp['avatar'];
             return $user;
         });
 
-        $this->response['before'] = $this->me->map(function($user) use ($users){
-            $user->datas = $users->where('_id', $user->user_id)->values();
+        $this->response['before'] = $this->before->map(function($user) use ($users){
+            $temp = $users->where('_id', $user->user_id)->values()->first();
+            $user->first_name = $temp['first_name'];
+            $user->last_name = $temp['last_name'];
+            $user->avatar = $temp['avatar'];
             return $user;
         });
 
-        $this->response['after'] = $this->me->map(function($user) use ($users){
-            $user->datas = $users->where('_id', $user->user_id)->values();
+        $this->response['after'] = $this->after->map(function($user) use ($users){
+            $temp = $users->where('_id', $user->user_id)->values()->first();
+            $user->first_name = $temp['first_name'];
+            $user->last_name = $temp['last_name'];
+            $user->avatar = $temp['avatar'];
             return $user;
         });
     }
