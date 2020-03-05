@@ -13,6 +13,7 @@ use App\Models\v2\HuntUserDetail;
 use App\Models\v2\PlanPurchase;
 use App\Models\v2\PracticeGameUser;
 use App\Models\v2\Relic;
+use App\Models\v3\City;
 use App\Repositories\RelicRepository;
 use Auth;
 use Carbon\Carbon;
@@ -315,8 +316,10 @@ class UserController extends Controller
                     $relic->collected_pieces = 0;
                     return $relic; 
                 });
+
+        $cities = City::get();
                 
-        return view('admin.user.accountInfo',compact('id','user','data','relics'));
+        return view('admin.user.accountInfo',compact('id','user','data','relics','cities'));
     }
 
     //AVTAR ITEMS
@@ -771,5 +774,29 @@ class UserController extends Controller
         $chests = $user->buckets['chests'];
         $chests['mini_game'] = ($chests['minigame_id'])?Game::where('_id',$chests['minigame_id'])->first()->name:'-';
         return view('admin.user.chestInverntory',compact('id','chests'));           
+    }
+
+    public function updateCity(Request $request){
+        $validator = Validator::make($request->all(), [
+            'dob'   => 'required',
+            'city'  => 'required',
+        ]);
+
+        if ($validator->fails()){
+            $message = $validator->messages()->first();
+            return response()->json(['status' => false,'message' => $message]);
+        }        
+        
+        $user = User::where('_id',$request->user_id)->first();
+
+        $user->city_id = $request->city_id;
+        $user->dob = Carbon::parse($request->dob);
+        $user->save();
+
+        return response()->json([
+            'status'  => true,
+            'message' =>'City and date of birth has been updated successfully.',
+            'current_gold'=> $user->gold_balance
+        ]);
     }
 }

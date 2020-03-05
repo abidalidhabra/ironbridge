@@ -79,6 +79,7 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('/miniGameStatistics/{id}','UserController@miniGameStatistics')->name('miniGameStatistics');
 	Route::get('/tutorialsProgress/{id}','UserController@tutorialsProgress')->name('tutorialsProgress');
 	Route::get('/chestInverntory/{id}','UserController@chestInverntory')->name('chestInverntory');
+	Route::post('/updateCity','UserController@updateCity')->name('updateCity');
 	
 
 
