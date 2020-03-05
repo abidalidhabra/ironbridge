@@ -51,9 +51,8 @@ class LeaderBoardService
 		return $this->response();
 	}
 
-  public function next($direction, $cursor)
+  public function next($direction,int $cursor)
   {
-
     $this->response = $this->more($direction, $cursor);
     return $this->response();
   }
@@ -182,6 +181,7 @@ class LeaderBoardService
             $user->first_name = $temp['first_name'];
             $user->last_name = $temp['last_name'];
             $user->avatar = $temp['avatar'];
+            $user->widgets = $temp['widgets'];
             return $user;
         });
 

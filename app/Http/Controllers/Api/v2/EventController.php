@@ -58,11 +58,8 @@ class EventController extends Controller
     public function reduceTheRadius(Request $request)
     {
         try {
-            $event = (new EventUserService)->setUser(auth()->user())->running(['*'], true);
             $eventUser = (new CompassService)
                             ->setUser(auth()->user())
-                            ->setEvent($event)
-                            ->setEventUser($event->participations->first())
                             ->deduct();
             return ResponseHelpers::successResponse($eventUser->response());
         } catch (Exception $e) {

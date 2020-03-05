@@ -41,9 +41,14 @@ class CompassPurchase implements Purchase
     	$compassService = (new CompassService)->setUser($this->user)->add($this->plan->compasses);
 
         /** Deduct User Gold **/
-        $goldBalance = (new UserRepository($this->user))->deductGold($this->plan->gold_price);
+        $userRepository = new UserRepository($this->user);
+        $goldBalance = $userRepository->deductGold($this->plan->gold_price);
 
     	/** return the available skeleton keys **/
-    	return ['compasses'=> $compassService->response(), 'available_gold_balance'=> $goldBalance];
+    	return [
+    		'compasses'=> $compassService->response(), 
+    		'available_gold_balance'=> $goldBalance, 
+    		'compass_plan_occupied_this_week'=> $userRepository->compassPlanOccupiedThisWeek($compassService->event)
+    	];
     }
 }

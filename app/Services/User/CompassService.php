@@ -3,6 +3,7 @@
 namespace App\Services\User;
 
 // use App\Services\AssetsLogService;
+use App\Services\Event\EventUserService;
 use App\Services\Traits\UserTraits;
 use Exception;
 
@@ -11,25 +12,21 @@ class CompassService
     use UserTraits;
 
     // protected $userRadius;
-    protected $userCompasses;
-    protected $added;
-    protected $event;
-    protected $eventUser;
+    public $userCompasses;
+    public $added;
+    public $event;
+    public $eventUser;
 
-    public function setEvent($event){
+    public function init()
+    {
+        $event = (new EventUserService)->setUser($this->user)->running(['*'], true);
         $this->event = $event;
-        return $this;
-    }
-
-    public function setEventUser($eventUser){
-        $this->eventUser = $eventUser;
-        return $this;
+        $this->eventUser = $event->participations->first();
     }
 
     public function add(int $size)
     {
-        
-        // (new AssetsLogService('compass', 'loot'))->setUser($this->user)->compasses($size)->save();
+        $this->init();
 
         $this->setUserCompasses(
             $this->eventUser->compasses
@@ -47,15 +44,12 @@ class CompassService
 
     public function deduct()
     {
+        $this->init();
+
         $this->setUserCompasses(
             $this->eventUser->compasses
         );
 
-        if (!$this->event) {
-            $this->setEvent(
-                $this->eventUser->event
-            );
-        }
         if ($this->userCompasses['remaining'] <= 0) {
             throw new Exception("You dont have enough compasses to reduce the circle");
         }
