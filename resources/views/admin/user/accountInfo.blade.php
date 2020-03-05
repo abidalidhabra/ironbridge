@@ -144,6 +144,30 @@
                 @empty
                 @endforelse            
         </div>
+         <div class="avtardetailbox">
+            <h4>Basic Update</h4>
+            <form method="post" id="updateCityForm">
+                @csrf
+                <div class="row">
+                    <div class="form-group col-md-4">
+                        <label>Home City</label>
+                        <select class="form-control" name="city">
+                                <option value="">Please Select</option>
+                            @foreach($cities as $city)
+                                <option value="{{ $city->id }}" @if($user->city_id == $city->id){{ 'selected' }}@endif>{{ $city->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label>Date Of Birth</label>
+                        <input type="text" class="form-control" value="{{ Carbon\Carbon::parse($user->dob)->format('d-m-Y') }}" placeholder="Enter the date of birth" name='dob' id="dateofbirth">
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-success">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- ADD GOLD MODEL -->
@@ -285,6 +309,27 @@
                             $('#skeleton_key , #user_id').val('');
                             
                             $('.skeleton_text').text(response.available_skeleton_keys)
+                        } else {
+                            toastr.warning(response.message);
+                        }
+                    }
+                });
+            });
+
+            $('#dateofbirth').datepicker({
+                format: 'dd-mm-yyyy',
+                endDate: '-1d'
+            })
+             $('#updateCityForm').submit(function(e) {
+                e.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    url: '{{ route("admin.updateCity") }}',
+                    data: $(this).serialize()+'&user_id='+ '{{ $id }}',
+                    success: function(response)
+                    {
+                        if (response.status == true) {
+                            toastr.success(response.message);
                         } else {
                             toastr.warning(response.message);
                         }
