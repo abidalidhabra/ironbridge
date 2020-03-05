@@ -49,22 +49,17 @@
                         <input type="text" name="least_radius" class="form-control" id="least_radius" value="{{ $event->least_radius }}" placeholder="Minimal Radius">
                     </div>
                     <div class="form-group col-md-4">
-                        <label class="form-label">Maximum compasses values to be distribute</label>
+                        <label class="form-label">Total Compasses</label>
+                        <input type="text" name="total_compasses" class="form-control" id="total_compasses" value="{{ $event->total_compasses }}" placeholder="Total compasses">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="form-label">Maximum compasses values allow to earn per week</label>
                         <input type="text" name="weekly_max_compasses" class="form-control" id="weekly_max_compasses" value="{{ $event->weekly_max_compasses }}" placeholder="Maximum compasses values to be distribute">
                     </div>
                     <div class="form-group col-md-4">
                         <label class="form-label">Radius tobe deduce on each compass usage</label>
                         <input type="text" name="deductable_radius" class="form-control" id="deductable_radius" value="{{ $event->deductable_radius }}" placeholder="Radius tobe deduce on each compass usage">
                     </div>
-                    <div class="form-group col-md-3">
-                        <label class="form-label">Start Date</label>
-                        <input type="text" name="start_time" class="form-control datetimepicker startDate" placeholder="Enter the start date" readonly="">
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label class="form-label">End Date</label>
-                        <input type="text" name="end_time" class="form-control datetimepicker endDate" placeholder="Enter the date" readonly="">
-                    </div>
-                    <!-- <div id="clock_hou"></div> -->
                     <div class="form-group col-md-3">
                         <label class="form-label">City</label>
                         <select name="city_id" class="form-control">
@@ -76,6 +71,15 @@
                             @endforelse
                         </select>
                     </div>
+                    <div class="form-group col-md-3">
+                        <label class="form-label">Start Date</label>
+                        <input type="text" name="start_time" class="form-control datetimepicker startDate" placeholder="Enter the start date" readonly="">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="form-label">End Date</label>
+                        <input type="text" name="end_time" class="form-control datetimepicker endDate" placeholder="Enter the date" readonly="">
+                    </div>
+                    <!-- <div id="clock_hou"></div> -->
                     <div class="form-group col-md-12">
                         <button type="submit" class="btn btn-success btnSubmit">Submit</button>
                     </div>

@@ -6,10 +6,13 @@ use App\Helpers\ResponseHelpers;
 use App\Http\Controllers\Controller;
 use App\Models\v3\Event;
 use App\Repositories\User\UserRepository;
+use App\Services\Event\EventUserService;
 use App\Services\Event\LeaderBoardService;
+use App\Services\User\CompassService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use MongoDB\BSON\ObjectId;
+use Exception;
 
 class EventController extends Controller
 {
@@ -50,5 +53,20 @@ class EventController extends Controller
         }
         $data = (new LeaderBoardService)->next($request->direction, $request->cursor);
         return ResponseHelpers::successResponse($data);
+    }
+
+    public function reduceTheRadius(Request $request)
+    {
+        try {
+            $event = (new EventUserService)->setUser(auth()->user())->running(['*'], true);
+            $eventUser = (new CompassService)
+                            ->setUser(auth()->user())
+                            ->setEvent($event)
+                            ->setEventUser($event->participations->first())
+                            ->deduct();
+            return ResponseHelpers::successResponse($eventUser->response());
+        } catch (Exception $e) {
+            return ResponseHelpers::validationErrorResponse($e);
+        }
     }
 }

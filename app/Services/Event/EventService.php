@@ -54,7 +54,16 @@ class EventService
 				$dataToBeCreate = collect();
 				$users->each(function($user) use ($event, &$dataToBeCreate) {
 					// $user->events()->create(['event_id'=> $event->id, 'status'=> 'running']);
-					$dataToBeCreate->push(['user_id'=> $user->id, 'event_id'=> $event->id, 'status'=> 'running']);
+					$dataToBeCreate->push([
+						'user_id'=> $user->id, 
+						'event_id'=> $event->id, 
+						'status'=> 'running', 
+						'radius'=> $event->total_radius,
+						'compasses'=> [
+							'utilized'=> 0,
+							'remaining'=> 0
+						]
+					]);
 				});
 				if ($dataToBeCreate->count()) {
 					EventUser::insert($dataToBeCreate->toArray());

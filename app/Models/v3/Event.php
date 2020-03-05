@@ -11,7 +11,7 @@ use MongoDB\BSON\UTCDateTime;
 class Event extends Eloquent
 {
     
-	protected $fillable = [ 'name', 'city_id', 'centeric_points', 'total_radius', 'least_radius', 'weekly_max_compasses', 'deductable_radius', 'time', 'started_at', 'finished_at'];   
+	protected $fillable = [ 'name', 'city_id', 'centeric_points', 'total_radius', 'least_radius', 'total_compasses', 'weekly_max_compasses', 'deductable_radius', 'time', 'started_at', 'finished_at'];   
 
 	// protected $dates = [
 	// 	'started_at',

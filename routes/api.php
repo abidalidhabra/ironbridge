@@ -189,6 +189,7 @@ Route::group(['namespace' => 'Api\v2', 'prefix' => 'v2', 'middleware'=> ['jwt-au
 		/** Event **/
 		Route::get('getLeadersBoard', 'EventController@getLeadersBoard');
 		Route::get('getMoreLeaders', 'EventController@getMoreLeaders');
+		Route::post('reduceTheRadius', 'EventController@reduceTheRadius');
 		// Route::get('getEventsCities', 'EventController@getEventsCities');
 		// Route::get('getEventsInCity', 'EventController@getEventsInCity');
 		// Route::post('participateInEvent', 'EventsUserController@participateInEvent');

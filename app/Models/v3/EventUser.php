@@ -7,7 +7,7 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class EventUser extends Eloquent
 {
-    protected $fillable = ['event_id', 'user_id', 'status'];
+    protected $fillable = ['event_id', 'user_id', 'status', 'radius', 'compasses'];
 
     public function scopeRunning($query)
     {
