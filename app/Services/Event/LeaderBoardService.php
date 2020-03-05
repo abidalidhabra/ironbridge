@@ -163,7 +163,7 @@ class LeaderBoardService
     public function getUsers()
     {
         $this->users = (new UserRepository)->getModel()->whereIn('_id', $this->userIds)
-                ->select('_id', 'first_name', 'last_name', 'widgets')
+                ->select('_id', 'first_name', 'last_name', 'widgets', 'gender')
                 ->get()
                 ->map(function($user){
                   $user->avatar = asset('storage/avatars/'.$user->id.'.jpg');
@@ -182,6 +182,7 @@ class LeaderBoardService
             $user->last_name = $temp['last_name'];
             $user->avatar = $temp['avatar'];
             $user->widgets = $temp['widgets'];
+            $user->gender = $temp['gender'];
             return $user;
         });
 
