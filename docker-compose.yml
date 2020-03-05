@@ -4,7 +4,7 @@ services:
   laravel:
     container_name: irinbridge
     restart: always
-    image: test:latest
+    image: 905666888987.dkr.ecr.us-east-1.amazonaws.com/laravel:latest
     volumes:
       - admin_assests:/var/www/html/public/admin_assets/images
       - storage:/var/www/html/storage/app/public
