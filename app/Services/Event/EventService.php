@@ -36,17 +36,14 @@ class EventService
 
 	public function users()
 	{
-		// \DB::connection()->enableQueryLog();
 		$this->users = User::whereIn('city_id', $this->cities->pluck('_id')->toArray())
 						->whereNotNull('dob')
 						->where('dob', '<', new UTCDateTime(now()->subYears(18)))
 						// ->doesntHave('events', function($query){
-						// 	$query->whereNotIn('event_id', $this->events->pluck('_id')->toArray());
+						// 	$query->whereIn('event_id', $this->events->pluck('_id')->toArray());
 						// })
 						->select('_id', 'city_id')
 						->get();
-		// $queries = \DB::getQueryLog();
-		// dd($queries);
 	}
 
 	public function store()
