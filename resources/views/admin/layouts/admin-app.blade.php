@@ -68,6 +68,9 @@
             color: #fff;
             background-color: #ffc107;
         }
+        .d-none {
+            display: none;
+        }
     </style>
 </head>
 

@@ -6,8 +6,10 @@ use App\Models\v1\User;
 use App\Models\v1\WidgetItem;
 use App\Models\v2\AgentComplementary;
 use App\Models\v2\HuntStatistic;
+use App\Repositories\PlanPurchase\PlanPurchaseRepository;
 use App\Repositories\RelicRepository;
 use App\Repositories\User\UserRepositoryInterface;
+use App\Services\Event\UserEventService;
 use Carbon\CarbonImmutable;
 use Exception;
 use Illuminate\Support\Collection;
@@ -384,5 +386,17 @@ class UserRepository implements UserRepositoryInterface
         //     $user->save();
         // }
         return $user;
+    }
+
+    public function compassPlanOccupiedThisWeek($event)
+    {
+        
+        $dates = (new UserEventService)->setUser($this->user)->setEvent($event)->getWeekDates();
+
+        return (new PlanPurchaseRepository)
+                ->getModel()
+                ->where('created_at', '>=', new UTCDateTime($dates['start']))
+                ->where('created_at', '<=', new UTCDateTime($dates['end']))
+                ->count();
     }
 }

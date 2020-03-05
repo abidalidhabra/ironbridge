@@ -39,18 +39,25 @@ class Event extends Eloquent
 
     public function getStartedAtAttribute($value)
     {
-        $city = $this->city()->select('_id', 'timezone')->first();
-        return $value->toDateTime()->setTimezone(new DateTimeZone($city->timezone))->format('Y-m-d H:i:s');
+        if ($value) {
+            $city = $this->city()->select('_id', 'timezone')->first();
+            return $value->toDateTime()->setTimezone(new DateTimeZone($city->timezone))->format('Y-m-d H:i:s');
+        }
     }
 
     public function scopeParticipateable($query)
     {
-    	return $query->where('time.start', '<=', new UTCDateTime())->whereNull('started_at')->whereNull('ended_at');
+    	return $query->where('time.start', '<=', new UTCDateTime())->whereNull('started_at')->whereNull('ended_at')->orderBy('time.start', 'asc');
     }
+
+    // public function scopeUpcoming($query)
+    // {
+    //     return $query->where('time.start', '>', new UTCDateTime())->whereNull('started_at')->whereNull('ended_at');
+    // }
 
     public function scopeRunning($query)
     {
-        return $query->where('time.start', '<=', new UTCDateTime())->where('time.end', '>=', new UTCDateTime());
+        return $query->where('time.start', '<=', new UTCDateTime())->where('time.end', '>', new UTCDateTime());
     }
 
     public function scopeFinished($query)

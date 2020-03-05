@@ -7,6 +7,7 @@
 		</button>
 		<div class="nav-offcanvas-menu">
 			<ul>
+
 				@if(Route::currentRouteName() == 'admin.accountInfo' || Route::currentRouteName() == 'admin.treasureHunts' || Route::currentRouteName() == 'admin.userHuntDetails' || Route::currentRouteName() == 'admin.activity' || Route::currentRouteName() == 'admin.practiceGameUser' || Route::currentRouteName() == 'admin.user.avatarItems' || Route::currentRouteName() == 'admin.user.planPurchase' || Route::currentRouteName() == 'admin.miniGameStatistics' || Route::currentRouteName() == 'admin.tutorialsProgress' || Route::currentRouteName() == 'admin.chestInverntory')
 
 					<li  class="@if(Route::currentRouteName() == 'admin.accountInfo') {{ 'activelist' }} @endif">
@@ -314,13 +315,23 @@
 						$couponRoute = ($route == 'admin.discounts.index')? true:false;
 						$paymentRoute = ($route == 'admin.payment.index')? true:false;
 						$reportLocations = ($route == 'admin.reported-locations.index')? true:false;
+						$cityRoute = ($route == 'admin.city.index')? true:false;
+					
+						$countryRoute = ($route == 'admin.country.index')? true:false;
+						$stateRoute = ($route == 'admin.state.index')? true:false;
+
+						$eventNotificationRoute = ($route == 'admin.event-notifications.index')? true:false;
 						
 						$showIcon = (
 						$userAccessRoute || 
 						$appSettingsRoute || 
 						$notificationsRoute || 
+						$cityRoute || 
+						$countryRoute || 
+						$stateRoute || 					
 						$paymentRoute || 
 						$reportLocations || 
+						$eventNotificationRoute || 
 						$couponRoute)? 'fa-minus': 'fa-plus';
 					@endphp
 					<li>
@@ -342,6 +353,7 @@
 								@endif
 
 								<a href="{{ route('admin.notifications.index') }}" class="@if($notificationsRoute) {{ 'activelistsub' }} @endif">Notifications</a>
+								<a href="{{ route('admin.event-notifications.index') }}" class="@if($eventNotificationRoute) {{ 'activelistsub' }} @endif">Event Notifications</a>
 
 								@if($admin->hasPermissionTo('View App Settings'))
 								<a href="{{ route('admin.app.settings.index') }}" class="@if($appSettingsRoute) {{ 'activelistsub' }} @endif">App Settings</a>
@@ -350,7 +362,12 @@
 								@if($admin->hasRole('Super Admin'))
 								<a href="{{ route('admin.adminManagement.index') }}" class="@if($userAccessRoute) {{ 'activelistsub' }} @endif">User Access</a>
 								@endif
-								
+								<a href="{{ route('admin.country.index') }}" class="@if($countryRoute) {{ 'activelistsub' }} @endif">Country</a>
+
+								<a href="{{ route('admin.state.index') }}" class="@if($stateRoute) {{ 'activelistsub' }} @endif">State</a>
+
+								<a href="{{ route('admin.city.index') }}" class="@if($cityRoute) {{ 'activelistsub' }} @endif">Cities</a>
+
 								<a href="{{ route('admin.reported-locations.index') }}" class="@if($reportLocations) {{ 'activelistsub' }} @endif">Reported Google Locations</a>
 
 							</div>

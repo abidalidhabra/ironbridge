@@ -787,6 +787,26 @@ header{
 .newstitlebox_inputbox :-moz-placeholder {
   color: #b3b3b3;
 }
+
+.cityInsForm ul{
+    border: 1px solid #d7d7d7;
+    padding-left: 10px;
+    padding-right: 10px;
+    max-height: 174px;
+    overflow: auto;
+    padding-top: 6px;
+    padding-bottom: 10px;
+}
+.cityInsForm ul .ui-menu-item-wrapper{
+    cursor: pointer;
+    line-height: normal;
+    padding-bottom: 1px;
+}
+.cityInsForm ul .ui-menu-item-wrapper:hover{
+    background:#0866df;
+    color:#fff;
+}
+
 .addnewsmodal_box .btn-default {
     color: #fff;
     background-color: #908f8e;

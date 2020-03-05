@@ -5,10 +5,11 @@ namespace App\Services\Event;
 use App\Models\v1\User;
 use App\Models\v3\City;
 use App\Models\v3\Event;
+use App\Models\v3\EventUser;
 use App\Services\Traits\UserTraits;
-use MongoDB\BSON\UTCDateTime;
 use DateTime;
 use DateTimeZone;
+use MongoDB\BSON\UTCDateTime;
 
 class EventService
 {
@@ -36,9 +37,11 @@ class EventService
 	public function users()
 	{
 		$this->users = User::whereIn('city_id', $this->cities->pluck('_id')->toArray())
-						->doesntHave('events', function($query){
-							$query->whereIn('event_id', $this->events->pluck('_id')->toArray());
-						})
+						->whereNotNull('dob')
+						->where('dob', '<', new UTCDateTime(now()->subYears(18)))
+						// ->doesntHave('events', function($query){
+						// 	$query->whereIn('event_id', $this->events->pluck('_id')->toArray());
+						// })
 						->select('_id', 'city_id')
 						->get();
 	}
@@ -48,9 +51,14 @@ class EventService
 		$this->cities->each(function($city){
 			$users = $this->users->where('city_id',$city->id);
 			$city->events->each(function($event) use ($users, $city) {
-				$users->each(function($user) use ($event) {
-					$user->events()->create(['event_id'=> $event->id, 'status'=> 'running']);
+				$dataToBeCreate = collect();
+				$users->each(function($user) use ($event, &$dataToBeCreate) {
+					// $user->events()->create(['event_id'=> $event->id, 'status'=> 'running']);
+					$dataToBeCreate->push(['user_id'=> $user->id, 'event_id'=> $event->id, 'status'=> 'running']);
 				});
+				if ($dataToBeCreate->count()) {
+					EventUser::insert($dataToBeCreate->toArray());
+				}
 				$this->markAsStarted($event, $city);
 			});
 		});

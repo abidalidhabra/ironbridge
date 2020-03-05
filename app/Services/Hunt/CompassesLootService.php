@@ -15,6 +15,8 @@ class CompassesLootService
 
 	public $compassService;
 	public $compasses;
+	public $userEventService;
+	public $event;
 
 	public function spin()
 	{
@@ -24,11 +26,18 @@ class CompassesLootService
 		return $this;
 	}
 
+	public function canCredit()
+	{
+		$compassesAfterCredit = $this->userEventService->thisWeekEarnedCompasses() + $this->loot->compasses;
+		if ($compassesAfterCredit > $this->event->weekly_max_compasses) {
+			return false;
+		}else{
+			return true;
+		}
+	}
+
 	public function open()
 	{
-		$this->setLoot(
-			CompassesLoot::where('min', '<=', $this->magicNumber)->where('max','>=',$this->magicNumber)->first()
-		);
 
         (new AssetsLogService('compass', 'loot'))->setUser($this->user)->compasses($this->loot->compasses)->save();
 
@@ -43,9 +52,19 @@ class CompassesLootService
 
 	public function generate()
 	{
-		if ($event = (new UserEventService)->setUser($this->user)->running()) {
-			$this->open();
+
+		$this->userEventService = (new UserEventService)->setUser($this->user);
+		
+		$this->setLoot(
+			CompassesLoot::where('min', '<=', $this->magicNumber)->where('max','>=',$this->magicNumber)->first()
+		);
+
+		if ($this->event = $this->userEventService->running()) {
+			if ($this->canCredit()) {
+				$this->open();
+			}
 		}
+		
 		return $this;
 	}
 }
