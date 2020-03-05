@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Helpers;
+use App\Http\Controllers\Api\v2\EventController;
 use App\Models\v1\Avatar;
 use App\Models\v1\Game;
 use App\Models\v1\News;
@@ -15,14 +16,15 @@ use App\Repositories\PlanRepository;
 use App\Repositories\RelicRepository;
 use App\Repositories\User\UserRepository;
 use App\Services\Event\EventService;
+use App\Services\Event\EventUserService;
 use App\Services\Event\ParticipateInEvent;
-use App\Services\Event\UserEventService;
 use App\Services\Hunt\ChestService;
 use App\Services\MiniGame\MiniGameInfoService;
 use Auth;
+use Illuminate\Http\Request;
 use MongoDB\BSON\ObjectId as MongoID;
 use MongoDB\BSON\UTCDateTime;
-use Request;
+// use Request;
 use Route;
 
 class UserHelper {
@@ -96,8 +98,8 @@ class UserHelper {
 
 		// $abc = (new ParticipateInEvent)->handle();
 		// \DB::connection()->enableQueryLog();
-		// $userEventService->running();
-		// $userEventService->usedCompasses();
+		// $eventUserService->running();
+		// $eventUserService->usedCompasses();
 		// $queries = \DB::getQueryLog();
 		// dd($queries);
 
@@ -132,17 +134,18 @@ class UserHelper {
 
 	public static function prepareDateForEvent($user)
 	{
-		$userEventService = (new UserEventService)->setUser($user);
+		$eventUserService = (new EventUserService)->setUser($user);
 		// dd((new EventService)->participate());
 		$response = [];
 		if ($city = $user->city) {
 			$response['user_city'] = $user->city;
 		}
 
-		if ($event = $userEventService->running()) {
+		if ($event = $eventUserService->running(['*'], true)) {
 			$response['running_event'] = $event->makeHidden(['time', 'started_at', 'created_at', 'updated_at']);
-			$response['total_earned_compasses'] = $userEventService->totalEarnedCompasses();
-			$response['this_week_earned_compasses'] = $userEventService->thisWeekEarnedCompasses();
+			// $response['event_user'] = $event->makeHidden(['time', 'started_at', 'created_at', 'updated_at']);
+			$response['total_earned_compasses'] = $eventUserService->totalEarnedCompasses();
+			$response['this_week_earned_compasses'] = $eventUserService->thisWeekEarnedCompasses();
 			$response['compass_plan_occupied_this_week'] = (new UserRepository($user))->compassPlanOccupiedThisWeek($event);
 		}
 		return $response;

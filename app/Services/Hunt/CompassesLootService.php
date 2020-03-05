@@ -4,7 +4,7 @@ namespace App\Services\Hunt;
 
 use App\Models\v3\CompassesLoot;
 use App\Services\AssetsLogService;
-use App\Services\Event\UserEventService;
+use App\Services\Event\EventUserService;
 use App\Services\Hunt\LootDistribution\LootTrait;
 use App\Services\User\CompassService;
 
@@ -15,7 +15,7 @@ class CompassesLootService
 
 	public $compassService;
 	public $compasses;
-	public $userEventService;
+	public $eventUserService;
 	public $event;
 
 	public function spin()
@@ -28,7 +28,7 @@ class CompassesLootService
 
 	public function canCredit()
 	{
-		$compassesAfterCredit = $this->userEventService->thisWeekEarnedCompasses() + $this->loot->compasses;
+		$compassesAfterCredit = $this->eventUserService->thisWeekEarnedCompasses() + $this->loot->compasses;
 		if ($compassesAfterCredit > $this->event->weekly_max_compasses) {
 			return false;
 		}else{
@@ -53,13 +53,13 @@ class CompassesLootService
 	public function generate()
 	{
 
-		$this->userEventService = (new UserEventService)->setUser($this->user);
+		$this->eventUserService = (new EventUserService)->setUser($this->user);
 		
 		$this->setLoot(
 			CompassesLoot::where('min', '<=', $this->magicNumber)->where('max','>=',$this->magicNumber)->first()
 		);
 
-		if ($this->event = $this->userEventService->running()) {
+		if ($this->event = $this->eventUserService->running()) {
 			if ($this->canCredit()) {
 				$this->open();
 			}

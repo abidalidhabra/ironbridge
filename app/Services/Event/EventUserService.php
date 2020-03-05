@@ -5,12 +5,15 @@ namespace App\Services\Event;
 use App\Models\v1\User;
 use App\Models\v3\City;
 use App\Models\v3\Event;
+use App\Services\Event\EventUserService;
 use App\Services\Traits\UserTraits;
+use App\Services\User\CompassService;
 use DateInterval;
-use MongoDB\BSON\UTCDateTime;
 use DateTimeImmutable;
+use MongoDB\BSON\UTCDateTime;
+use Exception;
 
-class UserEventService
+class EventUserService
 {
 	use UserTraits;
 
@@ -23,10 +26,15 @@ class UserEventService
 		return $this;
 	}
 	
-	public function running(array $fields = ['*'])
+	public function running(array $fields = ['*'], $withParticipation = false)
 	{
 		$this->event = Event::whereHas('participations', function($query){
 							$query->where('user_id', $this->user->id);
+						})
+						->when($withParticipation, function($query) {
+							$query->with(['participations'=> function($query){
+								$query->where('user_id', $this->user->id);
+							}]);
 						})
 						->running()
 						->first($fields);
@@ -79,4 +87,46 @@ class UserEventService
 		$dates = collect($intervals)->where('start', '<=', $now)->where('end', '>', $now)->first();
 		return $dates;
 	}
+
+	// public function utilizeTheCompasses()
+	// {
+	// 	if (!$this->event) {
+	// 		$this->running();
+	// 	}
+
+	// 	$this->event->load(['participations'=> function($query) {
+	// 		$query->where('user_id', $this->user->id);
+	// 	}]);
+
+	// 	$eventUser = $this->event->participations->first();
+	// 	$eventUser->radius -= $this->event->deductable_radius;
+	// 	$eventUser->save();
+
+	// 	dd($this->event->participations->first());
+	// }
+
+	// public function reduceTheRadius()
+	// {
+	// 	// $validator = Validator::make($request->all(),[
+	// 	// 	'cursor'=> 'required|integer',
+	// 	// 	'direction'  => 'required|in:up,down',
+	// 	// ]);
+
+	// 	// if ($validator->fails()){
+	// 	// 	return response()->json(['message' => $validator->messages()->first()]);
+	// 	// }
+	// 	try{
+	// 	\DB::connection()->enableQueryLog();
+	// 	$event = $this->running(['*'], true);
+	// 	$eventUser = (new CompassService)
+	// 				->setUser(auth()->user())
+	// 				->setEvent($event)
+	// 				->setEventUser($event->participations->first())
+	// 				->deduct();
+	// 	$queries = \DB::getQueryLog();
+	// 	dd($eventUser->response());
+	// 	} catch (Exception $e) {
+ //            dd($e->getMessage());
+ //        }
+	// }
 }

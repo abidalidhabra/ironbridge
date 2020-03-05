@@ -53,6 +53,7 @@ class EventController extends Controller
             'centeric_points.*'=> 'numeric',
             'total_radius'=> 'required|integer',
             'least_radius'=> 'required|integer',
+            'total_compasses'=> 'required|integer',
             'weekly_max_compasses'=> 'required|integer',
             'deductable_radius'=> 'required|integer',
             'start_time'=> 'required|date_format:m/d/Y h:i A',
@@ -76,6 +77,7 @@ class EventController extends Controller
             ],
             'total_radius'=> (int) $request->total_radius,
             'least_radius'=> (int) $request->least_radius,
+            'total_compasses'=> (int) $request->total_compasses,
             'weekly_max_compasses'=> (int) $request->weekly_max_compasses,
             'deductable_radius'=> (int) $request->deductable_radius,
             'time'=> [
@@ -129,6 +131,7 @@ class EventController extends Controller
             'centeric_points.*'=> 'numeric',
             'total_radius'=> 'required|integer',
             'least_radius'=> 'required|integer',
+            'total_compasses'=> 'required|integer',
             'weekly_max_compasses'=> 'required|integer',
             'deductable_radius'=> 'required|integer',
             'start_time'=> 'required|date_format:m/d/Y h:i A',
@@ -158,6 +161,7 @@ class EventController extends Controller
             ],
             'total_radius'=> (int) $request->total_radius,
             'least_radius'=> (int) $request->least_radius,
+            'total_compasses'=> (int) $request->total_compasses,
             'weekly_max_compasses'=> (int) $request->weekly_max_compasses,
             'deductable_radius'=> (int) $request->deductable_radius,
             'time'=> [

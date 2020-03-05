@@ -7,7 +7,6 @@ use App\Repositories\PlanPurchase\Purchase;
 use App\Repositories\User\UserRepository;
 use App\Services\AssetsLogService;
 use App\Services\Event\EventService;
-use App\Services\Event\UserEventService;
 use App\Services\User\CompassService;
 use Exception;
 

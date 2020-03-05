@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\v3\AssetsLog;
-use App\Services\Event\UserEventService;
+use App\Services\Event\EventUserService;
 use App\Services\Traits\UserTraits;
 
 class AssetsLogService
@@ -23,7 +23,7 @@ class AssetsLogService
 
 	public function compasses($size)
 	{
-		if ($event = (new UserEventService)->setUser($this->user)->running()) {
+		if ($event = (new EventUserService)->setUser($this->user)->running()) {
 			$this->model->compasses = (int)$size;
 			$this->model->event_id = $event->id;
 			return $this;

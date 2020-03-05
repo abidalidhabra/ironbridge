@@ -9,7 +9,7 @@ use App\Models\v2\HuntStatistic;
 use App\Repositories\PlanPurchase\PlanPurchaseRepository;
 use App\Repositories\RelicRepository;
 use App\Repositories\User\UserRepositoryInterface;
-use App\Services\Event\UserEventService;
+use App\Services\Event\EventUserService;
 use Carbon\CarbonImmutable;
 use Exception;
 use Illuminate\Support\Collection;
@@ -391,7 +391,7 @@ class UserRepository implements UserRepositoryInterface
     public function compassPlanOccupiedThisWeek($event)
     {
         
-        $dates = (new UserEventService)->setUser($this->user)->setEvent($event)->getWeekDates();
+        $dates = (new EventUserService)->setUser($this->user)->setEvent($event)->getWeekDates();
 
         return (new PlanPurchaseRepository)
                 ->getModel()
