@@ -789,7 +789,7 @@ class UserController extends Controller
         
         $user = User::where('_id',$request->user_id)->first();
 
-        $user->city_id = $request->city_id;
+        $user->city_id = $request->city;
         $user->dob = Carbon::parse($request->dob);
         $user->save();
 
