@@ -50,6 +50,10 @@ class CompassService
             $this->eventUser->compasses
         );
 
+        if (!$this->event) {
+            throw new Exception("Seems like you are not participated in any of event yet.");
+        }
+
         if ($this->userCompasses['remaining'] <= 0) {
             throw new Exception("You dont have enough compasses to reduce the circle");
         }
