@@ -35,7 +35,7 @@ class ProfileController extends Controller
 		}
 
 		$data = $request->all();
-		$user->dob = new MongoDBDate(Carbon::parse($request->get('dob')));
+		$user->dob = $request->get('dob');
 		if ($request->first_name) {
 			$user->first_name = $request->get('first_name');
 		}
