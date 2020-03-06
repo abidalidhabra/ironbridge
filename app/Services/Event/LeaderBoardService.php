@@ -13,6 +13,7 @@ use DateTimeZone;
 use Illuminate\Pagination\Paginator;
 use MongoDB\BSON\ObjectId;
 use MongoDB\BSON\UTCDateTime;
+use Exception;
 
 class LeaderBoardService
 {
@@ -38,6 +39,10 @@ class LeaderBoardService
                 		})
                 		->select('id', 'name')
                 		->first();
+
+        if (!$this->event) {
+            throw new Exception("Seems like you are not participated in any of event yet.");
+        }
 	}
 
 	public function home()
@@ -59,13 +64,11 @@ class LeaderBoardService
 
     public function toppers()
     {
-        if ($this->event) {
-            $this->toppers = EventUser::where('event_id', $this->event->id)
-            ->select('_id', 'user_id', 'event_id', 'compasses')
-            ->orderBy('compasses.remaining', 'desc')
-            ->limit(3)
-            ->get();
-        }
+        $this->toppers = EventUser::where('event_id', $this->event->id)
+        ->select('_id', 'user_id', 'event_id', 'compasses')
+        ->orderBy('compasses.remaining', 'desc')
+        ->limit(3)
+        ->get();
         $this->userIds = array_merge($this->userIds, $this->toppers->pluck('user_id')->toArray(), [auth()->user()->id]);
         return $this->toppers;
     }

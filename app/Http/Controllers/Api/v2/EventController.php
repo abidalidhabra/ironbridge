@@ -19,8 +19,12 @@ class EventController extends Controller
     
     public function getLeadersBoard(Request $request)
     {
-        $data = (new LeaderBoardService)->home();
-        return ResponseHelpers::successResponse($data);
+        try {
+            $data = (new LeaderBoardService)->home();
+            return ResponseHelpers::successResponse($data);
+        } catch (Exception $e) {
+            return ResponseHelpers::validationErrorResponse($e);
+        }
     }
 
 
@@ -51,8 +55,13 @@ class EventController extends Controller
         if ($validator->fails()){
             return response()->json(['message' => $validator->messages()->first()]);
         }
-        $data = (new LeaderBoardService)->next($request->direction, $request->cursor);
-        return ResponseHelpers::successResponse($data);
+
+        try {
+            $data = (new LeaderBoardService)->next($request->direction, $request->cursor);
+            return ResponseHelpers::successResponse($data);
+        } catch (Exception $e) {
+            return ResponseHelpers::validationErrorResponse($e);
+        }
     }
 
     public function reduceTheRadius(Request $request)
