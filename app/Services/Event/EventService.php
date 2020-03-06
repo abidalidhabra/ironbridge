@@ -92,9 +92,9 @@ class EventService
 
 	public function finish()
 	{
-		Event::finished()->get()->each(function($event){
-			$event->finished_at = new UTCDateTime;
-			$event->save();
-		});
+		$events = Event::finished()->get()->pluck('_id');
+		Event::whereIn('_id', $events->toArray())->update([
+			'finished_at'=> new UTCDateTime
+		]);
 	}
 }

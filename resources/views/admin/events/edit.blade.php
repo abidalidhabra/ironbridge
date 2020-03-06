@@ -149,14 +149,14 @@
             var incrementDay = moment(new Date(e.date));
             incrementDay.add(1, 'days');
             $('.endDate').data('DateTimePicker').setMinDate(incrementDay);
-            $(this).data("DateTimePicker").hide();
+            // $(this).data("DateTimePicker").hide();
         });
 
          $('.endDate').datetimepicker().on('dp.change', function (e) {
             var decrementDay = moment(new Date(e.date));
             decrementDay.subtract(1, 'days');
             $('.startDate').data('DateTimePicker').setMaxDate(decrementDay);
-            $(this).data("DateTimePicker").hide();
+            // $(this).data("DateTimePicker").hide();
         });
 
         // let abc = $('#clock_hou').jClocksGMT({

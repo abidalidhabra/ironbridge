@@ -223,10 +223,10 @@ class EventController extends Controller
             return $event->city->name;
         })
         ->addColumn('starts_at',function($event){
-            return $event->time['start'];
+            return Carbon::parse($event->time['start'])->format('d-m-Y h:i A');
         })
         ->addColumn('ends_at',function($event){
-            return $event->time['end'];
+            return Carbon::parse($event->time['end'])->format('d-m-Y h:i A');
         })
         ->addColumn('action', function($query) use ($admin){
             $data = '';

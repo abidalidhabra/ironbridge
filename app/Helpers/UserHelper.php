@@ -104,6 +104,7 @@ class UserHelper {
 		// dd($queries);
 
         // (new EventService)->finish();
+        // (new EventService)->finish();
 		
 		return array_merge(
 			[
