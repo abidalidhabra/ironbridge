@@ -18,6 +18,7 @@ class EventService
 	public $events;
 	public $cities;
 	public $users;
+	public $insertedUsers;
 
 	public function cities()
 	{
@@ -67,6 +68,7 @@ class EventService
 						'updated_at'=> new UTCDateTime
 					]);
 				});
+				$this->insertedUsers = $dataToBeCreate->toArray();
 				if ($dataToBeCreate->count()) {
 					EventUser::insert($dataToBeCreate->toArray());
 				}
@@ -128,6 +130,7 @@ class EventService
 			'cities'=> $this->cities->count(),
 			'events'=> $this->events->count(),
 			'users'=> $this->users->count(),
+			'inserted_users'=> $this->insertedUsers
 		];
 	}
 }
