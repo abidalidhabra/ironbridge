@@ -8,6 +8,7 @@ use App\Models\v1\User;
 use App\Rules\IsPasswordValid;
 use App\Rules\User\UpdateHomeCity;
 use App\Services\Event\EventService;
+use App\Services\Event\EventUserService;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -112,6 +113,12 @@ class ProfileController extends Controller
 		$user->city_id = $request->city_id;
 		$user->save();
 		$response['message'] = 'Your home city has been updated successfully.';
+
+        $event = (new EventUserService)->setUser($user)->running(['*'], true);
+		if ($event) {
+			$event->participations->first()->delete();
+		}
+
 		$event = (new EventService)->participateMeInEventIfAny($user, $request->city_id);
 		if ($event) {
 			$response['event_data'] = (new UserHelper)->prepareDateForEvent($user);

@@ -31,23 +31,27 @@ class UpdateHomeCity implements Rule
     public function passes($attribute, $value)
     {
         $event = (new EventUserService)->setUser($this->user)->running(['*'], true);
-        $participation = $event->participations->first();
 
-        // if ($event && $event->city_id == $value) {
-        //     $this->message = 'No need to update! You\'r home city is same as before';
-        //     return false;
-        // }else if ($event && ($participation->compasses['utilized'] > 0 || $participation->compasses['remaining'] > 0)) {
-        //     $this->message = 'You cannot change your home city until the running event not ends.';
-        //     return false;
-        // }else{
-        //     return true;
-        // }
         if ($event) {
+            $participation = $event->participations->first();
+        }
+        
+        if ($event && $event->city_id == $value) {
+            $this->message = 'No need to update! You\'r home city is same as before';
+            return false;
+        }else if ($event && ($participation->compasses['utilized'] > 0 || $participation->compasses['remaining'] > 0)) {
             $this->message = 'You cannot change your home city until the running event not ends.';
             return false;
         }else{
             return true;
         }
+        // if ($event) {
+        //     $participation = $event->participations->first();
+        //     $this->message = 'You cannot change your home city until the running event not ends.';
+        //     return false;
+        // }else{
+        //     return true;
+        // }
     }
 
     /**
