@@ -90,6 +90,7 @@ class EventService
 		$this->events();
 		$this->users();
 		$this->store();
+		return $this;
 	}
 
 	public function finish()
@@ -119,5 +120,14 @@ class EventService
 			]);
 		}
 		return $event;
+	}
+
+	public function response()
+	{
+		return [
+			'cities'=> $this->cities->count(),
+			'events'=> $this->events->count(),
+			'users'=> $this->users->count(),
+		];
 	}
 }

@@ -39,7 +39,7 @@ class StartAnEvent extends Command
      */
     public function handle()
     {
-        (new EventService)->participate();
-        Log::info('event:start Cummand Run successfully! at '. now()->setTimeZone('Asia/Kolkata')->format('d-m-Y h:i:s A'));
+        $eventService = (new EventService)->participate();
+        Log::info(json_encode($eventService->response()).' event:start Cummand Run successfully! at '. now()->setTimeZone('Asia/Kolkata')->format('d-m-Y h:i:s A'));
     }
 }
