@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Helpers\UserHelper;
 use App\Http\Controllers\Controller;
 use App\Models\v1\User;
 use App\Rules\IsPasswordValid;
 use App\Rules\User\UpdateHomeCity;
+use App\Services\Event\EventService;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -97,17 +99,23 @@ class ProfileController extends Controller
 
 	public function updateUserHomeCity(Request $request)
 	{
+		$user = auth()->user();
+		
 		$validator = Validator::make($request->all(),[
-						'city_id'=>['required', 'exists:cities,_id', new UpdateHomeCity],
+						'city_id'=>['required', 'exists:cities,_id', new UpdateHomeCity($user)],
 					]);
 
 		if ($validator->fails()) {
 			return response()->json(['message' => $validator->messages()->first()],422);
 		}
 
-		$user = auth()->user();
 		$user->city_id = $request->city_id;
 		$user->save();
-		return response()->json(['message' => 'Your home city has been updated successfully.']);
+		$response['message'] = 'Your home city has been updated successfully.';
+		$event = (new EventService)->participateMeInEventIfAny($user, $request->city_id);
+		if ($event) {
+			$response['event_data'] = (new UserHelper)->prepareDateForEvent($user);
+		}
+		return response()->json($response);
 	}
 }

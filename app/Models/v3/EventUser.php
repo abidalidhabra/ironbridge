@@ -9,6 +9,11 @@ class EventUser extends Eloquent
 {
     protected $fillable = ['event_id', 'user_id', 'status', 'radius', 'compasses'];
 
+    public function scopeStatus($query, $status)
+    {
+    	return $query->where('status', $status);
+    }    
+
     public function scopeRunning($query)
     {
     	return $query->where('status', 'running');

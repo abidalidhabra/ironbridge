@@ -57,12 +57,14 @@ class EventService
 					$dataToBeCreate->push([
 						'user_id'=> $user->id, 
 						'event_id'=> $event->id, 
-						'status'=> 'running', 
+						'status'=> 'participated', 
 						'radius'=> $event->total_radius,
 						'compasses'=> [
 							'utilized'=> 0,
 							'remaining'=> 0
-						]
+						],
+						'created_at'=> new UTCDateTime,
+						'updated_at'=> new UTCDateTime
 					]);
 				});
 				if ($dataToBeCreate->count()) {
@@ -96,5 +98,26 @@ class EventService
 		Event::whereIn('_id', $events->toArray())->update([
 			'finished_at'=> new UTCDateTime
 		]);
+	}
+
+
+	public function participateMeInEventIfAny($user, $cityId)
+	{
+		$event = Event::running()->where('city_id', $cityId)->orderBy('time.start', 'asc')->first();
+		if ($event) {
+			EventUser::create([
+				'user_id'=> $user->id, 
+				'event_id'=> $event->id, 
+				'status'=> 'participated',
+				'radius'=> $event->total_radius,
+				'compasses'=> [
+					'utilized'=> 0,
+					'remaining'=> 0
+				],
+				'created_at'=> new UTCDateTime,
+				'updated_at'=> new UTCDateTime
+			]);
+		}
+		return $event;
 	}
 }

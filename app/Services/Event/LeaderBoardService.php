@@ -124,7 +124,7 @@ class LeaderBoardService
         // for ($i=0; $i < 150; $i++) { 
         //     $digits[] = $i+1;
         // }
-        $paginate = 25;
+        $paginate = 3;
         if ($direction == 'up') {
             $limit = (($cursor - 1) == 0)? 0: ($cursor - 1);
             if ($limit > $paginate) {

@@ -98,9 +98,11 @@ class CompleteTheClueRepository implements ClueInterface
             $huntCompleted = true;
         }
 
+        if($huntUserDetails->where('status', 'completed')->count() > 0) {
+            $rewardData['xp_state'] = $this->xPDistributionService->setHuntUser($this->huntUser)->setUser($this->user)->add($huntCompleted);
+        }
         // $rewardData['xp_reward'] = $this->addXP($huntCompleted);
         // $rewardData['xp_reward'] = $this->xPDistributionService->setHuntUser($this->huntUser)->setUser($this->user)->add($huntCompleted);
-        $rewardData['xp_state'] = $this->xPDistributionService->setHuntUser($this->huntUser)->setUser($this->user)->add($huntCompleted);
         // $rewardData['agent_status'] = $this->user->agent_status;
         // $rewardData['agent_stack'] = $this->userRepository->getAgentStack();
 
