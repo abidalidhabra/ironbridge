@@ -68,7 +68,7 @@ class EventService
 						'updated_at'=> new UTCDateTime
 					]);
 				});
-				$this->insertedUsers = $dataToBeCreate->toArray();
+				$this->insertedUsers = $dataToBeCreate->count();
 				if ($dataToBeCreate->count()) {
 					EventUser::insert($dataToBeCreate->toArray());
 				}
