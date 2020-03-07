@@ -261,7 +261,7 @@ class LeaderBoardService
                 $user->first_name = $temp['first_name'];
                 $user->last_name = $temp['last_name'];
                 $user->avatar = $temp['avatar'];
-                $user->widgets = collect($temp['widgets'])->where('selected', true);
+                $user->widgets = collect($temp['widgets'])->where('selected', true)->values();
                 $user->gender = $temp['gender'];
                 $user->compasses = $user->participations->compasses;
                 unset($user->participations, $user->_id);
@@ -278,7 +278,7 @@ class LeaderBoardService
                 $user->avatar = $temp['avatar'];
                 $user->compasses = $user->participations->compasses;
                 if ($user->rank <= 3) {
-                    $user->widgets = collect($temp['widgets'])->where('selected', true);
+                    $user->widgets = collect($temp['widgets'])->where('selected', true)->values();
                 }
                 unset($user->participations, $user->_id);
                 return $user;
