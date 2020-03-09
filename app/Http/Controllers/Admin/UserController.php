@@ -23,14 +23,14 @@ use MongoDB\BSON\UTCDateTime as MongoDBDate;
 use Validator;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\Datatables\Datatables;
-use App\Services\Event\EventService;
+//use App\Services\Event\EventService;
 
 
 class UserController extends Controller
 {
     public function index()
     {
-          (new EventService)->participate();
+     //     (new EventService)->participate();
     	return view('admin.user.userList');
     }
 
