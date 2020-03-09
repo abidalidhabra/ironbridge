@@ -227,7 +227,7 @@ class LeaderBoardService
         }
 
         if ($direction == 'up') {
-            $this->beforeCursor = ($nextCursor)? $nextCursor: 0;
+            $this->beforeCursor = ($nextCursor)? $nextCursor+1: 0;
             $this->before = $data;
         }else{
             $this->afterCursor = ($nextCursor)? $nextCursor: 0;
@@ -292,7 +292,7 @@ class LeaderBoardService
                 $user->first_name = $temp['first_name'];
                 $user->last_name = $temp['last_name'];
                 $user->avatar = $temp['avatar'];
-                $user->rank = ($cursor)? $cursor + $user->rank: $this->myRank - $user->rank;
+                $user->rank = ($cursor)? $cursor - $user->rank: $this->myRank - $user->rank;
                 $user->compasses = $user->participations->compasses;
                 unset($user->participations, $user->_id);
                 return $user;
