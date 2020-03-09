@@ -22,12 +22,7 @@ class EventService
 
 	public function cities()
 	{
-		$this->cities = City::whereHas('events', function($query){
-					$query->participateable()->limit(1);
-				})->with(['events'=> function($query){
-					$query->participateable()->limit(1);
-				}])
-				->get();
+		$this->cities = City::get();
 	}
 
 	public function events()
@@ -49,8 +44,12 @@ class EventService
 
 	public function store()
 	{
+		//exit('expression');
 		$this->cities->each(function($city){
+			echo "cityId". $city->id;
 			$users = $this->users->where('city_id',$city->id);
+		print_r($users);
+			
 			$city->events->each(function($event) use ($users, $city) {
 				$dataToBeCreate = collect();
 				$users->each(function($user) use ($event, &$dataToBeCreate) {
@@ -68,9 +67,11 @@ class EventService
 						'updated_at'=> new UTCDateTime
 					]);
 				});
-				$this->insertedUsers = $dataToBeCreate->count();
+echo				$this->insertedUsers = $dataToBeCreate->count();
+print_r($dataToBeCreate);
 				if ($dataToBeCreate->count()) {
-					EventUser::insert($dataToBeCreate->toArray());
+				echo 'Event Insert'.	EventUser::insert($dataToBeCreate->toArray());
+					exit;
 				}
 				$this->markAsStarted($event, $city);
 			});
