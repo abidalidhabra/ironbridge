@@ -28,6 +28,7 @@ class EventService
 	public function events()
 	{
 		$this->events = $this->cities->pluck('events')->flatten();
+
 	}
 
 	public function users()
@@ -44,13 +45,10 @@ class EventService
 
 	public function store()
 	{
-		//exit('expression');
 		$this->cities->each(function($city){
-			echo "cityId". $city->id;
 			$users = $this->users->where('city_id',$city->id);
-		print_r($users);
-			
 			$city->events->each(function($event) use ($users, $city) {
+				print_r($event);
 				$dataToBeCreate = collect();
 				$users->each(function($user) use ($event, &$dataToBeCreate) {
 					// $user->events()->create(['event_id'=> $event->id, 'status'=> 'running']);
@@ -67,14 +65,13 @@ class EventService
 						'updated_at'=> new UTCDateTime
 					]);
 				});
-echo				$this->insertedUsers = $dataToBeCreate->count();
-print_r($dataToBeCreate);
+				print_r($dataToBeCreate);
+				$this->insertedUsers = $dataToBeCreate->count();
 				if ($dataToBeCreate->count()) {
-				echo 'Event Insert'.	EventUser::insert($dataToBeCreate->toArray());
-					exit;
+					//EventUser::insert($dataToBeCreate->toArray());
 				}
 				$this->markAsStarted($event, $city);
-			});
+			});exit;
 		});
 	}
 
