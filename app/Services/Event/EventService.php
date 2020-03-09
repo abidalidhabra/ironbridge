@@ -54,7 +54,7 @@ class EventService
 			$city->events->each(function($event) use ($users, $city) {
 				$dataToBeCreate = collect();
 				$users->each(function($user) use ($event, &$dataToBeCreate) {
-					// $user->events()->create(['event_id'=> $event->id, 'status'=> 'running']);
+				// $user->events()->create(['event_id'=> $event->id, 'status'=> 'running']);
 					$dataToBeCreate->push([
 						'user_id'=> $user->id, 
 						'event_id'=> $event->id, 
@@ -76,7 +76,6 @@ class EventService
 			});
 		});
 	}
-
 	public function markAsStarted($event, $city)
 	{
 		$localDate = new DateTime(now(), new DateTimeZone($city->timezone));
