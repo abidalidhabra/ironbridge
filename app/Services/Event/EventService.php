@@ -66,7 +66,7 @@ class EventService
 						],
 						'created_at'=> new UTCDateTime,
 						'updated_at'=> new UTCDateTime
-					]);
+					]); 
 				});
 				$this->insertedUsers = $dataToBeCreate->count();
 				if ($dataToBeCreate->count()) {
