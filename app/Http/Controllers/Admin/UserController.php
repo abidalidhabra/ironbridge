@@ -15,6 +15,9 @@ use App\Models\v2\PracticeGameUser;
 use App\Models\v2\Relic;
 use App\Models\v3\City;
 use App\Repositories\RelicRepository;
+use App\Rules\User\UpdateHomeCity;
+use App\Services\Event\EventService;
+use App\Services\Event\EventUserService;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -776,17 +779,25 @@ class UserController extends Controller
     }
 
     public function updateCity(Request $request){
+
+        $user = User::where('_id',$request->user_id)->first();
+
         $validator = Validator::make($request->all(), [
             'dob'   => 'required',
-            'city'  => 'required',
+            'city'  => ['required', new UpdateHomeCity($user)],
         ]);
 
         if ($validator->fails()){
             $message = $validator->messages()->first();
             return response()->json(['status' => false,'message' => $message]);
         }        
+
+        $event = (new EventUserService)->setUser($user)->running(['*'], true);
+        if ($event) {
+            $event->participations->first()->delete();
+        }
         
-        $user = User::where('_id',$request->user_id)->first();
+        (new EventService)->participateMeInEventIfAny($user, $request->city);
 
         $user->city_id = $request->city;
         $user->dob = Carbon::parse($request->dob);
