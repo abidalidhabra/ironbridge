@@ -93,7 +93,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json(['message'=>$validator->messages()], 422);
         }
-         $user =User::where('_id', $request->guestid)->get();
+         $user =User::find($request->guestid);
          if ($request->longitude || $request->latitude) {
                     $wantToSave = true;
                     $user->location = [
