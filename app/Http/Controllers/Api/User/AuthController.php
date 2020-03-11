@@ -127,7 +127,7 @@ class AuthController extends Controller
                     ];
                 }
 
-            $user->save();
+            $user->update();
             //if ($token = (new LoginService)->generateAToken()->getToken()) {
                 
                 //$user = $user->getUser();
