@@ -13,6 +13,8 @@ use App\Services\User\PostRegisterService;
 use Exception;
 use Illuminate\Http\Request;
 use stdClass;
+use Validator;
+use App\Models\v1\User;
 
 class AuthController extends Controller
 {
@@ -71,6 +73,81 @@ class AuthController extends Controller
        }
     }
 
+   public function guestUserregister(Request $request){
+      try {
+       if ($request->has('username')) {
+                $request['username'] = strtolower($request->username);
+            }
+        $validator = Validator::make($request->all(),[
+                            'type'=> 'required|in:google,facebook,apple,guest',
+                            'google_id'=> 'required_if:type,google|unique:users,google_id',
+                            'facebook_id'=> 'required_if:type,facebook|unique:users,facebook_id',
+                            'apple_id'=> 'required_if:type,apple|unique:users,apple_id',
+                            'email'=> 'required_unless:type,guest,apple|unique:users,email',
+                            'apple_data'=> 'required_if:type,apple|json',
+                            'latitude'=> 'required',
+                            'longitude'=> 'required',
+                            'firebase_id'=> 'nullable',
+                            'device_type'=> 'required|in:ios,android',
+                            'device_id'=> 'required',
+                            'device_model'=> 'required',
+                            'device_os'=> 'required',
+                            'username' => "required",
+                            'guestid' => "required",
+                          
+                    ]);
+        
+        if ($validator->fails()) {
+            return response()->json(['message'=>$validator->messages()], 422);
+        }
+         $user =User::find($request->guestid);
+         if ($request->longitude || $request->latitude) {
+                    $wantToSave = true;
+                    $user->location = [
+                        'type' => 'Point',
+                        'coordinates' =>[
+                    $request->longitude,
+                    $request->latitude,
+                ],
+                    ];
+                }
+                $user->google_id = ($request->filled('google_id'))? $request->google_id: '';
+                $user->facebook_id =($request->filled('facebook_id'))? $request->facebook_id: '';
+                $user->apple_id =($request->filled('apple_id'))? $request->apple_id: '';
+                $user->username =($request->filled('username'))? $request->username: '';
+                $user->first_name =($request->filled('first_name'))? $request->first_name: '';
+                $user->last_name =($request->filled('last_name'))? $request->last_name: '';
+                $user->email =($request->filled('email'))? $request->email: '';
+                $user->apple_data =($request->filled('apple_data'))? $request->apple_data: '';
+                if (
+                    $request->filled('device_type') || 
+                    $request->filled('device_id') || 
+                    $request->filled('device_model') || 
+                    $request->filled('device_os')
+                ) {
+                    $wantToSave = true;
+                    $user->device_info = [ 
+                        'id'=> ($request->filled('device_id'))? $request->device_id: $user->device_info['id'],
+                        'type'=> ($request->filled('device_type'))? $request->device_type: $user->device_info['type'],
+                        'model'=> ($request->filled('device_model'))? $request->device_model: $user->device_info['model'],
+                        'os'=> ($request->filled('device_os'))? $request->device_os: $user->device_info['os'],
+                    ];
+                }
+
+            $user->save();
+            return response()->json([
+                    'message'=>'You updated info successfully.',  
+                   
+            ],200);
+
+
+     
+       }catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ],500);
+        }
+    }
     public function getPayloadData($request)
     {
         $payloadData = UserHelper::getPerfixDetails(auth('api')->user());

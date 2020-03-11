@@ -32,6 +32,7 @@ Route::group(['namespace' => 'Api\v1', 'prefix' => 'v1', 'middleware'=> ['downti
 
 	Route::post('checkUsernameEmail', 'AuthController@checkUsernameEmail');
 	Route::post('register', 'UserController@register');
+
 	// Route::get('checkMyBalance', 'UserController@checkMyBalance');
 	Route::get('getParks', 'UserController@getParks');
 	Route::get('watercheck/{lat}/{long}', 'UserController@watercheck');
@@ -238,6 +239,7 @@ Route::group(['namespace' => 'Api\Relic', 'prefix' => 'relics', 'middleware' => 
 
 Route::group(['namespace' => 'Api\User', 'prefix' => 'v2', 'middleware'=> ['downtime']], function ($router) {
 	Route::post('login', 'AuthController@login');
+	Route::post('guestUserregister', 'AuthController@guestUserregister');
 });
 
 Route::get('/app/url', 'Api\User\AuthController@getAppURL')->middleware('downtime');
