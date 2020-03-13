@@ -250,7 +250,7 @@ class RandomHuntController extends Controller
                         $playableNodes = collect($playableRes->locationsPerGameObjectType); 
 
                         // if (isset($user->nodes_status['power'])) {  
-                            $responseToBeGiven['skeleton_key_node'] = $playableNodes->first();  
+                            $responseToBeGiven['power_station_node'] = $playableNodes->first();  
                         // }   
 
                         // if (isset($user->nodes_status['mg_challenge'])) {   
