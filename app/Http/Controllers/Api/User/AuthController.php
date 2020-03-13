@@ -85,15 +85,8 @@ class AuthController extends Controller
                             'apple_id'=> 'required_if:type,apple|unique:users,apple_id',
                             'email'=> 'required_unless:type,guest,apple|unique:users,email',
                             'apple_data'=> 'required_if:type,apple|json',
-                            'latitude'=> 'required',
-                            'longitude'=> 'required',
-                            'firebase_id'=> 'nullable',
-                            'device_type'=> 'required|in:ios,android',
-                            'device_id'=> 'required',
-                            'device_model'=> 'required',
-                            'device_os'=> 'required',
-                            'username' => "required",
-                            'guestid' => "required",
+                           
+                            'guestid' => "required|exists:users,_id",
                           
                     ]);
         
@@ -119,6 +112,7 @@ class AuthController extends Controller
                 $user->last_name =($request->filled('last_name'))? $request->last_name: '';
                 $user->email =($request->filled('email'))? $request->email: '';
                 $user->apple_data =($request->filled('apple_data'))? $request->apple_data: '';
+                $user->last_login_as =$request->type; 
                 if (
                     $request->filled('device_type') || 
                     $request->filled('device_id') || 
@@ -134,12 +128,24 @@ class AuthController extends Controller
                     ];
                 }
 
-            $user->save();
-            return response()->json([
-                    'message'=>'You updated info successfully.',  
-                   
-            ],200);
+            $user->update();
+            //if ($token = (new LoginService)->generateAToken()->getToken()) {
+                
+                //$user = $user->getUser();
 
+                // $postRegisterService = (new PostRegisterService)->setUser($user);
+                // $postRegisterService->configure();
+                
+                //$defaultData = new stdClass();
+                //$newRegistration= new stdClass();
+
+                return response()->json([
+                    'message'=>'Your data updated successfully.', 
+                    //'token' => $token, 
+                    'data' => $user->makeHidden(['reffered_by','updated_at','created_at', 'widgets', 'skeleton_keys', 'avatar', 'tutorials', 'additional', 'device_info', 'hat_selected']),
+                    
+                ],200);
+           
 
      
        }catch (Exception $e) {
