@@ -213,6 +213,7 @@ Route::group(['namespace' => 'Api\Hunt', 'prefix' => 'hunts', 'middleware' => ['
 	Route::get('random/getRelicDetails', 'RandomHuntController@getRelicDetails');
 	Route::get('random/getMinigamesForNode', 'RandomHuntController@getMinigamesForNode');
 	Route::post('random/claimPrizeForBonuseTreasureNode', 'RandomHuntController@claimPrizeForBonuseTreasureNode');
+	Route::post('random/claimTheSkeletonNodePrizeService', 'RandomHuntController@claimTheSkeletonNodePrizeService');
 	Route::post('random/claimPrizeForMinigameNode', 'RandomHuntController@claimPrizeForMinigameNode');
 	Route::post('map/ARMode', 'RandomHuntController@updateARMode');
 	Route::post('random/boostThePower', 'RandomHuntController@boostThePower');
@@ -226,6 +227,7 @@ Route::group(['namespace' => 'Api\Profile', 'prefix' => 'profile', 'middleware' 
 	/** Hunt requests **/
 	Route::get('getRelicsData', 'ProfileController@getRelics');
 	Route::post('markTutorialAsComplete', 'ProfileController@markTutorialAsComplete');
+	Route::post('addTheChest', 'ProfileController@addTheChest');
 	Route::post('openTheChest', 'ProfileController@openTheChest');
 	Route::post('changeTheChestMG', 'ProfileController@changeTheChestMG');
 	Route::post('removeTheChestFromBucket', 'ProfileController@removeTheChestFromBucket');

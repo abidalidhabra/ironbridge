@@ -14,6 +14,7 @@ use App\ReportedLocation;
 use App\Repositories\AppStatisticRepository;
 use App\Repositories\Hunt\ClaimTheBonusTreasurePrizeService;
 use App\Repositories\Hunt\ClaimTheMinigameNodePrizeService;
+use App\Repositories\Hunt\ClaimTheSkeletonNodePrizeService;
 use App\Repositories\Hunt\Factory\HuntFactory;
 use App\Repositories\Hunt\GetHuntParticipationDetailRepository;
 use App\Repositories\Hunt\GetLastRunningRandomHuntRepository;
@@ -138,6 +139,12 @@ class RandomHuntController extends Controller
         // $queries = \DB::getQueryLog();
         // dd($queries);
         return response()->json(['message' => 'prize provided on the behalf of bonuse treasure node.', 'reward'=> $reward]);
+    }    
+
+    public function claimTheSkeletonNodePrizeService(Request $request)
+    {
+        $reward = (new ClaimTheSkeletonNodePrizeService)->setUser(auth()->user())->do();
+        return response()->json(['message' => 'prize provided on the behalf of skeleton key node.', 'reward'=> $reward]);
     }
 
     public function claimPrizeForMinigameNode(ClaimPrizeForMinigameNodeRequest $request)
@@ -243,7 +250,7 @@ class RandomHuntController extends Controller
                         $playableNodes = collect($playableRes->locationsPerGameObjectType); 
 
                         // if (isset($user->nodes_status['power'])) {  
-                            $responseToBeGiven['power_station_node'] = $playableNodes->first();  
+                            $responseToBeGiven['skeleton_key_node'] = $playableNodes->first();  
                         // }   
 
                         // if (isset($user->nodes_status['mg_challenge'])) {   

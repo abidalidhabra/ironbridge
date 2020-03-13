@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api\Profile;
 
+use App\Exceptions\Profile\ChestBucketCapacityOverflowException;
 use App\Helpers\UserHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Profile\MarkTutorialAsCompleteRequest;
 use App\Http\Requests\User\ChangeTheChestMGRequest;
+use App\Http\Requests\User\OpenTheChestRequest;
 use App\Models\v2\MinigameHistory;
 use App\Repositories\ComplexityTargetRepository;
 use App\Repositories\Game\GameRepository;
@@ -65,13 +67,17 @@ class ProfileController extends Controller
         return response()->json(['message' => 'Tutorial has been marked as complete.']); 
     }
 
-    public function openTheChest(Request $request)
+    public function openTheChest(OpenTheChestRequest $request)
     {
         try {
-
             $user = auth()->user();
             if ($user->buckets['chests']['collected']) {
-                $chestService = (new ChestService)->setUser($user)->open();
+                $chestService = (new ChestService)
+                                ->setUser($user)
+                                ->open()
+                                ->when($request->skip, function($class){
+                                    $class->cutTheCharge('skipping_chest');
+                                });
                 // return response()->json([
                 //     'message' => 'Chest has been opened successfully.', 
                 //     'next_minigame'=> $chestService->getMiniGame(),
@@ -126,6 +132,19 @@ class ProfileController extends Controller
             ]);
         }else{
             return response()->json(['message'=> 'You don\'t have atleast single chest to remove.'], 422);
+        }
+    }
+
+    public function addTheChest(Request $request)
+    {
+        try {
+            $chestService = new ChestService;
+            $chestService->setUser(auth()->user())->add();
+            return response()->json(['message'=> 'A chest has been added to bucket.', 'chests_bucket'=> $chestService->getUser()->buckets['chests']]);
+        } catch (ChestBucketCapacityOverflowException $e) {
+            return response()->json(['message'=> $e->getMessage()], 422);
+        } catch (Exception $e) {
+            return response()->json(['message'=> $e->getMessage()], 500);
         }
     }
 }

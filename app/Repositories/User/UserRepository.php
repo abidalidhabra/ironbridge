@@ -98,7 +98,7 @@ class UserRepository implements UserRepositoryInterface
                 [ 'skeleton_keys.$[identifier].used_at'=> new UTCDateTime(now()) ],
                 [ 'arrayFilters'=> [ [ "identifier.key"=> ['$in'=> $skeletonToBeUpdate->toArray()] ] ], 'new'=> true ]
             );
-        return $user->available_skeleton_keys - 1;
+        return $user->available_skeleton_keys - $keysAmount;
     }
 
     public function markMiniGameTutorialAsComplete(string $gameId)

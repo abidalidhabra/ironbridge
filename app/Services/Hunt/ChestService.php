@@ -13,6 +13,7 @@ use App\Services\Hunt\RelicService;
 use App\Services\MiniGame\MiniGameInfoService;
 use App\Services\Traits\UserTraits;
 use GuzzleHttp\Client;
+use Exception;
 
 class ChestService
 {
@@ -24,6 +25,7 @@ class ChestService
 	protected $bucketRestored = false;
 	protected $relicInfo;
     protected $compassRewards;
+    protected $availableSkeletonKeys;
 
     public function expand($amount)
     {
@@ -42,6 +44,10 @@ class ChestService
 			$this->user->buckets
 		);
 
+        if ($this->userBuckets['chests']['collected'] + 1 > $this->userBuckets['chests']['capacity']) {
+            throw new ChestBucketCapacityOverflowException("You don't have enough capacity to hold this chest");
+        }
+
 		// if ($this->userBuckets['chests']['collected'] >= $this->userBuckets['chests']['capacity']) {
 		// 	throw new ChestBucketCapacityOverflowException("You don't have enough capacity to hold this chest");
 		// }else{
@@ -51,7 +57,9 @@ class ChestService
 		// 	$this->save();
 		// }
 		
-		$this->userBuckets['chests']['minigame_id'] = $this->generateMiniGame()->id;
+        if (!isset($this->userBuckets['chests']['minigame_id'])) {
+		  $this->userBuckets['chests']['minigame_id'] = $this->generateMiniGame()->id;
+        }
 		$this->userBuckets['chests']['collected'] += 1;
 		$this->userBuckets['chests']['remaining'] -= 1;
 		$this->save();
@@ -127,17 +135,21 @@ class ChestService
             null, $MGIds
         )->id;
 
-		$this->cutTheCharge();
+		$this->cutTheCharge('minigame_change');
 		
 		$this->save();
 	}
 
-	public function cutTheCharge()
+	public function cutTheCharge($for)
 	{
-		$huntStatistic = (new HuntStatisticRepository)->first(['id', 'mg_change_charge']);
-		// if ($user->gold_balance >= $huntStatistic->retention_hunt['refresh_mg_charge']) {
-			return (new UserRepository($this->user))->deductGold($huntStatistic->mg_change_charge ?? 1);
-		// }
+        $huntStatistic = (new HuntStatisticRepository)->first(['id', 'mg_change_charge', 'chest']);
+        $userRepository = new UserRepository($this->user);
+        if ($for == 'skipping_chest') {
+            return $this->availableSkeletonKeys = $userRepository->deductSkeletonKeys($huntStatistic->chest['skeleton_keys_to_skip'] ?? 1);
+        }else if($for == 'minigame_change'){
+    		return $userRepository->deductGold($huntStatistic->mg_change_charge ?? 1);
+        }
+        throw new Exception("Invalid type provided to cutting charge on behalf of chest");
 	}
 
 	public function remove()
@@ -287,7 +299,17 @@ class ChestService
             'next_minigame'=> $this->getMiniGame(),
             'loot_rewards'=> $this->getLootRewards(),
             'chests_bucket'=> $this->user->buckets['chests'],
-            'relic_info'=> $this->getRelicInfo()
+            'relic_info'=> $this->getRelicInfo(),
+            'available_skeleton_keys'=> ($this->availableSkeletonKeys)? $this->availableSkeletonKeys: $this->user->available_skeleton_keys,
         ]; 
+    }
+
+    public function when($value, $callback)
+    {
+        if ($value) {
+            return $callback($this, $value) ?: $this;
+        }
+
+        return $this;
     }
 }
