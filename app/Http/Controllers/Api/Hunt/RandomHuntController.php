@@ -259,7 +259,7 @@ class RandomHuntController extends Controller
 
                         // if (isset($user->nodes_status['bonus'])) {    
 
-                            // $responseToBeGiven['bonus_nodes'] = $playableNodes->slice(2)->values();  
+                            $responseToBeGiven['bonus_nodes'] = $playableNodes->slice(2)->values();  
                         // }   
                     // }
                     $response[] = $responseToBeGiven;
