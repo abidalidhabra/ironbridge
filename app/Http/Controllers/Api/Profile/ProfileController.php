@@ -78,15 +78,6 @@ class ProfileController extends Controller
                                 ->when($request->skip, function($class){
                                     $class->cutTheCharge('skipping_chest');
                                 });
-                // return response()->json([
-                //     'message' => 'Chest has been opened successfully.', 
-                //     'next_minigame'=> $chestService->getMiniGame(),
-                //     'chests_bucket'=> $user->buckets['chests'],
-                //     'loot_rewards'=> $chestService->getLootRewards(),
-                //     'chest_rewards'=> $chestService->getChestRewards(),
-                //     'agent_status'=> $user->agent_status,
-                //     'relic_info'=> $chestService->getRelicInfo(),
-                // ]); 
                 return response()->json(['message' => 'Chest has been opened successfully.', 'data'=> $chestService->response()]); 
             }else{
                 return response()->json(['message' => 'You don\'t have chest in your account to open.'], 422); 
@@ -99,8 +90,8 @@ class ProfileController extends Controller
     public function changeTheChestMG(ChangeTheChestMGRequest $request)
     {
         $user = auth()->user();
-        $huntStatistic = (new HuntStatisticRepository)->first(['id', 'mg_change_charge']);
-        if ($user->gold_balance >= $huntStatistic->mg_change_charge) {
+        $huntStatistic = (new HuntStatisticRepository)->first(['id', 'chest']);
+        if ($user->gold_balance >= $huntStatistic->chest['golds_to_skip_mg']) {
 
             $chestService = (new ChestService)->setUser($user);
             $chestService->changeChestMiniGame($request->minigames_ids);

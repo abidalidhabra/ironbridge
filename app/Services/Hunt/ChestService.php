@@ -142,12 +142,12 @@ class ChestService
 
 	public function cutTheCharge($for)
 	{
-        $huntStatistic = (new HuntStatisticRepository)->first(['id', 'mg_change_charge', 'chest']);
+        $huntStatistic = (new HuntStatisticRepository)->first(['id', 'chest']);
         $userRepository = new UserRepository($this->user);
         if ($for == 'skipping_chest') {
             return $this->availableSkeletonKeys = $userRepository->deductSkeletonKeys($huntStatistic->chest['skeleton_keys_to_skip'] ?? 1);
         }else if($for == 'minigame_change'){
-    		return $userRepository->deductGold($huntStatistic->mg_change_charge ?? 1);
+    		return $userRepository->deductGold($huntStatistic->chest['golds_to_skip_mg'] ?? 1);
         }
         throw new Exception("Invalid type provided to cutting charge on behalf of chest");
 	}

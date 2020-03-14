@@ -73,18 +73,20 @@ class HuntStatisticController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(),[
-            'power_ratio'                   => 'required|numeric',
-            'gold'                          => 'required|numeric',
-            'skeleton_keys'                 => 'required|numeric',
-            'boost_power_till'              => 'required|numeric',
-            'refreshable_random_hunt'       => 'required|numeric',
-            'nodes'                         => 'required|numeric',
-            'distances_random_hunt'         => 'required|numeric',
-            'relic'                         => 'required|numeric',
-            'power'                         => 'required|numeric',
-            'mgc'                           => 'required|numeric',
+            'power_ratio'             => 'required|numeric',
+            'gold'                    => 'required|numeric',
+            'skeleton_keys'           => 'required|numeric',
+            'boost_power_till'        => 'required|numeric',
+            'refreshable_random_hunt' => 'required|numeric',
+            'nodes'                   => 'required|numeric',
+            'distances_random_hunt'   => 'required|numeric',
+            'relic'                   => 'required|numeric',
+            'power'                   => 'required|numeric',
+            'mgc'                     => 'required|numeric',
+            'freeze_till_chest'       => 'required|numeric',
             // 'chest_xp'                      => 'required|numeric',
-            'mg_change_charge'             => 'required|numeric',
+            // 'mg_change_charge'             => 'required|numeric',
+            'chest'        => 'required|array',
         ]);
 
         if ($validator->fails())
@@ -111,7 +113,12 @@ class HuntStatisticController extends Controller
         $huntStatistic->freeze_till =  (object)[
                                         'power'=>(int)$request->power,
                                         'mgc'=>(int)$request->mgc,
+                                        'chest'=>(int)$request->freeze_till_chest,
                                     ];
+        $huntStatistic->chest = [
+            'golds_to_skip_mg'=>(int)$request->chest['golds_to_skip_mg'],
+            'skeleton_keys_to_skip'=>(int)$request->chest['skeleton_keys_to_skip'],
+        ];
         $huntStatistic->save();
 
         return response()->json([
