@@ -81,12 +81,13 @@ class HuntStatisticController extends Controller
             'nodes'                   => 'required|numeric',
             'distances_random_hunt'   => 'required|numeric',
             'relic'                   => 'required|numeric',
-            'power'                   => 'required|numeric',
-            'mgc'                     => 'required|numeric',
-            'freeze_till_chest'       => 'required|numeric',
+            'power'                   => 'required|numeric|min:0',
+            'mgc'                     => 'required|numeric|min:0',
+            'freeze_till_chest'       => 'required|numeric|min:0',
             // 'chest_xp'                      => 'required|numeric',
             // 'mg_change_charge'             => 'required|numeric',
             'chest'        => 'required|array',
+            'chest.*'      => 'required|integer|min:0',
         ]);
 
         if ($validator->fails())

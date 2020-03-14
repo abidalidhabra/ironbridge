@@ -6,6 +6,7 @@ use App\Exceptions\Profile\ChestBucketCapacityOverflowException;
 use App\Helpers\UserHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Profile\MarkTutorialAsCompleteRequest;
+use App\Http\Requests\User\AddTheChestRequest;
 use App\Http\Requests\User\ChangeTheChestMGRequest;
 use App\Http\Requests\User\OpenTheChestRequest;
 use App\Models\v2\MinigameHistory;
@@ -126,12 +127,17 @@ class ProfileController extends Controller
         }
     }
 
-    public function addTheChest(Request $request)
+    public function addTheChest(AddTheChestRequest $request)
     {
         try {
-            $chestService = new ChestService;
-            $chestService->setUser(auth()->user())->add();
-            return response()->json(['message'=> 'A chest has been added to bucket.', 'chests_bucket'=> $chestService->getUser()->buckets['chests']]);
+            $user = auth()->user();
+            if ($user['buckets']['chests']['collected'] + 1 > $user['buckets']['chests']['capacity']) {
+                throw new ChestBucketCapacityOverflowException("You don't have enough capacity to hold this chest");
+            }else{
+                $chestService = new ChestService;
+                $chestService->setUser($user)->add($request->place_id);
+                return response()->json(['message'=> 'A chest has been added to bucket.', 'chests_bucket'=> $chestService->getUser()->buckets['chests']]);
+            }
         } catch (ChestBucketCapacityOverflowException $e) {
             return response()->json(['message'=> $e->getMessage()], 422);
         } catch (Exception $e) {

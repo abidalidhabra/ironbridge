@@ -38,15 +38,15 @@ class ChestService
 		$this->save();
     }
 
-	public function add()
+	public function add($placeId)
 	{
 		$this->setUserBuckets(
 			$this->user->buckets
 		);
 
-        if ($this->userBuckets['chests']['collected'] + 1 > $this->userBuckets['chests']['capacity']) {
-            throw new ChestBucketCapacityOverflowException("You don't have enough capacity to hold this chest");
-        }
+        // if ($this->userBuckets['chests']['collected'] + 1 > $this->userBuckets['chests']['capacity']) {
+        //     throw new ChestBucketCapacityOverflowException("You don't have enough capacity to hold this chest");
+        // }
 
 		// if ($this->userBuckets['chests']['collected'] >= $this->userBuckets['chests']['capacity']) {
 		// 	throw new ChestBucketCapacityOverflowException("You don't have enough capacity to hold this chest");
@@ -60,6 +60,9 @@ class ChestService
         if (!isset($this->userBuckets['chests']['minigame_id'])) {
 		  $this->userBuckets['chests']['minigame_id'] = $this->generateMiniGame()->id;
         }
+        
+        $this->markThisChestAsTaken($placeId);
+
 		$this->userBuckets['chests']['collected'] += 1;
 		$this->userBuckets['chests']['remaining'] -= 1;
 		$this->save();
@@ -310,6 +313,12 @@ class ChestService
             return $callback($this, $value) ?: $this;
         }
 
+        return $this;
+    }
+
+    public function markThisChestAsTaken($placeId)
+    {
+        $this->user->chests()->create(['place_id'=> $placeId]);
         return $this;
     }
 }

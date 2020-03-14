@@ -256,11 +256,13 @@ class RandomHuntController extends Controller
                         // if (isset($user->nodes_status['mg_challenge'])) {   
                             $responseToBeGiven['minigame_node'] = $playableNodes->slice(1)->take(1)->first();    
                         // }
-
+                            
                         // if (isset($user->nodes_status['bonus'])) {    
 
                             // $responseToBeGiven['bonus_nodes'] = $playableNodes->slice(2)->values();  
                         // }   
+                        
+                        $responseToBeGiven['chest_nodes'] = $playableNodes->last();    
                     // }
                     $response[] = $responseToBeGiven;
                 }

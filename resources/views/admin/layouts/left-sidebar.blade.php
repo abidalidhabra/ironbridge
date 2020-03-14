@@ -184,7 +184,9 @@
 						$route == 'admin.xpManagement.edit'
 						)? true:false;
 						
-						$showIcon = ($chestLoot || $MGCLoot || $relicLootBind || $huntXPMngmnt)? 'fa-minus': 'fa-plus';
+						$mapPiecesLoot = ($route == 'admin.map-pieces-loots.index')? true:false;
+						
+						$showIcon = ($chestLoot || $MGCLoot || $relicLootBind || $huntXPMngmnt || $mapPiecesLoot)? 'fa-minus': 'fa-plus';
 					@endphp
 					<li>
 						
@@ -211,8 +213,10 @@
 								@endif
 
 								@if($admin->hasPermissionTo('View Hunts XP'))
-									<a href="{{ route('admin.xpManagement.index') }}" class="@if($huntXPMngmnt) {{ 'activelistsub' }} @endif">XP rewards</a>
+								<a href="{{ route('admin.xpManagement.index') }}" class="@if($huntXPMngmnt) {{ 'activelistsub' }} @endif">XP rewards</a>
 								@endif
+									
+								<a href="{{ route('admin.map-pieces-loots.index') }}" class="@if($mapPiecesLoot) {{ 'activelistsub' }} @endif">Map Pieces rewards</a>
 							</div>
 						</div>
 					</li>

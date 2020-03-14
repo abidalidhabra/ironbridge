@@ -9,6 +9,7 @@ use App\Models\v2\UserRelicMapPiece;
 use App\Models\v3\AssetsLog;
 use App\Models\v3\City;
 use App\Models\v3\EventUser;
+use App\Models\v3\ChestUser;
 use App\ReportedLocation;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
@@ -430,5 +431,10 @@ class User extends Authenticatable implements JWTSubject
         }else if($this->device_info['type'] == 'ios') {
             return $this->firebase_ids['ios_id'];
         }
+    }
+
+    public function chests()
+    {
+        return $this->hasMany(ChestUser::class);
     }
 }

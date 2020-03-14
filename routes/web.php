@@ -191,6 +191,8 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	});
 	
 	Route::resource('loots', 'LootController');
+	Route::put('map-pieces-loots/update', 'MapPiecesLootController@update')->name('map-pieces-loots.update');
+	Route::resource('map-pieces-loots', 'MapPiecesLootController')->except(['update']);
 	Route::group(['middleware' => ['permission:View MGC Loot Table']], function () {
 		Route::resource('mgc_loot', 'MgcController');
 	});

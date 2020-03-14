@@ -90,11 +90,12 @@ class CompleteTheClueRepository implements ClueInterface
                 // $rewardData['collected_relic'] = (new AddRelicService)->setUser($this->user)->setRelicId($this->huntUser->relic_id)->activate()->getRelic(['_id', 'complexity','icon', 'number']);
                 $addRelicService = (new AddRelicService)->setUser($this->user)->setRelicId($this->huntUser->relic_id)->activate();
                 $rewardData['relic_info'] = $addRelicService->response();
-            }else{
-                
-                (new ChestService)->setUser($this->user)->add();
-                $rewardData['chests_bucket'] = $this->user->buckets['chests'];
             }
+            // else{
+                
+            //     (new ChestService)->setUser($this->user)->add();
+            //     $rewardData['chests_bucket'] = $this->user->buckets['chests'];
+            // }
             $huntCompleted = true;
         }
 
