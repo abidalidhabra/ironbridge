@@ -12,6 +12,7 @@
             @method('PUT')
             <div class="appstbboxin">
                 <div class="row">
+                    
                     <div class="col-md-3">
                         <h4>Power Charging Station</h4>
                         <div class="form-group">
@@ -23,8 +24,9 @@
                             <input type="number" name="boost_power_till" class="form-control" value="{{ $huntStatistic->boost_power_till }}" placeholder="Enter the boot validity till">
                         </div>
                     </div>
+                    
                     <div class="col-md-3">
-                        <h4 class="text-center">Challenge Nodes</h4>
+                        <h4 class="text-center">Bonus Nodes</h4>
                         <div class="form-group">
                             <label class="control-label">
                                 Gold:
@@ -36,21 +38,9 @@
                             <input type="number" name="skeleton_keys" class="form-control" placeholder="Enter the skeleton keys" value="{{ $huntStatistic->skeleton_keys }}">
                         </div>
                     </div>
-
+                    
                     <div class="col-md-3">
-                        <h4>Refreshable Distance</h4>
-                        <div class="form-group">
-                            <label class="control-label" data-toggle="tooltip" data-title="Re-load the api after reaching to this distance. (In meter)">Random Hunt: <i class="fa fa-question-circle"></i></label>
-                            <input type="number" name="refreshable_random_hunt" class="form-control" placeholder="Enter the random hunt" value="{{ ($huntStatistic->refreshable_distances)?$huntStatistic->refreshable_distances['random_hunt']:'' }}">
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label" data-toggle="tooltip" data-title="Re-load the api after reaching to this distance. (In meter)">Nodes: <i class="fa fa-question-circle"></i></label>
-                            <input type="number" name="nodes" class="form-control" placeholder="Enter the nodes" value="{{ ($huntStatistic->refreshable_distances)?$huntStatistic->refreshable_distances['nodes']:'' }}">
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <h4 class="text-center">Chests</h4>
+                        <h4 class="text-center">Chests Nodes</h4>
                         <div class="row">
                             <div class="form-group">
                                 <label class="control-label" data-toggle="tooltip" data-title="This indicates the golds to be cut if user want to change the chest minigame.">
@@ -66,10 +56,33 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="col-md-3">
+                        <h4 class="text-center">Skeleton Nodes</h4>
+                        <div class="form-group">
+                            <label class="control-label" data-toggle="tooltip" data-title="This indicate the skeleton keys to give user on finding skeleton node.">
+                                Skeleton keys: <i class="fa fa-question-circle"></i>
+                            </label>
+                            <input type="number" name="skeleton_keys_for_node" class="form-control" placeholder="Enter the power cool-down period" value="{{ $huntStatistic->skeleton_keys_for_node }}">
+                        </div>
+                    </div>
+                    
                 </div>
                
                 <div class="row">
-                    <div class="col-md-2">
+                    <div class="col-md-3">
+                        <h4>Refreshable Distance</h4>
+                        <div class="form-group">
+                            <label class="control-label" data-toggle="tooltip" data-title="Re-load the api after reaching to this distance. (In meter)">Random Hunt: <i class="fa fa-question-circle"></i></label>
+                            <input type="number" name="refreshable_random_hunt" class="form-control" placeholder="Enter the random hunt" value="{{ ($huntStatistic->refreshable_distances)?$huntStatistic->refreshable_distances['random_hunt']:'' }}">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" data-toggle="tooltip" data-title="Re-load the api after reaching to this distance. (In meter)">Nodes: <i class="fa fa-question-circle"></i></label>
+                            <input type="number" name="nodes" class="form-control" placeholder="Enter the nodes" value="{{ ($huntStatistic->refreshable_distances)?$huntStatistic->refreshable_distances['nodes']:'' }}">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
                         <h4>Distances</h4>
                         <div class="form-group">
                             <label class="control-label">Random hunt distance:
@@ -84,7 +97,8 @@
                             <input type="number" name="relic" class="form-control" placeholder="Enter the relic" value="{{ ($huntStatistic->distances)?$huntStatistic->distances['relic']:'' }}">
                         </div>
                     </div>
-                    <div class="col-md-4">
+
+                    <div class="col-md-6" style="border: 1px dotted #ad853b;">
                         <h4 class="text-center">Freeze time</h4>
                         <div class="row">
                             <div class="col-md-6">
@@ -111,6 +125,7 @@
                             </div>
                         </div>
                     </div>
+                    
                 </div>
               <button type="submit" class="btn btn-success">Save</button>
           </div>

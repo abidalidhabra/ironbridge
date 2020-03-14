@@ -20,6 +20,8 @@ class HuntStatistic extends Eloquent
         'mgc_xp',
         'relic_xp',
         'reported_loc_count',
+        'skeleton_keys_for_node',
         'chest',
+        'map_pieces'
     ];
 }
