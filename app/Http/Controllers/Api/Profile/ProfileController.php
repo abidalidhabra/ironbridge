@@ -72,6 +72,7 @@ class ProfileController extends Controller
     {
         try {
             $user = auth()->user();
+
             if ($user->buckets['chests']['collected']) {
                 $chestService = (new ChestService)
                                 ->setUser($user)

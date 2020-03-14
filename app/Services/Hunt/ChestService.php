@@ -90,9 +90,13 @@ class ChestService
         	(new ChestRewardsService)->setUser($this->user)->get()
         );
 
-        $this->setRelicInfo(
-        	(new RelicService)->setUser($this->user)->addMapPiece()
-        );
+        $magicNumber = rand(1, 100);
+        $huntStatistic = (new HuntStatisticRepository)->first(['id', 'map_pieces']);
+        if ($magicNumber <= $huntStatistic->map_pieces['max']) {
+            $this->setRelicInfo(
+            	(new RelicService)->setUser($this->user)->addMapPiece()
+            );
+        }
 
         $this->setCompassRewards(
             (new CompassesLootService)->setUser($this->user)->spin()->generate()
@@ -297,14 +301,18 @@ class ChestService
 
     public function treasureChestLootResponse()
     {
-        return [
+        $response = [
             'xp_state'=> $this->getChestRewards(),
             'next_minigame'=> $this->getMiniGame(),
             'loot_rewards'=> $this->getLootRewards(),
             'chests_bucket'=> $this->user->buckets['chests'],
-            'relic_info'=> $this->getRelicInfo(),
+            // 'relic_info'=> $this->getRelicInfo(),
             'available_skeleton_keys'=> ($this->availableSkeletonKeys)? $this->availableSkeletonKeys: $this->user->available_skeleton_keys,
-        ]; 
+        ];
+        if ($relicInfo = $this->getRelicInfo()) {
+            $response['relic_info'] = $relicInfo;
+        }
+        return $response;
     }
 
     public function when($value, $callback)

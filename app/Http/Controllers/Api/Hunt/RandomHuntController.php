@@ -143,8 +143,13 @@ class RandomHuntController extends Controller
 
     public function claimTheSkeletonNodePrizeService(Request $request)
     {
-        $reward = (new ClaimTheSkeletonNodePrizeService)->setUser(auth()->user())->do();
-        return response()->json(['message' => 'prize provided on the behalf of skeleton key node.', 'reward'=> $reward]);
+        $user = auth()->user();
+        if (($user->available_skeleton_keys + 1) <= $user->skeletons_bucket) {
+            $reward = (new ClaimTheSkeletonNodePrizeService)->setUser($user)->do();
+            return response()->json(['message' => 'prize provided on the behalf of skeleton key node.', 'reward'=> $reward]);
+        }else{
+            return response()->json(['message' => 'Your skeleton bucket has not enough space to hold new skeleton keys.'], 422);
+        }
     }
 
     public function claimPrizeForMinigameNode(ClaimPrizeForMinigameNodeRequest $request)
