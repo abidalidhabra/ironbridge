@@ -50,7 +50,7 @@ class UserController extends Controller
                         'email'      => "required|string|email|unique:users,email",
                         'password'   => "required|string|min:6",
                         'username'   => "required|string|unique:users,username",
-                        'dob'        => "required|date_format:d-m-Y",
+                        'dob'        => "required|date_format:dmY",
                         'longitude' => 'required', 
                         'latitude'  => 'required',
                         'device_type'  => "required|string",

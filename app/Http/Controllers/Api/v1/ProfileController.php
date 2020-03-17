@@ -30,7 +30,7 @@ class ProfileController extends Controller
 			'last_name' => "string|max:50",
 			'email' => "string|email|max:255|unique:users,email,".$user->_id.',_id',
 			// 'email'                => "required|email|unique:users,email,{$user->id}",
-			'dob' => "required|date_format:d-m-Y",
+			'dob' => "required|date_format:dmY",
 		]);
 
 		if ($validator->fails()) {
