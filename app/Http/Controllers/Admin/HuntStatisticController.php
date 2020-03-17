@@ -103,7 +103,7 @@ class HuntStatisticController extends Controller
         $huntStatistic->skeleton_keys =  (int)$request->skeleton_keys;
         $huntStatistic->boost_power_till =  (int)$request->boost_power_till;
         // $huntStatistic->chest_xp =  (int)$request->chest_xp;
-        $huntStatistic->mg_change_charge =  (int)$request->mg_change_charge;
+        // $huntStatistic->mg_change_charge =  (int)$request->mg_change_charge;
         $huntStatistic->skeleton_keys_for_node =  (int)$request->skeleton_keys_for_node;
         $huntStatistic->refreshable_distances =  (object)[
                                                     'random_hunt'=>(int)$request->refreshable_random_hunt,

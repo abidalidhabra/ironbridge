@@ -307,7 +307,7 @@ class ChestService
             'loot_rewards'=> $this->getLootRewards(),
             'chests_bucket'=> $this->user->buckets['chests'],
             // 'relic_info'=> $this->getRelicInfo(),
-            'available_skeleton_keys'=> ($this->availableSkeletonKeys)? $this->availableSkeletonKeys: $this->user->available_skeleton_keys,
+            'available_skeleton_keys'=> (is_numeric($this->availableSkeletonKeys))? $this->availableSkeletonKeys: $this->user->available_skeleton_keys,
         ];
         if ($relicInfo = $this->getRelicInfo()) {
             $response['relic_info'] = $relicInfo;
