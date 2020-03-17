@@ -37,8 +37,11 @@ class ProfileController extends Controller
 			return response()->json(['message' => $validator->messages()],422);
 		}
 
-		$data = $request->all();
-		$user->dob = $request->get('dob');
+		 $data = $request->all();
+		 $user->dob =Carbon::createFromFormat('dmY', $request->get('dob'))->format('d-m-Y');
+
+		//  strtotime($request->get('dob'));
+		 //$user->dob = Carbon::parse($request->get('dob'))->format('M d Y');
 		if ($request->first_name) {
 			$user->first_name = $request->get('first_name');
 		}
