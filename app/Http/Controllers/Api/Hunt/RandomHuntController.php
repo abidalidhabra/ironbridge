@@ -144,7 +144,8 @@ class RandomHuntController extends Controller
     public function claimTheSkeletonNodePrizeService(Request $request)
     {
         $user = auth()->user();
-        if (($user->available_skeleton_keys + 1) <= $user->skeletons_bucket) {
+        $huntStatistic = HuntStatistic::first(['_id', 'skeleton_keys_for_node']);
+        if (($user->available_skeleton_keys + $huntStatistic->skeleton_keys_for_node ) <= $user->skeletons_bucket) {
             $reward = (new ClaimTheSkeletonNodePrizeService)->setUser($user)->do();
             return response()->json(['message' => 'prize provided on the behalf of skeleton key node.', 'reward'=> $reward]);
         }else{
