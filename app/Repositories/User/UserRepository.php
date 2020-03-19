@@ -336,17 +336,31 @@ class UserRepository implements UserRepositoryInterface
         return $remainingFreezePowerTime ?? 0;
     }
 
-    public function streamingRelic()
+    // public function streamingRelic()
+    // {
+    //     $userRelics = User::find($this->user->id, ['_id', 'relics'])->relics;
+    //     $relic = (new RelicRepository)->getModel()
+    //             ->when(($userRelics->count() > 0), function($query) use ($userRelics) {
+    //                 $query->whereNotIn('_id', $userRelics->pluck('id')->toArray());
+    //             })
+    //             ->active()
+    //             ->orderBy('number', 'asc')
+    //             ->select('_id', 'name', 'number', 'active', 'pieces', 'icon')
+    //             ->first();
+
+    //     if ($relic) {
+    //         $relic->collected_pieces = $relic->map_pieces()->where(['user_id'=> $this->user->id])->count();
+    //     }
+    //     return $relic;
+    // }
+
+    public function streamingRelic($userRelicId = '')
     {
-        $userRelics = User::find($this->user->id, ['_id', 'relics'])->relics;
-        $relic = (new RelicRepository)->getModel()
-                ->when(($userRelics->count() > 0), function($query) use ($userRelics) {
-                    $query->whereNotIn('_id', $userRelics->pluck('id')->toArray());
-                })
-                ->active()
-                ->orderBy('number', 'asc')
-                ->select('_id', 'name', 'number', 'active', 'pieces', 'icon')
-                ->first();
+        if (!$userRelicId) {
+            $userRelicId = User::find($this->user->id, ['_id', 'relics', 'streaming_relic_id'])->streaming_relic_id;
+        }
+
+        $relic = (new RelicRepository)->getModel()->where('_id', $userRelicId)->select('_id', 'name', 'number', 'active', 'pieces', 'icon')->first();
 
         if ($relic) {
             $relic->collected_pieces = $relic->map_pieces()->where(['user_id'=> $this->user->id])->count();

@@ -225,11 +225,13 @@ Route::group(['namespace' => 'Api\Hunt', 'prefix' => 'hunts', 'middleware' => ['
 Route::group(['namespace' => 'Api\Profile', 'prefix' => 'profile', 'middleware' => ['jwt-auth', 'downtime', 'freshapp']], function ($router) {
 
 	/** Hunt requests **/
+	Route::get('temporelicAPI', 'ProfileController@temporelicAPI');
 	Route::get('getRelicsData', 'ProfileController@getRelics');
 	Route::post('markTutorialAsComplete', 'ProfileController@markTutorialAsComplete');
 	Route::post('addTheChest', 'ProfileController@addTheChest');
 	Route::post('openTheChest', 'ProfileController@openTheChest');
 	Route::post('changeTheChestMG', 'ProfileController@changeTheChestMG');
+	Route::post('setStreamingRelic', 'ProfileController@setStreamingRelic');
 	Route::post('removeTheChestFromBucket', 'ProfileController@removeTheChestFromBucket');
 });
 

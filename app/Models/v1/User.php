@@ -73,6 +73,7 @@ class User extends Authenticatable implements JWTSubject
         'hat_selected',
         'compasses',
         'city_id',
+        'streaming_relic_id',
         // 'expnadable_skeleton_keys',
     ];
 

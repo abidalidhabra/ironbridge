@@ -21,6 +21,7 @@ use App\Repositories\User\UserRepository;
 use App\Services\Hunt\ChestService;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends Controller
 {
@@ -144,5 +145,44 @@ class ProfileController extends Controller
         } catch (Exception $e) {
             return response()->json(['message'=> $e->getMessage()], 500);
         }
+    }
+
+    public function setStreamingRelic(Request $request)
+    {
+        try {
+
+            $validator = Validator::make($request->all(),[
+                            'relic_id'=> "required|exists:relics,_id",
+                        ]);
+
+            if ($validator->fails()) {
+                return response()->json(['message'=> $validator->messages()->first()],422);
+            }
+
+            $user = auth()->user();
+            $user->streaming_relic_id = $request->relic_id;
+            $user->save();
+
+            return response()->json([
+                'message'=> 'Streaming relic has been added to your account.',
+                'streaming_relic'=> (new UserRepository($user))->streamingRelic()
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['message'=> $e->getMessage()], 500);
+        }
+    }
+
+    public function temporelicAPI(Request $request)
+    {
+        (new UserRepository)->getModel()->chunk(200, function($users){
+            foreach ($users as $user){
+                $relic = $user->relics->last();
+                if ($relic) {
+                    $user->streaming_relic_id = $relic['id'];
+                    $user->save();
+                }
+            }
+        });
+
     }
 }
