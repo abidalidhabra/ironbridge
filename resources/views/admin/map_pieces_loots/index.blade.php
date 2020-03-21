@@ -15,7 +15,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label class="control-label">Probability To Give Map Piecees in %:</label>
-                            <input type="number" name="probability" class="form-control" value="{{ $huntStatistic->map_pieces['max'] }}" placeholder="Enter the power ratio">
+                            <input type="number" name="probability" class="form-control" value="{{ $huntStatistic->map_pieces['max'] }}" min="0" placeholder="Probability To Give Map Piecees in %">
                         </div>
                         <button type="submit" class="btn btn-success">Save</button>
                     </div>

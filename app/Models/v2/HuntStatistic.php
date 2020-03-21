@@ -22,6 +22,7 @@ class HuntStatistic extends Eloquent
         'reported_loc_count',
         'skeleton_keys_for_node',
         'chest',
-        'map_pieces'
+        'map_pieces',
+        'joke_item'
     ];
 }

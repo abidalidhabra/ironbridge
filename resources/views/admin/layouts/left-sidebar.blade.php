@@ -186,7 +186,9 @@
 						
 						$mapPiecesLoot = ($route == 'admin.map-pieces-loots.index')? true:false;
 						
-						$showIcon = ($chestLoot || $MGCLoot || $relicLootBind || $huntXPMngmnt || $mapPiecesLoot)? 'fa-minus': 'fa-plus';
+						$jokeItemsLoot = ($route == 'admin.joke-items-loots.index')? true:false;
+						
+						$showIcon = ($chestLoot || $MGCLoot || $relicLootBind || $huntXPMngmnt || $mapPiecesLoot || $jokeItemsLoot)? 'fa-minus': 'fa-plus';
 					@endphp
 					<li>
 						
@@ -217,6 +219,7 @@
 								@endif
 									
 								<a href="{{ route('admin.map-pieces-loots.index') }}" class="@if($mapPiecesLoot) {{ 'activelistsub' }} @endif">Map Pieces rewards</a>
+								<a href="{{ route('admin.joke-items-loots.index') }}" class="@if($jokeItemsLoot) {{ 'activelistsub' }} @endif">Joke Item rewards</a>
 							</div>
 						</div>
 					</li>

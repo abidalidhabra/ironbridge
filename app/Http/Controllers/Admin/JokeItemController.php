@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\v3\JokeItem;
 use App\Repositories\HuntStatisticRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class MapPiecesLootController extends Controller
+class JokeItemController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,8 +17,9 @@ class MapPiecesLootController extends Controller
      */
     public function index()
     {
-        return view('admin.map_pieces_loots.index', [
-            'huntStatistic'=> (new HuntStatisticRepository)->first(['_id', 'map_pieces'])
+        return view('admin.joke_items_loots.index', [
+            'huntStatistic'=> (new HuntStatisticRepository)->first(['_id', 'joke_item']),
+            'items'=> JokeItem::all(),
         ]);
     }
 
@@ -61,7 +63,7 @@ class MapPiecesLootController extends Controller
      */
     public function edit($id)
     {
-        //
+        return response()->json(['message'=> 'Item has been retrieved successfully.', 'item'=> JokeItem::find($id)]);
     }
 
     /**
@@ -74,17 +76,26 @@ class MapPiecesLootController extends Controller
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(),[
-            'probability' => 'required|numeric|integer|min:0|max:100',
+            'id' => 'required|exists:joke_items,_id',
+            'name' => 'required',
+            'image' => 'image|mimes:jpeg,jpg,png',
         ]);
         
         if ($validator->fails()){
             return response()->json(['message' => $validator->messages()->first()], 422);
         }
 
-        $data = (new HuntStatisticRepository)->first(['_id', 'map_pieces']);
-        $data->map_pieces = ['min'=> 1, 'max'=> (int)$request->probability, 'out_of'=> 100];
-        $data->save();
-        return response()->json(['message' => 'Probability has been updated successfully.']);
+        $dataToBeUpdate['name'] = $request->name;
+        
+        if ($request->hasFile('image')) {
+            $dataToBeUpdate['image'] = $request->image->hashName();
+        }
+        $status = JokeItem::where('_id', $request->id)->update($dataToBeUpdate);
+
+        if ($status && $request->hasFile('image')) {
+            $path = $request->file('image')->store('joke_items', 'public');
+        }
+        return response()->json(['message'=> 'Item has been updated successfully.', 'item'=> $request->only('name')]);
     }
 
     /**
@@ -96,5 +107,21 @@ class MapPiecesLootController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function updateProbability(Request $request)
+    {
+        $validator = Validator::make($request->all(),[
+            'probability' => 'required|numeric|integer|min:0|max:100',
+        ]);
+        
+        if ($validator->fails()){
+            return response()->json(['message' => $validator->messages()->first()], 422);
+        }
+
+        $data = (new HuntStatisticRepository)->first(['_id', 'joke_item']);
+        $data->joke_item = ['min'=> 1, 'max'=> (int)$request->probability, 'out_of'=> 100];
+        $data->save();
+        return response()->json(['message' => 'Probability has been updated successfully.']);
     }
 }

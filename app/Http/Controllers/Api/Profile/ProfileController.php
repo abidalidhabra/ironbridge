@@ -152,7 +152,8 @@ class ProfileController extends Controller
         try {
 
             $validator = Validator::make($request->all(),[
-                            'relic_id'=> "required|exists:relics,_id",
+                            'streaming_relic_id'=> "required|exists:relics,_id",
+                            'skipped_relic_id'=> "required|exists:relics,_id",
                         ]);
 
             if ($validator->fails()) {
@@ -160,7 +161,8 @@ class ProfileController extends Controller
             }
 
             $user = auth()->user();
-            $user->streaming_relic_id = $request->relic_id;
+            $user->streaming_relic_id = $request->streaming_relic_id;
+            $user->skipped_relic_id = $request->skipped_relic_id;
             $user->save();
 
             return response()->json([

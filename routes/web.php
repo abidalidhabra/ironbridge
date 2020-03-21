@@ -190,9 +190,13 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 		Route::resource('rewards', 'RewardController');
 	});
 	
+	Route::put('joke-items-loots/update', 'JokeItemController@updateProbability')->name('joke-items-loots.updateProbability');
+	Route::resource('joke-items-loots', 'JokeItemController');
+	
 	Route::resource('loots', 'LootController');
 	Route::put('map-pieces-loots/update', 'MapPiecesLootController@update')->name('map-pieces-loots.update');
 	Route::resource('map-pieces-loots', 'MapPiecesLootController')->except(['update']);
+	
 	Route::group(['middleware' => ['permission:View MGC Loot Table']], function () {
 		Route::resource('mgc_loot', 'MgcController');
 	});

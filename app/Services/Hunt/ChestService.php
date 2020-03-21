@@ -3,6 +3,7 @@
 namespace App\Services\Hunt;
 
 use App\Exceptions\Profile\ChestBucketCapacityOverflowException;
+use App\Models\v3\JokeItem;
 use App\Repositories\HuntStatisticRepository;
 use App\Repositories\Hunt\GetRandomizeGamesService;
 use App\Repositories\User\UserRepository;
@@ -12,8 +13,8 @@ use App\Services\Hunt\LootDistribution\OldLootService;
 use App\Services\Hunt\RelicService;
 use App\Services\MiniGame\MiniGameInfoService;
 use App\Services\Traits\UserTraits;
-use GuzzleHttp\Client;
 use Exception;
+use GuzzleHttp\Client;
 
 class ChestService
 {
@@ -26,6 +27,7 @@ class ChestService
 	protected $relicInfo;
     protected $compassRewards;
     protected $availableSkeletonKeys;
+    protected $jokeItem;
 
     public function expand($amount)
     {
@@ -90,11 +92,20 @@ class ChestService
         	(new ChestRewardsService)->setUser($this->user)->get()
         );
 
+        /** Relic Map Pieces **/
         $magicNumber = rand(1, 100);
-        $huntStatistic = (new HuntStatisticRepository)->first(['id', 'map_pieces']);
+        $huntStatistic = (new HuntStatisticRepository)->first(['id', 'map_pieces', 'joke_item']);
         if ($magicNumber <= $huntStatistic->map_pieces['max']) {
             $this->setRelicInfo(
             	(new RelicService)->setUser($this->user)->addMapPiece()
+            );
+        }
+
+        /** Joke Item **/
+        $magicNumber = rand(1, 100);
+        if ($magicNumber <= $huntStatistic->joke_item['max']) {
+            $this->setJokeItem(
+                JokeItem::first()
             );
         }
 
@@ -312,6 +323,9 @@ class ChestService
         if ($relicInfo = $this->getRelicInfo()) {
             $response['relic_info'] = $relicInfo;
         }
+        if ($jokeItem = $this->getJokeItem()) {
+            $response['joke_item'] = $jokeItem;
+        }
         return $response;
     }
 
@@ -328,5 +342,25 @@ class ChestService
     {
         $this->user->chests()->create(['place_id'=> $placeId]);
         return $this;
+    }
+
+    /**
+     * @param mixed $jokeItem
+     *
+     * @return self
+     */
+    public function setJokeItem($jokeItem)
+    {
+        $this->jokeItem = $jokeItem;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getJokeItem()
+    {
+        return $this->jokeItem;
     }
 }
