@@ -78,7 +78,7 @@ class ProfileController extends Controller
                 $chestService = (new ChestService)
                                 ->setUser($user)
                                 ->open()
-                                ->when($request->skip, function($class){
+                                ->when(($request->skip == 'true'), function($class){
                                     $class->cutTheCharge('skipping_chest');
                                 });
                 return response()->json(['message' => 'Chest has been opened successfully.', 'data'=> $chestService->response()]); 

@@ -30,7 +30,7 @@ class OpenTheChestRequest extends FormRequest
     public function rules()
     {
         return [
-            'skip'=> ['nullable', 'in:true,false', new OpenTheChestRule($this->user)]
+            'skip'=> ['nullable', 'string', 'in:true,false', new OpenTheChestRule($this->user)]
         ];
     }
 }
