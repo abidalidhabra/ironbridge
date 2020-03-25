@@ -30,7 +30,7 @@ services:
   db:
     image: mongo:4.2.3-bionic
     restart: always
-    container_name: 
+    container_name: db
     volumes:
       - mongodb:/data/db
     environment:
