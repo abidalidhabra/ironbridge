@@ -381,6 +381,7 @@ class UserRepository implements UserRepositoryInterface
     public function createIfNotExist($data, $condition, $whatToCheck = null)
     {
         $user = $this->model->where($condition)->first();
+
         if(!$user){
             $this->setCreated(true);
             return $this->model->create($data);
