@@ -38,9 +38,9 @@ RUN pecl install mongodb
 
 RUN mkdir /etc/apache2/ssl
 
-COPY .docker/php.ini /usr/local/etc/php
-COPY .docker/vhost.conf /etc/apache2/sites-available/000-default.conf
-COPY .docker/cert/stageapi* /etc/apache2/ssl/
+COPY php.ini /usr/local/etc/php
+COPY vhost.conf /etc/apache2/sites-available/000-default.conf
+COPY cert/stageapi* /etc/apache2/ssl/
 
 RUN a2enmod rewrite ssl
 
