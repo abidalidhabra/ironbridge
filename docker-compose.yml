@@ -33,9 +33,12 @@ services:
     container_name: db
     volumes:
       - mongodb:/data/db
+    ports:
+      - "27017:27017"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_USERNAME: ironbridge1779user
       MONGO_INITDB_ROOT_PASSWORD: WvshoaanimlBoWMM
+      MONGO_INITDB_DATABASE: ironbridge1779
 
 volumes:
   admin_assests:
