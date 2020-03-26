@@ -50,7 +50,7 @@ class EventNotificationController extends Controller
     {
         $validator = Validator::make($request->all(),[
             'target'=> 'required|in:BYCOUNTRY,BYCITY',
-            'target_audience'=> 'required|in:PARTICIPATED,!PARTICIPATED',
+            'target_audience'=> 'required|in:LOCALS,!LOCALS',
             'cities'=> 'array|required_without:countries',
             'countries'=> 'array|required_without:cities',
             'title'=> 'required',
@@ -61,15 +61,37 @@ class EventNotificationController extends Controller
             return response()->json(['message' => $validator->messages()->first()], 422);
         }
 
-        if ($request->target == 'BYCITY') {
-            $users = (new UserRepository)->getModel()->whereIn('city_id', $request->cities)->get();
-        }else{
-            $users = (new UserRepository)->getModel()->whereHas('city.country', function($query) use ($request){
-                return $query->whereIn('_id', $request->countries);
-            })
-            ->get();
-        }
+        /** Send the message to local people leaving in cities mentioned in cities parameter. **/
+        $msgToLocalsByCityIds = ($request->target == 'BYCITY' && $request->target_audience == 'LOCALS')? true: false;
         
+        /** Send the message to local people leaving in country mentioned in countries parameter. **/
+        $msgToLocalsByCountyIds = ($request->target == 'BYCOUNTRY' && $request->target_audience == 'LOCALS')? true: false;
+        
+        /** Send the message to people which are not leaving in cities mentioned in cities parameter. **/
+        $msgToOutsidersByCityIds = ($request->target == 'BYCITY' && $request->target_audience == '!LOCALS')? true: false;
+        
+        /** Send the message to people which are not leaving in cities mentioned in countries parameter. **/
+        $msgToOutsidersByCountyIds = ($request->target == 'BYCOUNTRY' && $request->target_audience == '!LOCALS')? true: false;
+
+        $users = (new UserRepository)->getModel()
+                ->when($msgToLocalsByCityIds, function($query) use ($request){
+                    $query->whereIn('city_id', $request->cities);
+                })
+                ->when($msgToLocalsByCountyIds, function($query) use ($request){
+                    $query->whereHas('city.country', function($query) use ($request){
+                        return $query->whereIn('_id', $request->countries);
+                    });
+                })
+                ->when($msgToOutsidersByCityIds, function($query) use ($request){
+                    $query->whereNotIn('city_id', $request->cities);
+                })
+                ->when($msgToOutsidersByCountyIds, function($query) use ($request){
+                    $query->doesntHave('city.country', function($query) use ($request){
+                        return $query->whereIn('_id', $request->countries);
+                    });
+                })
+                ->get();
+
         Notification::send($users, new EventNotification($request->title, $request->message));
         return response()->json(['message'=> 'We have sent notification to '.$users->count().' users']);
     }

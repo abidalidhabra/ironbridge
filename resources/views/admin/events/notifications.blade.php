@@ -26,9 +26,8 @@
                         <div class="row">
                             
                             <div class="form-group col-md-3">
-                                <label class="form-label">
-                                    Send To 
-                                    <span data-toggle="tooltip" title="Where you want to broadcast the message." data-placement="right">?</span>
+                                <label class="control-label" data-toggle="tooltip" data-title="Where you want to broadcast the message." data-placement="right">
+                                    Send To: <i class="fa fa-question-circle"></i>
                                 </label>
                                 <select name="target" class="form-control" id="js-target">
                                     <option value="">Select a target</option>
@@ -38,9 +37,8 @@
                             </div>
 
                             <div class="form-group col-md-4">
-                                <label class="form-label">
-                                    Target Audience
-                                    <span data-toggle="tooltip" title="Select the target audience." data-placement="right">?</span>
+                                <label class="control-label" data-toggle="tooltip" data-title="Select the target audience." data-placement="right">
+                                    Target Audience: <i class="fa fa-question-circle"></i>
                                 </label>
                                 <select name="target_audience" class="form-control" id="js-target-audience">
                                     <option value="">Select a target first.</option>
@@ -48,9 +46,8 @@
                             </div>
 
                             <div class="form-group col-md-4 d-none" id="js-cities-container">
-                                <label class="form-label">
-                                    Cities
-                                    <span data-toggle="tooltip" title="This shows all the cities having events within a month." data-placement="right">?</span>
+                                <label class="control-label" data-toggle="tooltip" data-title="This shows all the cities having events within a month." data-placement="right">
+                                    Cities: <i class="fa fa-question-circle"></i>
                                 </label>
                                 <select name="cities[]" class="form-control" id="js-cities" multiple="multiple">
                                     @forelse($cities as $city)
@@ -62,9 +59,8 @@
                             </div>
 
                             <div class="form-group col-md-4 d-none" id="js-countries-container">
-                                <label class="form-label">
-                                    Countries
-                                    <span data-toggle="tooltip" title="This shows all the countries having events within a month." data-placement="right">?</span>
+                                <label class="control-label" data-toggle="tooltip" data-title="This shows all the countries having events within a month." data-placement="right">
+                                    Countries: <i class="fa fa-question-circle"></i>
                                 </label>
                                 <select name="countries[]" class="form-control" id="js-countries" multiple="multiple">
                                     @forelse($cities as $city)
@@ -79,9 +75,8 @@
 
                         <div class="row">
                             <div class="form-group col-md-6">
-                                <label for="message">
-                                    Title
-                                    <span data-toggle="tooltip" title="Write a title of message." data-placement="right">?</span>
+                                <label class="control-label" data-toggle="tooltip" data-title="Write a title of message." data-placement="right">
+                                    Title: <i class="fa fa-question-circle"></i>
                                 </label>
                                 <input type="text" name="title" class="form-control" id="title">
                             </div>
@@ -89,9 +84,8 @@
 
                         <div class="row">
                             <div class="form-group col-md-6">
-                                <label for="message">
-                                    Message
-                                    <span data-toggle="tooltip" title="Write a message to broadcast." data-placement="right">?</span>
+                                <label class="control-label" data-toggle="tooltip" data-title="Write a title of message." data-placement="right">
+                                    Message: <i class="fa fa-question-circle"></i>
                                 </label>
                                 <textarea name="message" class="form-control" id="message" rows="3"></textarea>
                             </div>
@@ -140,11 +134,11 @@
                 text:   `Select Audience`
             }));
             element.append($('<option>', {
-                value:  'PARTICIPATED',
+                value:  'LOCALS',
                 text:   `To those who are in same ${target}`
             }));
             element.append($('<option>', {
-                value:  '!PARTICIPATED',
+                value:  '!LOCALS',
                 text:   `To those who are not in same ${target}`
             }));
         }
