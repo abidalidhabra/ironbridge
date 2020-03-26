@@ -36,6 +36,9 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: WvshoaanimlBoWMM
+      MONGODB_USERNAME: ironbridge1779user
+      MONGODB_PASSWORD: WvshoaanimlBoWMM
+      MONGODB_DATABASE: ironbridge1779
 
 volumes:
   admin_assests:
