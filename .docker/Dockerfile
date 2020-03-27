@@ -1,5 +1,7 @@
 FROM php:7.2-apache
 
+MAINTAINER Prashant Rajavat <prashant.rajavat1996@gmail.com>
+
 RUN apt-get -y update
 
 RUN apt-get install -y \
@@ -8,8 +10,7 @@ RUN apt-get install -y \
     zip \
     wget \
     g++ \
-    vim \
-    cron
+    vim
 
 RUN apt-get install -y libsndfile1 --no-install-recommends
 
@@ -36,13 +37,9 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 
 RUN pecl install mongodb
 
-RUN mkdir /etc/apache2/ssl
-
-COPY php.ini /usr/local/etc/php
-COPY vhost.conf /etc/apache2/sites-available/000-default.conf
-COPY cert/stageapi* /etc/apache2/ssl/
-
-RUN a2enmod rewrite ssl
+RUN pecl install -o -f redis \
+    &&  rm -rf /tmp/pear \
+    &&  docker-php-ext-enable redis
 
 RUN apt-get install -y \
         zlib1g-dev \
@@ -54,15 +51,19 @@ RUN chmod a+x /usr/local/bin/composer
 
 RUN mkdir /root/.composer
 
+RUN a2enmod rewrite ssl
+
+RUN mkdir /etc/apache2/ssl
+COPY .docker/php.ini /usr/local/etc/php
+COPY .docker/vhost.conf /etc/apache2/sites-available/000-default.conf
+COPY .docker/cert/prodapi* /etc/apache2/ssl/
+
 RUN echo "\n<FilesMatch \\.php$>\nSetHandler application/x-httpd-php\n</FilesMatch>" >> /etc/apache2/apache2.conf
 
-ADD schedule/crontab /etc/cron.d/cron
-RUN chmod 0644 /etc/cron.d/cron
-RUN touch /var/log/cron.log
+EXPOSE 443
 
-EXPOSE 80 443
+WORKDIR /var/www/html
 
-ENV APP_ENV=dev
-ENV TERM=xterm
+RUN chown -R www-data:www-data /var/www/html
 
 RUN service apache2 restart

@@ -1,24 +1,15 @@
-FROM 905666888987.dkr.ecr.us-east-1.amazonaws.com/laravel-ssl-base:latest
+FROM 905666888987.dkr.ecr.us-east-1.amazonaws.com/laravel-ssl-base:prod
 
-ENV APP_ENV=staging
+ENV APP_ENV=dev
 ENV TERM=xterm
 
-COPY --chown=www-data:www-data . /var/www/html
+COPY . /var/www/html
 
 WORKDIR /var/www/html
 
-RUN rm -rf .env public/.htaccess
+RUN rm -rf .env
 RUN cp .env.example .env
-RUN cp -r public/htaccess_prod public/.htaccess
-
 
 RUN composer install
 RUN php artisan storage:link
-
-# Changing ownership 
 RUN chown -R www-data:www-data /var/www/html
-
-RUN chmod -R 0777 /var/www/html/storage/logs
-
-# Run the command on container startup
-CMD echo "cron starting..." && (cron) && : > /var/log/cron.log && apache2-foreground
