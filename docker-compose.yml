@@ -31,6 +31,7 @@ services:
       - laravel
     networks:
       - network
+
   db:
     image: mongo:4.2.3-bionic
     restart: always
@@ -43,6 +44,8 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ironbridge1779user
       MONGO_INITDB_ROOT_PASSWORD: WvshoaanimlBoWMM
       MONGO_INITDB_DATABASE: ironbridge1779
+    networks:
+      - network
 
 volumes:
   admin_assests:
