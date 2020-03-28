@@ -754,6 +754,7 @@ class UserController extends Controller
         $user->minigame_tutorials = $minigameTutorial;
 
         /** reset streaming relic **/
+        $user->user_relic_map_pieces()->delete();
         $relic = (new RelicRepository)->getModel()->active()->orderBy('number', 'asc')
                 ->select('_id', 'name', 'number', 'active', 'pieces', 'icon')->first();
         $user->streaming_relic_id = $relic->id;
