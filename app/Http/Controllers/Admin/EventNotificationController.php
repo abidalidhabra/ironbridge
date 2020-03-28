@@ -135,7 +135,11 @@ class EventNotificationController extends Controller
      */
     public function destroy($id)
     {
-        //
+        if (FCMNotificationsHistory::destroy($id)) {
+            return response()->json(['message'=> 'Notification has been deleted successfully.'], 200);
+        }else{
+            return response()->json(['message'=> 'Issue occured while deleting notification.'], 500);
+        }
     }
 
     public function list(Request $request)
@@ -179,7 +183,10 @@ class EventNotificationController extends Controller
                         return '<span class="badge badge-success">Sent</span>';
                     }
                 })
-                ->rawColumns(['status'])
+                ->addColumn('action', function($notification) {
+                    return '<a href="'.route('admin.event-notifications.destroy',$notification->id).'" data-action="delete" data-toggle="tooltip" title="Delete this Notification" ><i class="fa fa-trash iconsetaddbox"></i></a>';
+                })
+                ->rawColumns(['status', 'action'])
                 ->setTotalRecords($totalCount)
                 ->setFilteredRecords($filterCount)
                 ->skipPaging()

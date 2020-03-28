@@ -23,6 +23,7 @@
                     <th>Message</th>
                     <th>Sent At (UTC)</th>
                     <th>Status</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -30,7 +31,7 @@
     </div>
 
 <script type="text/javascript">
-    // $(document).ready(function() {
+    $(document).ready(function() {
             var notificationsTable = $('#notificationsTable').DataTable({
                 pageLength: 10,
                 processing: true,
@@ -46,6 +47,10 @@
                         d._token = "{{ csrf_token() }}";
                     },
                     complete:function(){
+
+                        if( $('[data-action="delete"]').length > 0 )
+                            initializeDeletePopup();
+
                         if( $('[data-toggle="tooltip"]').length > 0 )
                             $('[data-toggle="tooltip"]').tooltip();
                     }
@@ -55,7 +60,8 @@
                     { data:'title',name:'title'},
                     { data:'message',name:'message' },
                     { data:'send_at',name:'send_at' },
-                    { data:'status',name:'status' }
+                    { data:'status',name:'status' },
+                    { data:'action',name:'action' }
                 ],
                 columnDefs: [
                     {
@@ -64,5 +70,28 @@
                     }
                 ]
             });
-        // });
+
+            function initializeDeletePopup() {
+                $("a[data-action='delete']").confirmation({
+                    container:"body",
+                    btnOkClass:"btn btn-sm btn-success",
+                    btnCancelClass:"btn btn-sm btn-danger",
+                    onConfirm:function(event, element) {
+                        event.preventDefault();
+                        $.ajax({
+                            type: "DELETE",
+                            url: element.attr('href'),
+                            success: function(response){
+                                toastr.success(response.message);
+                                notificationsTable.draw();
+                            },
+                            error: function(xhr, exception) {
+                                toastr.error(errHandling(xhr, exception));
+                            }
+                        });
+                    }
+                }); 
+            }
+        });
+
     </script>

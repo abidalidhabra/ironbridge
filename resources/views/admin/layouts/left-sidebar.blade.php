@@ -97,8 +97,9 @@
 						$route == 'admin.events.show'
 						)? true:false;
 
-
-						$showIcon = ($eventRoutes)? 'fa-minus': 'fa-plus';
+						$eventNotificationRoute = ($route == 'admin.event-notifications.index')? true:false;
+						
+						$showIcon = ($eventRoutes || $eventNotificationRoute)? 'fa-minus': 'fa-plus';
 					@endphp
 					<li>
 						
@@ -108,7 +109,10 @@
 
 						<div class="dropdown custmenbox">
 							<div class="dropdown-content myDropdown {{ ($showIcon == 'fa-minus')? 'show': '' }}">
+								
 								<a href="{{ route('admin.events.index') }}" class="@if($eventRoutes) {{ 'activelistsub' }} @endif">Events</a>
+								
+								<a href="{{ route('admin.event-notifications.index') }}" class="@if($eventNotificationRoute) {{ 'activelistsub' }} @endif">Event Notifications</a>
 							</div>
 						</div>
 					</li>
@@ -327,8 +331,6 @@
 						$countryRoute = ($route == 'admin.country.index')? true:false;
 						$stateRoute = ($route == 'admin.state.index')? true:false;
 
-						$eventNotificationRoute = ($route == 'admin.event-notifications.index')? true:false;
-						
 						$showIcon = (
 						$userAccessRoute || 
 						$appSettingsRoute || 
@@ -338,7 +340,6 @@
 						$stateRoute || 					
 						$paymentRoute || 
 						$reportLocations || 
-						$eventNotificationRoute || 
 						$couponRoute)? 'fa-minus': 'fa-plus';
 					@endphp
 					<li>
@@ -360,7 +361,6 @@
 								@endif
 
 								<a href="{{ route('admin.notifications.index') }}" class="@if($notificationsRoute) {{ 'activelistsub' }} @endif">Notifications</a>
-								<a href="{{ route('admin.event-notifications.index') }}" class="@if($eventNotificationRoute) {{ 'activelistsub' }} @endif">Event Notifications</a>
 
 								@if($admin->hasPermissionTo('View App Settings'))
 								<a href="{{ route('admin.app.settings.index') }}" class="@if($appSettingsRoute) {{ 'activelistsub' }} @endif">App Settings</a>

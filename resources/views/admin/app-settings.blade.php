@@ -78,7 +78,49 @@
                     <label class="control-label">Base Url:</label>
                     <input type="text" name="base_url" class="form-control" value="{{ $settings->base_url }}" placeholder="Enter the base url">
                 </div>
-              <button type="submit" class="btn btn-success">Save</button>
+
+                <div class="col-md-4 borderize-container">
+                    <h4 class="text-center">App Inactivity Notification Setting</h4>
+                    <div class="form-group">
+                        <label class="radio-inline">
+                            <input 
+                            class="radio-inline" 
+                            type="radio" 
+                            name="inactivity_notification[active]" 
+                            id="turnInactivityNotificationOn" 
+                            value="1"
+                            @if($settings->inactivity_notification['active'] == true) checked @endif
+                            >ON
+                        </label>
+                        <label class="radio-inline">
+                            <input 
+                            class="form-check-input" 
+                            type="radio" 
+                            name="inactivity_notification[active]" 
+                            id="turnInactivityNotificationOff" 
+                            value="0"
+                            @if($settings->inactivity_notification['active'] == false) checked @endif
+                            >OFF
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" data-toggle="tooltip" data-title="When user should receive the in-activity notification. (in Hours)" data-placement="right">
+                            When (in Hours): <i class="fa fa-question-circle"></i>
+                        </label>
+                        <input type="number" name="inactivity_notification[when]" class="form-control" placeholder="When to send" value="{{ $settings->inactivity_notification['when'] }}" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" data-toggle="tooltip" data-title="In-activity notification message." data-placement="right">
+                            Message: <i class="fa fa-question-circle"></i>
+                        </label>
+                        <input type="text" name="inactivity_notification[message]" class="form-control" placeholder="Message" value="{{ $settings->inactivity_notification['message'] }}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12" style="margin-top: 10px;">
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </div>
+                </div>
           </div>
         </form>
     </div>
@@ -88,6 +130,8 @@
 @section('scripts')
 
 <script>
+    $('[data-toggle="tooltip"]').tooltip();
+
     let startDate = "{{ (isset($settings->maintenance_time['start']))?$settings->maintenance_time['start']->toDateTime()->format('d-m-Y h:i A'): now()->format('D-M-Y h:i A') }}";
     let endDate = "{{ (isset($settings->maintenance_time['end']))?$settings->maintenance_time['end']->toDateTime()->format('d-m-Y h:i A'): now()->format('D-M-Y h:i A') }}";
     /*$('.datepicker').datetimepicker({
