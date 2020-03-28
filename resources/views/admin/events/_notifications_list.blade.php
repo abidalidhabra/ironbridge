@@ -9,7 +9,7 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Pre-Schedued Notifications</h3>
+                <h3>Pre-Scheduled Notifications</h3>
             </div>
         </div>
     </div>
