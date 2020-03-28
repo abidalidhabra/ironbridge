@@ -8,7 +8,7 @@ COPY . /var/www/html
 WORKDIR /var/www/html
 
 RUN rm -rf .env
-RUN cp .env.example .env
+RUN cp .env.production .env
 
 RUN composer install
 RUN php artisan storage:link
