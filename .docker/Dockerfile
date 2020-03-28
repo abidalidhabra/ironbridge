@@ -1,7 +1,5 @@
 FROM php:7.2-apache
 
-MAINTAINER Prashant Rajavat <prashant.rajavat1996@gmail.com>
-
 RUN apt-get -y update
 
 RUN apt-get install -y \
@@ -10,7 +8,8 @@ RUN apt-get install -y \
     zip \
     wget \
     g++ \
-    vim
+    vim \
+    cron
 
 RUN apt-get install -y libsndfile1 --no-install-recommends
 
@@ -23,11 +22,9 @@ RUN apt-get install -y \
     libicu-dev \
     python-pip
 
-
 RUN apt-get install -y pkg-config libsasl2-dev zlib1g-dev libpng-dev  --fix-missing
 
 RUN apt-get install -y libjpeg62-turbo-dev libpango1.0-dev libgif-dev  --fix-missing
-
 
 RUN docker-php-ext-install intl mbstring
 RUN docker-php-ext-install gd
@@ -41,10 +38,13 @@ RUN pecl install -o -f redis \
     &&  rm -rf /tmp/pear \
     &&  docker-php-ext-enable redis
 
+RUN mkdir /etc/apache2/ssl
+
 RUN apt-get install -y \
         zlib1g-dev \
         zip \
   && docker-php-ext-install zip
+
 RUN curl -O https://getcomposer.org/composer.phar
 RUN mv composer.phar /usr/local/bin/composer
 RUN chmod a+x /usr/local/bin/composer
@@ -53,17 +53,19 @@ RUN mkdir /root/.composer
 
 RUN a2enmod rewrite ssl
 
-RUN mkdir /etc/apache2/ssl
-COPY .docker/php.ini /usr/local/etc/php
-COPY .docker/vhost.conf /etc/apache2/sites-available/000-default.conf
-COPY .docker/cert/prodapi* /etc/apache2/ssl/
+COPY php.ini /usr/local/etc/php
+COPY vhost_prod.conf /etc/apache2/sites-available/000-default.conf
+COPY cert_prod/prodapi* /etc/apache2/ssl/
 
 RUN echo "\n<FilesMatch \\.php$>\nSetHandler application/x-httpd-php\n</FilesMatch>" >> /etc/apache2/apache2.conf
 
-EXPOSE 443
+ADD schedule/crontab /etc/cron.d/cron
+RUN chmod 0644 /etc/cron.d/cron
+RUN touch /var/log/cron.log
 
-WORKDIR /var/www/html
+EXPOSE 80 443
 
-RUN chown -R www-data:www-data /var/www/html
+ENV APP_ENV=dev
+ENV TERM=xterm
 
 RUN service apache2 restart
