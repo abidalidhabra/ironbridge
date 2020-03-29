@@ -9,7 +9,8 @@ RUN apt-get install -y \
     wget \
     g++ \
     vim \
-    cron
+    cron \ 
+    supervisor
 
 RUN apt-get install -y libsndfile1 --no-install-recommends
 
@@ -58,6 +59,7 @@ RUN a2enmod rewrite ssl
 COPY php.ini /usr/local/etc/php
 COPY vhost.conf /etc/apache2/sites-available/000-default.conf
 COPY cert/stageapi* /etc/apache2/ssl/
+COPY laravel-worker.conf /etc/supervisor/conf.d/laravel-worker.conf
 
 RUN echo "\n<FilesMatch \\.php$>\nSetHandler application/x-httpd-php\n</FilesMatch>" >> /etc/apache2/apache2.conf
 
