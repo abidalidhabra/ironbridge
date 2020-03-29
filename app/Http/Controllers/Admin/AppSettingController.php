@@ -63,7 +63,7 @@ class AppSettingController extends Controller
             'end'=> new UTCDateTime(Carbon::parse($maintenanceTime[1]))
         ];
         $appStatistic->save();
-        dispatch(new SendPushToInactiveUsers);
+        // dispatch(new SendPushToInactiveUsers);
         return response()->json(['status'=> true, 'message'=> 'Settings updated successfully.']);
     }
 }
