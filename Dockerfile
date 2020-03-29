@@ -18,8 +18,10 @@ RUN php artisan storage:link
 
 # Changing ownership 
 RUN chown -R www-data:www-data /var/www/html
-
 RUN chmod -R 0777 /var/www/html/storage/logs
 
+COPY .docker/startup.sh /usr/bin/startup.sh
+RUN chmod +x /usr/bin/startup.sh
+
 # Run the command on container startup
-CMD echo "cron starting..." && (cron) && : > /var/log/cron.log && apache2-foreground && /usr/bin/supervisord
+CMD ["/bin/bash", "/usr/bin/startup.sh"]
