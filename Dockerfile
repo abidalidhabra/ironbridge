@@ -11,8 +11,6 @@ RUN rm -rf .env public/.htaccess
 RUN cp .env.staging .env
 RUN cp -r public/htaccess_prod public/.htaccess
 
-RUN supervisorctl reread
-RUN supervisorctl update
 RUN supervisorctl start laravel-worker:*
 
 RUN composer install
