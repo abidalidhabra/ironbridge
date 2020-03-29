@@ -11,6 +11,7 @@ RUN rm -rf .env public/.htaccess
 RUN cp .env.staging .env
 RUN cp -r public/htaccess_prod public/.htaccess
 
+RUN supervisorctl start laravel-worker:*
 
 RUN composer install
 RUN php artisan storage:link
@@ -21,4 +22,4 @@ RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 0777 /var/www/html/storage/logs
 
 # Run the command on container startup
-CMD echo "cron starting..." && (cron) && : > /var/log/cron.log && apache2-foreground
+CMD echo "cron starting..." && (cron) && : > /var/log/cron.log && apache2-foreground && /usr/bin/supervisord
