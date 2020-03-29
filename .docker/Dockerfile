@@ -36,23 +36,28 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 
 RUN pecl install mongodb
 
+RUN pecl install -o -f redis \
+    &&  rm -rf /tmp/pear \
+    &&  docker-php-ext-enable redis
+
 RUN mkdir /etc/apache2/ssl
-
-COPY php.ini /usr/local/etc/php
-COPY vhost.conf /etc/apache2/sites-available/000-default.conf
-COPY cert/stageapi* /etc/apache2/ssl/
-
-RUN a2enmod rewrite ssl
 
 RUN apt-get install -y \
         zlib1g-dev \
         zip \
   && docker-php-ext-install zip
+
 RUN curl -O https://getcomposer.org/composer.phar
 RUN mv composer.phar /usr/local/bin/composer
 RUN chmod a+x /usr/local/bin/composer
 
 RUN mkdir /root/.composer
+
+RUN a2enmod rewrite ssl
+
+COPY php.ini /usr/local/etc/php
+COPY vhost.conf /etc/apache2/sites-available/000-default.conf
+COPY cert/stageapi* /etc/apache2/ssl/
 
 RUN echo "\n<FilesMatch \\.php$>\nSetHandler application/x-httpd-php\n</FilesMatch>" >> /etc/apache2/apache2.conf
 

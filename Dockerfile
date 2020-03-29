@@ -20,5 +20,14 @@ RUN chown -R www-data:www-data /var/www/html
 
 RUN chmod -R 0777 /var/www/html/storage/logs
 
+RUN apt-get -y update
+RUN apt-get install -y supervisor
+
+COPY .docker/laravel-worker.conf /etc/supervisor/conf.d/laravel-worker.conf
+
+RUN supervisorctl reread && \
+    supervisorctl update && \
+    supervisorctl start laravel-worker:*
+
 # Run the command on container startup
-CMD echo "cron starting..." && (cron) && : > /var/log/cron.log && apache2-foreground
+CMD echo "cron starting..." && (cron) && : > /var/log/cron.log && apache2-foreground && /usr/bin/supervisord
