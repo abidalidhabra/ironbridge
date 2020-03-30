@@ -9,7 +9,8 @@ RUN apt-get install -y \
     wget \
     g++ \
     vim \
-    cron
+    cron \ 
+    supervisor
 
 RUN apt-get install -y libsndfile1 --no-install-recommends
 
@@ -21,6 +22,7 @@ RUN apt-get install -y \
     libssl-dev \
     libicu-dev \
     python-pip
+
 
 RUN apt-get install -y pkg-config libsasl2-dev zlib1g-dev libpng-dev  --fix-missing
 
@@ -38,24 +40,21 @@ RUN pecl install -o -f redis \
     &&  rm -rf /tmp/pear \
     &&  docker-php-ext-enable redis
 
-RUN mkdir /etc/apache2/ssl
-
 RUN apt-get install -y \
         zlib1g-dev \
         zip \
   && docker-php-ext-install zip
 
+COPY php.ini /usr/local/etc/php
+COPY laravel-worker.conf /etc/supervisor/conf.d/laravel-worker.conf
+
+RUN a2enmod rewrite ssl
+
 RUN curl -O https://getcomposer.org/composer.phar
 RUN mv composer.phar /usr/local/bin/composer
 RUN chmod a+x /usr/local/bin/composer
 
-RUN mkdir /root/.composer
-
-RUN a2enmod rewrite ssl
-
-COPY php.ini /usr/local/etc/php
-COPY vhost_prod.conf /etc/apache2/sites-available/000-default.conf
-COPY cert_prod/prodapi* /etc/apache2/ssl/
+RUN mkdir /root/.composer /etc/apache2/ssl
 
 RUN echo "\n<FilesMatch \\.php$>\nSetHandler application/x-httpd-php\n</FilesMatch>" >> /etc/apache2/apache2.conf
 
@@ -68,4 +67,4 @@ EXPOSE 80 443
 ENV APP_ENV=dev
 ENV TERM=xterm
 
-RUN service apache2 restart
+RUN service apache2 restarts
