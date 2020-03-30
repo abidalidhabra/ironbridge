@@ -11,6 +11,8 @@ RUN rm -rf .env public/.htaccess
 RUN cp .env.staging .env
 RUN cp -r public/htaccess_prod public/.htaccess
 
+COPY .docker/vhost_staging.conf /etc/apache2/sites-available/000-default.conf
+COPY .docker/cert/stageapi* /etc/apache2/ssl/
 
 RUN composer install
 RUN php artisan storage:link
