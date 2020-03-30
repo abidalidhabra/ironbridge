@@ -12,14 +12,13 @@ RUN cp .env.staging .env
 RUN cp -r public/htaccess_prod public/.htaccess
 
 COPY .docker/vhost_staging.conf /etc/apache2/sites-available/000-default.conf
-COPY .docker/cert/stageapi* /etc/apache2/ssl/
+COPY .docker/cert_stage/stageapi* /etc/apache2/ssl/
 
 RUN composer install
 RUN php artisan storage:link
 
 # Changing ownership 
 RUN chown -R www-data:www-data /var/www/html
-
 RUN chmod -R 0777 /var/www/html/storage/logs
 
 # Run the command on container startup
