@@ -74,6 +74,7 @@ class AuthController extends Controller
     }
 
    public function guestUserregister(Request $request){
+    exit(10);
       try {
        if ($request->has('username')) {
                 $request['username'] = strtolower($request->username);
