@@ -74,19 +74,17 @@ class AuthController extends Controller
     }
 
    public function guestUserregister(Request $request){
-    exit(10);
       try {
        if ($request->has('username')) {
                 $request['username'] = strtolower($request->username);
             }
         $validator = Validator::make($request->all(),[
-                            'type'=> 'in:google,facebook,apple,guest,emailupdate',
+                            'type'=> 'required|in:google,facebook,apple,guest,email',
                             'google_id'=> 'required_if:type,google|unique:users,google_id',
                             'facebook_id'=> 'required_if:type,facebook|unique:users,facebook_id',
-                            'apple_id'=> 'required_if:type,apple,emailupdate|unique:users,apple_id',
+                            'apple_id'=> 'required_if:type,apple|unique:users,apple_id',
                             'email'=> 'required_unless:type,guest,apple|unique:users,email',
                             'apple_data'=> 'required_if:type,apple|json',
-                           
                             'guestid' => "required|exists:users,_id",
                           
                     ]);
