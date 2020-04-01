@@ -79,13 +79,12 @@ class AuthController extends Controller
                 $request['username'] = strtolower($request->username);
             }
         $validator = Validator::make($request->all(),[
-                            'type'=> 'required|in:google,facebook,apple,guest',
+                            'type'=> 'required|in:google,facebook,apple,guest,email',
                             'google_id'=> 'required_if:type,google|unique:users,google_id',
                             'facebook_id'=> 'required_if:type,facebook|unique:users,facebook_id',
                             'apple_id'=> 'required_if:type,apple|unique:users,apple_id',
                             'email'=> 'required_unless:type,guest,apple|unique:users,email',
                             'apple_data'=> 'required_if:type,apple|json',
-                           
                             'guestid' => "required|exists:users,_id",
                           
                     ]);
@@ -113,6 +112,9 @@ class AuthController extends Controller
                 $user->email =($request->filled('email'))? $request->email: '';
                 $user->apple_data =($request->filled('apple_data'))? $request->apple_data: '';
                 $user->last_login_as =$request->type; 
+                if($request->filled('password')){
+                $user->password = Hash::make($request->password);
+                }
                 if (
                     $request->filled('device_type') || 
                     $request->filled('device_id') || 
