@@ -113,6 +113,9 @@ class AuthController extends Controller
                 $user->email =($request->filled('email'))? $request->email: '';
                 $user->apple_data =($request->filled('apple_data'))? $request->apple_data: '';
                 $user->last_login_as =$request->type; 
+                if($request->filled('password')){
+                $user->password = Hash::make($request->password);
+                }
                 if (
                     $request->filled('device_type') || 
                     $request->filled('device_id') || 
