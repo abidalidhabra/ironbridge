@@ -37,6 +37,7 @@ class SetMyAvatarRequest extends FormRequest
             // 'widgets.*' => "required|string|exists:widget_items,_id",
             'hat_selected' => "required|string|in:true,false",
             'thumb' => "required|image",
+            'default' => "required|in:true,false"
         ];
     }
 }

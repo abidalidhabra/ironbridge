@@ -26,6 +26,16 @@
                         <div class="row">
                             
                             <div class="form-group col-md-3">
+                                <label class="control-label" data-toggle="tooltip" data-title="Is this pre-sheduled push notifications ?" data-placement="right">
+                                    Notifiication Type: <i class="fa fa-question-circle"></i>
+                                </label>
+                                <select name="is_prescheduled" class="form-control" id="js-is-prescheduled">
+                                    <option value="!PRESCHEDULED">Instant</option>
+                                    <option value="PRESCHEDULED">Pre-Scheduled</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group col-md-3">
                                 <label class="control-label" data-toggle="tooltip" data-title="Where you want to broadcast the message." data-placement="right">
                                     Send To: <i class="fa fa-question-circle"></i>
                                 </label>
@@ -36,7 +46,7 @@
                                 </select>
                             </div>
 
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-3">
                                 <label class="control-label" data-toggle="tooltip" data-title="Select the target audience." data-placement="right">
                                     Target Audience: <i class="fa fa-question-circle"></i>
                                 </label>
@@ -45,7 +55,7 @@
                                 </select>
                             </div>
 
-                            <div class="form-group col-md-4 d-none" id="js-cities-container">
+                            <div class="form-group col-md-3 d-none" id="js-cities-container">
                                 <label class="control-label" data-toggle="tooltip" data-title="This shows all the cities having events within a month." data-placement="right">
                                     Cities: <i class="fa fa-question-circle"></i>
                                 </label>
@@ -58,7 +68,7 @@
                                 </select>
                             </div>
 
-                            <div class="form-group col-md-4 d-none" id="js-countries-container">
+                            <div class="form-group col-md-3 d-none" id="js-countries-container">
                                 <label class="control-label" data-toggle="tooltip" data-title="This shows all the countries having events within a month." data-placement="right">
                                     Countries: <i class="fa fa-question-circle"></i>
                                 </label>
@@ -80,6 +90,12 @@
                                 </label>
                                 <input type="text" name="title" class="form-control" id="title">
                             </div>
+                            <div class="form-group col-md-3 d-none" id="js-notification-date-container">
+                                <label class="control-label" data-toggle="tooltip" data-title="At which time notification should be send." data-placement="right">
+                                    Notification Date (UTC): <i class="fa fa-question-circle"></i>
+                                </label>
+                                <input type="text" name="send_at" class="form-control datetimepicker" id="js-notification-date" placeholder="Select the Notification Date" readonly="">
+                            </div>
                         </div>
 
                         <div class="row">
@@ -90,7 +106,14 @@
                                 <textarea name="message" class="form-control" id="message" rows="3"></textarea>
                             </div>
                             <div class="form-group col-md-12">
-                                <button type="submit" class="btn btn-success btnSubmit">Submit</button>
+                                <button 
+                                type="submit" 
+                                class="btn btn-success btnSubmit"
+                                loadingText="loading..."
+                                submitText="Submit"
+                                >
+                                    Submit
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -104,6 +127,8 @@
             </div>
         </div>
     @endif
+
+    @include('admin.events._notifications_list')
 </div>
 @endsection
 
@@ -126,38 +151,69 @@
             }
         });
 
+        $(document).on('change', '#js-is-prescheduled', function(){
+            if (this.value == 'PRESCHEDULED') {
+                $('#js-notification-date-container').show();
+            }else{
+                $('#js-notification-date-container').hide();
+            }
+        });
+
+        $('#js-notification-date').datetimepicker({
+            format: "MM/DD/YYYY hh:mm A",
+            minDate: moment(),
+            defaultDate: moment(),
+        });
+
         function initTargetAudienceSelect(target) {
             let element = $('#js-target-audience');
             element.empty();
             element.append($('<option>', {
-                value:  '',
-                text:   `Select Audience`
+                value: '',
+                text: `Select Audience`
             }));
             element.append($('<option>', {
-                value:  'LOCALS',
-                text:   `To those who are in same ${target}`
+                value: 'LOCALS',
+                text: `To those who are in same ${target}`
             }));
             element.append($('<option>', {
-                value:  '!LOCALS',
-                text:   `To those who are not in same ${target}`
+                value: '!LOCALS',
+                text: `To those who are not in same ${target}`
             }));
         }
 
         $(document).on('submit', '#sendEventNotificationForm', function(e){
             e.preventDefault();
+            let btn = $(this).find(':submit');
             $.ajax({
                 type:'POST',
                 url:'{{ route("admin.event-notifications.store") }}',
                 data: $(this).serialize(),
-                beforeSend:function(){},
+                beforeSend:function(){
+                    btn.text(btn.attr('loadingText')).attr('disabled', true);
+                },
                 success:function(response) {
+                    if (response.is_prescheduled == 'PRESCHEDULED') {
+                        resetTheForm();
+                    }
                     toastr.success(response.message);
                 },
-                complete:function(){},
+                complete:function(){
+                    btn.text(btn.attr('submitText')).attr('disabled', false);
+                },
                 error:function(jqXHR, textStatus, errorThrown){
                     toastr.error(JSON.parse(jqXHR.responseText).message);
                 }
             });
         });
+
+        function resetTheForm() {
+            $('#js-countries').val(null).trigger('change');
+            $('#sendEventNotificationForm')[0].reset();
+            notificationsTable.draw();
+            $('#js-cities-container').hide();
+            $('#js-countries-container').hide();
+            $('#js-notification-date-container').hide();
+        }
 </script>
 @endsection

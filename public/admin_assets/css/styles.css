@@ -2837,6 +2837,9 @@ table i.iconsetaddbox{
     border: 0;
 }
 
+.borderize-container{
+    border: 1px dotted #ad853b;
+}
 
 
 

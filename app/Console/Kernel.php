@@ -4,6 +4,8 @@ namespace App\Console;
 
 use App\Console\Commands\FinishAnEvent;
 use App\Console\Commands\StartAnEvent;
+use App\Jobs\SendPushToInactiveUsers;
+use App\Services\Event\EventNotificationService;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -32,6 +34,8 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('event:start')->everyMinute();
         $schedule->command('event:finish')->everyMinute();
+        $schedule->job(new EventNotificationService)->everyMinute();
+        $schedule->job(new SendPushToInactiveUsers)->twiceDaily(0, 18);
     }
 
     /**

@@ -75,6 +75,7 @@ class User extends Authenticatable implements JWTSubject
         'city_id',
         'streaming_relic_id',
         'skipped_relic_id',
+        'default_outfit_id',
         // 'expnadable_skeleton_keys',
     ];
 
@@ -139,7 +140,8 @@ class User extends Authenticatable implements JWTSubject
             'hunt_refresh'=> null,
             'hunt_distance'=> null,
             'relic'=> null,
-            'home_second'=> null
+            'home_second'=> null,
+            'robo_intro'=> null,
             // 'hunts'=> [
             //     'relic'=> null,
             //     'mg_challenge'=> null,

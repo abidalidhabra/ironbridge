@@ -60,7 +60,6 @@ RUN echo "\n<FilesMatch \\.php$>\nSetHandler application/x-httpd-php\n</FilesMat
 
 ADD schedule/crontab /etc/cron.d/cron
 RUN chmod 0644 /etc/cron.d/cron
-RUN touch /var/log/cron.log
 
 EXPOSE 80 443
 

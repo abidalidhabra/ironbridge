@@ -98,7 +98,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6" style="border: 1px dotted #ad853b;">
+                    <div class="col-md-6 borderize-container">
                         <h4 class="text-center">Freeze time</h4>
                         <div class="row">
                             <div class="col-md-6">
@@ -137,7 +137,7 @@
 @section('scripts')
 
 <script>
-    $('[data-toggle="tooltip"]').tooltip(); 
+    $('[data-toggle="tooltip"]').tooltip();
     $(document).on('submit', '#updateHuntStatisticForm', function(e) {
         e.preventDefault();
         $.ajax({

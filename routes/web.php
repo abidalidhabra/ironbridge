@@ -301,6 +301,7 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('plans/list', 'PlanController@list')->name('plans.list');
 	Route::resource('plans', 'PlanController');
 	/* NOTIFICATION */
+	Route::get('event-notifications/list', 'EventNotificationController@list')->name('event-notifications.list');
 	Route::resource('event-notifications', 'EventNotificationController');
 	Route::resource('notifications', 'NotificationController');
 	Route::post('reported-locations/submit', 'ReportLocationController@submit')->name('reported-locations.submit');

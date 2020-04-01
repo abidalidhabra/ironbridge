@@ -402,6 +402,11 @@ class UserController extends Controller
             'skin_color' => $skinColors,
         ];
         $user->hat_selected = filter_var($request->hat_selected, FILTER_VALIDATE_BOOLEAN);
+
+        if (filter_var($request->default, FILTER_VALIDATE_BOOLEAN) == true) {
+          $outfitId = WidgetItem::whereIn('_id', $widgets)->select('_id', 'items')->whereNotNull('items')->first()->id;
+          $user->default_outfit_id = $outfitId;
+        }
         $user->save();
 
         /*********************************************************************************************************/

@@ -12,6 +12,7 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use MongoDB\BSON\UTCDateTime;
 
 class LoginService
 {
@@ -142,12 +143,22 @@ class LoginService
 
     public function setAdditional()
     {
-        $this->user->additional = [ 
+
+        $additional = [
             'token' =>($this->token)?  $this->token: $this->user->additional['token'],
             'app_version' =>(!isset($this->user->additional['app_version']) || $this->user->additional['app_version'] !== $this->request->app_version)?  $this->request->app_version: $this->user->additional['app_version'],
-            // 'device_type'=> ($this->request->filled('device_type'))? $this->request->device_type: $this->user->additional['device_type'],
-            // 'device_id'=> ($this->request->filled('device_id'))? $this->request->device_id: $this->user->additional['device_id']
+            'last_login_at'=> new UTCDateTime
         ];
+
+        if ($this->newRegistration) {
+            $additional['is_first_login'] = true;
+            $additional['first_login_at'] = new UTCDateTime;
+        }else{
+            $additional['is_first_login'] = false;
+            $additional['first_login_at'] = $this->user->additional['first_login_at'] ?? new UTCDateTime;
+        }
+
+        $this->user->additional = $additional;
         return $this;
     }    
 
