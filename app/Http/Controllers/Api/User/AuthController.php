@@ -79,7 +79,7 @@ class AuthController extends Controller
                 $request['username'] = strtolower($request->username);
             }
         $validator = Validator::make($request->all(),[
-                            'type'=> 'required|in:google,facebook,apple,guest',
+                            'type'=> 'required|in:google,facebook,apple,guest,emailupdate',
                             'google_id'=> 'required_if:type,google|unique:users,google_id',
                             'facebook_id'=> 'required_if:type,facebook|unique:users,facebook_id',
                             'apple_id'=> 'required_if:type,apple|unique:users,apple_id',
