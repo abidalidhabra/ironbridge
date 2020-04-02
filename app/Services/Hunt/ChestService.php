@@ -340,7 +340,7 @@ class ChestService
 
     public function markThisChestAsTaken($placeId)
     {
-        $this->user->chests()->create(['place_id'=> $placeId]);
+        $this->user->chests()->create(['place_id'=> $placeId, 'city_id'=> $this->user->city_id]);
         return $this;
     }
 
@@ -362,5 +362,21 @@ class ChestService
     public function getJokeItem()
     {
         return $this->jokeItem;
+    }
+
+    public function remainingFreezeTime()
+    {
+        $huntStatistic = (new HuntStatisticRepository)->first(['_id', 'freeze_till']);
+        $chests = $this->user->chests()
+                ->whereNotNull('city_id')
+                ->where('city_id', $this->user->city_id)
+                ->groupBy('place_id')
+                ->get(['city_id','created_at'])
+                ->map(function($chest) use ($huntStatistic){
+                    $freezeTime = $chest->created_at->addSeconds($huntStatistic->freeze_till['chest']);
+                    $chest->freeze_till = ($freezeTime->gte(now()))? $freezeTime->diffInSeconds(now()): 0;
+                    return $chest;
+                });
+        return $chests;
     }
 }
