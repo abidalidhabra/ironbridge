@@ -25,6 +25,7 @@ use App\Repositories\Hunt\HuntUserRepository;
 use App\Repositories\Hunt\ParticipationInRandomHuntRepository;
 use App\Repositories\Hunt\TerminateTheLastRandomHuntRepository;
 use App\Repositories\User\UserRepository;
+use App\Services\Hunt\ChestService;
 use App\Services\Hunt\PaybleCellProviderService;
 use Exception;
 use GuzzleHttp\Client;
@@ -273,7 +274,12 @@ class RandomHuntController extends Controller
                     $response[] = $responseToBeGiven;
                 }
             }
-            return response()->json(['message'=> 'Cell data has been retrieved.', 'data'=> $response]);
+
+            return response()->json([
+                'message'=> 'Cell data has been retrieved.', 
+                'data'=> $response,
+                'chest_freeze_data'=> (new ChestService)->setUser($user)->remainingFreezeTime()
+            ]);
         } catch (Exception $e) {
             return response()->json(['message'=> $e->getMessage()], 500);
         }

@@ -6,6 +6,7 @@ use App\Models\v1\User;
 use App\Models\v1\WidgetItem;
 use App\Models\v2\AgentComplementary;
 use App\Models\v2\HuntStatistic;
+use App\Models\v3\UserQA;
 use App\Repositories\PlanPurchase\PlanPurchaseRepository;
 use App\Repositories\RelicRepository;
 use App\Repositories\User\UserRepositoryInterface;
@@ -413,5 +414,10 @@ class UserRepository implements UserRepositoryInterface
                 ->where('created_at', '>=', new UTCDateTime($dates['start']))
                 ->where('created_at', '<=', new UTCDateTime($dates['end']))
                 ->count();
+    }
+
+    public function submitAnswer(string $identifier)
+    {
+        return UserQA::where(['user_id'=> $this->user->id])->update(['answers.'.$identifier=> new UTCDateTime]);
     }
 }

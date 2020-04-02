@@ -7,7 +7,7 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
 class ChestUser extends Eloquent
 {
-    protected $fillable = ['user_id', 'place_id'];
+    protected $fillable = ['user_id', 'place_id', 'city_id'];
     
     public function user()
     {

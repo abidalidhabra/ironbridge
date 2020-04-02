@@ -6,6 +6,7 @@ use App\Exceptions\Profile\ChestBucketCapacityOverflowException;
 use App\Helpers\UserHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Profile\MarkTutorialAsCompleteRequest;
+use App\Http\Requests\Profile\SubmitAnswerRequest;
 use App\Http\Requests\User\AddTheChestRequest;
 use App\Http\Requests\User\ChangeTheChestMGRequest;
 use App\Http\Requests\User\OpenTheChestRequest;
@@ -138,7 +139,11 @@ class ProfileController extends Controller
             }else{
                 $chestService = new ChestService;
                 $chestService->setUser($user)->add($request->place_id);
-                return response()->json(['message'=> 'A chest has been added to bucket.', 'chests_bucket'=> $chestService->getUser()->buckets['chests']]);
+                return response()->json([
+                    'message'=> 'A chest has been added to bucket.', 
+                    'chests_bucket'=> $chestService->getUser()->buckets['chests'],
+                    'chest_freeze_data'=> (new ChestService)->setUser($user)->remainingFreezeTime()
+                ]);
             }
         } catch (ChestBucketCapacityOverflowException $e) {
             return response()->json(['message'=> $e->getMessage()], 422);
@@ -186,5 +191,15 @@ class ProfileController extends Controller
             }
         });
 
+    }
+
+    public function submitAnswer(SubmitAnswerRequest $request)
+    {
+        try {
+            $data = (new UserRepository(auth()->user()))->submitAnswer($request->tag);
+            return response()->json(['message' => 'Answer has been submitted successfully.']); 
+        } catch (Exception $e) {
+            return response()->json(['message'=> $e->getMessage()], 500);
+        }
     }
 }

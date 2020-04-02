@@ -125,6 +125,7 @@ class UserHelper {
 				'nodes_enable_on'=> $specialAminities,
 				'chest_minigame'=> $miniGameInfoService,
 				'chest_synced'=> $chestMinigame->getBucketRestored(),
+				'user_answers'=> $user->answers,
 				'hat_selected'=> $user->hat_selected,
 				'plans'=> (new PlanRepository)->all(),
 				'cities'=> City::all(['_id', 'name']),

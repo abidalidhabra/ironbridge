@@ -17,12 +17,14 @@ class PostRegisterService
         $this->addMinigameTutorialsForUser();
         $this->addPracticeGameUser();
         $this->setupFirstRelic();
+        $this->addUserAnswers();
         return $this;
     }
 
     public function configureForNewRegistration()
     {
         $this->giveMapPiece();
+        $this->addUserAnswers();
         return $this;
     }
 
@@ -52,5 +54,16 @@ class PostRegisterService
             $this->user->save();
         }
         return $this;
+    }
+
+    /**
+    * I am putting this function in login action which all it each time. because there are old user there.
+    * We will remove this in production
+    **/
+    public function addUserAnswers()
+    {
+        if (!$this->user->answers->count()) {
+            $this->user->answers()->create();
+        }
     }
 }
