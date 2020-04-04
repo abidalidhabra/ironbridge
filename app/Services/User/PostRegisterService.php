@@ -24,7 +24,6 @@ class PostRegisterService
     public function configureForNewRegistration()
     {
         $this->giveMapPiece();
-        $this->addUserAnswers();
         return $this;
     }
 
@@ -62,7 +61,7 @@ class PostRegisterService
     **/
     public function addUserAnswers()
     {
-        if (!$this->user->answers->count()) {
+        if (!$this->user->answers) {
             $this->user->answers()->create();
         }
     }

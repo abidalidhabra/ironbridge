@@ -445,6 +445,6 @@ class User extends Authenticatable implements JWTSubject
 
     public function answers()
     {
-        return $this->hasMany(UserQA::class);
+        return $this->hasOne(UserQA::class);
     }
 }
