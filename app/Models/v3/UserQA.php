@@ -23,7 +23,7 @@ class UserQA extends Eloquent
         	'avatar_i_dont_cares'=> null,
             'avatar_changed_outfit'=> null,
             'robo_final'=> null,
-            'robo_random1'=> null,
+            'robo_random_one'=> null,
         ]
     ];
 }
