@@ -2,74 +2,91 @@
 
 namespace App\Services\User\SyncAccount;
 
-use App\Http\Controllers\Admin\UserController;
+use App\Models\v2\HuntUser;
 use App\Repositories\User\UserRepository;
-use App\Services\Traits\UserTraits;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
+use stdClass;
 
 class ToEmailAccount
 {
+
+    protected $user;
+    protected $targetUser;
+    protected $request;
+    protected $newRegistration;
+
+    public function __construct($user, $request)
+    {
+        $this->user = $user;
+        $this->request = $request;
+
+        $this->getTargetUser();
+
+        $this->validate();
+    }
+
+    public function getTargetUser()
+    {
+        $this->targetUser = (new UserRepository)->getModel()->where(['email'=> $this->request->email, 'username'=> $this->request->username])->first();
+    }
+
+    public function validate()
+    {
+        if ($this->user->last_login_as != 'guest') {
+            throw ValidationException::withMessages(['password'=> "You are not signed in as guest."]);
+        }
+
+        if ($this->targetUser) {
+            $this->newRegistration = false;
+            if (!Hash::check($this->request->password, $this->targetUser->password)) {
+                throw ValidationException::withMessages(['password'=> "You have provided wrong password."]);
+            }
+        }else{
+            $this->newRegistration = true;
+            $this->targetUser = new stdClass;
+            $this->targetUser->email = $this->request->email;
+            $this->targetUser->username = $this->request->username;
+            $this->targetUser->password = $this->request->password;
+        }
+    }
+
+    public function trashTargetUserData()
+    {
+        HuntUser::where('user_id', $this->targetUser->id)->get()->map(function($huntUser){
+            $huntUser->hunt_user_details()->delete();
+            $huntUser->delete();
+        });
+        $this->targetUser->practice_games()->delete();
+        $this->targetUser->plans_purchases()->delete();
+        $this->targetUser->events()->delete();
+        $this->targetUser->user_relic_map_pieces()->delete();
+        $this->targetUser->chests()->delete();
+        $this->targetUser->answers()->delete();
+        $this->targetUser->assets()->delete();
+        $this->targetUser->reported_locations()->delete();
+        $this->targetUser->relics_info()->delete();
+        $this->targetUser->minigames_history()->delete();
+        $this->targetUser->delete();
+    }
 	
-	use UserTraits;
-
-	protected $targetUser;
-	protected $userRepository;
-
-	public function __construct()
-	{
-		$this->userRepository = (new UserRepository)->getModel();
-	}
-
-	public function targetUser($targetUserId)
-	{
-		$this->targetUser = $this->userRepository->find($targetUserId);
-		return $this;
-	}
-
-	public function migrate($targetUserId)
+	public function sync()
     {
 
-    	/**
-    	* 1. Remove all the existing data
-    	* 2. merge the data
-    	**/
+        $this->user->first_name = "";
+        $this->user->email = $this->targetUser->email;
+        $this->user->username = $this->targetUser->username;
+        $this->user->password = $this->targetUser->password;
+        $this->user->last_login_as = 'email';
+        $this->user->save();
 
-    	// HuntUser::where('user_id', $targetUserId)->get()->map(function($huntUser){
-     //        $huntUser->hunt_user_details()->delete();
-     //        $huntUser->delete();
-     //    });
-    	// $this->targetUser->practice_games()->delete();
-    	// $this->targetUser->plans_purchases()->delete();
-    	// $this->targetUser->events()->delete();
-    	// $this->targetUser->user_relic_map_pieces()->delete();
-    	// $this->targetUser->chests()->delete();
-    	// $this->targetUser->answers()->delete();
-    	// $this->targetUser->assets()->delete();
-    	// $this->targetUser->reported_locations()->delete();
+        (new UserRepository)->getModel()->where('_id', $this->user->id)->unset('guest_id');
 
-    	$this->targetUser->fill(
-    		'nodes_status'=> $this->user->nodes_status,
-    		'registration_completed'=> $this->user->registration_completed,
-    		'skeleton_keys'=> $this->user->skeleton_keys,
-    		'gold_balance'=> $this->user->gold_balance,
-    		'skeletons_bucket'=> $this->user->skeletons_bucket,
-    		'pieces_collected'=> $this->user->pieces_collected,
-    		'widgets'=> $this->user->widgets,
-    		'first_login'=> $this->user->first_login,
-    		'tutorials'=> $this->user->tutorials,
-    		'agent_status'=> $this->user->agent_status,
-    		'relics'=> $this->user->relics,
-    		'power_status'=> $this->user->power_status,
-    		'ar_mode'=> $this->user->ar_mode,
-    		'avatar'=> $this->user->avatar,
-    		'nodes_status'=> $this->user->nodes_status,
-    		'buckets'=> $this->user->buckets,
-    		'streaming_relic_id'=> $this->user->streaming_relic_id,
-    		'mgc_status'=> $this->user->mgc_status,
-    		'minigame_tutorials'=> $this->user->minigame_tutorials
-    	);
-    	dd($this->targetUser);
-        $this->targetUser->save();
+        if ($this->newRegistration == false) {
+    	   $this->trashTargetUserData();
+        }
 
-        return response()->json(['message'=> 'Account has been successfully reset.']);
+        return $this->user->makeHidden(['reffered_by','updated_at','created_at', 'widgets', 'skeleton_keys', 'avatar', 'tutorials', 'additional', 'device_info', 'hat_selected', 'guest_id']);
     }
 }

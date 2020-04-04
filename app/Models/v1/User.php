@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Jenssegers\Mongodb\Auth\User as Authenticatable;
 use MongoDB\BSON\UTCDateTime;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -375,7 +376,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function setPasswordAttribute($value)
     {
-        return $this->attributes['password'] = bcrypt($value);
+        return $this->attributes['password'] = Hash::needsRehash($value) ? bcrypt($value): $value;
     }
 
     public function getDobAttribute($value)
@@ -445,6 +446,6 @@ class User extends Authenticatable implements JWTSubject
 
     public function answers()
     {
-        return $this->hasMany(UserQA::class);
+        return $this->hasOne(UserQA::class);
     }
 }

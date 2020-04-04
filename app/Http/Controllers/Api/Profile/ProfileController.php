@@ -10,6 +10,7 @@ use App\Http\Requests\Profile\SubmitAnswerRequest;
 use App\Http\Requests\User\AddTheChestRequest;
 use App\Http\Requests\User\ChangeTheChestMGRequest;
 use App\Http\Requests\User\OpenTheChestRequest;
+use App\Http\Requests\User\SyncAnAccountRequest;
 use App\Models\v2\MinigameHistory;
 use App\Repositories\ComplexityTargetRepository;
 use App\Repositories\Game\GameRepository;
@@ -20,9 +21,11 @@ use App\Repositories\RelicRepository;
 use App\Repositories\SeasonRepository;
 use App\Repositories\User\UserRepository;
 use App\Services\Hunt\ChestService;
+use App\Services\User\SyncAccount\SyncAccountFactory;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class ProfileController extends Controller
 {
@@ -199,6 +202,20 @@ class ProfileController extends Controller
             $data = (new UserRepository(auth()->user()))->submitAnswer($request->tag);
             return response()->json(['message' => 'Answer has been submitted successfully.']); 
         } catch (Exception $e) {
+            return response()->json(['message'=> $e->getMessage()], 500);
+        }
+    }
+
+    public function syncAnAccountRequest(SyncAnAccountRequest $request)
+    {
+        try {
+
+            $syncAccountFactory = new SyncAccountFactory;
+            $emailAccountService = $syncAccountFactory->init($request->sync_to, auth()->user(), $request);
+            return response()->json(['message' => 'Account has been successfully reset.', 'data'=> $emailAccountService->sync()]);
+        }catch (ValidationException $e) {
+            return response()->json(['message'=> collect($e->errors())->first()[0]], 422);
+        }catch (Exception $e) {
             return response()->json(['message'=> $e->getMessage()], 500);
         }
     }

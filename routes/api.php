@@ -234,6 +234,7 @@ Route::group(['namespace' => 'Api\Profile', 'prefix' => 'profile', 'middleware' 
 	Route::post('setStreamingRelic', 'ProfileController@setStreamingRelic');
 	Route::post('removeTheChestFromBucket', 'ProfileController@removeTheChestFromBucket');
 	Route::post('submitAnswer', 'ProfileController@submitAnswer');
+	Route::post('syncAnAccountRequest', 'ProfileController@syncAnAccountRequest');
 });
 
 Route::group(['namespace' => 'Api\Relic', 'prefix' => 'relics', 'middleware' => ['jwt-auth', 'downtime', 'freshapp']], function ($router) {

@@ -20,7 +20,10 @@ class UserQA extends Eloquent
         	'robo_intro'=> null,
         	'avatar_i_dont_liked'=> null,
         	'avatar_i_cant_afford'=> null,
-        	'avatar_i_dont_cares'=> null
+        	'avatar_i_dont_cares'=> null,
+            'avatar_changed_outfit'=> null,
+            'robo_final'=> null,
+            'robo_random_one'=> null,
         ]
     ];
 }

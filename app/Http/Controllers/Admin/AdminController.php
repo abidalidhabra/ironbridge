@@ -2,21 +2,24 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\v1\Admin;
 use App\Models\v1\AdminPasswordSetLink;
 use App\Models\v1\News;
 use App\Models\v1\User;
-use App\Models\v2\Hunt;
-use App\Models\v2\HuntUser;
 use App\Models\v2\Event;
 use App\Models\v2\EventsUser;
-use Carbon\Carbon;
-use Validator;
-use Auth;
-use Hash;
+use App\Models\v2\Hunt;
+use App\Models\v2\HuntUser;
 use App\Models\v2\PlanPurchase;
+use App\Models\v3\City;
+use App\Models\v3\Country;
+use App\Models\v3\State;
+use Auth;
+use Carbon\Carbon;
+use Hash;
+use Illuminate\Http\Request;
+use Validator;
 
 
 class AdminController extends Controller
@@ -26,9 +29,12 @@ class AdminController extends Controller
     	$data['news'] = News::count();
     	$treasureLocations = Hunt::select('city','province','country')->get();
     	$data['treasure_locations'] = $treasureLocations->count();
-    	$data['total_city'] = $treasureLocations->groupBy('city')->count();
-    	$data['total_province'] = $treasureLocations->groupBy('province')->count();
-        $data['total_country'] = $treasureLocations->groupBy('country')->count();
+    	// $data['total_city'] = $treasureLocations->groupBy('city')->count();
+    	// $data['total_province'] = $treasureLocations->groupBy('province')->count();
+     //    $data['total_country'] = $treasureLocations->groupBy('country')->count();
+        $data['total_city'] = City::count();
+        $data['total_province'] = State::count();
+        $data['total_country'] = Country::count();
 
         $user = User::get();
         $data['device_ios']		= $user->where('device_type','ios')->count();
@@ -36,8 +42,8 @@ class AdminController extends Controller
         $data['male']       = $user->where('gender','male')->count();
         $data['female']     = $user->where('gender','female')->count();
         $data['total_user'] = $user->count();
-        $data['first_record_date'] = $user->first()->created_at;
-        $data['last_record_date'] = $user->last()->created_at;
+        $data['first_record_date'] = $user->first()->created_at ?? now();
+        $data['last_record_date'] = $user->last()->created_at ?? now();
 
         /* huntuser */
         $huntUser = HuntUser::select('user_id','hunt_id','status')
