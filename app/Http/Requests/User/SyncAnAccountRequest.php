@@ -30,9 +30,9 @@ class SyncAnAccountRequest extends FormRequest
     public function rules()
     {
         return [
-            'email'=> ['required', 'email', 'exists:users,email'],
-            'username'=> ['required', 'exists:users,username'],
-            'password'=> ['required', new EmailLoginRule($this->username, $this->email)],
+            'email'=> ['required_if:sync_to,string', 'email'],
+            'username'=> ['required_if:sync_to,string'],
+            'password'=> ['required_if:sync_to,string'],
             'sync_to'=> ['required', 'in:email']
         ];
     }

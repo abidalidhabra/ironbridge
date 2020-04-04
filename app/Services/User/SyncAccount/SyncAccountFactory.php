@@ -7,10 +7,10 @@ use Exception;
 
 class SyncAccountFactory
 {
-	public function init($type)
+	public function init($type, $user, $request)
 	{
 		if ($type == 'email') {
-			return new ToEmailAccount;
+			return new ToEmailAccount($user, $request);
 		}
 		throw new Exception("Invalid sync type provided.");
 	}

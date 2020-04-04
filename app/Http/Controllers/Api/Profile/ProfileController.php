@@ -25,6 +25,7 @@ use App\Services\User\SyncAccount\SyncAccountFactory;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class ProfileController extends Controller
 {
@@ -210,11 +211,10 @@ class ProfileController extends Controller
         try {
 
             $syncAccountFactory = new SyncAccountFactory;
-            $emailAccountService = $syncAccountFactory->init($request->sync_to);
-
-            $targetUser = (new UserRepository)->getModel()->where(['email'=> $request->email, 'username'=> $request->username])->first();
-            $emailAccountService->sync(auth()->user(), $targetUser);
-            return response()->json(['message' => 'Account has been successfully reset.']);
+            $emailAccountService = $syncAccountFactory->init($request->sync_to, auth()->user(), $request);
+            return response()->json(['message' => 'Account has been successfully reset.', 'data'=> $emailAccountService->sync()]);
+        }catch (ValidationException $e) {
+            return response()->json(['message'=> collect($e->errors())->first()[0]], 422);
         }catch (Exception $e) {
             return response()->json(['message'=> $e->getMessage()], 500);
         }
