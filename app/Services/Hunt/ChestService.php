@@ -340,7 +340,8 @@ class ChestService
 
     public function markThisChestAsTaken($placeId)
     {
-        $this->user->chests()->create(['place_id'=> $placeId, 'city_id'=> $this->user->city_id]);
+        // $this->user->chests()->create(['place_id'=> $placeId, 'city_id'=> $this->user->city_id]);
+        $this->user->chests()->create(['place_id'=> $placeId]);
         return $this;
     }
 
@@ -368,10 +369,10 @@ class ChestService
     {
         $huntStatistic = (new HuntStatisticRepository)->first(['_id', 'freeze_till']);
         $chests = $this->user->chests()
-                ->whereNotNull('city_id')
-                ->where('city_id', $this->user->city_id)
+                // ->whereNotNull('city_id')
+                // ->where('city_id', $this->user->city_id)
                 ->groupBy('place_id')
-                ->get(['city_id','created_at'])
+                ->get(['created_at'])
                 ->map(function($chest) use ($huntStatistic){
                     $freezeTime = $chest->created_at->addSeconds($huntStatistic->freeze_till['chest']);
                     $chest->freeze_till = ($freezeTime->gte(now()))? $freezeTime->diffInSeconds(now()): 0;
