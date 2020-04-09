@@ -143,7 +143,7 @@ class User extends Authenticatable implements JWTSubject
             'hunt_distance'=> null,
             'relic'=> null,
             'home_second'=> null,
-            'robo_intro'=> null,
+            // 'robo_intro'=> null,
             // 'hunts'=> [
             //     'relic'=> null,
             //     'mg_challenge'=> null,
