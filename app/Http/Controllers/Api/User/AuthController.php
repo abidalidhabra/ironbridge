@@ -131,7 +131,7 @@ class AuthController extends Controller
         $user->update();
 
         return response()->json([
-            'message'=>'Your data updated successfully check.', 
+            'message'=>'Your data updated successfully.', 
             'data' => $user->makeHidden(['reffered_by','updated_at','created_at', 'widgets', 'skeleton_keys', 'avatar', 'tutorials', 'additional', 'device_info', 'hat_selected']),
         ],200);
        }catch (Exception $e) {
