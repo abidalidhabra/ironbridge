@@ -138,7 +138,7 @@ class ProfileController extends Controller
         try {
             $user = auth()->user();
             if ($user['buckets']['chests']['collected'] + 1 > $user['buckets']['chests']['capacity']) {
-                throw new ChestBucketCapacityOverflowException("You don't have enough capacity to hold this chestsss");
+                throw new ChestBucketCapacityOverflowException("You don't have enough capacity to hold this chest");
             }else{
                 $chestService = new ChestService;
                 $chestService->setUser($user)->add($request->place_id);
