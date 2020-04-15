@@ -1,6 +1,6 @@
 [
   {
     "name": "Irinbridge",
-    "imageUri": "905666888987.dkr.ecr.us-east-1.amazonaws.com/laravel:latest"
+    "imageUri": "905666888987.dkr.ecr.us-east-1.amazonaws.com/laravel-staging:latest"
   }
 ]
