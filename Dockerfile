@@ -8,11 +8,11 @@ COPY --chown=www-data:www-data . /var/www/html
 WORKDIR /var/www/html
 
 RUN rm -rf .env public/.htaccess
-RUN cp .env.production .env
+RUN cp .env.staging .env
 RUN cp -r public/htaccess_prod public/.htaccess
 
-COPY .docker/vhost_prod.conf /etc/apache2/sites-available/000-default.conf
-COPY .docker/cert_prod/prodapi* /etc/apache2/ssl/
+COPY .docker/vhost_staging.conf /etc/apache2/sites-available/000-default.conf
+COPY .docker/cert_stage/stageapi* /etc/apache2/ssl/
 
 RUN composer install
 RUN php artisan storage:link
