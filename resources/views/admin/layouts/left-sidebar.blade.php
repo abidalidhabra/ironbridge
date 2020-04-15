@@ -40,12 +40,12 @@
 				@else
 					@if($admin->hasPermissionTo('Dashboard'))
 					<li  class="@if(Route::currentRouteName() == 'admin.dashboards') {{ 'activelist' }} @endif">
-						<a href="{{ route('admin.dashboards') }}">Dashboard!</a>
+						<a href="{{ route('admin.dashboards') }}">Dashboard</a>
 					</li>
 					@endif
 					@if($admin->hasPermissionTo('View Users'))
 					<li  class="@if(Route::currentRouteName() == 'admin.userList') {{ 'activelist' }} @endif">
-						<a href="{{ route('admin.userList') }}">Users!</a>
+						<a href="{{ route('admin.userList') }}">Users</a>
 					</li>
 					@endif
 					@if($admin->hasPermissionTo('View News'))
