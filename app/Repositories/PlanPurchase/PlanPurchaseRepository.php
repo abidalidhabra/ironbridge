@@ -3,9 +3,18 @@
 namespace App\Repositories\PlanPurchase;
 
 use App\Models\v2\PlanPurchase;
+use App\Repositories\ModelRepository;
 
-class PlanPurchase
+class PlanPurchaseRepository extends ModelRepository
 {
+
+	protected $model;
+
+    public function __construct()
+    {
+        $this->model = new PlanPurchase;
+    }
+    
 	/**
 	 *
 	 * Saves the resource in the database

@@ -6,7 +6,7 @@ use App\Models\v1\WidgetItem;
 use App\Models\v2\HuntReward;
 use App\Services\HuntReward\LogTheHuntRewardService;
 use App\Services\Traits\UserTraits;
-use Illuminate\Support\Facades\Log;
+// use Illuminate\Support\Facades\Log;
 use stdClass;
 use MongoDB\BSON\UTCDateTime;
 
@@ -40,7 +40,7 @@ class OldLootService
 
         $rewardData['type'] = $selectedReward->reward_type;
         // $rewardData['hunt_user_id'] = $this->huntUser->id;
-        $rewardData['random_number'] = $randNumber;
+        // $rewardData['random_number'] = $randNumber;
 
         if ($selectedReward->widgets_order && is_array($selectedReward->widgets_order)) {
 
@@ -115,7 +115,8 @@ class OldLootService
         (new LogTheHuntRewardService)->add($rewardData);
         unset($selectedReward->min_range, $selectedReward->max_range);
         unset($rewardData['user_id'], $rewardData['type']);
-        Log::info([ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData]);
-        return [ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData];
+        // Log::info([ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData]);
+        // return [ 'reward_messages' => implode(',', $message), 'reward_data' => $rewardData];
+        return $rewardData;
     }
 }

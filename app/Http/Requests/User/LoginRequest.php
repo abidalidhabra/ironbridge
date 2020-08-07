@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\User;
 
-use App\Rules\User\CheckThePassword;
+use App\Rules\EmailLoginRule;
 use App\Rules\User\UsernameRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -30,7 +30,7 @@ class LoginRequest extends FormRequest
         return [
             // 'username'=> ['required', new UsernameRule],
             // 'password'=> ['required', new CheckThePassword($this->username)],
-            'type'=> 'required|in:google,facebook,apple,guest',
+            'type'=> 'required|in:google,facebook,apple,guest,email',
             'google_id'=> 'required_if:type,google',
             'facebook_id'=> 'required_if:type,facebook',
             'apple_id'=> 'required_if:type,apple',
@@ -45,6 +45,24 @@ class LoginRequest extends FormRequest
             'device_model'=> 'required',
             'device_os'=> 'required'
         ];
+    }
+
+    protected function getValidatorInstance() {
+        $validator = parent::getValidatorInstance();
+
+        $validator->sometimes('email', ['required', 'email', 'required_unless:type,guest,apple'], function($input){
+            return $this->type == 'email';
+        });
+
+        $validator->sometimes('username', ['required'], function($input){
+            return $this->type == 'email';
+        });
+
+        $validator->sometimes('password', ['required', new EmailLoginRule($this->username, $this->email)], function($input){
+            return $this->type == 'email';
+        });
+
+        return $validator;
     }
 
     /**

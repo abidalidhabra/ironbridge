@@ -1,24 +1,30 @@
 <?php
 
 namespace App\Helpers;
+use App\Http\Controllers\Api\v2\EventController;
 use App\Models\v1\Avatar;
-use App\Models\v1\City;
 use App\Models\v1\Game;
 use App\Models\v1\News;
 use App\Models\v1\WidgetItem;
 use App\Models\v2\HuntStatistic;
+use App\Models\v3\City;
 use App\Repositories\AgentComplementaryRepository;
 use App\Repositories\EventRepository;
 use App\Repositories\Game\GameRepository;
 use App\Repositories\MinigameHistoryRepository;
+use App\Repositories\PlanRepository;
 use App\Repositories\RelicRepository;
 use App\Repositories\User\UserRepository;
+use App\Services\Event\EventService;
+use App\Services\Event\EventUserService;
+use App\Services\Event\ParticipateInEvent;
 use App\Services\Hunt\ChestService;
 use App\Services\MiniGame\MiniGameInfoService;
 use Auth;
+use Illuminate\Http\Request;
 use MongoDB\BSON\ObjectId as MongoID;
 use MongoDB\BSON\UTCDateTime;
-use Request;
+// use Request;
 use Route;
 
 class UserHelper {
@@ -48,7 +54,7 @@ class UserHelper {
         // $cities = City::select('_id','name')->get();
 
 		// $eventsCities = (new EventRepository($user))->cities();
-		$eventsCities = City::select('_id','name')->havingActiveEvents()->get();
+		// $eventsCities = City::select('_id','name')->havingActiveEvents()->get();
 		// $relics = (new RelicRepository)->getModel()
 		// 			->active()
 		// 			// ->whereHas('season', function($query) {
@@ -89,30 +95,62 @@ class UserHelper {
 		// $chestMinigame = (new ChestService)->setUser($user)->getMiniGame();
 		$chestMinigame = (new ChestService)->setUser($user)->sync();
 		$miniGameInfoService = (new MiniGameInfoService)->setUser($user)->chestMiniGame();
-		return [
-			'avatars' => $avatars,
-			'widgets' => $widgets,
-			'user_avatar' => $user->avatar,
-			'user_widgets' => $user->widgets,
-			'tutorials' => $user->tutorials,
-			'events_cities' => $eventsCities,
-			'free_outfit_occupied' => $user->free_outfit_taken,
-			'latest_news' => News::latest()->limit(1)->get()->map(function($news) { return $news->setHidden(['valid_till', 'updated_at']); }),
-			'relics' => $relics,
-			'streaming_relic' => $userRepository->streamingRelic(),
-			// 'available_complexities' => $user->getAvailableComplexities(),
-			'available_complexities' => [1],
-			'agent_stack'=> $userRepository->getAgentStack(),
-			'hunt_statistics'=> array_merge($huntStatistics->toArray(), ['power_station'=> ['till'=> $userRepository->powerFreezeTill()]]),
-			'nodes_enable_on'=> $specialAminities,
-			'chest_minigame'=> $miniGameInfoService,
-			'chest_synced'=> $chestMinigame->getBucketRestored(),
-			'hat_selected'=> $user->hat_selected,
-			// 'used_widgets' => $user->used_widgets,
-			// 'plans' => $plans,
-			// 'events_data' => $events,
-			// 'cities' => $cities,
-		];
+
+		// $abc = (new ParticipateInEvent)->handle();
+		// \DB::connection()->enableQueryLog();
+		// $eventUserService->running();
+		// $eventUserService->usedCompasses();
+		// $queries = \DB::getQueryLog();
+		// dd($queries);
+
+        // (new EventService)->finish();
+        // (new EventService)->finish();
+		
+		return array_merge(
+			[
+				'avatars' => $avatars,
+				'widgets' => $widgets,
+				'user_avatar' => $user->avatar,
+				'user_widgets' => $user->widgets,
+				'tutorials' => $user->tutorials,
+				// 'events_cities' => $eventsCities,
+				'free_outfit_occupied' => $user->free_outfit_taken,
+				'latest_news' => News::latest()->limit(1)->get()->map(function($news) { return $news->setHidden(['valid_till', 'updated_at']); }),
+				'relics' => $relics,
+				'streaming_relic' => $userRepository->streamingRelic(),
+				// 'available_complexities' => $user->getAvailableComplexities(),
+				'available_complexities' => [1],
+				'agent_stack'=> $userRepository->getAgentStack(),
+				'hunt_statistics'=> array_merge($huntStatistics->toArray(), ['power_station'=> ['till'=> $userRepository->powerFreezeTill()]]),
+				'nodes_enable_on'=> $specialAminities,
+				'chest_minigame'=> $miniGameInfoService,
+				'chest_synced'=> $chestMinigame->getBucketRestored(),
+				'user_answers'=> $user->answers,
+				'hat_selected'=> $user->hat_selected,
+				'plans'=> (new PlanRepository)->all(),
+				'cities'=> City::all(['_id', 'name']),
+			],
+			self::prepareDateForEvent($user)
+		);
+	}
+
+	public static function prepareDateForEvent($user)
+	{
+		$eventUserService = (new EventUserService)->setUser($user);
+		// dd((new EventService)->participate());
+		$response = [];
+		if ($city = $user->city) {
+			$response['user_city'] = $user->city;
+		}
+
+		if ($event = $eventUserService->running(['*'], true)) {
+			$response['running_event'] = $event->makeHidden(['time', 'started_at', 'created_at', 'updated_at']);
+			// $response['event_user'] = $event->makeHidden(['time', 'started_at', 'created_at', 'updated_at']);
+			$response['total_earned_compasses'] = $eventUserService->totalEarnedCompasses();
+			$response['this_week_earned_compasses'] = $eventUserService->thisWeekEarnedCompasses();
+			$response['compass_plan_occupied_this_week'] = (new UserRepository($user))->compassPlanOccupiedThisWeek($event);
+		}
+		return $response;
 	}
 
 	public static function getWidgets($user)

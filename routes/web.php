@@ -76,9 +76,10 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 	Route::get('/avatarItems/{id}','UserController@avatarItems')->name('user.avatarItems');
 	Route::get('/planPurchase/{id}','UserController@planPurchase')->name('user.planPurchase');
 	Route::get('getPlanPurchaseList','UserController@getPlanPurchaseList')->name('getPlanPurchaseList');
-	Route::get('/events/{id}','UserController@eventsUser')->name('eventsUser');
 	Route::get('/miniGameStatistics/{id}','UserController@miniGameStatistics')->name('miniGameStatistics');
 	Route::get('/tutorialsProgress/{id}','UserController@tutorialsProgress')->name('tutorialsProgress');
+	Route::get('/chestInverntory/{id}','UserController@chestInverntory')->name('chestInverntory');
+	Route::post('/updateCity','UserController@updateCity')->name('updateCity');
 	
 
 
@@ -155,7 +156,9 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 
 
 	//EVENTS
-	Route::resource('event', 'EventController');
+	Route::get('events/list', 'EventController@list')->name('events.list');
+	Route::resource('events', 'EventController');
+	// Route::get('/events/{id}','UserController@eventsUser')->name('eventsUser');
 	Route::get('basicDetails/{id?}', [ 'middleware' => ['permission:Add Event'], 'uses' => 'EventController@basicDetails' ])->name('event.basicDetails');
 	Route::post('addBasicStore', [ 'middleware' => ['permission:Add Event'], 'uses' => 'EventController@addBasicStore' ])->name('event.addBasicStore');
 	Route::get('miniGame/{id}', [ 'middleware' => ['permission:Add Event'], 'uses' => 'EventController@miniGame' ])->name('event.miniGame');
@@ -187,7 +190,13 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 		Route::resource('rewards', 'RewardController');
 	});
 	
+	Route::put('joke-items-loots/update', 'JokeItemController@updateProbability')->name('joke-items-loots.updateProbability');
+	Route::resource('joke-items-loots', 'JokeItemController');
+	
 	Route::resource('loots', 'LootController');
+	Route::put('map-pieces-loots/update', 'MapPiecesLootController@update')->name('map-pieces-loots.update');
+	Route::resource('map-pieces-loots', 'MapPiecesLootController')->except(['update']);
+	
 	Route::group(['middleware' => ['permission:View MGC Loot Table']], function () {
 		Route::resource('mgc_loot', 'MgcController');
 	});
@@ -271,8 +280,29 @@ Route::group(['prefix'=> 'admin','middleware'=>'auth:admin', 'namespace'=>'Admin
 		Route::get('avatar-agent-levels-list', 'AgentLevel\AvatarAgentLevelController@list')->name('avatar-agent-levels-list');
 	});
 
+	// Country
 
+
+	Route::resource('country', 'CountryController');
+	Route::get('getCountryList', 'CountryController@getCountryList')->name('getCountryList');	
+
+	Route::resource('state', 'StateController');
+	Route::get('getStateList', 'StateController@getStateList')->name('getStateList');	
+
+
+	//Cities
+	//Route::get('city', 'CitiesController@index')->name('city');
+	Route::get('getCityList', 'CitiesController@getCityList')->name('getCityList');	
+	Route::resource('city', 'CitiesController');
+	Route::post('countryState', 'CitiesController@countryState')->name('countryState');	
+	
+	Route::get('city.getTimezone', 'CitiesController@getTimezone')->name('city.getTimezone');	
+
+	Route::get('plans/list', 'PlanController@list')->name('plans.list');
+	Route::resource('plans', 'PlanController');
 	/* NOTIFICATION */
+	Route::get('event-notifications/list', 'EventNotificationController@list')->name('event-notifications.list');
+	Route::resource('event-notifications', 'EventNotificationController');
 	Route::resource('notifications', 'NotificationController');
 	Route::post('reported-locations/submit', 'ReportLocationController@submit')->name('reported-locations.submit');
 	Route::post('reported-locations/updateIt', 'ReportLocationController@updateIt')->name('reported-locations.updateIt');

@@ -112,6 +112,13 @@ class AuthController extends Controller
                 }
                 $user->save();
 
+                if (
+                    ($request->device_type == 'android' && $request->serverAppInfo->app_versions['android'] > $request->app_version) ||
+                    ($request->device_type == 'ios' && $request->serverAppInfo->app_versions['ios'] > $request->app_version)
+                ) {
+                    return response()->json(['code'=> 14, 'message' => 'Please update an application.'], 500);
+                }
+
                 if ($user->practice_games()->count() == 0) {
                     $miniGameRepository = new MiniGameRepository($user);
                     $miniGameRepository->createIfnotExist();

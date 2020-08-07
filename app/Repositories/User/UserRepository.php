@@ -6,8 +6,11 @@ use App\Models\v1\User;
 use App\Models\v1\WidgetItem;
 use App\Models\v2\AgentComplementary;
 use App\Models\v2\HuntStatistic;
+use App\Models\v3\UserQA;
+use App\Repositories\PlanPurchase\PlanPurchaseRepository;
 use App\Repositories\RelicRepository;
 use App\Repositories\User\UserRepositoryInterface;
+use App\Services\Event\EventUserService;
 use Carbon\CarbonImmutable;
 use Exception;
 use Illuminate\Support\Collection;
@@ -96,7 +99,7 @@ class UserRepository implements UserRepositoryInterface
                 [ 'skeleton_keys.$[identifier].used_at'=> new UTCDateTime(now()) ],
                 [ 'arrayFilters'=> [ [ "identifier.key"=> ['$in'=> $skeletonToBeUpdate->toArray()] ] ], 'new'=> true ]
             );
-        return $user->available_skeleton_keys - 1;
+        return $user->available_skeleton_keys - $keysAmount;
     }
 
     public function markMiniGameTutorialAsComplete(string $gameId)
@@ -334,17 +337,31 @@ class UserRepository implements UserRepositoryInterface
         return $remainingFreezePowerTime ?? 0;
     }
 
-    public function streamingRelic()
+    // public function streamingRelic()
+    // {
+    //     $userRelics = User::find($this->user->id, ['_id', 'relics'])->relics;
+    //     $relic = (new RelicRepository)->getModel()
+    //             ->when(($userRelics->count() > 0), function($query) use ($userRelics) {
+    //                 $query->whereNotIn('_id', $userRelics->pluck('id')->toArray());
+    //             })
+    //             ->active()
+    //             ->orderBy('number', 'asc')
+    //             ->select('_id', 'name', 'number', 'active', 'pieces', 'icon')
+    //             ->first();
+
+    //     if ($relic) {
+    //         $relic->collected_pieces = $relic->map_pieces()->where(['user_id'=> $this->user->id])->count();
+    //     }
+    //     return $relic;
+    // }
+
+    public function streamingRelic($userRelicId = '')
     {
-        $userRelics = User::find($this->user->id, ['_id', 'relics'])->relics;
-        $relic = (new RelicRepository)->getModel()
-                ->when(($userRelics->count() > 0), function($query) use ($userRelics) {
-                    $query->whereNotIn('_id', $userRelics->pluck('id')->toArray());
-                })
-                ->active()
-                ->orderBy('number', 'asc')
-                ->select('_id', 'name', 'number', 'active', 'pieces', 'icon')
-                ->first();
+        if (!$userRelicId) {
+            $userRelicId = User::find($this->user->id, ['_id', 'relics', 'streaming_relic_id'])->streaming_relic_id;
+        }
+
+        $relic = (new RelicRepository)->getModel()->where('_id', $userRelicId)->select('_id', 'name', 'number', 'active', 'pieces', 'icon')->first();
 
         if ($relic) {
             $relic->collected_pieces = $relic->map_pieces()->where(['user_id'=> $this->user->id])->count();
@@ -365,6 +382,7 @@ class UserRepository implements UserRepositoryInterface
     public function createIfNotExist($data, $condition, $whatToCheck = null)
     {
         $user = $this->model->where($condition)->first();
+
         if(!$user){
             $this->setCreated(true);
             return $this->model->create($data);
@@ -384,5 +402,22 @@ class UserRepository implements UserRepositoryInterface
         //     $user->save();
         // }
         return $user;
+    }
+
+    public function compassPlanOccupiedThisWeek($event)
+    {
+        
+        $dates = (new EventUserService)->setUser($this->user)->setEvent($event)->getWeekDates();
+
+        return (new PlanPurchaseRepository)
+                ->getModel()
+                ->where('created_at', '>=', new UTCDateTime($dates['start']))
+                ->where('created_at', '<=', new UTCDateTime($dates['end']))
+                ->count();
+    }
+
+    public function submitAnswer(string $identifier)
+    {
+        return UserQA::where(['user_id'=> $this->user->id])->update(['answers.'.$identifier=> new UTCDateTime]);
     }
 }

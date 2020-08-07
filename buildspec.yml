@@ -6,7 +6,7 @@ phases:
       - echo Logging in to Amazon ECR... 
       - aws --version 
       - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email) 
-      - REPOSITORY_URI=905666888987.dkr.ecr.us-east-1.amazonaws.com/laravel
+      - REPOSITORY_URI=905666888987.dkr.ecr.us-east-1.amazonaws.com/ironbridge-prod
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7) 
       - IMAGE_TAG=${COMMIT_HASH:=latest} 
 
@@ -23,6 +23,6 @@ phases:
       - docker push $REPOSITORY_URI:latest 
       - docker push $REPOSITORY_URI:$IMAGE_TAG 
       - echo Writing image definitions file... 
-      - printf '[{"name":"Irinbridge","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json 
+      - printf '[{"name":"ironbridge","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json 
 artifacts: 
     files: imagedefinitions.json 

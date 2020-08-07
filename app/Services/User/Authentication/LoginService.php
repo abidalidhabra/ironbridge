@@ -3,6 +3,7 @@
 namespace App\Services\User\Authentication;
 
 use App\Exceptions\AppInMaintenanceException;
+use App\Exceptions\AppNotUpdatedException;
 use App\Repositories\AppStatisticRepository;
 use App\Repositories\User\UserRepository;
 use App\Services\User\Authentication\LoginFactory;
@@ -11,6 +12,7 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use MongoDB\BSON\UTCDateTime;
 
 class LoginService
 {
@@ -89,7 +91,7 @@ class LoginService
 
     public function checkMaintenanceMode()
     {
-        $this->serverAppInfo = (new AppStatisticRepository)->first(['id', 'maintenance', 'android_version', 'ios_version']);
+        $this->serverAppInfo = (new AppStatisticRepository)->first(['id', 'maintenance', 'app_versions']);
         if ($this->serverAppInfo->maintenance) {
             throw new AppInMaintenanceException("Application currently is under maintenance mode.");
         }
@@ -141,11 +143,22 @@ class LoginService
 
     public function setAdditional()
     {
-        $this->user->additional = [ 
+
+        $additional = [
             'token' =>($this->token)?  $this->token: $this->user->additional['token'],
-            // 'device_type'=> ($this->request->filled('device_type'))? $this->request->device_type: $this->user->additional['device_type'],
-            // 'device_id'=> ($this->request->filled('device_id'))? $this->request->device_id: $this->user->additional['device_id']
+            'app_version' =>(!isset($this->user->additional['app_version']) || $this->user->additional['app_version'] !== $this->request->app_version)?  $this->request->app_version: $this->user->additional['app_version'],
+            'last_login_at'=> new UTCDateTime
         ];
+
+        if ($this->newRegistration) {
+            $additional['is_first_login'] = true;
+            $additional['first_login_at'] = new UTCDateTime;
+        }else{
+            $additional['is_first_login'] = false;
+            $additional['first_login_at'] = $this->user->additional['first_login_at'] ?? new UTCDateTime;
+        }
+
+        $this->user->additional = $additional;
         return $this;
     }    
 
@@ -163,6 +176,19 @@ class LoginService
     public function save()
     {
         $this->user->save();
+        return $this;
+    }
+
+    public function throwIfAppNotUpdated()
+    {
+        $serverAppInfo = $this->getServerAppInfo();
+        if (
+            ($this->request->device_type == 'android' && $serverAppInfo->app_versions['android'] > $this->request->app_version) ||
+            ($this->request->device_type == 'ios' && $serverAppInfo->app_versions['ios'] > $this->request->app_version)
+        ) {
+            throw (new AppNotUpdatedException('Please update an application.'))->setExceptionCode(14);
+        }
+
         return $this;
     }
 }

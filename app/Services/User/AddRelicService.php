@@ -42,4 +42,12 @@ class AddRelicService
         $this->userRepository->activateTheRelic($this->relicId);
         return $this;
     }
+
+    public function response()
+    {
+        return [
+            'collected_relic'=> $this->getRelic(['_id', 'complexity','icon', 'number','name']),
+            'streaming_relic'=> $this->userRepository->streamingRelic(),
+        ];
+    }
 }

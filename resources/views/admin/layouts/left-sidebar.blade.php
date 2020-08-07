@@ -7,7 +7,8 @@
 		</button>
 		<div class="nav-offcanvas-menu">
 			<ul>
-				@if(Route::currentRouteName() == 'admin.accountInfo' || Route::currentRouteName() == 'admin.treasureHunts' || Route::currentRouteName() == 'admin.userHuntDetails' || Route::currentRouteName() == 'admin.activity' || Route::currentRouteName() == 'admin.eventsUser' || Route::currentRouteName() == 'admin.practiceGameUser' || Route::currentRouteName() == 'admin.user.avatarItems' || Route::currentRouteName() == 'admin.user.planPurchase' || Route::currentRouteName() == 'admin.miniGameStatistics' || Route::currentRouteName() == 'admin.tutorialsProgress')
+
+				@if(Route::currentRouteName() == 'admin.accountInfo' || Route::currentRouteName() == 'admin.treasureHunts' || Route::currentRouteName() == 'admin.userHuntDetails' || Route::currentRouteName() == 'admin.activity' || Route::currentRouteName() == 'admin.practiceGameUser' || Route::currentRouteName() == 'admin.user.avatarItems' || Route::currentRouteName() == 'admin.user.planPurchase' || Route::currentRouteName() == 'admin.miniGameStatistics' || Route::currentRouteName() == 'admin.tutorialsProgress' || Route::currentRouteName() == 'admin.chestInverntory')
 
 					<li  class="@if(Route::currentRouteName() == 'admin.accountInfo') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.accountInfo',$id) }}">Account Info</a>
@@ -17,9 +18,6 @@
 					</li>
 					<li  class="@if(Route::currentRouteName() == 'admin.activity') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.activity',$id) }}">Activity</a>
-					</li>
-					<li  class="@if(Route::currentRouteName() == 'admin.eventsUser') {{ 'activelist' }} @endif">
-						<a href="{{ route('admin.eventsUser',$id) }}">Events</a>
 					</li>
 					<li  class="@if(Route::currentRouteName() == 'admin.tutorialsProgress') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.tutorialsProgress',$id) }}">Tutorials Progress</a>
@@ -35,6 +33,9 @@
 					</li>
 					<li  class="@if(Route::currentRouteName() == 'admin.miniGameStatistics') {{ 'activelist' }} @endif">
 						<a href="{{ route('admin.miniGameStatistics',$id) }}">Mini-Games Statistics</a>
+					</li>
+					<li  class="@if(Route::currentRouteName() == 'admin.chestInverntory') {{ 'activelist' }} @endif">
+						<a href="{{ route('admin.chestInverntory',$id) }}">Chest Inverntory</a>
 					</li>
 				@else
 					@if($admin->hasPermissionTo('Dashboard'))
@@ -83,6 +84,35 @@
 								@if($admin->hasPermissionTo('View Hunt Statistics'))
 									<a href="{{ route('admin.hunt_statistics.index') }}" class="@if($hstateRoutes) {{ 'activelistsub' }} @endif">Distance and XP</a>
 								@endif
+							</div>
+						</div>
+					</li>
+
+
+					@php 
+						$eventRoutes = (
+						$route == 'admin.events.index' || 
+						$route == 'admin.events.create' || 
+						$route == 'admin.events.edit' || 
+						$route == 'admin.events.show'
+						)? true:false;
+
+						$eventNotificationRoute = ($route == 'admin.event-notifications.index')? true:false;
+						
+						$showIcon = ($eventRoutes || $eventNotificationRoute)? 'fa-minus': 'fa-plus';
+					@endphp
+					<li>
+						
+						<a href="javascript:void(0)" class="plusbttnbox myBtn">
+							Events<i class="fa {{ $showIcon }}" aria-hidden="true"></i>
+						</a>
+
+						<div class="dropdown custmenbox">
+							<div class="dropdown-content myDropdown {{ ($showIcon == 'fa-minus')? 'show': '' }}">
+								
+								<a href="{{ route('admin.events.index') }}" class="@if($eventRoutes) {{ 'activelistsub' }} @endif">Events</a>
+								
+								<a href="{{ route('admin.event-notifications.index') }}" class="@if($eventNotificationRoute) {{ 'activelistsub' }} @endif">Event Notifications</a>
 							</div>
 						</div>
 					</li>
@@ -158,7 +188,11 @@
 						$route == 'admin.xpManagement.edit'
 						)? true:false;
 						
-						$showIcon = ($chestLoot || $MGCLoot || $relicLootBind || $huntXPMngmnt)? 'fa-minus': 'fa-plus';
+						$mapPiecesLoot = ($route == 'admin.map-pieces-loots.index')? true:false;
+						
+						$jokeItemsLoot = ($route == 'admin.joke-items-loots.index')? true:false;
+						
+						$showIcon = ($chestLoot || $MGCLoot || $relicLootBind || $huntXPMngmnt || $mapPiecesLoot || $jokeItemsLoot)? 'fa-minus': 'fa-plus';
 					@endphp
 					<li>
 						
@@ -185,8 +219,11 @@
 								@endif
 
 								@if($admin->hasPermissionTo('View Hunts XP'))
-									<a href="{{ route('admin.xpManagement.index') }}" class="@if($huntXPMngmnt) {{ 'activelistsub' }} @endif">XP rewards</a>
+								<a href="{{ route('admin.xpManagement.index') }}" class="@if($huntXPMngmnt) {{ 'activelistsub' }} @endif">XP rewards</a>
 								@endif
+									
+								<a href="{{ route('admin.map-pieces-loots.index') }}" class="@if($mapPiecesLoot) {{ 'activelistsub' }} @endif">Map Pieces rewards</a>
+								<a href="{{ route('admin.joke-items-loots.index') }}" class="@if($jokeItemsLoot) {{ 'activelistsub' }} @endif">Joke Item rewards</a>
 							</div>
 						</div>
 					</li>
@@ -272,7 +309,9 @@
 						<a href="{{ route('admin.analyticsMetrics') }}">Analytics</a>
 					</li>
 					@endif
-					
+					<li  class="@if($route == 'admin.plans.index') {{ 'activelist' }} @endif">
+						<a href="{{ route('admin.plans.index') }}">Plans</a>
+					</li>
 					@if($admin->hasPermissionTo('View Avatars'))
 						<li  class="@if($route == 'admin.avatar.index' || $route == 'admin.avatarDetails'	) {{ 'activelist' }} @endif">
 							<a href="{{ route('admin.avatar.index') }}">Avatars</a>
@@ -287,11 +326,18 @@
 						$couponRoute = ($route == 'admin.discounts.index')? true:false;
 						$paymentRoute = ($route == 'admin.payment.index')? true:false;
 						$reportLocations = ($route == 'admin.reported-locations.index')? true:false;
-						
+						$cityRoute = ($route == 'admin.city.index')? true:false;
+					
+						$countryRoute = ($route == 'admin.country.index')? true:false;
+						$stateRoute = ($route == 'admin.state.index')? true:false;
+
 						$showIcon = (
 						$userAccessRoute || 
 						$appSettingsRoute || 
 						$notificationsRoute || 
+						$cityRoute || 
+						$countryRoute || 
+						$stateRoute || 					
 						$paymentRoute || 
 						$reportLocations || 
 						$couponRoute)? 'fa-minus': 'fa-plus';
@@ -323,7 +369,12 @@
 								@if($admin->hasRole('Super Admin'))
 								<a href="{{ route('admin.adminManagement.index') }}" class="@if($userAccessRoute) {{ 'activelistsub' }} @endif">User Access</a>
 								@endif
-								
+								<a href="{{ route('admin.country.index') }}" class="@if($countryRoute) {{ 'activelistsub' }} @endif">Country</a>
+
+								<a href="{{ route('admin.state.index') }}" class="@if($stateRoute) {{ 'activelistsub' }} @endif">State</a>
+
+								<a href="{{ route('admin.city.index') }}" class="@if($cityRoute) {{ 'activelistsub' }} @endif">Cities</a>
+
 								<a href="{{ route('admin.reported-locations.index') }}" class="@if($reportLocations) {{ 'activelistsub' }} @endif">Reported Google Locations</a>
 
 							</div>

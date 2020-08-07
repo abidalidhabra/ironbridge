@@ -16,9 +16,13 @@ class HuntStatistic extends Eloquent
     	'distances',
     	'freeze_till',
     	'chest_xp',
-        'mg_change_charge',
+        // 'mg_change_charge',
         'mgc_xp',
         'relic_xp',
         'reported_loc_count',
+        'skeleton_keys_for_node',
+        'chest',
+        'map_pieces',
+        'joke_item'
     ];
 }

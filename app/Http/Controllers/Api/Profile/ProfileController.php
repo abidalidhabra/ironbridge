@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers\Api\Profile;
 
+use App\Exceptions\Profile\ChestBucketCapacityOverflowException;
 use App\Helpers\UserHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Profile\MarkTutorialAsCompleteRequest;
+use App\Http\Requests\Profile\SubmitAnswerRequest;
+use App\Http\Requests\User\AddTheChestRequest;
 use App\Http\Requests\User\ChangeTheChestMGRequest;
+use App\Http\Requests\User\OpenTheChestRequest;
+use App\Http\Requests\User\SyncAnAccountRequest;
 use App\Models\v2\MinigameHistory;
 use App\Repositories\ComplexityTargetRepository;
 use App\Repositories\Game\GameRepository;
@@ -16,8 +21,11 @@ use App\Repositories\RelicRepository;
 use App\Repositories\SeasonRepository;
 use App\Repositories\User\UserRepository;
 use App\Services\Hunt\ChestService;
+use App\Services\User\SyncAccount\SyncAccountFactory;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class ProfileController extends Controller
 {
@@ -65,22 +73,19 @@ class ProfileController extends Controller
         return response()->json(['message' => 'Tutorial has been marked as complete.']); 
     }
 
-    public function openTheChest(Request $request)
+    public function openTheChest(OpenTheChestRequest $request)
     {
         try {
-
             $user = auth()->user();
+
             if ($user->buckets['chests']['collected']) {
-                $chestService = (new ChestService)->setUser($user)->open();
-                return response()->json([
-                    'message' => 'Chest has been opened successfully.', 
-                    'next_minigame'=> $chestService->getMiniGame(),
-                    'chests_bucket'=> $user->buckets['chests'],
-                    'loot_rewards'=> $chestService->getLootRewards(),
-                    'chest_rewards'=> $chestService->getChestRewards(),
-                    'agent_status'=> $user->agent_status,
-                    'relic_info'=> $chestService->getRelicInfo(),
-                ]); 
+                $chestService = (new ChestService)
+                                ->setUser($user)
+                                ->open()
+                                ->when(($request->skip == 'true'), function($class){
+                                    $class->cutTheCharge('skipping_chest');
+                                });
+                return response()->json(['message' => 'Chest has been opened successfully.', 'data'=> $chestService->response()]); 
             }else{
                 return response()->json(['message' => 'You don\'t have chest in your account to open.'], 422); 
             }
@@ -92,8 +97,8 @@ class ProfileController extends Controller
     public function changeTheChestMG(ChangeTheChestMGRequest $request)
     {
         $user = auth()->user();
-        $huntStatistic = (new HuntStatisticRepository)->first(['id', 'mg_change_charge']);
-        if ($user->gold_balance >= $huntStatistic->mg_change_charge) {
+        $huntStatistic = (new HuntStatisticRepository)->first(['id', 'chest']);
+        if ($user->gold_balance >= $huntStatistic->chest['golds_to_skip_mg']) {
 
             $chestService = (new ChestService)->setUser($user);
             $chestService->changeChestMiniGame($request->minigames_ids);
@@ -125,6 +130,93 @@ class ProfileController extends Controller
             ]);
         }else{
             return response()->json(['message'=> 'You don\'t have atleast single chest to remove.'], 422);
+        }
+    }
+
+    public function addTheChest(AddTheChestRequest $request)
+    {
+        try {
+            $user = auth()->user();
+            if ($user['buckets']['chests']['collected'] + 1 > $user['buckets']['chests']['capacity']) {
+                throw new ChestBucketCapacityOverflowException("You don't have enough capacity to hold this chest");
+            }else{
+                $chestService = new ChestService;
+                $chestService->setUser($user)->add($request->place_id);
+                return response()->json([
+                    'message'=> 'A chest has been added to bucket.', 
+                    'chests_bucket'=> $chestService->getUser()->buckets['chests'],
+                    'chest_freeze_data'=> (new ChestService)->setUser($user)->remainingFreezeTime()
+                ]);
+            }
+        } catch (ChestBucketCapacityOverflowException $e) {
+            return response()->json(['message'=> $e->getMessage()], 422);
+        } catch (Exception $e) {
+            return response()->json(['message'=> $e->getMessage()], 500);
+        }
+    }
+
+    public function setStreamingRelic(Request $request)
+    {
+        try {
+
+            $validator = Validator::make($request->all(),[
+                            'streaming_relic_id'=> "required|exists:relics,_id",
+                            'skipped_relic_id'=> "required|exists:relics,_id",
+                        ]);
+
+            if ($validator->fails()) {
+                return response()->json(['message'=> $validator->messages()->first()],422);
+            }
+
+            $user = auth()->user();
+            $user->streaming_relic_id = $request->streaming_relic_id;
+            $user->skipped_relic_id = $request->skipped_relic_id;
+            $user->save();
+
+            return response()->json([
+                'message'=> 'Streaming relic has been added to your account.',
+                'streaming_relic'=> (new UserRepository($user))->streamingRelic()
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['message'=> $e->getMessage()], 500);
+        }
+    }
+
+    public function temporelicAPI(Request $request)
+    {
+        (new UserRepository)->getModel()->chunk(200, function($users){
+            foreach ($users as $user){
+                $relic = $user->relics->last();
+                if ($relic) {
+                    $user->streaming_relic_id = $relic['id'];
+                    $user->save();
+                }
+            }
+        });
+
+    }
+
+    public function submitAnswer(SubmitAnswerRequest $request)
+    {
+        try {
+            $data = (new UserRepository(auth()->user()))->submitAnswer($request->tag);
+            return response()->json(['message' => 'Answer has been submitted successfully.']); 
+        } catch (Exception $e) {
+            return response()->json(['message'=> $e->getMessage()], 500);
+        }
+    }
+
+    public function syncAnAccountRequest(SyncAnAccountRequest $request)
+    {
+        try {
+
+            $syncAccountFactory = new SyncAccountFactory;
+            $emailAccountService = $syncAccountFactory->init($request->sync_to, auth()->user(), $request);
+            return response()->json(['message' => 'Account has been successfully reset.', 'data'=> $emailAccountService->sync()]);
+        }catch (ValidationException $e) {
+            return response()->json(['message'=> collect($e->errors())->first()[0]], 422);
+        }catch (Exception $e) {
+            return response()->json(['message'=> $e->getMessage()], 500);
         }
     }
 }

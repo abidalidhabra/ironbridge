@@ -13,7 +13,11 @@ use App\Models\v2\HuntUserDetail;
 use App\Models\v2\PlanPurchase;
 use App\Models\v2\PracticeGameUser;
 use App\Models\v2\Relic;
+use App\Models\v3\City;
 use App\Repositories\RelicRepository;
+use App\Rules\User\UpdateHomeCity;
+use App\Services\Event\EventService;
+use App\Services\Event\EventUserService;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -22,7 +26,6 @@ use MongoDB\BSON\UTCDateTime as MongoDBDate;
 use Validator;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\Datatables\Datatables;
-
 
 
 class UserController extends Controller
@@ -35,7 +38,7 @@ class UserController extends Controller
     //GET USER
     public function getUsers(Request $request)
     {	
-        $skip = (int)$request->get('start');
+        /*$skip = (int)$request->get('start');
         $take = (int)$request->get('length');
         $search = $request->get('search')['value'];
 
@@ -63,7 +66,55 @@ class UserController extends Controller
                 ->orWhere('dob','like','%'.$search.'%')
                 ->orWhere('created_at','like','%'.$search.'%');
             })->count();
+        }*/
+
+        $columns = array( 
+                            0 => '_id', 
+                            1 => 'created_at',
+                            2 => 'first_name',
+                            3 => 'email',
+                            4 => 'username',
+                            5 => 'gold_balance',
+                            6 => 'available_skeleton_keys',
+                            // 7 => 'device.type',
+                        );
+
+        $skip = (int)$request->get('start');
+        $take = (int)$request->get('length');
+        $order = $columns[$request->input('order.0.column')];
+        $search = $request->get('search')['value'];
+        $status = $request->status;
+        
+        if(!empty($request->input('search.value')) || $request->input('order.0.column') != 0){
+            $dir = $request->input('order.0.dir');
+        } else {
+            $dir = 'desc';
         }
+
+        $user = User::select('first_name','last_name','username', 'email', 'mobile_no', 'gold_balance','created_at','skeleton_keys','device_info','guest_id')
+                    ->when($search != '', function($query) use ($search) {
+                                $active = ($search == 'true' || $search == 'Active')? true: false;
+                                $query->orWhere('first_name', 'LIKE',"%{$search}%")
+                                       ->orWhere('last_name', 'LIKE',"%{$search}%")
+                                       ->orWhere('email', 'LIKE',"%{$search}%")
+                                       ->orWhere('username', 'LIKE',"%{$search}%")
+                                       ->orWhere('gold_balance', 'LIKE',"%{$search}%")
+                                       ->orWhere('created_at', 'LIKE',"%{$search}%");
+                            })
+                    ->orderBy($order,$dir)
+                    ->skip($skip)
+                    ->take($take)
+                    ->get();
+        $filterCount = User::when($search != '', function($query) use ($search) {
+                                $active = ($search == 'true' || $search == 'Active')? true: false;
+                                $query->orWhere('first_name', 'LIKE',"%{$search}%")
+                                       ->orWhere('last_name', 'LIKE',"%{$search}%")
+                                       ->orWhere('email', 'LIKE',"%{$search}%")
+                                       ->orWhere('username', 'LIKE',"%{$search}%")
+                                       ->orWhere('gold_balance', 'LIKE',"%{$search}%")
+                                       ->orWhere('created_at', 'LIKE',"%{$search}%");
+                            })->count();
+
         return DataTables::of($user)
         ->addIndexColumn()
         ->addColumn('name', function($user){
@@ -116,8 +167,8 @@ class UserController extends Controller
                     }
                     
                 })
-        ->setTotalRecords($count)
-        ->setFilteredRecords($count)
+        ->setTotalRecords($filterCount)
+        ->setFilteredRecords($filterCount)
         ->skipPaging()
         ->make(true);
     }
@@ -267,8 +318,10 @@ class UserController extends Controller
                     $relic->collected_pieces = 0;
                     return $relic; 
                 });
+
+        $cities = City::get();
                 
-        return view('admin.user.accountInfo',compact('id','user','data','relics'));
+        return view('admin.user.accountInfo',compact('id','user','data','relics','cities'));
     }
 
     //AVTAR ITEMS
@@ -699,6 +752,13 @@ class UserController extends Controller
         }
         $user->mgc_status = $MGCStatus;
         $user->minigame_tutorials = $minigameTutorial;
+
+        /** reset streaming relic **/
+        $user->user_relic_map_pieces()->delete();
+        $relic = (new RelicRepository)->getModel()->active()->orderBy('number', 'asc')
+                ->select('_id', 'name', 'number', 'active', 'pieces', 'icon')->first();
+        $user->streaming_relic_id = $relic->id;
+
         $user->save();
         return response()->json(['message'=> 'Account has been successfully reset.']);
     }
@@ -716,5 +776,44 @@ class UserController extends Controller
             return $completed;
         });
         return view('admin.user.tutorialsProgress',compact('id','tutorials'));        
+    }
+
+    public function chestInverntory($id){
+        $user = User::where('_id',$id)->select('_id', 'buckets')->first();
+        $chests = $user->buckets['chests'];
+        $chests['mini_game'] = ($chests['minigame_id'])?Game::where('_id',$chests['minigame_id'])->first()->name:'-';
+        return view('admin.user.chestInverntory',compact('id','chests'));           
+    }
+
+    public function updateCity(Request $request){
+
+        $user = User::where('_id',$request->user_id)->first();
+
+        $validator = Validator::make($request->all(), [
+            'dob'   => 'required',
+            'city'  => ['required', new UpdateHomeCity($user)],
+        ]);
+
+        if ($validator->fails()){
+            $message = $validator->messages()->first();
+            return response()->json(['status' => false,'message' => $message]);
+        }        
+
+        $event = (new EventUserService)->setUser($user)->running(['*'], true);
+        if ($event) {
+            $event->participations->first()->delete();
+        }
+        
+        (new EventService)->participateMeInEventIfAny($user, $request->city);
+
+        $user->city_id = $request->city;
+        $user->dob = Carbon::parse($request->dob);
+        $user->save();
+
+        return response()->json([
+            'status'  => true,
+            'message' =>'City and date of birth has been updated successfully.',
+            'current_gold'=> $user->gold_balance
+        ]);
     }
 }

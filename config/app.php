@@ -179,6 +179,7 @@ return [
         Intervention\Image\ImageServiceProvider::class,
         Maklad\Permission\PermissionServiceProvider::class,
         App\Providers\IronBridgeServiceProvider::class,
+        Jenssegers\Mongodb\MongodbQueueServiceProvider::class,
 
     ],
 

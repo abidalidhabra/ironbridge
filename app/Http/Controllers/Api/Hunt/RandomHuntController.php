@@ -11,8 +11,10 @@ use App\Http\Requests\Hunt\RevokeTheRevealRequest;
 use App\Http\Requests\v1\ParticipateRequest;
 use App\Models\v2\HuntStatistic;
 use App\ReportedLocation;
+use App\Repositories\AppStatisticRepository;
 use App\Repositories\Hunt\ClaimTheBonusTreasurePrizeService;
 use App\Repositories\Hunt\ClaimTheMinigameNodePrizeService;
+use App\Repositories\Hunt\ClaimTheSkeletonNodePrizeService;
 use App\Repositories\Hunt\Factory\HuntFactory;
 use App\Repositories\Hunt\GetHuntParticipationDetailRepository;
 use App\Repositories\Hunt\GetLastRunningRandomHuntRepository;
@@ -23,6 +25,7 @@ use App\Repositories\Hunt\HuntUserRepository;
 use App\Repositories\Hunt\ParticipationInRandomHuntRepository;
 use App\Repositories\Hunt\TerminateTheLastRandomHuntRepository;
 use App\Repositories\User\UserRepository;
+use App\Services\Hunt\ChestService;
 use App\Services\Hunt\PaybleCellProviderService;
 use Exception;
 use GuzzleHttp\Client;
@@ -137,6 +140,18 @@ class RandomHuntController extends Controller
         // $queries = \DB::getQueryLog();
         // dd($queries);
         return response()->json(['message' => 'prize provided on the behalf of bonuse treasure node.', 'reward'=> $reward]);
+    }    
+
+    public function claimTheSkeletonNodePrizeService(Request $request)
+    {
+        $user = auth()->user();
+        $huntStatistic = HuntStatistic::first(['_id', 'skeleton_keys_for_node']);
+        if (($user->available_skeleton_keys + $huntStatistic->skeleton_keys_for_node ) <= $user->skeletons_bucket) {
+            $reward = (new ClaimTheSkeletonNodePrizeService)->setUser($user)->do();
+            return response()->json(['message' => 'prize provided on the behalf of skeleton key node.', 'reward'=> $reward]);
+        }else{
+            return response()->json(['message' => 'Your skeleton bucket has not enough space to hold new skeleton keys.'], 422);
+        }
     }
 
     public function claimPrizeForMinigameNode(ClaimPrizeForMinigameNodeRequest $request)
@@ -186,78 +201,88 @@ class RandomHuntController extends Controller
 
     public function getCellData(CellDataRequest $request)
     {
+        try {
+            $user = auth()->user();
         
-        $user = auth()->user();
-        
-        $paybleCellProviderService = new PaybleCellProviderService;
-        
-        // $response = [
-        //     'cell_id'=> $paybleCellProviderService->getCellIDs($request, $user),
-        //     'random_hunt_cell'=> $paybleCellProviderService->getRandomHuntsCells()
-        // ];
-        
-        // if ($user->nodes_status && (isset($user->nodes_status['mg_challenge']) || isset($user->nodes_status['power']) || isset($user->nodes_status['bonus']))) {
-
-        //     $playableRes = $paybleCellProviderService->getMinigamesCells(); 
-        //     $playableNodes = collect($playableRes->locationsPerGameObjectType); 
+            $paybleCellProviderService = new PaybleCellProviderService;
             
-        //     if (isset($user->nodes_status['power'])) {  
-        //         $response['power_station_node'] = $playableNodes->first();  
-        //     }   
+            // $response = [
+            //     'cell_id'=> $paybleCellProviderService->getCellIDs($request, $user),
+            //     'random_hunt_cell'=> $paybleCellProviderService->getRandomHuntsCells()
+            // ];
             
-        //     if (isset($user->nodes_status['mg_challenge'])) {   
-        //         $response['minigame_node'] = $playableNodes->slice(1)->take(1)->first();    
-        //     }
-        //     if (isset($user->nodes_status['bonus'])) {    
-            
-        //         $response['bonus_nodes'] = $playableNodes->slice(2)->values();  
-        //     }   
-        // }
+            // if ($user->nodes_status && (isset($user->nodes_status['mg_challenge']) || isset($user->nodes_status['power']) || isset($user->nodes_status['bonus']))) {
 
-        $response = [];
-
-        foreach (json_decode($request->coordinates, true) as $key => $coordinate) {
-
-            $cell2ID = $paybleCellProviderService->getCellID(
-                            array_merge($coordinate, ['level'=> $request->level])
-                        );
-
-            if (!$paybleCellProviderService->getCell2IDs()->contains('cell2ID', $cell2ID->cell2ID)) {
-
-                $responseToBeGiven = [];
-                $responseToBeGiven['cell2ID'] = $cell2ID->cell2ID;
-                $paybleCellProviderService->addCell2IDs($cell2ID);
-                $responseToBeGiven['random_hunt_cell'] = $paybleCellProviderService->getRandomHuntsCells();
+            //     $playableRes = $paybleCellProviderService->getMinigamesCells(); 
+            //     $playableNodes = collect($playableRes->locationsPerGameObjectType); 
                 
-                // if (
-                //     $user->nodes_status && 
-                //     (   
-                //         isset($user->nodes_status['mg_challenge']) || 
-                //         isset($user->nodes_status['power']) || 
-                //         isset($user->nodes_status['bonus'])
-                //     )
-                // ) {
+            //     if (isset($user->nodes_status['power'])) {  
+            //         $response['power_station_node'] = $playableNodes->first();  
+            //     }   
+                
+            //     if (isset($user->nodes_status['mg_challenge'])) {   
+            //         $response['minigame_node'] = $playableNodes->slice(1)->take(1)->first();    
+            //     }
+            //     if (isset($user->nodes_status['bonus'])) {    
+                
+            //         $response['bonus_nodes'] = $playableNodes->slice(2)->values();  
+            //     }   
+            // }
 
-                    $playableRes = $paybleCellProviderService->getMinigamesCells(); 
-                    $playableNodes = collect($playableRes->locationsPerGameObjectType); 
+            $response = [];
 
-                    // if (isset($user->nodes_status['power'])) {  
-                        $responseToBeGiven['power_station_node'] = $playableNodes->first();  
-                    // }   
+            foreach (json_decode($request->coordinates, true) as $key => $coordinate) {
 
-                    // if (isset($user->nodes_status['mg_challenge'])) {   
-                        $responseToBeGiven['minigame_node'] = $playableNodes->slice(1)->take(1)->first();    
+                $cell2ID = $paybleCellProviderService->getCellID(
+                                array_merge($coordinate, ['level'=> $request->level])
+                            );
+
+                if (!$paybleCellProviderService->getCell2IDs()->contains('cell2ID', $cell2ID->cell2ID)) {
+
+                    $responseToBeGiven = [];
+                    $responseToBeGiven['cell2ID'] = $cell2ID->cell2ID;
+                    $paybleCellProviderService->addCell2IDs($cell2ID);
+                    $responseToBeGiven['random_hunt_cell'] = $paybleCellProviderService->getRandomHuntsCells();
+                    
+                    // if (
+                    //     $user->nodes_status && 
+                    //     (   
+                    //         isset($user->nodes_status['mg_challenge']) || 
+                    //         isset($user->nodes_status['power']) || 
+                    //         isset($user->nodes_status['bonus'])
+                    //     )
+                    // ) {
+
+                        $playableRes = $paybleCellProviderService->getMinigamesCells(); 
+                        $playableNodes = collect($playableRes->locationsPerGameObjectType); 
+
+                        // if (isset($user->nodes_status['power'])) {  
+                            $responseToBeGiven['skeleton_node'] = $playableNodes->first();  
+                        // }   
+
+                        // if (isset($user->nodes_status['mg_challenge'])) {   
+                            $responseToBeGiven['minigame_node'] = $playableNodes->slice(1)->take(1)->first();    
+                        // }
+                            
+                        // if (isset($user->nodes_status['bonus'])) {    
+
+                            // $responseToBeGiven['bonus_nodes'] = $playableNodes->slice(2)->values();  
+                        // }   
+                        
+                        $responseToBeGiven['chest_nodes'] = $playableNodes->last();    
                     // }
-
-                    // if (isset($user->nodes_status['bonus'])) {    
-
-                        // $responseToBeGiven['bonus_nodes'] = $playableNodes->slice(2)->values();  
-                    // }   
-                // }
-                $response[] = $responseToBeGiven;
+                    $response[] = $responseToBeGiven;
+                }
             }
+
+            return response()->json([
+                'message'=> 'Cell data has been retrieved.', 
+                'data'=> $response,
+                'chest_freeze_data'=> (new ChestService)->setUser($user)->remainingFreezeTime()
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['message'=> $e->getMessage()], 500);
         }
-        return response()->json(['message'=> 'Cell data has been retrieved.', 'data'=> $response]);
     }
 
     public function reportTheLocation(Request $request)
@@ -279,6 +304,7 @@ class RandomHuntController extends Controller
             $huntStatistic = HuntStatistic::first(['_id', 'reported_loc_count']);
 
             if ($locations->count() >= $huntStatistic->reported_loc_count) {
+                $paybleGoogleKey = (new AppStatisticRepository)->first(['_id', 'google_keys.web'])->google_keys['web'];
                 
                 $loc = $locations->map(function($data) {
                     $data->languageCode = "en-US";
@@ -289,7 +315,7 @@ class RandomHuntController extends Controller
                 $requestId = uniqid();
                 $client = new Client();
                 $apiResponse = $client->request('POST', 
-                    "https://playablelocations.googleapis.com/v3:logPlayerReports?key=AIzaSyA_01wAGuFb4lEYCF2CO3zkKcFdDv2NORQ", 
+                    "https://playablelocations.googleapis.com/v3:logPlayerReports?key=".$paybleGoogleKey, 
                     [
                         'json' => ["playerReports"=> $loc->toArray(), 'requestId'=> $requestId],
                         'http_errors'=> false

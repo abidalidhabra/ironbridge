@@ -4,39 +4,75 @@ namespace App\Http\Controllers\Api\v2;
 
 use App\Helpers\ResponseHelpers;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\v2\GetEventsInCityRequest;
-use App\Models\v1\City;
-use App\Models\v2\Event;
+use App\Models\v3\Event;
+use App\Repositories\User\UserRepository;
+use App\Services\Event\EventUserService;
+use App\Services\Event\LeaderBoardService;
+use App\Services\User\CompassService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use MongoDB\BSON\ObjectId;
+use Exception;
 
 class EventController extends Controller
 {
-    private $user;
-
-    public function __construct()
+    
+    public function getLeadersBoard(Request $request)
     {
-        $this->middleware(function ($request, $next) {
-            $this->user = auth()->user();
-            return $next($request);
-        });
+        try {
+            $data = (new LeaderBoardService)->home();
+            return ResponseHelpers::successResponse($data);
+        } catch (Exception $e) {
+            return ResponseHelpers::validationErrorResponse($e);
+        }
     }
 
-    public function getEventsCities(Request $request)
-    {
-        $cities = City::select('_id','name')->havingActiveEvents()->get();
 
-        return ResponseHelpers::successResponse($cities);
+    public function getMoreLeaderRanks($skip, $take = 25)
+    {
+        $data = (new UserRepository)->getModel()->whereHas('events', function($query) use ($eventId){
+                    $query->where('event_id', $eventId);
+                })
+                ->select('_id', 'first_name', 'last_name', 'compasses', 'widgets')
+                ->orderBy('compasses.remaining', 1)
+                ->skip($skip)
+                ->limit($take)
+                ->get()
+                ->map(function($user){
+                    $user->avatar = asset('storage/avatars/'.$user->id.'.jpg');
+                    return $user;
+                });
+        return $data;
     }
 
-    public function getEventsInCity(GetEventsInCityRequest $request)
+    public function getMoreLeaders(Request $request)
     {
-        $events = Event::soonActivatedOrParticipated(auth()->user()->id)
-                    ->havingCity($request->city_id)
-                    ->withWinningPrize()
-                    ->withParticipation($this->user->id)
-                    ->select('_id', 'name', 'fees', 'description', 'starts_at', 'ends_at', 'discount', 'discount_amount', 'city_id', 'play_countdown', 'discount_countdown', 'status')
-                    ->get();
-                    
-        return ResponseHelpers::successResponse($events);
+        $validator = Validator::make($request->all(),[
+            'cursor'=> 'required|integer',
+            'direction'  => 'required|in:up,down',
+        ]);
+
+        if ($validator->fails()){
+            return response()->json(['message' => $validator->messages()->first()]);
+        }
+
+        try {
+            $data = (new LeaderBoardService)->next($request->direction, $request->cursor);
+            return ResponseHelpers::successResponse($data);
+        } catch (Exception $e) {
+            return ResponseHelpers::validationErrorResponse($e);
+        }
+    }
+
+    public function reduceTheRadius(Request $request)
+    {
+        try {
+            $eventUser = (new CompassService)
+                            ->setUser(auth()->user())
+                            ->deduct();
+            return ResponseHelpers::successResponse($eventUser->response());
+        } catch (Exception $e) {
+            return ResponseHelpers::validationErrorResponse($e);
+        }
     }
 }

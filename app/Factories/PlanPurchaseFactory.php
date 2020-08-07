@@ -3,6 +3,7 @@
 namespace App\Factories;
 
 use App\Repositories\PlanPurchase\ChestBucketPurchase;
+use App\Repositories\PlanPurchase\CompassPurchase;
 use App\Repositories\PlanPurchase\GoldPurchase;
 use App\Repositories\PlanPurchase\GoldSkeletonPurchase;
 use App\Repositories\PlanPurchase\SkeletonPurchase;
@@ -20,6 +21,8 @@ class PlanPurchaseFactory
 
 		if ($plan->type == 'chest_bucket') {
 			return new ChestBucketPurchase($plan, $user);
+		}else if ($plan->type == 'compass') {
+			return new CompassPurchase($plan, $user);
 		}else if ($plan->gold_value && $plan->skeleton_keys) {
 			return new GoldSkeletonPurchase($plan, $user);
 		}else if ($plan->gold_value) {
