@@ -11,7 +11,7 @@ use Exception;
 class PaybleCellProviderService
 {
 	
-	protected $cellIDServerURL = 'http://54.152.124.171:8080/CELL2IDAPP/rest/json/metallica/get';
+	protected $cellIDServerURL = 'http://18.233.52.123:8080/CELL2IDAPP/rest/json/metallica/get';
 	// protected $paybleGoogleKey = 'AIzaSyA_01wAGuFb4lEYCF2CO3zkKcFdDv2NORQ';
 	protected $paybleGoogleKey;
 	protected $paybleGoogleURL;
