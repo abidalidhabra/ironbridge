@@ -14,6 +14,8 @@ services:
     ports:
       - "443:443"
       - "80:80"
+    depends_on:
+      - db
     networks:
       - network
 
@@ -25,6 +27,23 @@ services:
       - redis:/data
     ports:
       - "6379:6379"
+    depends_on:
+      - laravel
+    networks:
+      - network
+
+  db:
+    image: mongo:4.2.3-bionic
+    restart: always
+    container_name: db
+    volumes:
+      - mongodb:/data/db
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ironbridge1779user
+      MONGO_INITDB_ROOT_PASSWORD: WvshoaanimlBoWMM
+      MONGO_INITDB_DATABASE: ironbridge1779
     networks:
       - network
 
@@ -34,6 +53,7 @@ volumes:
   redis:
   logs:
   framework:
+  mongodb:
 
 networks:
   network:

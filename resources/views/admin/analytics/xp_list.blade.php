@@ -14,6 +14,18 @@
                 <a href="{{ route('admin.analyticsMetrics') }}" class="btn btn-info btn-md">Back</a>
             </div>
         </div>
+        <div class="row">
+            <div class="daterightbox">
+                <form method="post" id="userDaterangepickerForm">
+                    @csrf
+                    <img src="{{ asset('admin_assets/images/datepicker.png') }}">
+                    <input type="text" name="user_date" value="" />
+                </form>
+            </div>
+            <div class="refreshbox">
+                <a href="javascript:void(0)" id="refresh_user" data-action="refresh" data-date="{{ $data['user_start_date']->format('d M Y').' - '.$data['user_end_date']->format('d M Y') }}"><i class="fa fa-refresh"></i></a>
+            </div>
+        </div>
     </div>
     <br/><br/>
     <div class="customdatatable_box">
@@ -33,7 +45,43 @@
 
 @section('scripts')
 <script type="text/javascript">
-    $(document).ready(function() {
+    $(window).load(function() {
+            /* USER DTAE RANGE FILETR */
+            var userStartDate =  "{{ $data['user_start_date']->format('d M Y') }}";
+            var userEndDate = "{{ $data['user_end_date']->format('d M Y') }}";
+
+            userDaterangepicker();
+            function userDaterangepicker(){
+                $('input[name="user_date"]').daterangepicker({ 
+                    maxDate: new Date(),
+                    startDate: userStartDate,
+                    endDate: userEndDate,
+                    locale: {
+                        format: 'DD MMM YYYY',
+                    },
+                    ranges: {
+                     'Today': [moment(), moment()],
+                     'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                     'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                     'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                     'This Month': [moment().startOf('month'), moment().endOf('month')],
+                     'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                 }
+             });
+            }
+
+            $('input[name="user_date"]').change(function(e) {
+                e.preventDefault();
+                table.ajax.reload();
+            });
+
+            $('#refresh_user').click(function(e){
+                e.preventDefault();
+                // $('input[name="user_date"]').val($(this).attr('data-date'));
+                table.ajax.reload();
+            });
+
+
             //GET USER LIST
             var table = $('#dataTable').DataTable({
                 pageLength: 10,
@@ -47,6 +95,7 @@
                     url: "{{ route('admin.analyticsMetrics.getXPList') }}",
                     data: function ( d ) {
                         d._token = "{{ csrf_token() }}";
+                        d.user_date = $('input[name="user_date"]').val();
                     },
                     complete:function(){
                         afterfunction();
@@ -67,6 +116,7 @@
                 ],
 
             });
+
         });
     </script>
     @endsection

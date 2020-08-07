@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | GAME VARIATION')
+@section('title','Ironbridge1779 | Add Random Hunt Variations')
 @extends('admin.layouts.admin-app')
 @section('styles')
     <!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->
@@ -8,7 +8,7 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Add Game Variation</h3>
+                <h3>Add Random Hunt Variations</h3>
             </div>
             <div class="col-md-6 text-right modalbuttonadd">
                 <a href="{{ route('admin.gameVariation.index') }}" class="btn btn-info btn-md">Back</a>

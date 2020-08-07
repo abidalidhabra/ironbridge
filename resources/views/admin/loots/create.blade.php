@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | Loot')
+@section('title','Ironbridge1779 | Add Relic Loots')
 @extends('admin.layouts.admin-app')
 
 @section('content')
@@ -10,7 +10,7 @@
             </div>
             <div class="col-md-12">
                 <div class="row">
-                    <h3>Add Loot Table</h3>
+                    <h3>Add Relic Loots</h3>
                 </div>
             </div>
         </div>

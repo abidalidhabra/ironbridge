@@ -54,6 +54,23 @@
 
     <style>
         @yield('styles')
+/*        .tooltip-inner{
+            word-wrap: break-word;
+            text-align: center;
+            white-space: pre-line;
+            max-width: 100% !important;
+        }*/
+        .badge-success {
+            color: #fff;
+            background-color: #28a745;
+        } 
+        .badge-warning {
+            color: #fff;
+            background-color: #ffc107;
+        }
+        .d-none {
+            display: none;
+        }
     </style>
 </head>
 
@@ -115,6 +132,36 @@
         } else {
             $(this).find("i").addClass("fa-minus").removeClass("fa-plus");
         }
-    })
+    });
+
+    function showTheLoader() {
+        $('#submitBtn').prop('disabled', true).find('i').show();
+    }
+
+    function hideTheLoader() {
+        $('#submitBtn').prop('disabled', false).find('i').hide();
+    }
+
+    function errHandling(jqXHR, exception) {
+        var msg = '';
+        if (jqXHR.status === 0) {
+            msg = 'Not connect.\n Verify Network.';
+        } else if (jqXHR.status == 404) {
+            msg = 'Requested page not found. [404]';
+        } else if (jqXHR.status == 500) {
+            msg = 'Internal Server Error [500].';
+        } else if (jqXHR.status == 422) {
+            msg = JSON.parse(jqXHR.responseText).message;
+        } else if (exception === 'parsererror') {
+            msg = 'Requested JSON parse failed.';
+        } else if (exception === 'timeout') {
+            msg = 'Time out error.';
+        } else if (exception === 'abort') {
+            msg = 'Ajax request aborted.';
+        } else {
+            msg = 'Uncaught Error.\n' + jqXHR.responseText;
+        }
+        return msg;
+    }
 </script>
 </html>

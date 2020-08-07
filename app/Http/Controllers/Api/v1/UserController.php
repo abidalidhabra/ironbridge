@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v1;
 use App\Factories\WidgetItemFactory;
 use App\Helpers\TransactionHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\v2\SetMyAvatarRequest;
 use App\Models\v1\Avatar;
 use App\Models\v1\CityInfo;
 use App\Models\v1\TreasureLocation;
@@ -12,7 +13,6 @@ use App\Models\v1\User;
 use App\Models\v1\UserBalancesheet;
 use App\Models\v1\WidgetItem;
 use App\Repositories\MiniGameRepository;
-// use App\Repositories\User\UserRepository;
 use Auth;
 use Carbon\Carbon;
 use Exception;
@@ -241,38 +241,158 @@ class UserController extends Controller
     	],200);
     }
 
-    public function setMyAvatar(Request $request)
+  //   public function setMyAvatar(Request $request)
+  //   {
+
+  //   	/* Validate the parameters */
+  //   	$validator = Validator::make($request->all(),[
+		// 	'avatar_id'	  => "required|string|exists:avatars,_id",
+		// 	'eyes_color'  => "required|string",
+		// 	'hairs_color' => "required|string",
+		// 	'skin_color'  => "required|string",
+  //           'widgets'     => "required|array",
+  //           'widgets.*' => "required|string|exists:widget_items,_id",
+  //   	]);
+
+  //   	if ($validator->fails()) {
+  //           return response()->json(['message'=>$validator->messages()], 422);
+  //       }
+
+  //       // $usersAll = User::where('widgets.id','!=','5d246f0c0b6d7b19fb5ab590')->get();
+  //       // $usersAll->map(function($user, $index){
+  //       //     $user->push('widgets',['id'=>'5d246f0c0b6d7b19fb5ab590','selected'=>false]);
+  //       //     $user->save();
+  //       //     return $user;
+  //       // });
+
+  //   	$user       = Auth::user();
+  //       $userId     = $user->id;
+  //   	$avatarId 	= $request->avatar_id;
+		// $eyeColor 	= $request->eyes_color;
+		// $hairColor  = $request->hairs_color;
+		// $skinColors = $request->skin_color;
+  //       $widgets    = $request->widgets;
+        
+  //       $primaryAvatar = Avatar::where('_id',$avatarId)->select('_id','gender')->first();
+  //       $user->gender = $primaryAvatar->gender;
+  //       $user->avatar = [
+  //           'avatar_id' => $avatarId,
+  //           'eyes_color' => $eyeColor,
+  //           'hairs_color' => $hairColor,
+  //           'skin_color' => $skinColors,
+  //       ];
+  //       $user->save();
+
+  //       /** Extra ordinary setup **/
+  //       // $newBee = User::where('_id', $userId)->first();
+  //       /** Extra ordinary setup **/
+
+  //       // User::where('_id',$user->id)
+  //       //     ->where('widgets.selected', true)
+  //       //     ->update(['widgets.$[].selected'=> false]);
+
+  //       // if ($primaryAvatar->gender == 'female') {
+  //       //     $newUser = User::where('_id', $userId)->select('_id', 'widgets')->get();
+  //       //     $maleIdsGlobal = WidgetItem::whereHas('avatar', function($query) {
+  //       //                         $query->where('gender', 'male');
+  //       //                     })
+  //       //                     ->get()
+  //       //                     ->map(function($item) {
+  //       //                         return $item->id;
+  //       //                     });
+  //       //     $maleIdsUser = collect($newUser->widgets)->filter(function($value, $key) use ($maleIdsGlobal){ 
+  //       //                             return $maleIdsGlobal->contains($value->id);
+  //       //                         });
+  //       //     dump($maleIdsUser);
+  //       //     dd("male", $maleIdsGlobal);
+  //       //     // $maleItems = collect($newUser->widgets)->where()
+  //       // }else {
+  //       //     $newUser = User::where('_id', $userId)->select('_id', 'widgets')->first();
+  //       //     $femaleIdsGlobal = WidgetItem::whereHas('avatar', function($query) {
+  //       //                         $query->where('gender', 'male');
+  //       //                     })
+  //       //                     ->get()
+  //       //                     ->map(function($item) {
+  //       //                         return $item->id;
+  //       //                     });
+  //       //     $femaleIdsUser = collect($newUser->widgets)->filter(function($value, $key) use ($femaleIdsGlobal){ 
+  //       //                             return $femaleIdsGlobal->contains($value['id']);
+  //       //                         })->map(function($item) {
+  //       //                             return $item['id'];
+  //       //                         });
+  //       //     dump($femaleIdsUser);
+  //       //     dd("male", $femaleIdsGlobal);
+  //       // }
+
+
+  //       /*********************************************************************************************************/
+  //       $newUser = User::where('_id', $userId)->select('_id', 'widgets')->first();
+
+  //       $hairsProvided = false;
+  //       foreach ($widgets as $index => $widget) {
+  //           $hairsProvided = WidgetItem::where(['_id'=> $widget, 'widget_name'=> 'Hairs'])->count();
+  //           if ($hairsProvided) {
+  //               break;
+  //           }
+  //       }
+
+  //       $globalIds = WidgetItem::whereHas('avatar', function($query) use ($primaryAvatar){
+  //                               $query->where('gender', $primaryAvatar->gender);
+  //                           })
+  //                           ->get()
+  //                           ->map(function($item) {
+  //                               return $item->id;
+  //                           });
+  //       $userWidgetIds = collect($newUser->widgets)->filter(function($value, $key) use ($globalIds){ 
+  //                           return $globalIds->contains($value['id']);
+  //                       })->map(function($item) {
+  //                           return $item['id'];
+  //                       })->values()->toArray();
+
+  //       User::where('_id',$user->id)
+  //       ->update(['widgets.$[identifier].selected'=> false],[
+  //           'arrayFilters'=> [ 
+  //               [ "identifier.id"=> ['$in'=> $userWidgetIds] ] 
+  //           ]
+  //       ]);
+  //       // dump($primaryAvatar->gender, $userWidgetIds);
+  //       // dd($primaryAvatar->gender, $widgets);
+  //       /*********************************************************************************************************/
+
+  //       if (!$hairsProvided) {
+  //           if ($user->gender == 'female') {
+  //               $widgets[] = '5d4424455c60e6147cf181b4';
+  //           }else{
+  //               $widgets[] = '5d4423d65c60e6147cf181a6';
+  //           }
+  //       }
+  //       User::where('_id',$user->id)
+  //           ->update(['widgets.$[identifier].selected'=> true],[
+  //               'arrayFilters'=> [ 
+  //                   [ "identifier.id"=> ['$in'=> $widgets] ] 
+  //               ]
+  //           ]);
+        
+  //       $user = User::where('_id', $userId)->select('_id', 'avatar', 'widgets')->first();
+		// return response()->json([
+  //           'message' => 'Your avatar has been updated successfully.', 
+  //           'data'=> $user
+  //       ]);
+  //   }
+  
+    public function setMyAvatar(SetMyAvatarRequest $request)
     {
 
-    	/* Validate the parameters */
-    	$validator = Validator::make($request->all(),[
-			'avatar_id'	  => "required|string|exists:avatars,_id",
-			'eyes_color'  => "required|string",
-			'hairs_color' => "required|string",
-			'skin_color'  => "required|string",
-            'widgets'     => "required|array",
-            'widgets.*' => "required|string|exists:widget_items,_id",
-    	]);
-
-    	if ($validator->fails()) {
-            return response()->json(['message'=>$validator->messages()], 422);
-        }
-
-        // $usersAll = User::where('widgets.id','!=','5d246f0c0b6d7b19fb5ab590')->get();
-        // $usersAll->map(function($user, $index){
-        //     $user->push('widgets',['id'=>'5d246f0c0b6d7b19fb5ab590','selected'=>false]);
-        //     $user->save();
-        //     return $user;
-        // });
-
-    	$user       = Auth::user();
+        $user       = auth()->user();
         $userId     = $user->id;
-    	$avatarId 	= $request->avatar_id;
-		$eyeColor 	= $request->eyes_color;
-		$hairColor  = $request->hairs_color;
-		$skinColors = $request->skin_color;
+        $avatarId   = $request->avatar_id;
+        $eyeColor   = $request->eyes_color;
+        $hairColor  = $request->hairs_color;
+        $skinColors = $request->skin_color;
         $widgets    = $request->widgets;
-        
+        $widgets    = json_decode($request->widgets);
+        $request->file('thumb')->storeAs('avatars', $userId.'.jpg', 'public');
+
         $primaryAvatar = Avatar::where('_id',$avatarId)->select('_id','gender')->first();
         $user->gender = $primaryAvatar->gender;
         $user->avatar = [
@@ -281,49 +401,13 @@ class UserController extends Controller
             'hairs_color' => $hairColor,
             'skin_color' => $skinColors,
         ];
+        $user->hat_selected = filter_var($request->hat_selected, FILTER_VALIDATE_BOOLEAN);
+
+        if (filter_var($request->default, FILTER_VALIDATE_BOOLEAN) == true) {
+          $outfitId = WidgetItem::whereIn('_id', $widgets)->select('_id', 'items')->whereNotNull('items')->first()->id;
+          $user->default_outfit_id = $outfitId;
+        }
         $user->save();
-
-        /** Extra ordinary setup **/
-        // $newBee = User::where('_id', $userId)->first();
-        /** Extra ordinary setup **/
-
-        // User::where('_id',$user->id)
-        //     ->where('widgets.selected', true)
-        //     ->update(['widgets.$[].selected'=> false]);
-
-        // if ($primaryAvatar->gender == 'female') {
-        //     $newUser = User::where('_id', $userId)->select('_id', 'widgets')->get();
-        //     $maleIdsGlobal = WidgetItem::whereHas('avatar', function($query) {
-        //                         $query->where('gender', 'male');
-        //                     })
-        //                     ->get()
-        //                     ->map(function($item) {
-        //                         return $item->id;
-        //                     });
-        //     $maleIdsUser = collect($newUser->widgets)->filter(function($value, $key) use ($maleIdsGlobal){ 
-        //                             return $maleIdsGlobal->contains($value->id);
-        //                         });
-        //     dump($maleIdsUser);
-        //     dd("male", $maleIdsGlobal);
-        //     // $maleItems = collect($newUser->widgets)->where()
-        // }else {
-        //     $newUser = User::where('_id', $userId)->select('_id', 'widgets')->first();
-        //     $femaleIdsGlobal = WidgetItem::whereHas('avatar', function($query) {
-        //                         $query->where('gender', 'male');
-        //                     })
-        //                     ->get()
-        //                     ->map(function($item) {
-        //                         return $item->id;
-        //                     });
-        //     $femaleIdsUser = collect($newUser->widgets)->filter(function($value, $key) use ($femaleIdsGlobal){ 
-        //                             return $femaleIdsGlobal->contains($value['id']);
-        //                         })->map(function($item) {
-        //                             return $item['id'];
-        //                         });
-        //     dump($femaleIdsUser);
-        //     dd("male", $femaleIdsGlobal);
-        // }
-
 
         /*********************************************************************************************************/
         $newUser = User::where('_id', $userId)->select('_id', 'widgets')->first();
@@ -355,8 +439,6 @@ class UserController extends Controller
                 [ "identifier.id"=> ['$in'=> $userWidgetIds] ] 
             ]
         ]);
-        // dump($primaryAvatar->gender, $userWidgetIds);
-        // dd($primaryAvatar->gender, $widgets);
         /*********************************************************************************************************/
 
         if (!$hairsProvided) {
@@ -373,10 +455,11 @@ class UserController extends Controller
                 ]
             ]);
         
-        $user = User::where('_id', $userId)->select('_id', 'avatar', 'widgets')->first();
-		return response()->json([
+        $user = User::where('_id', $userId)->select('_id', 'avatar', 'widgets', 'hat_selected')->first();
+        return response()->json([
             'message' => 'Your avatar has been updated successfully.', 
-            'data'=> $user
+            'data'=> $user,
+            'avatar'=> asset('storage/avatars/'.$user->id.'.jpg')
         ]);
     }
 

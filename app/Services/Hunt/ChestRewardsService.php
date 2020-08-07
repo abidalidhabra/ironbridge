@@ -20,9 +20,6 @@ class ChestRewardsService
 
 	public function get()
 	{
-        return [
-        	'xp_provided'=> $this->xp,
-        	'xp_rewards'=> (new AddXPService)->setUser($this->user)->add($this->xp)
-        ];
+        return (new AddXPService)->setUser($this->user)->add($this->xp)->response();
 	}
 }

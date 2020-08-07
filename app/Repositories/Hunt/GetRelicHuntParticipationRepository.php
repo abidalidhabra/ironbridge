@@ -41,7 +41,7 @@ class GetRelicHuntParticipationRepository
         $remainingClues = $huntUserDetails->where('status', '!=' ,'completed')->count();
         $completedClues = $huntUserDetails->where('status', 'completed')->count();
         $relic = $huntUser->relic()->select('_id', 'name', 'pieces', 'number')->first();
-        $relic->collected_pieces = $relic->hunt_users_reference()->where(['status'=> 'completed', 'user_id'=> $huntUser->user_id])->count();
+        $relic->collected_pieces = $relic->map_pieces()->where(['user_id'=> $huntUser->user_id])->count();
         return [
             'relic_info'=> $relic,
             'clues_data'=> $huntUserDetails, 

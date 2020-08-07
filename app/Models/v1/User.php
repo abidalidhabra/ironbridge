@@ -5,10 +5,18 @@ namespace App\Models\v1;
 use App\Models\v2\AgentComplementary;
 use App\Models\v2\MinigameHistory;
 use App\Models\v2\Relic;
+use App\Models\v2\UserRelicMapPiece;
+use App\Models\v3\AssetsLog;
+use App\Models\v3\ChestUser;
+use App\Models\v3\City;
+use App\Models\v3\EventUser;
+use App\Models\v3\UserQA;
+use App\ReportedLocation;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Jenssegers\Mongodb\Auth\User as Authenticatable;
 use MongoDB\BSON\UTCDateTime;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -64,6 +72,12 @@ class User extends Authenticatable implements JWTSubject
         'nodes_status',
         'mgc_status',
         'buckets',
+        'hat_selected',
+        'compasses',
+        'city_id',
+        'streaming_relic_id',
+        'skipped_relic_id',
+        'default_outfit_id',
         // 'expnadable_skeleton_keys',
     ];
 
@@ -128,7 +142,8 @@ class User extends Authenticatable implements JWTSubject
             'hunt_refresh'=> null,
             'hunt_distance'=> null,
             'relic'=> null,
-            'home_second'=> null
+            'home_second'=> null,
+            // 'robo_intro'=> null,
             // 'hunts'=> [
             //     'relic'=> null,
             //     'mg_challenge'=> null,
@@ -177,6 +192,11 @@ class User extends Authenticatable implements JWTSubject
                 'collected'=> 0,
                 'remaining'=> 5
             ]
+        ],
+        'hat_selected'=> true,
+        'compasses'=> [
+            'utilized'=> 0,
+            'remaining'=> 0,
         ]
         // 'expnadable_skeleton_keys'   => 0,
         // 'user_widgets' => [],
@@ -214,7 +234,12 @@ class User extends Authenticatable implements JWTSubject
      */
     public function events()
     {
-        return $this->hasMany('App\Models\v2\EventsUser');
+        return $this->hasMany(EventUser::class);
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class);
     }
 
     public function balance_sheet()
@@ -351,7 +376,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function setPasswordAttribute($value)
     {
-        return $this->attributes['password'] = bcrypt($value);
+        return $this->attributes['password'] = Hash::needsRehash($value) ? bcrypt($value): $value;
     }
 
     public function getDobAttribute($value)
@@ -383,5 +408,44 @@ class User extends Authenticatable implements JWTSubject
     public function setAppleDataAttribute($value)
     {
         return $this->attributes['apple_data'] = json_decode($value, true);
+    }
+
+    public function user_relic_map_pieces()
+    {
+        return $this->hasMany(UserRelicMapPiece::class);
+    }
+
+    public function reported_locations()
+    {
+        return $this->hasMany(ReportedLocation::class);
+    }
+
+    public function assets()
+    {
+        return $this->hasMany(AssetsLog::class);
+    }
+
+    /**
+     * Specifies the user's FCM token
+     *
+     * @return string
+     */
+    public function routeNotificationForFcm()
+    {
+        if ($this->device_info['type'] == 'android') {
+            return $this->firebase_ids['android_id'];
+        }else if($this->device_info['type'] == 'ios') {
+            return $this->firebase_ids['ios_id'];
+        }
+    }
+
+    public function chests()
+    {
+        return $this->hasMany(ChestUser::class);
+    }
+
+    public function answers()
+    {
+        return $this->hasOne(UserQA::class);
     }
 }

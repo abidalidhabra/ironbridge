@@ -8,7 +8,7 @@ use App\Models\v2\XpManagement;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 use Auth;
-
+use App\Models\v2\HuntStatistic;
 
 class XpManagementController extends Controller
 {
@@ -19,7 +19,8 @@ class XpManagementController extends Controller
      */
     public function index()
     {
-        return view('admin.xpManagement.index');
+        $hunt_statistic = HuntStatistic::first();
+        return view('admin.xpManagement.index',compact('hunt_statistic'));
     }
 
     /**
@@ -136,7 +137,10 @@ class XpManagementController extends Controller
             ->orWhere('complexity','like','%'.$search.'%')
             ->orWhere('xp','like','%'.$search.'%');
         })
-        ->orderBy('created_at','DESC')
+        ->orderBy('complexity','ASC')
+        ->where('complexity', 1)
+        ->where('event', 'clue_completion')
+        // ->orderBy('created_at','DESC')
         ->skip($skip)
         ->take($take)
         ->get();
@@ -148,6 +152,8 @@ class XpManagementController extends Controller
             ->orWhere('complexity','like','%'.$search.'%')
             ->orWhere('xp','like','%'.$search.'%');
         })
+        ->where('complexity', 1)
+        ->where('event', 'clue_completion')
         ->count();
                 
         $admin = Auth::User();
@@ -174,5 +180,31 @@ class XpManagementController extends Controller
         ->setFilteredRecords($filterCount)
         ->skipPaging()
         ->make(true);
+    }
+
+    public function updateDistanceXp(Request $request)
+    {
+        $validator = Validator::make($request->all(),[
+            'chest_xp'                      => 'required|numeric',
+            'mgc_xp'                      => 'required|numeric',
+            // 'relic_xp'                      => 'required|numeric',
+        ]);
+
+        if ($validator->fails())
+        {
+            $message = $validator->messages()->first();
+            return response()->json(['status' => false,'message' => $message]);
+        }
+
+        $huntStatistic = HuntStatistic::first();
+        $huntStatistic->chest_xp =  (int)$request->chest_xp;
+        $huntStatistic->mgc_xp =  (int)$request->mgc_xp;
+        // $huntStatistic->relic_xp =  (int)$request->relic_xp;
+        $huntStatistic->save();
+
+        return response()->json([
+                                'status' => true,
+                                'message' => 'Hunt statistics has been updated successfully.'
+                            ]);
     }
 }

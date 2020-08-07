@@ -73,17 +73,22 @@ class HuntStatisticController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(),[
-            'power_ratio'                   => 'required|numeric',
-            'gold'                          => 'required|numeric',
-            'skeleton_keys'                 => 'required|numeric',
-            'boost_power_till'              => 'required|numeric',
-            'refreshable_random_hunt'       => 'required|numeric',
-            'nodes'                         => 'required|numeric',
-            'distances_random_hunt'         => 'required|numeric',
-            'relic'                         => 'required|numeric',
-            'power'                         => 'required|numeric',
-            'mgc'                           => 'required|numeric',
-            'chest_xp'                      => 'required|numeric',
+            'power_ratio'             => 'required|numeric',
+            'gold'                    => 'required|numeric',
+            'skeleton_keys'           => 'required|numeric',
+            'boost_power_till'        => 'required|numeric',
+            'refreshable_random_hunt' => 'required|numeric',
+            'nodes'                   => 'required|numeric',
+            'distances_random_hunt'   => 'required|numeric',
+            'relic'                   => 'required|numeric',
+            'power'                   => 'required|numeric|min:0',
+            'mgc'                     => 'required|numeric|min:0',
+            'freeze_till_chest'       => 'required|numeric|min:0',
+            'skeleton_keys_for_node'  => 'required|numeric|min:1',
+            // 'chest_xp'                      => 'required|numeric',
+            // 'mg_change_charge'             => 'required|numeric',
+            'chest'        => 'required|array',
+            'chest.*'      => 'required|integer|min:0',
         ]);
 
         if ($validator->fails())
@@ -97,7 +102,9 @@ class HuntStatisticController extends Controller
         $huntStatistic->gold =  (int)$request->gold;
         $huntStatistic->skeleton_keys =  (int)$request->skeleton_keys;
         $huntStatistic->boost_power_till =  (int)$request->boost_power_till;
-        $huntStatistic->chest_xp =  (int)$request->chest_xp;
+        // $huntStatistic->chest_xp =  (int)$request->chest_xp;
+        // $huntStatistic->mg_change_charge =  (int)$request->mg_change_charge;
+        $huntStatistic->skeleton_keys_for_node =  (int)$request->skeleton_keys_for_node;
         $huntStatistic->refreshable_distances =  (object)[
                                                     'random_hunt'=>(int)$request->refreshable_random_hunt,
                                                     'nodes'=>(int)$request->nodes,
@@ -109,7 +116,12 @@ class HuntStatisticController extends Controller
         $huntStatistic->freeze_till =  (object)[
                                         'power'=>(int)$request->power,
                                         'mgc'=>(int)$request->mgc,
+                                        'chest'=>(int)$request->freeze_till_chest,
                                     ];
+        $huntStatistic->chest = [
+            'golds_to_skip_mg'=>(int)$request->chest['golds_to_skip_mg'],
+            'skeleton_keys_to_skip'=>(int)$request->chest['skeleton_keys_to_skip'],
+        ];
         $huntStatistic->save();
 
         return response()->json([

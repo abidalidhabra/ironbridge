@@ -51,10 +51,10 @@ class ParticipationInRandomHuntRepository implements HuntParticipationInterface
 
     public function add($request) : HuntUser
     {
-        $relic = $this->userRepository->streamingRelic();
+        // $relic = $this->userRepository->streamingRelic();
         return $this->user->hunt_user_v1()->create([
             'complexity'=> (int)$request->complexity,
-            'relic_reference_id'=> ($relic)? $relic->id: null,
+            // 'relic_reference_id'=> ($relic)? $relic->id: null,
             'location'=> [
                 'type'=> "Point",
                 'coordinates'=> [(float)$request->longitude, (float)$request->latitude]

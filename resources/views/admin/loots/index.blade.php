@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | Loots')
+@section('title','Ironbridge1779 | Relic Loots')
 @extends('admin.layouts.admin-app')
 
 @section('content')
@@ -6,7 +6,7 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Manage Loot Table</h3>
+                <h3>Relic Loots</h3>
             </div>
             @if(auth()->user()->hasPermissionTo('Add Loot'))
             <div class="col-md-6 text-right modalbuttonadd">

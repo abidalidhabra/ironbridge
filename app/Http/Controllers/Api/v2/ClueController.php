@@ -37,7 +37,7 @@ class ClueController extends Controller
             $data = $initializeAction->action($request);
             $rewardData = $data['rewardData'] ?? null;
             $finishedIn = $data['finishedIn'] ?? 0;
-            return response()->json(['message'=>'Action on clue has been taken successfully.', 'hunt_info'=> $rewardData, 'finished_in'=> $finishedIn]);
+            return response()->json(['message'=>'Action on clue has been taken successfully.', 'data'=> $rewardData, 'finished_in'=> $finishedIn]);
         } catch (ChestBucketCapacityOverflowException $e) {
             return response()->json(['message' => $e->getMessage()], 422); 
         } catch (Exception $e) {
@@ -69,7 +69,7 @@ class ClueController extends Controller
             $huntUserDetail->save();
 
             // return the response to client
-            return response()->json(['message'=> 'Clue Timer has been ended successfully.', 'hunt_action'=> $huntFinished->original, 'available_skeleton_keys'=> $freshUser->available_skeleton_keys]);
+            return response()->json(['message'=> 'Clue Timer has been ended successfully.', 'data'=> $huntFinished->original['data'], 'available_skeleton_keys'=> $freshUser->available_skeleton_keys]);
         } catch (Exception $e) {
             return response()->json(['message'=> $e->getMessage()], 500);
         }

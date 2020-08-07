@@ -1,4 +1,4 @@
-@section('title','Ironbridge1779 | NEWS')
+@section('title','Ironbridge1779 | Edit Random Hunt Variations')
 @extends('admin.layouts.admin-app')
 @section('styles')
     <!-- <link rel="stylesheet" type="text/css" href="{{ asset('css/toastr.min.css') }}"> -->
@@ -8,7 +8,7 @@
     <div class="users_datatablebox">
         <div class="row">
             <div class="col-md-6">
-                <h3>Edit Game Variation</h3>
+                <h3>Edit Random Hunt Variations</h3>
             </div>
             <div class="col-md-6 text-right modalbuttonadd">
                 <a href="{{ route('admin.gameVariation.index') }}" class="btn btn-info btn-md">Back</a>
@@ -91,7 +91,7 @@
                             ?>
                             <li>
                                 <div class="closeicon">
-                                    <a target="_blank" href="javascript:void(0)" data-action="delete" data-id="{{ $variations->id }}" data-index="{{ $key }}" >
+                                    <a href="javascript:void(0)" data-action="delete" data-id="{{ $variations->id }}" data-index="{{ $key }}" >
                                         <img src="{{ asset('admin_assets/svg/close.svg') }}">
                                     </a>
                                 </div>
@@ -107,7 +107,9 @@
             </div>
              
             <div class="form-group col-md-12">
-                <button type="submit" class="btn btn-success btnSubmit">Submit</button>
+                <button type="submit" class="btn btn-success btnSubmit" id="submitBtn">
+                    Submit <i class="fa fa-spinner fa-spin" style="font-size:14px; display: none;"></i>
+                </button>
             </div>
     </form>
     </div>
@@ -118,79 +120,33 @@
 @section('scripts')
     <script type="text/javascript">
         $(document).ready(function() {
-            //DELETE IMAGE
+          
             $(document).on("click",'a[data-action="delete"]',function() {
-                var id = $(this).data('id');
-                var index = $(this).data('index');
-                $(this).parents('li').remove();
-                var total_image = $('#total_image').val();
-                var image_len = $('.closeicon').length;
-                $('#total_image').val(image_len);
-                var total_image = $('#total_image').val();
-                
-                if(total_image >= 3){
-                    $(".btnSubmit").attr("disabled", false);
-                    // $('#variation_image').attr("disabled", true);
-                } else {
-                    total_image = 3-total_image;
-                    $('.error1').remove();
-                    $('#variation_image').after('<label class="error error1">You must have to upload only '+total_image+' images.</label>');
-                    $(".btnSubmit").attr("disabled", true);
-                    // $('#variation_image').attr("disabled", false);
-                }
-                /*$.ajax({
-                    type: "GET",
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    url: '{{ route("admin.deleteImage") }}',
-                    data: {id : id , index:index},
-                    success: function(response)
-                    {
+                let element = $(this);
+                $.ajax({
+                    type:'DELETE',
+                    url:'{{ route("admin.deleteImage") }}',
+                    data: {id: $(this).data('id'), index: $(this).data('index')},
+                    dataType: 'json',
+                    beforeSend:function(){},
+                    success:function(response) {
                         if (response.status == true) {
                             toastr.success(response.message);
-                            table.ajax.reload();
+                            element.parents('li').remove();
                         } else {
                             toastr.warning(response.message);
                         }
+                    },
+                    complete:function(){},
+                    error:function(jqXHR, textStatus, errorThrown){
+                        toastr.error(JSON.parse(jqXHR.responseText).message);
                     }
-                });*/
+                });
             });
 
-
-
-            $(document).on("change",'#variation_image',function() {
-                    var input = document.getElementById('variation_image');
-                    var total_image = parseInt($('#total_image').val());
-                    //total_image = 3-total_image;
-                    var total_file = input.files.length;
-                                        
-                    if((total_file+total_image) == 3){
-                        $('#total_image').val('3');
-                        $('.error1').remove();
-                        $(".btnSubmit").attr("disabled", false);
-                        // $('#variation_image').attr("disabled", true);
-                    } else {
-                        // $('#variation_image').attr("disabled", false);
-                        total_image = 3-total_image;
-                        $('.error1').remove();
-                        $('#variation_image').after('<label class="error error1">You must have to upload only '+total_image+' images.</label>');
-                        $(".btnSubmit").attr("disabled", true);
-                    }
-            });
-
-            $(document).on("click",'#reset_file',function() {
-                $('.error1').remove();
-                $(".btnSubmit").attr("disabled", false);
-                $('#variation_image').val('');
-            });
-
-            //ADD VARIATION
             $('#form_validation').submit(function(e) {
-                    e.preventDefault();
-                })
-            .validate({
-            //$('#form_validation').validate({
+                e.preventDefault();
+            }).validate({
                 focusInvalid: false, 
                 ignore: "",
                 rules: {
@@ -340,7 +296,9 @@
                         cache:false,
                         contentType: false,
                         processData: false,
-                        beforeSend:function(){},
+                        beforeSend:function(){
+                            showTheLoader();
+                        },
                         success:function(response) {
                             if (response.status == true) {
                                 toastr.success(response.message);
@@ -349,7 +307,9 @@
                                 toastr.warning(response.message);
                             }
                         },
-                        complete:function(){},
+                        complete:function(){
+                            hideTheLoader();
+                        },
                         error:function(){}
                     });
                 }

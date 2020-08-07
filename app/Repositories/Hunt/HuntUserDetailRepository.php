@@ -3,14 +3,21 @@
 namespace App\Repositories\Hunt;
 
 use App\Models\v2\HuntUserDetail;
+use App\Repositories\ModelRepository;
 
-class HuntUserDetailRepository
+class HuntUserDetailRepository extends ModelRepository
 {
+    protected $model;
 
-    public function find($id, $fields = ['*'])
+    public function __construct()
     {
-        return HuntUserDetail::find($id, $fields);
+        $this->model = new HuntUserDetail;
     }
+
+    // public function find($id, $fields = ['*'])
+    // {
+    //     return HuntUserDetail::find($id, $fields);
+    // }
     
     public function update(array $fields, array $cond)
     {

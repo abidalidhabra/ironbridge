@@ -15,7 +15,7 @@ class GetLastParticipatedRandomHuntRepository
                     ->whereHas('user', function($query) {
                         $query->where('_id', auth()->user()->id);
                     })
-                    ->where('status', 'participated')->latest()->select('_id', 'user_id', 'status', 'complexity', 'relic_reference_id')->first();
+                    ->where('status', 'participated')->latest()->select('_id', 'user_id', 'status', 'complexity')->first();
 
 
         if ($huntUser) {

@@ -16,10 +16,25 @@ class GetRandomizeGamesService
         return $this;
     }
 
+
+    public function getFreezedGames()
+    {
+        return $this->user->mgc_status->filter(function($status) {
+            return (
+                $status['completed_at'] < now()->subHours(4) ||
+                $status['completed_at'] == null
+            );
+        });
+    }
+
     public function get(int $limit)
     {
+
+        $freezedGames = $this->getFreezedGames();
+
         $games = $this->user->practice_games()
                             ->with('game:_id,name,identifier')
+                            ->whereIn('game_id', $freezedGames->pluck('game_id'))
                             ->whereNotNull('unlocked_at')
                             ->select('_id', 'game_id', 'unlocked_at')
                             ->limit($limit)
@@ -54,6 +69,10 @@ class GetRandomizeGamesService
                 ->shuffle()
                 ->pluck('game')
                 ->first();
+
+        if (!$game) {
+            $game = $this->get(0)->first();
+        }
 
         return $game->load('treasure_nodes_target');
     }

@@ -14,10 +14,10 @@ class CheckIfAppIsNotUpdated
 	public function handle($request, Closure $next)
 	{
 		$this->serverInfo = (new AppStatisticRepository)->first(['id', 'app_versions']);
+		$user = auth('api')->user();
 		if (
-			!$request->device_type || !$request->app_version ||
-			($request->device_type == 'android' && $this->serverInfo->app_versions['android'] > $request->app_version) ||
-			($request->device_type == 'ios' && $this->serverInfo->app_versions['ios'] > $request->app_version)
+			($user->device_info['type'] == 'android' && $this->serverInfo->app_versions['android'] > $user->additional['app_version']) ||
+			($user->device_info['type'] == 'ios' && $this->serverInfo->app_versions['ios'] > $user->additional['app_version'])
 		) {
 			return response()->json(['code'=> 14, 'message' => 'Please update an application.'], 500);
 		}

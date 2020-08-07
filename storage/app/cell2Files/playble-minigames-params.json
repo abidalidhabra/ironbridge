@@ -1,10 +1,10 @@
-{
-    "areaFilter": {
-        "s2CellId": "CELL2IDPLACE",
-        "pointExclusions": []
+    {
+        "areaFilter": {
+            "s2CellId": "CELL2IDPLACE",
+            "pointExclusions": []
 
-    },
-    "criteria": [{
+        },
+        "criteria": [{
             "gameObjectType": 0,
             "filter": {
                 "maxLocationCount": 100,
@@ -177,6 +177,33 @@
                 "typesProminenceModifier": {},
                 "capacity": {
                     "capacity": 0
+                },
+                "dwellability": {
+                    "dwellability": 0
+                },
+                "artisticallyInteresting": {
+                    "artisticallyInteresting": 0
+                }
+            },
+            "fieldsToReturn": "name,types,snapped_point"
+        },{
+            "gameObjectType": 7,
+            "filter": {
+                "maxLocationCount": 20,
+                "spacing": {
+                    "minSpacingMeters": 100,
+                    "pointType": 2
+
+                },
+                "contentRating": 1,
+                "accessTypes": [1]
+
+            },
+            "ranking": {
+                "typesProminenceModifier": {},
+                "capacity": {
+                    "capacity": 0
+
                 },
                 "dwellability": {
                     "dwellability": 0

@@ -10,7 +10,7 @@
             </div>
             <div class="col-md-12">
                 <div class="row">
-                    <h3>Details Mini Games XP/Score</h3>
+                    <h3>Practice Targets Details</h3>
                 </div>
             </div>
         </div>

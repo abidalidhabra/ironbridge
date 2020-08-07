@@ -2,14 +2,19 @@
 
 namespace App\Services\Hunt;
 
+use App\Repositories\AppStatisticRepository;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Redis;
+use Exception;
 
 class PaybleCellProviderService
 {
 	
 	protected $cellIDServerURL = 'http://18.233.52.123:8080/CELL2IDAPP/rest/json/metallica/get';
+
 	protected $paybleGoogleKey = 'AIzaSyA_01wAGuFb4lEYCF2CO3zkKcFdDv2NORQ';
+
 	protected $paybleGoogleURL;
 	protected $client;
 	protected $redis;
@@ -19,6 +24,7 @@ class PaybleCellProviderService
 
 	public function __construct()
 	{
+		$this->paybleGoogleKey = (new AppStatisticRepository)->first(['_id', 'google_keys.web'])->google_keys['web'];
 		$this->paybleGoogleURL = 'https://playablelocations.googleapis.com/v3:searchPlayableLocations?key='.$this->paybleGoogleKey;
 		$this->client = new Client();
 		$this->redis = Redis::connection();
@@ -107,10 +113,21 @@ class PaybleCellProviderService
 		if ($cacheContents = $this->redis->get($this->cacheKeys[$getLocationsFor])) {
 			return $this->getContents($cacheContents, true, false);;
 		}else{
-			$apiResponse = $this->client->request('POST', $this->paybleGoogleURL, ['body' => $this->getPlayableCellsJSONFile($getLocationsFor)]);
-			$apiContents = $this->getContents($apiResponse, false);
-			$this->setCacheableValues($getLocationsFor, $apiContents);
-			return $this->getContents($apiContents, true, false);
+			try {
+				$apiResponse = $this->client->request('POST', $this->paybleGoogleURL, ['body' => $this->getPlayableCellsJSONFile($getLocationsFor)]);
+				$apiContents = $this->getContents($apiResponse, false);
+				$this->setCacheableValues($getLocationsFor, $apiContents);
+				return $this->getContents($apiContents, true, false);
+			} catch (RequestException $e) {
+				if ($e->hasResponse()) {
+					$response = $e->getResponse();
+					$responseBodyAsString = $response->getBody()->getContents();
+					$errorMessage = json_decode($responseBodyAsString)->error->message;
+					throw new Exception($errorMessage);
+				}else{
+					throw new Exception("Error occured while requesting to google.");
+				}
+			}
 		}
 	}
 
