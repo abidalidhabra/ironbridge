@@ -737,6 +737,16 @@ class UserController extends Controller
         
         $user->practice_games()->delete();
         $user->plans_purchases()->delete();
+        
+
+        $user->chests()->delete();
+        $user->answers()->delete();
+        $user->assets()->delete();
+        // $user->reported_locations()->delete();
+        $user->relics_info()->delete();
+        $user->minigames_history()->delete();
+       
+
         $user->events()->delete();
         $user->user_relic_map_pieces()->orderBy('created_at', 'asc')->skip(1)->get()->each(function($row){ 
             $row->delete(); 

@@ -134,7 +134,7 @@ class ProfileController extends Controller
     }
 
     public function addTheChest(AddTheChestRequest $request)
-    {
+    {   
         try {
             $user = auth()->user();
             if ($user['buckets']['chests']['collected'] + 1 > $user['buckets']['chests']['capacity']) {

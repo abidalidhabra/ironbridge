@@ -50,6 +50,6 @@ class AddTheChestRule implements Rule
      */
     public function message()
     {
-        return 'This chest is under freeze mode.';
+        return 'This chest is in cool down. Try again later.';
     }
 }
